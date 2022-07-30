@@ -9,6 +9,8 @@ import (
 
 	invitation1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation"
 
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -33,7 +35,7 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 		}
 	}
 
-	limit := int32(20)
+	limit := int32(constant.DefaultLimitRows)
 	if in.GetLimit() > 0 {
 		limit = in.GetLimit()
 	}
