@@ -1,4 +1,3 @@
-//nolint:dupl
 package invitation
 
 import (
@@ -22,15 +21,17 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 		return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "AppID is invalid")
 	}
 
-	if _, err := uuid.Parse(in.GetUserID()); err != nil {
-		logger.Sugar().Errorw("GetInvitees", "UserID", in.GetUserID(), "error", err)
-		return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "UserID is invalid")
+	for _, user := range in.GetUserIDs() {
+		if _, err := uuid.Parse(user); err != nil {
+			logger.Sugar().Errorw("GetInvitees", "UserID", user, "error", err)
+			return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "UserID is invalid")
+		}
 	}
 
-	infos, total, err := invitation1.GetInvitees(ctx, in.GetAppID(), in.GetUserID(), in.GetOffset(), in.GetLimit())
+	infos, total, err := invitation1.GetInvitees(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), in.GetLimit())
 	if err != nil {
 		logger.Sugar().Errorw("GetInvitees",
-			"AppID", in.GetAppID(), "UserID", in.GetUserID(),
+			"AppID", in.GetAppID(), "UserID", in.GetUserIDs(),
 			"Offset", in.GetOffset(), "Limit", in.GetLimit(),
 			"error", err)
 		return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "fail get invitees")
