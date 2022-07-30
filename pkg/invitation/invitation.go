@@ -33,7 +33,6 @@ func GetInvitees(
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
-			Debug().
 			RegistrationInvitation.
 			Query().
 			Where(
