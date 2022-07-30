@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire"
 
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation"
@@ -18,6 +20,9 @@ func Register(server grpc.ServiceRegistrar) {
 	invitation.Register(server)
 }
 
-func RegisterMiddleware(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	if err := npool.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }

@@ -47,5 +47,11 @@ func rpcRegister(server grpc.ServiceRegistrar) error {
 }
 
 func rpcGatewayRegister(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	err := api.RegisterGateway(mux, endpoint, opts)
+	if err != nil {
+		return err
+	}
+
+	apimgrcli.Register(mux)
 	return nil
 }
