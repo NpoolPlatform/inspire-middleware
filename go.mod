@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220328101926-8907b2f76c6d
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf
-	github.com/NpoolPlatform/message v0.0.0-20220730050107-436d34829665
+	github.com/NpoolPlatform/message v0.0.0-20220730052548-73bd6d5dac27
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/streadway/amqp v1.0.0
