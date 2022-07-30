@@ -21,6 +21,11 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 		return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "AppID is invalid")
 	}
 
+	if len(in.GetUserIDs()) == 0 {
+		logger.Sugar().Errorw("GetInvitees", "error", "UserIDs is empty")
+		return &npool.GetInviteesResponse{}, status.Error(codes.Internal, "UserIDs is invalid")
+	}
+
 	for _, user := range in.GetUserIDs() {
 		if _, err := uuid.Parse(user); err != nil {
 			logger.Sugar().Errorw("GetInvitees", "UserID", user, "error", err)
@@ -28,7 +33,13 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 		}
 	}
 
-	infos, total, err := invitation1.GetInvitees(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), in.GetLimit())
+	limit := int32(20)
+	if in.GetLimit() > 0 {
+		limit = in.GetLimit()
+	}
+
+	infos, total, err := invitation1.GetInvitees(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), limit)
+
 	if err != nil {
 		logger.Sugar().Errorw("GetInvitees",
 			"AppID", in.GetAppID(), "UserID", in.GetUserIDs(),

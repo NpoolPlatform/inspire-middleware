@@ -7,7 +7,7 @@ require (
 	github.com/NpoolPlatform/api-manager v0.0.0-20220421114434-bf0e069b0c83
 	github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220730091359-8769860ce809
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf
-	github.com/NpoolPlatform/message v0.0.0-20220730100922-4ef873cccec9
+	github.com/NpoolPlatform/message v0.0.0-20220730104223-0ea0cbe78d16
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
