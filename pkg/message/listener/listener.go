@@ -2,8 +2,8 @@ package listener
 
 import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	msgcli "github.com/NpoolPlatform/inspire-gateway/pkg/message/client"
-	msg "github.com/NpoolPlatform/inspire-gateway/pkg/message/message"
+	msgcli "github.com/NpoolPlatform/inspire-middleware/pkg/message/client"
+	msg "github.com/NpoolPlatform/inspire-middleware/pkg/message/message"
 )
 
 func listenTemplateExample() {

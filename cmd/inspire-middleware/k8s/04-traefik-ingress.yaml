@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: inspire-gateway-traefik-vpn-ingress
+  name: inspire-middleware-traefik-app-ingress
   namespace: kube-system
   annotations:
-    k8s.kuboard.cn/displayName: inspire-gateway-traefik-vpn
-    k8s.kuboard.cn/workload: inspire-gateway-traefik-vpn
-    kubernetes.io/ingress.class: "traefik-internet-vpn"
+    k8s.kuboard.cn/displayName: inspire-middleware-traefik-app
+    k8s.kuboard.cn/workload: inspire-middleware-traefik-app
+    kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
-      kube-system-strip-inspire-gateway-prefix@kubernetescrd,
+      kube-system-strip-inspire-middleware-prefix@kubernetescrd,
       kube-system-common-headers@kubernetescrd,
       kube-system-headers-appid-to-body@kubernetescrd,
       kube-system-headers-userid-to-body@kubernetescrd,
@@ -23,9 +23,11 @@ spec:
         paths:
           - path: /api/inspire
             backend:
-              serviceName: inspire-gateway
-              servicePort: 50390
+              serviceName: inspire-middleware
+              servicePort: 50400
     - host: api.procyon.vip
       http: *http_rules
     - host: api.xpool.top
+      http: *http_rules
+    - host: api.ohhash.com
       http: *http_rules

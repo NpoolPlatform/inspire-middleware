@@ -3,7 +3,7 @@ kind: ServiceMonitor
 metadata:
   labels:
     release: prometheus
-  name: inspire-gateway
+  name: inspire-middleware
   namespace: monitor
 spec:
   endpoints:
@@ -14,4 +14,4 @@ spec:
       - kube-system
   selector:
     matchLabels:
-      app: inspire-gateway
+      app: inspire-middleware

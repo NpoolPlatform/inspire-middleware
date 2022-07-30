@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/NpoolPlatform/inspire-gateway/api"
+	"github.com/NpoolPlatform/inspire-middleware/api"
+
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -22,6 +24,10 @@ var runCmd = &cli.Command{
 	Aliases: []string{"s"},
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
+		if err := db.Init(); err != nil {
+			return err
+		}
+
 		go func() {
 			if err := grpc2.RunGRPC(rpcRegister); err != nil {
 				logger.Sugar().Errorf("fail to run grpc server: %v", err)
@@ -41,12 +47,5 @@ func rpcRegister(server grpc.ServiceRegistrar) error {
 }
 
 func rpcGatewayRegister(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	err := api.RegisterGateway(mux, endpoint, opts)
-	if err != nil {
-		return err
-	}
-
-	apimgrcli.Register(mux)
-
 	return nil
 }

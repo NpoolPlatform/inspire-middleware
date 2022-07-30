@@ -1,6 +1,6 @@
 resources:
-  - 01-inspire-gateway.viper.yaml
-  - 02-inspire-gateway.yaml
+  - 01-inspire-middleware.viper.yaml
+  - 02-inspire-middleware.yaml
   - 03-strip-prefix.yaml
   - 04-traefik-ingress.yaml
   - 05-traefik-vpn-ingress.yaml

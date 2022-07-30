@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/NpoolPlatform/inspire-gateway/pkg/version"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/version"
 	npool "github.com/NpoolPlatform/message/npool"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

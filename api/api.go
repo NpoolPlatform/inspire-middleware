@@ -1,36 +1,23 @@
 package api
 
 import (
-	"context"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire"
 
-	inspire "github.com/NpoolPlatform/message/npool/inspire/gw/v1"
-
-	"github.com/NpoolPlatform/inspire-gateway/api/archivement"
-	"github.com/NpoolPlatform/inspire-gateway/api/commission"
+	"github.com/NpoolPlatform/inspire-middleware/api/invitation"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	inspire.UnimplementedGatewayServer
+	npool.UnimplementedMiddlewareServer
 }
 
 func Register(server grpc.ServiceRegistrar) {
-	inspire.RegisterGatewayServer(server, &Server{})
-	archivement.Register(server)
-	commission.Register(server)
+	npool.RegisterMiddlewareServer(server, &Server{})
+	invitation.Register(server)
 }
 
-func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	if err := inspire.RegisterGatewayHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
-		return err
-	}
-	if err := archivement.RegisterGateway(mux, endpoint, opts); err != nil {
-		return err
-	}
-	if err := commission.RegisterGateway(mux, endpoint, opts); err != nil {
-		return err
-	}
+func RegisterMiddleware(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
 	return nil
 }

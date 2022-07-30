@@ -1,3 +1,3 @@
 package constant
 
-const ServiceName = "inspire-gateway.npool.top"
+const ServiceName = "inspire-middleware.npool.top"

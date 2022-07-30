@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: inspire-gateway-config
+  name: inspire-middleware-config
   namespace: kube-system
 data:
   service-conf: |
     config:
-      hostname: "inspire-gateway.npool.top"
-      http_port: 50390
-      grpc_port: 50391
-      healthz_port: 50392
-      prometheus_port: 50393
+      hostname: "inspire-middleware.npool.top"
+      http_port: 50400
+      grpc_port: 50401
+      healthz_port: 50402
+      prometheus_port: 50403
       appid: "89089012783789789719823798127398"
       serviceid: "6161ecc0-0b2c-11ed-b571-72e9de4b20f6"
       logdir: "./"

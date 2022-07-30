@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inspire-gateway
+  name: inspire-middleware
   namespace: kube-system
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
@@ -9,19 +9,19 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: inspire-gateway
+      app: inspire-middleware
   template:
     metadata:
       labels:
-        app: inspire-gateway
+        app: inspire-middleware
     spec:
       containers:
-        - name: inspire-gateway
-          image: uhub.service.ucloud.cn/entropypool/inspire-gateway:latest
+        - name: inspire-middleware
+          image: uhub.service.ucloud.cn/entropypool/inspire-middleware:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
-              mountPath: /etc/InspireGateway
+              mountPath: /etc/InspireMiddleware
           env:
             - name: ENV_ENVIRONMENT_TARGET
               valueFrom:
@@ -45,29 +45,29 @@ spec:
       volumes:
         - name: service-config
           configMap:
-            name: inspire-gateway-config
+            name: inspire-middleware-config
             items:
               - key: service-conf
-                path: InspireGateway.viper.yaml
+                path: InspireMiddleware.viper.yaml
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: inspire-gateway
+  name: inspire-middleware
   namespace: kube-system
 spec:
   ports:
     - name: http
-      port: 50390
-      targetPort: 50390
+      port: 50400
+      targetPort: 50400
     - name: grpc
-      port: 50391
-      targetPort: 50391
+      port: 50401
+      targetPort: 50401
     - name: healthz
-      port: 50392
-      targetPort: 50392
+      port: 50402
+      targetPort: 50402
     - name: prometheus
-      port: 50393
-      targetPort: 50393
+      port: 50403
+      targetPort: 50403
   selector:
-    app: inspire-gateway
+    app: inspire-middleware
