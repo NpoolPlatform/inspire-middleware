@@ -7,6 +7,7 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire/invitation"
 
+	converter "github.com/NpoolPlatform/inspire-middleware/pkg/converter/invitation"
 	invitation1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
@@ -51,7 +52,7 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 	}
 
 	return &npool.GetInviteesResponse{
-		Infos: infos,
+		Infos: converter.Ent2GrpcMany(infos),
 		Total: total,
 	}, nil
 }
@@ -77,7 +78,7 @@ func (s *Server) GetInviters(ctx context.Context, in *npool.GetInvitersRequest) 
 	}
 
 	return &npool.GetInvitersResponse{
-		Infos: infos,
+		Infos: converter.Ent2GrpcMany(infos),
 		Total: total,
 	}, nil
 }

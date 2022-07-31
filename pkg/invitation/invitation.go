@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"entgo.io/ent/dialect/sql"
 
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire/invitation"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 
 	"github.com/NpoolPlatform/cloud-hashing-inspire/pkg/db/ent"
 	"github.com/NpoolPlatform/cloud-hashing-inspire/pkg/db/ent/registrationinvitation"
+	"github.com/NpoolPlatform/cloud-hashing-inspire/pkg/db/ent/userinvitationcode"
 
 	"github.com/google/uuid"
 )
@@ -20,7 +20,7 @@ func GetInvitees(
 	appID string, inviterIDs []string,
 	offset, limit int32,
 ) (
-	infos []*npool.Invitation,
+	infos []*Invitation,
 	total uint32,
 	err error,
 ) {
@@ -28,8 +28,6 @@ func GetInvitees(
 	for _, inviter := range inviterIDs {
 		inviters = append(inviters, uuid.MustParse(inviter))
 	}
-
-	infos = []*npool.Invitation{}
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
@@ -55,7 +53,18 @@ func GetInvitees(
 			Order(ent.Desc(registrationinvitation.FieldUpdateAt)).
 			Offset(int(offset)).
 			Limit(int(limit)).
-			Modify().
+			Modify(func(s *sql.Selector) {
+				t1 := sql.Table(userinvitationcode.Table)
+				s.
+					LeftJoin(t1).
+					On(
+						s.C(registrationinvitation.FieldInviteeID),
+						t1.C(userinvitationcode.FieldUserID),
+					).
+					AppendSelect(
+						sql.As(t1.C(userinvitationcode.FieldInvitationCode), "invitation_code"),
+					)
+			}).
 			Scan(ctx, &infos)
 	})
 	if err != nil {
@@ -65,6 +74,6 @@ func GetInvitees(
 	return infos, total, nil
 }
 
-func GetInviters(ctx context.Context, appID, userID string, offset, limit int32) ([]*npool.Invitation, uint32, error) {
+func GetInviters(ctx context.Context, appID, userID string, offset, limit int32) ([]*Invitation, uint32, error) {
 	return nil, 0, fmt.Errorf("NOT IMPLEMENTED")
 }
