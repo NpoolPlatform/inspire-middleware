@@ -16,13 +16,9 @@ import (
 )
 
 func GetInvitees(
-	ctx context.Context,
-	appID string, inviterIDs []string,
-	offset, limit int32,
+	ctx context.Context, appID string, inviterIDs []string, offset, limit int32,
 ) (
-	infos []*Invitation,
-	total uint32,
-	err error,
+	infos []*Invitation, total uint32, err error,
 ) {
 	inviters := []uuid.UUID{}
 	for _, inviter := range inviterIDs {

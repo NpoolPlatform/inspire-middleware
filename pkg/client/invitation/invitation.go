@@ -1,3 +1,4 @@
+//nolint:dupl
 package invitation
 
 import (
@@ -54,4 +55,28 @@ func GetInvitees(ctx context.Context, appID string, inviters []string, offset, l
 		return nil, 0, err
 	}
 	return infos.([]*npool.Invitation), total, nil
+}
+
+func GetActivePercents(ctx context.Context, appID string, users []string, offset, limit int32) ([]*npool.Percent, uint32, error) {
+	total := uint32(0)
+
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetActivePercents(ctx, &npool.GetActivePercentsRequest{
+			AppID:   appID,
+			UserIDs: users,
+			Offset:  offset,
+			Limit:   limit,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		total = resp.GetTotal()
+
+		return resp.GetInfos(), nil
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	return infos.([]*npool.Percent), total, nil
 }

@@ -42,7 +42,6 @@ func (s *Server) GetInvitees(ctx context.Context, in *npool.GetInviteesRequest) 
 	}
 
 	infos, total, err := invitation1.GetInvitees(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), limit)
-
 	if err != nil {
 		logger.Sugar().Errorw("GetInvitees",
 			"AppID", in.GetAppID(), "UserID", in.GetUserIDs(),
@@ -68,7 +67,12 @@ func (s *Server) GetInviters(ctx context.Context, in *npool.GetInvitersRequest) 
 		return &npool.GetInvitersResponse{}, status.Error(codes.Internal, "UserID is invalid")
 	}
 
-	infos, total, err := invitation1.GetInviters(ctx, in.GetAppID(), in.GetUserID(), in.GetOffset(), in.GetLimit())
+	limit := int32(constant.DefaultLimitRows)
+	if in.GetLimit() > 0 {
+		limit = in.GetLimit()
+	}
+
+	infos, total, err := invitation1.GetInviters(ctx, in.GetAppID(), in.GetUserID(), in.GetOffset(), limit)
 	if err != nil {
 		logger.Sugar().Errorw("GetInviters",
 			"AppID", in.GetAppID(), "UserID", in.GetUserID(),
@@ -80,5 +84,40 @@ func (s *Server) GetInviters(ctx context.Context, in *npool.GetInvitersRequest) 
 	return &npool.GetInvitersResponse{
 		Infos: converter.Ent2GrpcMany(infos),
 		Total: total,
+	}, nil
+}
+
+func (s *Server) GetActivePercents(ctx context.Context, in *npool.GetActivePercentsRequest) (*npool.GetActivePercentsResponse, error) {
+	if _, err := uuid.Parse(in.GetAppID()); err != nil {
+		logger.Sugar().Errorw("GetActivePercents", "AppID", in.GetAppID(), "error", err)
+		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "AppID is invalid")
+	}
+
+	if len(in.GetUserIDs()) == 0 {
+		logger.Sugar().Errorw("GetActivePercents", "error", "UserIDs is empty")
+		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "UserIDs is invalid")
+	}
+
+	for _, user := range in.GetUserIDs() {
+		if _, err := uuid.Parse(user); err != nil {
+			logger.Sugar().Errorw("GetActivePercents", "UserID", user, "error", err)
+			return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "UserID is invalid")
+		}
+	}
+
+	limit := int32(constant.DefaultLimitRows)
+	if in.GetLimit() > 0 {
+		limit = in.GetLimit()
+	}
+
+	infos, n, err := invitation1.GetActivePercents(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), limit)
+	if err != nil {
+		logger.Sugar().Errorw("GetActivePercents", "error", err)
+		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "fail get active percents")
+	}
+
+	return &npool.GetActivePercentsResponse{
+		Infos: infos,
+		Total: n,
 	}, nil
 }
