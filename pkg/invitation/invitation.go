@@ -62,8 +62,6 @@ func GetInvitees(
 		return nil, 0, err
 	}
 
-	logger.Sugar().Infow("GetInvitees", "infos", infos, "total", total, "inviters", inviters, "app", appID, "error", err)
-
 	return infos, total, nil
 }
 
