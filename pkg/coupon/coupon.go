@@ -4,6 +4,7 @@ package coupon
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -19,6 +20,8 @@ import (
 
 	"github.com/google/uuid"
 )
+
+const secondsPerDay = 24 * 60 * 60
 
 func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (info *npool.Coupon, err error) {
 	infos := []*npool.Coupon{}
@@ -102,6 +105,20 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 	if err != nil {
 		return nil, err
 	}
+	if len(infos) == 0 {
+		return nil, nil
+	}
 
-	return nil, nil
+	coupon := infos[0]
+	coupon.End = coupon.Start + coupon.DurationDays*secondsPerDay
+	now := uint32(time.Now().Unix())
+
+	if coupon.Start <= now && now <= coupon.End {
+		coupon.Valid = true
+	}
+	if coupon.End < now {
+		coupon.Expired = true
+	}
+
+	return infos[0], nil
 }
