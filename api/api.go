@@ -5,6 +5,7 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire"
 
+	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -18,6 +19,7 @@ type Server struct {
 func Register(server grpc.ServiceRegistrar) {
 	npool.RegisterMiddlewareServer(server, &Server{})
 	invitation.Register(server)
+	coupon.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
