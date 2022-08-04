@@ -30,77 +30,23 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 		stm := cli.
 			CouponAllocated.
 			Query().
-			Select(
-				couponallocated.FieldID,
-				couponallocated.FieldCreateAt,
-			).
 			Where(
 				couponallocated.ID(uuid.MustParse(id)),
 			)
 
 		switch couponType {
 		case npool.CouponType_FixAmount:
-			err = stm.
-				Modify(func(s *sql.Selector) {
-					t1 := sql.Table(couponpool.Table)
-					s.
-						LeftJoin(t1).
-						On(
-							s.C(couponallocated.FieldCouponID),
-							t1.C(couponpool.FieldID),
-						).
-						AppendSelect(
-							sql.As(t1.C(couponpool.FieldName), "name"),
-							sql.As(t1.C(couponpool.FieldMessage), "message"),
-							sql.As(t1.C(couponpool.FieldStart), "start"),
-							sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
-							sql.As(t1.C(couponpool.FieldDenomination), "value"),
-						)
-				}).
-				Scan(ctx, &infos)
+			fallthrough //nolint
 		case npool.CouponType_Discount:
-			err = stm.
-				Modify(func(s *sql.Selector) {
-					t1 := sql.Table(discountpool.Table)
-					s.
-						LeftJoin(t1).
-						On(
-							s.C(couponallocated.FieldCouponID),
-							t1.C(couponpool.FieldID),
-						).
-						AppendSelect(
-							sql.As(t1.C(couponpool.FieldName), "name"),
-							sql.As(t1.C(couponpool.FieldMessage), "message"),
-							sql.As(t1.C(couponpool.FieldStart), "start"),
-							sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
-							sql.As(t1.C(couponpool.FieldDenomination), "value"),
-						)
-				}).
-				Scan(ctx, &infos)
+			fallthrough //nolint
 		case npool.CouponType_SpecialOffer:
-			err = stm.
-				Modify(func(s *sql.Selector) {
-					t1 := sql.Table(userspecialreduction.Table)
-					s.
-						LeftJoin(t1).
-						On(
-							s.C(couponallocated.FieldCouponID),
-							t1.C(couponpool.FieldID),
-						).
-						AppendSelect(
-							sql.As(t1.C(couponpool.FieldMessage), "message"),
-							sql.As(t1.C(couponpool.FieldStart), "start"),
-							sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
-							sql.As(t1.C(couponpool.FieldDenomination), "value"),
-						)
-				}).
+			return join(stm, couponType).
 				Scan(ctx, &infos)
 		case npool.CouponType_ThresholdReduction:
 			return fmt.Errorf("NOT IMPLEMENTED")
 		default:
 			return fmt.Errorf("UNKNOWN coupon")
 		}
-		return err
 	})
 	if err != nil {
 		return nil, err
@@ -109,16 +55,84 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 		return nil, nil
 	}
 
-	coupon := infos[0]
-	coupon.End = coupon.Start + coupon.DurationDays*secondsPerDay
+	return post(infos[0]), nil
+}
+
+func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.CouponAllocatedSelect {
+	stm1 := stm.
+		Select(
+			couponallocated.FieldID,
+			couponallocated.FieldCreateAt,
+		)
+
+	switch couponType {
+	case npool.CouponType_FixAmount:
+		return stm1.
+			Modify(func(s *sql.Selector) {
+				t1 := sql.Table(couponpool.Table)
+				s.
+					LeftJoin(t1).
+					On(
+						s.C(couponallocated.FieldCouponID),
+						t1.C(couponpool.FieldID),
+					).
+					AppendSelect(
+						sql.As(t1.C(couponpool.FieldName), "name"),
+						sql.As(t1.C(couponpool.FieldMessage), "message"),
+						sql.As(t1.C(couponpool.FieldStart), "start"),
+						sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
+						sql.As(t1.C(couponpool.FieldDenomination), "value"),
+					)
+			})
+	case npool.CouponType_Discount:
+		return stm1.
+			Modify(func(s *sql.Selector) {
+				t1 := sql.Table(discountpool.Table)
+				s.
+					LeftJoin(t1).
+					On(
+						s.C(couponallocated.FieldCouponID),
+						t1.C(couponpool.FieldID),
+					).
+					AppendSelect(
+						sql.As(t1.C(couponpool.FieldName), "name"),
+						sql.As(t1.C(couponpool.FieldMessage), "message"),
+						sql.As(t1.C(couponpool.FieldStart), "start"),
+						sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
+						sql.As(t1.C(couponpool.FieldDenomination), "value"),
+					)
+			})
+	case npool.CouponType_SpecialOffer:
+		return stm1.
+			Modify(func(s *sql.Selector) {
+				t1 := sql.Table(userspecialreduction.Table)
+				s.
+					LeftJoin(t1).
+					On(
+						s.C(couponallocated.FieldCouponID),
+						t1.C(couponpool.FieldID),
+					).
+					AppendSelect(
+						sql.As(t1.C(couponpool.FieldMessage), "message"),
+						sql.As(t1.C(couponpool.FieldStart), "start"),
+						sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
+						sql.As(t1.C(couponpool.FieldDenomination), "value"),
+					)
+			})
+	}
+	return nil
+}
+
+func post(info *npool.Coupon) *npool.Coupon {
+	info.End = info.Start + info.DurationDays*secondsPerDay
 	now := uint32(time.Now().Unix())
 
-	if coupon.Start <= now && now <= coupon.End {
-		coupon.Valid = true
+	if info.Start <= now && now <= info.End {
+		info.Valid = true
 	}
-	if coupon.End < now {
-		coupon.Expired = true
+	if info.End < now {
+		info.Expired = true
 	}
 
-	return infos[0], nil
+	return info
 }
