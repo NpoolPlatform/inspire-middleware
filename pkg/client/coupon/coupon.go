@@ -42,10 +42,28 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (*np
 			return nil, err
 		}
 
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 	return info.(*npool.Coupon), nil
+}
+
+func GetManyCoupons(ctx context.Context, ids []string, couponType npool.CouponType) ([]*npool.Coupon, error) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetManyCoupons(ctx, &npool.GetManyCouponsRequest{
+			IDs:  ids,
+			Type: couponType,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.Coupon), nil
 }

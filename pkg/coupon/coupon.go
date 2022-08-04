@@ -58,6 +58,48 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 	return post(infos[0]), nil
 }
 
+func GetManyCoupons(ctx context.Context, ids []string, couponType npool.CouponType) (infos []*npool.Coupon, err error) {
+	uids := []uuid.UUID{}
+	for _, id := range ids {
+		if _, err := uuid.Parse(id); err != nil {
+			return nil, err
+		}
+		uids = append(uids, uuid.MustParse(id))
+	}
+
+	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		stm := cli.
+			CouponAllocated.
+			Query().
+			Where(
+				couponallocated.IDIn(uids...),
+			)
+
+		switch couponType {
+		case npool.CouponType_FixAmount:
+			fallthrough //nolint
+		case npool.CouponType_Discount:
+			fallthrough //nolint
+		case npool.CouponType_SpecialOffer:
+			return join(stm, couponType).
+				Scan(ctx, &infos)
+		case npool.CouponType_ThresholdReduction:
+			return fmt.Errorf("NOT IMPLEMENTED")
+		default:
+			return fmt.Errorf("UNKNOWN coupon")
+		}
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	for i, info := range infos {
+		infos[i] = post(info)
+	}
+
+	return infos, nil
+}
+
 func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.CouponAllocatedSelect {
 	stm1 := stm.
 		Select(
