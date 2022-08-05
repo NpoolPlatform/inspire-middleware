@@ -134,14 +134,14 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 					LeftJoin(t1).
 					On(
 						s.C(couponallocated.FieldCouponID),
-						t1.C(couponpool.FieldID),
+						t1.C(discountpool.FieldID),
 					).
 					AppendSelect(
-						sql.As(t1.C(couponpool.FieldName), "name"),
-						sql.As(t1.C(couponpool.FieldMessage), "message"),
-						sql.As(t1.C(couponpool.FieldStart), "start"),
-						sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
-						sql.As(t1.C(couponpool.FieldDenomination), "value"),
+						sql.As(t1.C(discountpool.FieldName), "name"),
+						sql.As(t1.C(discountpool.FieldMessage), "message"),
+						sql.As(t1.C(discountpool.FieldStart), "start"),
+						sql.As(t1.C(discountpool.FieldDurationDays), "duration_days"),
+						sql.As(t1.C(discountpool.FieldDiscount), "value"),
 					)
 			})
 	case npool.CouponType_SpecialOffer:
@@ -152,13 +152,13 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 					LeftJoin(t1).
 					On(
 						s.C(couponallocated.FieldCouponID),
-						t1.C(couponpool.FieldID),
+						t1.C(userspecialreduction.FieldID),
 					).
 					AppendSelect(
-						sql.As(t1.C(couponpool.FieldMessage), "message"),
-						sql.As(t1.C(couponpool.FieldStart), "start"),
-						sql.As(t1.C(couponpool.FieldDurationDays), "duration_days"),
-						sql.As(t1.C(couponpool.FieldDenomination), "value"),
+						sql.As(t1.C(userspecialreduction.FieldMessage), "message"),
+						sql.As(t1.C(userspecialreduction.FieldStart), "start"),
+						sql.As(t1.C(userspecialreduction.FieldDurationDays), "duration_days"),
+						sql.As(t1.C(userspecialreduction.FieldAmount), "value"),
 					)
 			})
 	}
