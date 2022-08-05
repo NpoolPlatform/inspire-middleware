@@ -33,7 +33,7 @@ func (s *Server) GetCoupon(ctx context.Context, in *npool.GetCouponRequest) (*np
 	info, err := coupon1.GetCoupon(ctx, in.GetID(), in.GetType())
 	if err != nil {
 		logger.Sugar().Errorw("GetCoupon", "error", err)
-		return &npool.GetCouponResponse{}, status.Error(codes.Internal, "fail get coupon")
+		return &npool.GetCouponResponse{}, status.Error(codes.Internal, err)
 	}
 
 	return &npool.GetCouponResponse{
@@ -62,7 +62,7 @@ func (s *Server) GetManyCoupons(ctx context.Context, in *npool.GetManyCouponsReq
 	infos, err := coupon1.GetManyCoupons(ctx, in.GetIDs(), in.GetType())
 	if err != nil {
 		logger.Sugar().Errorw("GetManyCoupons", "error", err)
-		return &npool.GetManyCouponsResponse{}, status.Error(codes.Internal, "fail get coupon")
+		return &npool.GetManyCouponsResponse{}, status.Error(codes.Internal, err)
 	}
 
 	return &npool.GetManyCouponsResponse{
