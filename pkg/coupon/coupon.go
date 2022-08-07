@@ -121,6 +121,7 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 						t1.C(couponpool.FieldID),
 					).
 					AppendSelect(
+						sql.As(t1.C(couponpool.FieldID), "coupon_id"),
 						sql.As(t1.C(couponpool.FieldName), "name"),
 						sql.As(t1.C(couponpool.FieldMessage), "message"),
 						sql.As(t1.C(couponpool.FieldStart), "start"),
@@ -139,6 +140,7 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 						t1.C(discountpool.FieldID),
 					).
 					AppendSelect(
+						sql.As(t1.C(couponpool.FieldID), "coupon_id"),
 						sql.As(t1.C(discountpool.FieldName), "name"),
 						sql.As(t1.C(discountpool.FieldMessage), "message"),
 						sql.As(t1.C(discountpool.FieldStart), "start"),
@@ -157,6 +159,7 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 						t1.C(userspecialreduction.FieldID),
 					).
 					AppendSelect(
+						sql.As(t1.C(couponpool.FieldID), "coupon_id"),
 						sql.As(t1.C(userspecialreduction.FieldMessage), "message"),
 						sql.As(t1.C(userspecialreduction.FieldStart), "start"),
 						sql.As(t1.C(userspecialreduction.FieldDurationDays), "duration_days"),
@@ -182,7 +185,13 @@ func post(info *npool.Coupon, couponType npool.CouponType) *npool.Coupon {
 	amount := func(samount string) string {
 		damount, err := decimal.NewFromString(samount)
 		if err != nil {
-			logger.Sugar().Errorw("post", "CouponID", info.ID, "CouponType", couponType, "Value", samount)
+			logger.Sugar().Errorw(
+				"post",
+				"ID", info.ID,
+				"CouponID", info.CouponID,
+				"CouponType", couponType,
+				"Value", samount,
+			)
 			return decimal.NewFromInt(0).String()
 		}
 		return damount.Div(decimal.NewFromInt(accuracy)).String()
