@@ -5,10 +5,11 @@ go 1.17
 require (
 	entgo.io/ent v0.11.1
 	github.com/NpoolPlatform/api-manager v0.0.0-20220421114434-bf0e069b0c83
+	github.com/NpoolPlatform/archivement-manager v0.0.0-20220807161547-9479cc9ff5fc
 	github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220731100543-621262acb09b
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20220722111225-08c2156ac8bf
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1
-	github.com/NpoolPlatform/message v0.0.0-20220807074824-796d2354310c
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5
+	github.com/NpoolPlatform/message v0.0.0-20220807162728-44261080b280
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
@@ -35,11 +36,15 @@ require (
 	github.com/coocood/freecache v1.0.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-chassis/go-archaius v1.5.3 // indirect
 	github.com/go-chassis/openlog v1.1.3 // indirect
+	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
+	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
