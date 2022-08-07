@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/shopspring/decimal"
@@ -178,7 +180,11 @@ func post(info *npool.Coupon, couponType npool.CouponType) *npool.Coupon {
 
 	const accuracy = 1000000000000
 	amount := func(samount string) string {
-		damount := decimal.RequireFromString(samount)
+		damount, err := decimal.NewFromString(samount)
+		if err != nil {
+			logger.Sugar().Errorw("post", "CouponID", info.ID, "CouponType", couponType, "Value", samount)
+			return decimal.NewFromInt(0).String()
+		}
 		return damount.Div(decimal.NewFromInt(accuracy)).String()
 	}
 
