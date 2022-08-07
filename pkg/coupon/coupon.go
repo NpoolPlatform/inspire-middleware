@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/shopspring/decimal"
 
 	"github.com/NpoolPlatform/cloud-hashing-inspire/pkg/db/ent"
 	"github.com/NpoolPlatform/cloud-hashing-inspire/pkg/db/ent/couponallocated"
@@ -55,7 +55,7 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 		return nil, nil
 	}
 
-	return post(infos[0]), nil
+	return post(infos[0], couponType), nil
 }
 
 func GetManyCoupons(ctx context.Context, ids []string, couponType npool.CouponType) (infos []*npool.Coupon, err error) {
@@ -94,7 +94,7 @@ func GetManyCoupons(ctx context.Context, ids []string, couponType npool.CouponTy
 	}
 
 	for i, info := range infos {
-		infos[i] = post(info)
+		infos[i] = post(info, couponType)
 	}
 
 	return infos, nil
@@ -165,7 +165,7 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 	return nil
 }
 
-func post(info *npool.Coupon) *npool.Coupon {
+func post(info *npool.Coupon, couponType npool.CouponType) *npool.Coupon {
 	info.End = info.Start + info.DurationDays*secondsPerDay
 	now := uint32(time.Now().Unix())
 
@@ -174,6 +174,19 @@ func post(info *npool.Coupon) *npool.Coupon {
 	}
 	if info.End < now {
 		info.Expired = true
+	}
+
+	const accuracy = 1000000000000
+	amount := func(samount string) string {
+		damount := decimal.RequireFromString(samount)
+		return damount.Div(decimal.NewFromInt(accuracy)).String()
+	}
+
+	switch couponType {
+	case npool.CouponType_FixAmount:
+		fallthrough //nolint
+	case npool.CouponType_SpecialOffer:
+		info.Value = amount(info.Value)
 	}
 
 	return info
