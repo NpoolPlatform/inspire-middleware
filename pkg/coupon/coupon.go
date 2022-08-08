@@ -106,6 +106,8 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 	stm1 := stm.
 		Select(
 			couponallocated.FieldID,
+			couponallocated.FieldAppID,
+			couponallocated.FieldUserID,
 			couponallocated.FieldCreateAt,
 		)
 
