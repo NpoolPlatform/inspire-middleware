@@ -177,9 +177,11 @@ func post(info *npool.Coupon, couponType npool.CouponType) *npool.Coupon {
 	now := uint32(time.Now().Unix())
 
 	if info.Start <= now && now <= info.End {
-		info.Valid = true
+		if info.CreatedAt >= info.Start && info.CreatedAt <= info.End {
+			info.Valid = true
+		}
 	}
-	if info.End < now {
+	if info.CreatedAt+info.DurationDays*secondsPerDay < now {
 		info.Expired = true
 	}
 
