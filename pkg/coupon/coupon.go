@@ -29,21 +29,21 @@ func GetCoupon(ctx context.Context, id string, couponType npool.CouponType) (inf
 	infos := []*npool.Coupon{}
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		stm := cli.
-			CouponAllocated.
-			Query().
-			Where(
-				couponallocated.ID(uuid.MustParse(id)),
-			)
-
 		switch couponType {
 		case npool.CouponType_FixAmount:
 			fallthrough //nolint
 		case npool.CouponType_Discount:
-			fallthrough //nolint
-		case npool.CouponType_SpecialOffer:
+			stm := cli.
+				CouponAllocated.
+				Query().
+				Where(
+					couponallocated.ID(uuid.MustParse(id)),
+				)
 			return join(stm, couponType).
 				Scan(ctx, &infos)
+		case npool.CouponType_SpecialOffer:
+			infos, err = special(ctx, cli, []uuid.UUID{uuid.MustParse(id)})
+			return err
 		case npool.CouponType_ThresholdReduction:
 			return fmt.Errorf("NOT IMPLEMENTED")
 		default:
@@ -70,21 +70,21 @@ func GetManyCoupons(ctx context.Context, ids []string, couponType npool.CouponTy
 	}
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		stm := cli.
-			CouponAllocated.
-			Query().
-			Where(
-				couponallocated.IDIn(uids...),
-			)
-
 		switch couponType {
 		case npool.CouponType_FixAmount:
 			fallthrough //nolint
 		case npool.CouponType_Discount:
-			fallthrough //nolint
-		case npool.CouponType_SpecialOffer:
+			stm := cli.
+				CouponAllocated.
+				Query().
+				Where(
+					couponallocated.IDIn(uids...),
+				)
 			return join(stm, couponType).
 				Scan(ctx, &infos)
+		case npool.CouponType_SpecialOffer:
+			infos, err = special(ctx, cli, uids)
+			return err
 		case npool.CouponType_ThresholdReduction:
 			return fmt.Errorf("NOT IMPLEMENTED")
 		default:
@@ -150,24 +150,6 @@ func join(stm *ent.CouponAllocatedQuery, couponType npool.CouponType) *ent.Coupo
 						sql.As(t1.C(discountpool.FieldDiscount), "value"),
 					)
 			})
-	case npool.CouponType_SpecialOffer:
-		return stm1.
-			Modify(func(s *sql.Selector) {
-				t1 := sql.Table(userspecialreduction.Table)
-				s.
-					LeftJoin(t1).
-					On(
-						s.C(couponallocated.FieldCouponID),
-						t1.C(userspecialreduction.FieldID),
-					).
-					AppendSelect(
-						sql.As(t1.C(couponpool.FieldID), "coupon_id"),
-						sql.As(t1.C(userspecialreduction.FieldMessage), "message"),
-						sql.As(t1.C(userspecialreduction.FieldStart), "start"),
-						sql.As(t1.C(userspecialreduction.FieldDurationDays), "duration_days"),
-						sql.As(t1.C(userspecialreduction.FieldAmount), "value"),
-					)
-			})
 	}
 	return nil
 }
@@ -209,4 +191,30 @@ func post(info *npool.Coupon, couponType npool.CouponType) *npool.Coupon {
 	}
 
 	return info
+}
+
+func special(ctx context.Context, cli *ent.Client, uids []uuid.UUID) (coupons []*npool.Coupon, err error) {
+	err = cli.
+		UserSpecialReduction.
+		Query().
+		Where(
+			userspecialreduction.IDIn(uids...),
+		).
+		Select(
+			couponallocated.FieldID,
+			couponallocated.FieldAppID,
+			couponallocated.FieldUserID,
+			couponallocated.FieldCreateAt,
+		).
+		Modify(func(s *sql.Selector) {
+			s.AppendSelect(
+				sql.As(s.C(couponpool.FieldID), "coupon_id"),
+				sql.As(s.C(userspecialreduction.FieldMessage), "message"),
+				sql.As(s.C(userspecialreduction.FieldStart), "start"),
+				sql.As(s.C(userspecialreduction.FieldDurationDays), "duration_days"),
+				sql.As(s.C(userspecialreduction.FieldAmount), "value"),
+			)
+		}).
+		Scan(ctx, &coupons)
+	return coupons, err
 }
