@@ -81,15 +81,20 @@ func GetInviters(ctx context.Context, appID string, invitees []string, offset, l
 	return infos.([]*npool.Invitation), total, nil
 }
 
-func GetActivePercents(ctx context.Context, appID string, users []string, offset, limit int32) ([]*npool.Percent, uint32, error) {
+func GetPercents(
+	ctx context.Context, appID string, users []string, activeOnly bool, offset, limit int32,
+) (
+	[]*npool.Percent, uint32, error,
+) {
 	total := uint32(0)
 
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetActivePercents(ctx, &npool.GetActivePercentsRequest{
-			AppID:   appID,
-			UserIDs: users,
-			Offset:  offset,
-			Limit:   limit,
+		resp, err := cli.GetPercents(ctx, &npool.GetPercentsRequest{
+			AppID:      appID,
+			UserIDs:    users,
+			ActiveOnly: activeOnly,
+			Offset:     offset,
+			Limit:      limit,
 		})
 		if err != nil {
 			return nil, err

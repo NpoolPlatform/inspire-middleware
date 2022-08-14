@@ -13,8 +13,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetActivePercents(
-	ctx context.Context, appID string, userIDs []string, offset, limit int32,
+func GetPercents(
+	ctx context.Context, appID string, userIDs []string, activeOnly bool, offset, limit int32,
 ) (
 	infos []*npool.Percent, total uint32, err error,
 ) {
@@ -26,12 +26,22 @@ func GetActivePercents(
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm := cli.
 			AppPurchaseAmountSetting.
-			Query().
-			Where(
-				apppurchaseamountsetting.AppID(uuid.MustParse(appID)),
-				apppurchaseamountsetting.UserIDIn(users...),
-				apppurchaseamountsetting.End(0),
-			)
+			Query()
+
+		if activeOnly {
+			stm = stm.
+				Where(
+					apppurchaseamountsetting.AppID(uuid.MustParse(appID)),
+					apppurchaseamountsetting.UserIDIn(users...),
+					apppurchaseamountsetting.End(0),
+				)
+		} else {
+			stm = stm.
+				Where(
+					apppurchaseamountsetting.AppID(uuid.MustParse(appID)),
+					apppurchaseamountsetting.UserIDIn(users...),
+				)
+		}
 
 		_total, err := stm.Count(ctx)
 		if err != nil {

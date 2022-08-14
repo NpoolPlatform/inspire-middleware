@@ -95,21 +95,21 @@ func (s *Server) GetInviters(ctx context.Context, in *npool.GetInvitersRequest) 
 	}, nil
 }
 
-func (s *Server) GetActivePercents(ctx context.Context, in *npool.GetActivePercentsRequest) (*npool.GetActivePercentsResponse, error) {
+func (s *Server) GetPercents(ctx context.Context, in *npool.GetPercentsRequest) (*npool.GetPercentsResponse, error) {
 	if _, err := uuid.Parse(in.GetAppID()); err != nil {
-		logger.Sugar().Errorw("GetActivePercents", "AppID", in.GetAppID(), "error", err)
-		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "AppID is invalid")
+		logger.Sugar().Errorw("GetPercents", "AppID", in.GetAppID(), "error", err)
+		return &npool.GetPercentsResponse{}, status.Error(codes.Internal, "AppID is invalid")
 	}
 
 	if len(in.GetUserIDs()) == 0 {
-		logger.Sugar().Errorw("GetActivePercents", "error", "UserIDs is empty")
-		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "UserIDs is invalid")
+		logger.Sugar().Errorw("GetPercents", "error", "UserIDs is empty")
+		return &npool.GetPercentsResponse{}, status.Error(codes.Internal, "UserIDs is invalid")
 	}
 
 	for _, user := range in.GetUserIDs() {
 		if _, err := uuid.Parse(user); err != nil {
-			logger.Sugar().Errorw("GetActivePercents", "UserID", user, "error", err)
-			return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "UserID is invalid")
+			logger.Sugar().Errorw("GetPercents", "UserID", user, "error", err)
+			return &npool.GetPercentsResponse{}, status.Error(codes.Internal, "UserID is invalid")
 		}
 	}
 
@@ -118,13 +118,13 @@ func (s *Server) GetActivePercents(ctx context.Context, in *npool.GetActivePerce
 		limit = in.GetLimit()
 	}
 
-	infos, n, err := invitation1.GetActivePercents(ctx, in.GetAppID(), in.GetUserIDs(), in.GetOffset(), limit)
+	infos, n, err := invitation1.GetPercents(ctx, in.GetAppID(), in.GetUserIDs(), in.GetActiveOnly(), in.GetOffset(), limit)
 	if err != nil {
-		logger.Sugar().Errorw("GetActivePercents", "error", err)
-		return &npool.GetActivePercentsResponse{}, status.Error(codes.Internal, "fail get active percents")
+		logger.Sugar().Errorw("GetPercents", "error", err)
+		return &npool.GetPercentsResponse{}, status.Error(codes.Internal, "fail get active percents")
 	}
 
-	return &npool.GetActivePercentsResponse{
+	return &npool.GetPercentsResponse{
 		Infos: infos,
 		Total: n,
 	}, nil
