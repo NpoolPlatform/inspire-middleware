@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/NpoolPlatform/inspire-middleware/api"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
