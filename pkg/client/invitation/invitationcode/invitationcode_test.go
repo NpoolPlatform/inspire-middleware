@@ -1,4 +1,4 @@
-package invitation
+package invitationcode
 
 import (
 	"fmt"

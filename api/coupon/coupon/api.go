@@ -1,7 +1,7 @@
 package coupon
 
 import (
-	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/inspire/coupon"
+	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
 	"google.golang.org/grpc"
 )
