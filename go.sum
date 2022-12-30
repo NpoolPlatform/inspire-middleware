@@ -1,5 +1,6 @@
 ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e h1:/r1xGMwmLg4LZ2V3/wWui9TtM3+STh1fp5ExSVRNFZo=
 ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e/go.mod h1:ofVetkJqlaWle3mvYmaS2uyFGFcc7dSq436tmxa/Mzk=
+bou.ke/monkey v1.0.2 h1:kWcnsrCNUatbxncxR/ThdYqbytgOIArtYWqcQLQzKLI=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
 cloud.google.com/go v0.44.1/go.mod h1:iSa0KzasP4Uvy3f1mN/7PiObzGgflwredwwASm/v6AU=
@@ -68,15 +69,15 @@ github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0/go.mod h
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070/go.mod h1:QPI3Fu/AU5iUOUnf9EictZP1lqPQdPcVLqveIB2HovI=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20221015040432-cd676d323379 h1:8oPw16FRdFSEjx75MiecAsg9OoGDvrl7vEPHKlU/W0k=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20221015040432-cd676d323379/go.mod h1:/sor3E0i0XR8BaKInJwWC85aXLmbMFRNLdIuw+ed+ig=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20221229094015-742acc3b79f8 h1:3RrB7whji7MzllezrC7vZXc2pTUwSwIV+z7X9RVsdRU=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20221229094015-742acc3b79f8/go.mod h1:T860xpFOSl9wLmnXr0TF7QnT2/6KCuYbEKgTeYVHwa0=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20221230035502-580da977b09e h1:sEGi3nZLbQk26nh1bEGlMJAhVacLgmiTzX7RVFhVQvA=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20221230035502-580da977b09e/go.mod h1:leZk14WZMpG0Aw1hC36TwIwUZV86dr5do3VNi7zGkuA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
 github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c/go.mod h1:i/F/sQWjQk44RGvfgEB0zH0oAK/0qLvgJ1AsJDZQDkk=
 github.com/NpoolPlatform/message v0.0.0-20220819134247-1dc75c85fe43/go.mod h1:8YXp4MghMHLZ9bBdQQyfjcRtLI2RbEHAQoNCejT2nZU=
-github.com/NpoolPlatform/message v0.0.0-20221229115338-111516318039 h1:vRotXxSyUC7qpDZMNl2yAY9JtgcAbFxU+ojjaURv9Ec=
-github.com/NpoolPlatform/message v0.0.0-20221229115338-111516318039/go.mod h1:G4b3QmQYYHn2okxu8KfD6INUALqno3369SLciqevhtQ=
+github.com/NpoolPlatform/message v0.0.0-20221230042828-e99aebeef333 h1:Oe+hdh5o5IuDC5NohhHnJne5ES8/3Img2irRDCNgbx8=
+github.com/NpoolPlatform/message v0.0.0-20221230042828-e99aebeef333/go.mod h1:G4b3QmQYYHn2okxu8KfD6INUALqno3369SLciqevhtQ=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=
