@@ -19,6 +19,36 @@ func GetGoodOrderPercent(ctx context.Context, id string) (*npool.Commission, err
 	return gop2Comm(info), nil
 }
 
+func GetGoodOrderPercents(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Commission, uint32, error) {
+	infos, total, err := gopmgrcli.GetOrderPercents(ctx, &gopmgrpb.Conds{
+		ID:     conds.ID,
+		AppID:  conds.AppID,
+		UserID: conds.UserID,
+		GoodID: conds.GoodID,
+		EndAt:  conds.EndAt,
+	}, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return gops2Comms(infos), total, nil
+}
+
+func GetGoodOrderPercentOnly(ctx context.Context, conds *npool.Conds) (*npool.Commission, error) {
+	info, err := gopmgrcli.GetOrderPercentOnly(ctx, &gopmgrpb.Conds{
+		ID:     conds.ID,
+		AppID:  conds.AppID,
+		UserID: conds.UserID,
+		GoodID: conds.GoodID,
+		EndAt:  conds.EndAt,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return gop2Comm(info), nil
+}
+
 func gop2Comm(info *gopmgrpb.OrderPercent) *npool.Commission {
 	return &npool.Commission{
 		ID:             info.ID,
@@ -34,4 +64,14 @@ func gop2Comm(info *gopmgrpb.OrderPercent) *npool.Commission {
 		CreatedAt:      info.CreatedAt,
 		UpdatedAt:      info.UpdatedAt,
 	}
+}
+
+func gops2Comms(infos []*gopmgrpb.OrderPercent) []*npool.Commission {
+	comms := []*npool.Commission{}
+
+	for _, info := range infos {
+		comms = append(comms, gop2Comm(info))
+	}
+
+	return comms
 }
