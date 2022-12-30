@@ -27,3 +27,21 @@ func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponT
 	}
 	return nil, fmt.Errorf("not supported")
 }
+
+func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
+	switch allocatedmgrpb.CouponType(conds.GetCouponType().GetValue()) {
+	case allocatedmgrpb.CouponType_FixAmount:
+		return fixamount.GetFixAmounts(ctx, conds, offset, limit)
+	case allocatedmgrpb.CouponType_Discount:
+	case allocatedmgrpb.CouponType_SpecialOffer:
+	case allocatedmgrpb.CouponType_ThresholdFixAmount:
+	case allocatedmgrpb.CouponType_ThresholdDiscount:
+	case allocatedmgrpb.CouponType_GoodFixAmount:
+	case allocatedmgrpb.CouponType_GoodDiscount:
+	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
+	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
+	default:
+		return nil, 0, fmt.Errorf("unknown coupon type")
+	}
+	return nil, 0, fmt.Errorf("not supported")
+}

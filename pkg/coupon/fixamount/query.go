@@ -11,8 +11,15 @@ import (
 	fixamountmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/fixamount"
 )
 
-func GetFixAmounts(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, error) {
-	return fixAmounts2Coupons(nil), nil
+func GetFixAmounts(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
+	infos, total, err := fixamountmgrcli.GetFixAmounts(ctx, &fixamountmgrpb.Conds{
+		ID:    conds.ID,
+		AppID: conds.AppID,
+	}, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+	return fixAmounts2Coupons(infos), total, nil
 }
 
 func GetFixAmount(ctx context.Context, id string) (*npool.Coupon, error) {
