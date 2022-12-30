@@ -1,3 +1,4 @@
+//nolint:dupl
 package commission
 
 import (
@@ -16,7 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error { //nolint
+func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error {
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
 			return err
@@ -58,21 +59,6 @@ func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error { //noli
 			return err
 		}
 	default:
-	}
-
-	switch in.GetSettleMode() {
-	case mgrpb.SettleMode_SettleWithGoodValue:
-	case mgrpb.SettleMode_SettleWithPaymentAmount:
-	default:
-		return fmt.Errorf("invalid settle mode")
-	}
-
-	switch in.GetSettleInterval() {
-	case mgrpb.SettleInterval_SettleAggregate:
-	case mgrpb.SettleInterval_SettleYearly:
-	case mgrpb.SettleInterval_SettleMonthly:
-	default:
-		return fmt.Errorf("invalid settle interval")
 	}
 
 	return nil
