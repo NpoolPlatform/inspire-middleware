@@ -69,8 +69,8 @@ github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0/go.mod h
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070/go.mod h1:QPI3Fu/AU5iUOUnf9EictZP1lqPQdPcVLqveIB2HovI=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20221015040432-cd676d323379 h1:8oPw16FRdFSEjx75MiecAsg9OoGDvrl7vEPHKlU/W0k=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20221015040432-cd676d323379/go.mod h1:/sor3E0i0XR8BaKInJwWC85aXLmbMFRNLdIuw+ed+ig=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20221230112526-26af7a7f9c94 h1:yrZWKKaJQYN/+oGRkNCYdLd7ISusaYAXoE4my/FSMDQ=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20221230112526-26af7a7f9c94/go.mod h1:Kj4eKHYxbdRRc1nGAoBV1YFQSPX1pl5heylnLID5qyM=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20221230120909-1cda8f156ae9 h1:nn2nSYya1NGasgn1aLS5mcAReefbQf8cztma5MFwJdQ=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20221230120909-1cda8f156ae9/go.mod h1:8AXTp+WIEiAAX6e+/KXlnKyZi0atJt1ZoI1d7xW6dec=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
