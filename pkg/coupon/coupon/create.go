@@ -7,7 +7,7 @@ import (
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/fixamount"
+	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
 )
 
 func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
