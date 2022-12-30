@@ -2,6 +2,7 @@ package fixamount
 
 import (
 	"context"
+	"fmt"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
@@ -26,6 +27,8 @@ func GetFixAmount(ctx context.Context, id string) (*npool.Coupon, error) {
 }
 
 func fixAmount2Coupon(info *fixamountmgrpb.FixAmount) *npool.Coupon {
+	allocated := fmt.Sprintf("%v", info.Allocated)
+
 	return &npool.Coupon{
 		ID:               info.ID,
 		CouponType:       allocatedmgrpb.CouponType_FixAmount,
@@ -36,6 +39,7 @@ func fixAmount2Coupon(info *fixamountmgrpb.FixAmount) *npool.Coupon {
 		DurationDays:     info.DurationDays,
 		Message:          info.Message,
 		Name:             info.Name,
+		Allocated:        allocated,
 		CreatedAt:        info.CreatedAt,
 		UpdatedAt:        info.UpdatedAt,
 	}
