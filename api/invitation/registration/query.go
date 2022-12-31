@@ -1,4 +1,3 @@
-//nolint:dupl
 package registration
 
 import (
@@ -16,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func ValidateConds(ctx context.Context, conds *mgrpb.Conds) error {
+func ValidateConds(conds *mgrpb.Conds) error {
 	if conds.ID != nil {
 		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
 			return err
@@ -37,6 +36,16 @@ func ValidateConds(ctx context.Context, conds *mgrpb.Conds) error {
 			return err
 		}
 	}
+	for _, id := range conds.GetInviterIDs().GetValue() {
+		if _, err := uuid.Parse(id); err != nil {
+			return err
+		}
+	}
+	for _, id := range conds.GetInviteeIDs().GetValue() {
+		if _, err := uuid.Parse(id); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -48,7 +57,7 @@ func (s *Server) GetRegistrations(
 	*npool.GetRegistrationsResponse,
 	error,
 ) {
-	if err := ValidateConds(ctx, in.GetConds()); err != nil {
+	if err := ValidateConds(in.GetConds()); err != nil {
 		return &npool.GetRegistrationsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -75,7 +84,7 @@ func (s *Server) GetRegistrationOnly(
 	*npool.GetRegistrationOnlyResponse,
 	error,
 ) {
-	if err := ValidateConds(ctx, in.GetConds()); err != nil {
+	if err := ValidateConds(in.GetConds()); err != nil {
 		return &npool.GetRegistrationOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 

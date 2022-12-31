@@ -8,8 +8,7 @@ import (
 
 func GetInviters(
 	ctx context.Context,
-	appID string,
-	userIDs []string,
+	conds *mgrpb.Conds,
 	offset, limit int32,
 ) (
 	[]*mgrpb.Registration,
