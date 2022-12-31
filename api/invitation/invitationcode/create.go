@@ -16,6 +16,11 @@ import (
 )
 
 func ValidateCreate(info *mgrpb.InvitationCodeReq) error {
+	if info.ID != nil {
+		if _, err := uuid.Parse(info.GetID()); err != nil {
+			return err
+		}
+	}
 	if _, err := uuid.Parse(info.GetAppID()); err != nil {
 		return err
 	}
