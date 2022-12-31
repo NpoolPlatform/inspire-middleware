@@ -46,6 +46,7 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 		in.GetUserID(),
 		in.GetGoodID(),
 		in.GetOrderID(),
+		in.GetSettleType(),
 		paymentAmount,
 		goodValue,
 	)
