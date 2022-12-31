@@ -137,9 +137,9 @@ func GetCouponOnly(ctx context.Context, conds *allocatedmgrpb.Conds) (*npool.Cou
 
 	switch allocatedmgrpb.CouponType(conds.GetCouponType().GetValue()) {
 	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.GetFixAmountOnly(
+		return fixamount.GetFixAmount(
 			ctx,
-			conds,
+			info.CouponID,
 			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
 				return info, nil
 			})
