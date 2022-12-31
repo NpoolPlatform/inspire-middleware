@@ -4,6 +4,7 @@ package invitationcode
 import (
 	"context"
 
+	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	ivcode "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/invitationcode"
@@ -14,6 +15,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func ValidateCreate(info *mgrpb.InvitationCodeReq) error {
+	if _, err := uuid.Parse(info.GetAppID()); err != nil {
+		return err
+	}
+	if _, err := uuid.Parse(info.GetUserID()); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *Server) CreateInvitationCode(
 	ctx context.Context,
 	in *npool.CreateInvitationCodeRequest,
@@ -21,14 +32,11 @@ func (s *Server) CreateInvitationCode(
 	*npool.CreateInvitationCodeResponse,
 	error,
 ) {
-	if _, err := uuid.Parse(in.GetAppID()); err != nil {
-		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	if _, err := uuid.Parse(in.GetUserID()); err != nil {
+	if err := ValidateCreate(in.GetInfo()); err != nil {
 		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := ivcode.CreateInvitationCode(ctx, in.GetAppID(), in.GetUserID())
+	info, err := ivcode.CreateInvitationCode(ctx, in.GetInfo())
 	if err != nil {
 		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}

@@ -7,9 +7,6 @@ import (
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
 )
 
-func CreateInvitationCode(ctx context.Context, appID, userID string) (*mgrpb.InvitationCode, error) {
-	return mgrcli.CreateInvitationCode(ctx, &mgrpb.InvitationCodeReq{
-		AppID:  &appID,
-		UserID: &userID,
-	})
+func CreateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mgrpb.InvitationCode, error) {
+	return mgrcli.CreateInvitationCode(ctx, in)
 }
