@@ -1,3 +1,4 @@
+//nolint:dupl
 package registration
 
 import (
@@ -64,5 +65,26 @@ func (s *Server) GetRegistrations(
 	return &npool.GetRegistrationsResponse{
 		Infos: infos,
 		Total: total,
+	}, nil
+}
+
+func (s *Server) GetRegistrationOnly(
+	ctx context.Context,
+	in *npool.GetRegistrationOnlyRequest,
+) (
+	*npool.GetRegistrationOnlyResponse,
+	error,
+) {
+	if err := ValidateConds(ctx, in.GetConds()); err != nil {
+		return &npool.GetRegistrationOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := reg1.GetRegistrationOnly(ctx, in.GetConds())
+	if err != nil {
+		return &npool.GetRegistrationOnlyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetRegistrationOnlyResponse{
+		Info: info,
 	}, nil
 }

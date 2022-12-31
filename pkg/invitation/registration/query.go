@@ -10,3 +10,7 @@ import (
 func GetRegistrations(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.Registration, uint32, error) {
 	return mgrcli.GetRegistrations(ctx, conds, offset, limit)
 }
+
+func GetRegistrationOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Registration, error) {
+	return mgrcli.GetRegistrationOnly(ctx, conds)
+}
