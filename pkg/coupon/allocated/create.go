@@ -64,5 +64,5 @@ func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 		return nil, err
 	}
 
-	return GetCoupon(ctx, id, in.GetCouponType())
+	return GetCoupon(ctx, id)
 }
