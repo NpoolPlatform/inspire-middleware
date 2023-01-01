@@ -23,5 +23,6 @@ func Accounting(
 	// TODO: query all inviters
 	// TODO: query user settle type commission
 	// TODO: calculate commission
+	// TODO: record user archivement
 	return nil, nil
 }
