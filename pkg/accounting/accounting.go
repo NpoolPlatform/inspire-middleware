@@ -5,7 +5,7 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	commonmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+	commmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 )
@@ -13,7 +13,7 @@ import (
 func Accounting(
 	ctx context.Context,
 	appID, userID, goodID, orderID string,
-	settleType commissionmgrpb.SettleType,
+	settleType commmgrpb.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
 ) (
