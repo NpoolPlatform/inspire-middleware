@@ -3,6 +3,8 @@ package registration
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
@@ -75,7 +77,10 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 				entreg.FieldUpdatedAt,
 			).
 			Modify(func(s *sql.Selector) {
-				// TODO: get child recursively
+				inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
+				callProcedure := fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs)
+				s.
+					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)
