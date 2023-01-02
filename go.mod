@@ -8,7 +8,7 @@ require (
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
 	github.com/NpoolPlatform/inspire-manager v0.0.0-20230102073229-3f511d17ec3b
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230102072513-37d86675cdca
+	github.com/NpoolPlatform/message v0.0.0-20230102083525-f30a06350f34
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0

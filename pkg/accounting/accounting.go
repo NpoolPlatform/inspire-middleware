@@ -24,6 +24,9 @@ import (
 func Accounting(
 	ctx context.Context,
 	appID, userID, goodID, orderID string,
+	paymentID, coinTypeID, paymentCoinTypeID string,
+	paymentCoinUSDCurrency decimal.Decimal,
+	units uint32,
 	settleType commmgrpb.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
