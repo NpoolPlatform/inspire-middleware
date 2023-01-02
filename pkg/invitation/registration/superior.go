@@ -76,6 +76,10 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 			).
 			Modify(func(s *sql.Selector) {
 				// TODO: get parent recursively
+				inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
+				callProcedure := fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs)
+				s.
+					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)
