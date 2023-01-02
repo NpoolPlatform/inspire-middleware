@@ -3,6 +3,8 @@ package registration
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
@@ -23,13 +25,9 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 		return err
 	}
 
-	const dropProcedure = `DROP PROCEDURE IF EXISTS get_subordinates`
-	_, err = conn.ExecContext(ctx, dropProcedure)
-	if err != nil {
-		return err
-	}
-
 	const procedure = `
+		DROP PROCEDURE IF EXISTS get_subordinates;
+		SET SESSION GROUP_CONCAT_MAX_LEN = 1024000;
 		CREATE PROCEDURE get_subordinates (IN inviters TEXT)
 		BEGIN
 		  DECLARE subordinates TEXT;
@@ -42,7 +40,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 			else
 			  SET subordinates = CONCAT(subordinates, ',', inviters);
 			END if;
-		    SELECT GROUP_CONCAT(invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
+		    SELECT GROUP_CONCAT(DISTINCT invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
 		  END WHILE;
 		  SELECT subordinates;
 		END
@@ -59,7 +57,29 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 	var infos []*mgrpb.Registration
 	var total uint32
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	rawClient, err := db.Client()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
+	rows, err := rawClient.QueryContext(ctx, fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs))
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	subordinates := ""
+	for rows.Next() {
+		if err := rows.Scan(&subordinates); err != nil {
+			return nil, 0, err
+		}
+	}
+
+	ninviterIDs := strings.Split(subordinates, ",")
+	// reassign inviter_id too cond
+	conds.InviterIDs.Value = ninviterIDs
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
 			return err

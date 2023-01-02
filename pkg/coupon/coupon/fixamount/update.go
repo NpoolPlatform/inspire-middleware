@@ -14,7 +14,7 @@ func UpdateFixAmount(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, e
 	var allocated uint32
 
 	if in.Allocated != nil {
-		_allocated, err := strconv.ParseUint(in.GetAllocated(), 10, 64) //nolint
+		_allocated, err := strconv.ParseUint(in.GetAllocated(), 10, 64)
 		if err != nil {
 			return nil, err
 		}
