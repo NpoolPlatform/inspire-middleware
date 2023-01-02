@@ -42,7 +42,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 		return err
 	}
 
-	_, err = conn.ExecContext(ctx, procedure, nil, nil)
+	_, err = conn.ExecContext(ctx, procedure)
 	if err != nil {
 		return err
 	}

@@ -5,7 +5,7 @@ go 1.17
 require (
 	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20221231085755-6ca1f32c2bde
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
 	github.com/NpoolPlatform/inspire-manager v0.0.0-20221231105906-6ba3752596fd
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
 	github.com/NpoolPlatform/message v0.0.0-20230101035925-b2d390d21cb5

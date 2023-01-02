@@ -67,8 +67,8 @@ github.com/Masterminds/sprig v2.22.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuN
 github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0 h1:yIEwS7NTQhBBmfpf6yigvPCbxffMOrtBK/yUPM5ukbo=
 github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0/go.mod h1:+Xj8fVgWZWGakBtqZbFn/zY0qd47AywCjLPOGdTqJDU=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070/go.mod h1:QPI3Fu/AU5iUOUnf9EictZP1lqPQdPcVLqveIB2HovI=
-github.com/NpoolPlatform/go-service-framework v0.0.0-20221231085755-6ca1f32c2bde h1:sUtamVmNtIjscLAUdEh51O0GEmKxK+OrB08crdc87Ow=
-github.com/NpoolPlatform/go-service-framework v0.0.0-20221231085755-6ca1f32c2bde/go.mod h1:/sor3E0i0XR8BaKInJwWC85aXLmbMFRNLdIuw+ed+ig=
+github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd h1:2np830i/Exb0mhFVC7i6BN5dW1Hfr4WRNNsKkYFJY3g=
+github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd/go.mod h1:/sor3E0i0XR8BaKInJwWC85aXLmbMFRNLdIuw+ed+ig=
 github.com/NpoolPlatform/inspire-manager v0.0.0-20221231105906-6ba3752596fd h1:7/m96Kf03SPQDA90gIvepgNkfIOtJM8vo+jhuREQc/s=
 github.com/NpoolPlatform/inspire-manager v0.0.0-20221231105906-6ba3752596fd/go.mod h1:f/MLH+XQz9C/bmWKPA7T1OeRH5raHd/yQOl/We0X7pA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20220526050249-956b54fac9f1/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
