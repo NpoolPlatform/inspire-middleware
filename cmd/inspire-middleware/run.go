@@ -10,6 +10,8 @@ import (
 
 	apimgrcli "github.com/NpoolPlatform/api-manager/pkg/client"
 
+	registration "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	cli "github.com/urfave/cli/v2"
@@ -17,14 +19,19 @@ import (
 	"google.golang.org/grpc"
 )
 
-// const MsgInterval = 3 * time.Second
-
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"s"},
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
 		if err := db.Init(); err != nil {
+			return err
+		}
+
+		if err := registration.CreateSubordinateProcedure(c.Context); err != nil {
+			return err
+		}
+		if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
 			return err
 		}
 

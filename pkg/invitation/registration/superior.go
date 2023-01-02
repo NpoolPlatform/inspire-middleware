@@ -16,6 +16,10 @@ import (
 	crud "github.com/NpoolPlatform/inspire-manager/pkg/crud/invitation/registration"
 )
 
+func CreateSuperiorProcedure(ctx context.Context) error {
+	return nil
+}
+
 func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.Registration, uint32, error) {
 	var infos []*mgrpb.Registration
 	var total uint32
