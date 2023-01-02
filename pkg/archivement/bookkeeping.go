@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 
+	entarchivementdetail "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/archivementdetail"
 	entarchivementgeneral "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/archivementgeneral"
 
 	detailcrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/archivement/detail"
@@ -185,5 +186,139 @@ func BookKeeping(ctx context.Context, in *detailmgrpb.DetailReq) error { //nolin
 
 		_, err = c2.Save(ctx)
 		return err
+	})
+}
+
+func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //nolint
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, info := range in {
+			err := func(info *detailmgrpb.DetailReq) error {
+				key := detailKey(in[0])
+				if err := redis2.TryLock(key, 0); err != nil {
+					return err
+				}
+				defer func() {
+					_ = redis2.Unlock(key)
+				}()
+
+				key1 := fmt.Sprintf("archivement-general:%v:%v:%v:%v",
+					info.GetAppID(),
+					info.GetUserID(),
+					info.GetGoodID(),
+					info.GetCoinTypeID())
+				if err := redis2.TryLock(key1, 0); err != nil {
+					return err
+				}
+				defer func() {
+					_ = redis2.Unlock(key1)
+				}()
+
+				val, err := decimal.NewFromString(info.GetAmount())
+				if err != nil {
+					return err
+				}
+				if val.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("invalid amount")
+				}
+
+				d, err := tx.
+					ArchivementDetail.
+					Query().
+					Where(
+						entarchivementdetail.AppID(uuid.MustParse(info.GetAppID())),
+						entarchivementdetail.UserID(uuid.MustParse(info.GetUserID())),
+						entarchivementdetail.GoodID(uuid.MustParse(info.GetGoodID())),
+						entarchivementdetail.OrderID(uuid.MustParse(info.GetOrderID())),
+					).
+					Only(_ctx)
+				if err != nil {
+					if !ent.IsNotFound(err) {
+						return err
+					}
+				}
+				if d != nil {
+					return nil
+				}
+
+				c1, err := detailcrud.CreateSet(tx.ArchivementDetail.Create(), info)
+				if err != nil {
+					return err
+				}
+
+				_, err = c1.Save(ctx)
+				if err != nil {
+					return err
+				}
+
+				selfUnits := uint32(0)
+				selfAmount := decimal.NewFromInt(0).String()
+				selfCommission := decimal.NewFromInt(0).String()
+
+				if info.GetSelfOrder() {
+					selfUnits += info.GetUnits()
+					selfAmount = info.GetUSDAmount()
+					selfCommission = info.GetCommission()
+				}
+
+				g, err := tx.
+					ArchivementGeneral.
+					Query().
+					Where(
+						entarchivementgeneral.AppID(uuid.MustParse(info.GetAppID())),
+						entarchivementgeneral.UserID(uuid.MustParse(info.GetUserID())),
+						entarchivementgeneral.GoodID(uuid.MustParse(info.GetGoodID())),
+						entarchivementgeneral.CoinTypeID(uuid.MustParse(info.GetCoinTypeID())),
+					).
+					ForUpdate().
+					Only(ctx)
+				if err != nil {
+					if !ent.IsNotFound(err) {
+						return err
+					}
+				}
+				if g == nil {
+					c2 := generalcrud.CreateSet(
+						tx.ArchivementGeneral.Create(),
+						&generalmgrpb.GeneralReq{
+							AppID:      info.AppID,
+							UserID:     info.UserID,
+							GoodID:     info.GoodID,
+							CoinTypeID: info.CoinTypeID,
+						})
+
+					g, err = c2.Save(ctx)
+					if err != nil {
+						return err
+					}
+				}
+
+				c2, err := generalcrud.UpdateSet(g, &generalmgrpb.GeneralReq{
+					AppID:           info.AppID,
+					UserID:          info.UserID,
+					GoodID:          info.GoodID,
+					CoinTypeID:      info.CoinTypeID,
+					TotalUnits:      info.Units,
+					SelfUnits:       &selfUnits,
+					TotalAmount:     info.USDAmount,
+					SelfAmount:      &selfAmount,
+					TotalCommission: info.Commission,
+					SelfCommission:  &selfCommission,
+				})
+				if err != nil {
+					return err
+				}
+
+				_, err = c2.Save(ctx)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			}(info)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 	})
 }
