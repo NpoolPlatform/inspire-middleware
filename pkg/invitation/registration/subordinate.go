@@ -57,13 +57,13 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 	var infos []*mgrpb.Registration
 	var total uint32
 
-	raw_client, err := db.Client()
+	rawClient, err := db.Client()
 	if err != nil {
 		return nil, 0, err
 	}
 
 	inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
-	rows, err := raw_client.QueryContext(ctx, fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs))
+	rows, err := rawClient.QueryContext(ctx, fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -76,11 +76,9 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 		}
 	}
 
-	invitee_ids := strings.Split(subordinates, ",")
-	// reset to nil
-	conds.InviterIDs.Value = nil
-	// reassign invitee_id too cond
-	conds.InviteeIDs.Value = invitee_ids
+	ninviterIDs := strings.Split(subordinates, ",")
+	// reassign inviter_id too cond
+	conds.InviterIDs.Value = ninviterIDs
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {

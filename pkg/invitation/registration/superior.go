@@ -57,13 +57,13 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 	var infos []*mgrpb.Registration
 	var total uint32
 
-	raw_client, err := db.Client()
+	rawClient, err := db.Client()
 	if err != nil {
 		return nil, 0, err
 	}
 
 	inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
-	rows, err := raw_client.QueryContext(ctx, fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs))
+	rows, err := rawClient.QueryContext(ctx, fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -76,11 +76,9 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 		}
 	}
 
-	inviter_ids := strings.Split(superiores, ",")
-	// reset to nil
-	conds.InviteeIDs.Value = nil
-	// reassign inviter_id too cond
-	conds.InviterIDs.Value = inviter_ids
+	ninviteeIDs := strings.Split(superiores, ",")
+	// reassign invitee_id too cond
+	conds.InviteeIDs.Value = ninviteeIDs
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
