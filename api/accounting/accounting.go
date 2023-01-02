@@ -27,6 +27,25 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 	if _, err := uuid.Parse(in.GetOrderID()); err != nil {
 		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
+	if _, err := uuid.Parse(in.GetPaymentID()); err != nil {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if _, err := uuid.Parse(in.GetCoinTypeID()); err != nil {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if _, err := uuid.Parse(in.GetPaymentCoinTypeID()); err != nil {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	paymentCoinUSDCurrency, err := decimal.NewFromString(in.GetPaymentCoinUSDCurrency())
+	if err != nil {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if paymentCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, "PaymentCoinUSDCurrency <= 0")
+	}
+	if in.GetUnits() == 0 {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, "Units == 0")
+	}
 
 	paymentAmount, err := decimal.NewFromString(in.GetPaymentAmount())
 	if err != nil {
@@ -46,6 +65,11 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 		in.GetUserID(),
 		in.GetGoodID(),
 		in.GetOrderID(),
+		in.GetPaymentID(),
+		in.GetCoinTypeID(),
+		in.GetPaymentCoinTypeID(),
+		paymentCoinUSDCurrency,
+		in.GetUnits(),
 		in.GetSettleType(),
 		paymentAmount,
 		goodValue,
