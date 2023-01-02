@@ -27,7 +27,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 
 	const procedure = `
 		DROP PROCEDURE IF EXISTS get_subordinates;
-		SET GLOBAL GROUP_CONCAT_MAX_LEN = 102400;
+		SET SESSION GROUP_CONCAT_MAX_LEN = 102400;
 		CREATE PROCEDURE get_subordinates (IN inviters TEXT)
 		BEGIN
 		  DECLARE subordinates TEXT;
