@@ -23,8 +23,8 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 		return err
 	}
 
-	const drop_procedure = `DROP PROCEDURE IF EXISTS get_superiores`
-	_, err = conn.ExecContext(ctx, drop_procedure)
+	const dropProcedure = `DROP PROCEDURE IF EXISTS get_superiores`
+	_, err = conn.ExecContext(ctx, dropProcedure)
 	if err != nil {
 		return err
 	}
@@ -75,11 +75,6 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 				entreg.FieldUpdatedAt,
 			).
 			Modify(func(s *sql.Selector) {
-				// TODO: get parent recursively
-				inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
-				callProcedure := fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs)
-				s.
-					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)

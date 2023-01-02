@@ -3,8 +3,6 @@ package registration
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
@@ -25,8 +23,8 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 		return err
 	}
 
-	const drop_procedure = `DROP PROCEDURE IF EXISTS get_subordinates`
-	_, err = conn.ExecContext(ctx, drop_procedure)
+	const dropProcedure = `DROP PROCEDURE IF EXISTS get_subordinates`
+	_, err = conn.ExecContext(ctx, dropProcedure)
 	if err != nil {
 		return err
 	}
@@ -77,10 +75,6 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 				entreg.FieldUpdatedAt,
 			).
 			Modify(func(s *sql.Selector) {
-				inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
-				callProcedure := fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs)
-				s.
-					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)

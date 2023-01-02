@@ -21,11 +21,13 @@ func GetGoodOrderPercent(ctx context.Context, id string) (*npool.Commission, err
 
 func GetGoodOrderPercents(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Commission, uint32, error) {
 	infos, total, err := gopmgrcli.GetOrderPercents(ctx, &gopmgrpb.Conds{
-		ID:     conds.ID,
-		AppID:  conds.AppID,
-		UserID: conds.UserID,
-		GoodID: conds.GoodID,
-		EndAt:  conds.EndAt,
+		ID:      conds.ID,
+		AppID:   conds.AppID,
+		UserID:  conds.UserID,
+		GoodID:  conds.GoodID,
+		EndAt:   conds.EndAt,
+		UserIDs: conds.UserIDs,
+		GoodIDs: conds.GoodIDs,
 	}, offset, limit)
 	if err != nil {
 		return nil, 0, err
