@@ -25,13 +25,9 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 		return err
 	}
 
-	const drop_procedure = `DROP PROCEDURE IF EXISTS get_subordinates`
-	_, err = conn.ExecContext(ctx, drop_procedure)
-	if err != nil {
-		return err
-	}
-
 	const procedure = `
+		DROP PROCEDURE IF EXISTS get_subordinates;
+		SET GLOBAL GROUP_CONCAT_MAX_LEN = 102400;
 		CREATE PROCEDURE get_subordinates (IN inviters TEXT)
 		BEGIN
 		  DECLARE subordinates TEXT;
@@ -44,7 +40,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 			else
 			  SET subordinates = CONCAT(subordinates, ',', inviters);
 			END if;
-		    SELECT GROUP_CONCAT(invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
+		    SELECT GROUP_CONCAT(DISTINCT invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
 		  END WHILE;
 		  SELECT subordinates;
 		END
@@ -61,7 +57,31 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 	var infos []*mgrpb.Registration
 	var total uint32
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	raw_client, err := db.Client()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
+	rows, err := raw_client.QueryContext(ctx, fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs))
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	subordinates := ""
+	for rows.Next() {
+		if err := rows.Scan(&subordinates); err != nil {
+			return nil, 0, err
+		}
+	}
+
+	invitee_ids := strings.Split(subordinates, ",")
+	// reset to nil
+	conds.InviterIDs.Value = nil
+	// reassign invitee_id too cond
+	conds.InviteeIDs.Value = invitee_ids
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
 			return err
@@ -77,10 +97,6 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 				entreg.FieldUpdatedAt,
 			).
 			Modify(func(s *sql.Selector) {
-				inviterIDs := strings.Join(conds.GetInviterIDs().GetValue(), ",")
-				callProcedure := fmt.Sprintf("CALL get_subordinates(\"%v\")", inviterIDs)
-				s.
-					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)

@@ -3,6 +3,8 @@ package registration
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
@@ -23,14 +25,10 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 		return err
 	}
 
-	const drop_procedure = `DROP PROCEDURE IF EXISTS get_superiores`
-	_, err = conn.ExecContext(ctx, drop_procedure)
-	if err != nil {
-		return err
-	}
-
 	const procedure = `
-		CREATE PROCEDURE get_superiores (IN invitees TEXT)
+	DROP PROCEDURE IF EXISTS get_superiores;
+	SET GLOBAL GROUP_CONCAT_MAX_LEN = 102400;
+	CREATE PROCEDURE get_superiores (IN invitees TEXT)
 		BEGIN
 		  DECLARE superiores TEXT;
 		  DECLARE my_invitees TEXT;
@@ -42,7 +40,7 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 			else
 			  SET superiores = CONCAT(superiores, ',', my_invitees);
 			END if;
-		    SELECT GROUP_CONCAT(inviter_id) INTO my_invitees FROM registrations WHERE FIND_IN_SET(invitee_id, my_invitees);
+		    SELECT GROUP_CONCAT(DISTINCT inviter_id) INTO my_invitees FROM registrations WHERE FIND_IN_SET(invitee_id, my_invitees);
 		  END WHILE;
 		  SELECT superiores;
 		END
@@ -59,7 +57,31 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 	var infos []*mgrpb.Registration
 	var total uint32
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	raw_client, err := db.Client()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
+	rows, err := raw_client.QueryContext(ctx, fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs))
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	superiores := ""
+	for rows.Next() {
+		if err := rows.Scan(&superiores); err != nil {
+			return nil, 0, err
+		}
+	}
+
+	inviter_ids := strings.Split(superiores, ",")
+	// reset to nil
+	conds.InviteeIDs.Value = nil
+	// reassign inviter_id too cond
+	conds.InviterIDs.Value = inviter_ids
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
 			return err
@@ -75,11 +97,6 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 				entreg.FieldUpdatedAt,
 			).
 			Modify(func(s *sql.Selector) {
-				// TODO: get parent recursively
-				inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
-				callProcedure := fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs)
-				s.
-					QueryContext(callProcedure)
 			})
 
 		_total, err := sel.Count(ctx)
