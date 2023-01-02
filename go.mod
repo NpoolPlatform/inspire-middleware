@@ -3,6 +3,7 @@ module github.com/NpoolPlatform/inspire-middleware
 go 1.17
 
 require (
+	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20221231085755-6ca1f32c2bde
 	github.com/NpoolPlatform/inspire-manager v0.0.0-20221231105906-6ba3752596fd
@@ -22,7 +23,6 @@ require (
 
 require (
 	ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e // indirect
-	entgo.io/ent v0.11.3 // indirect
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
