@@ -7,6 +7,7 @@ import (
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
@@ -17,6 +18,40 @@ import (
 )
 
 func CreateSuperiorProcedure(ctx context.Context) error {
+	conn, err := mysql.GetConn()
+	if err != nil {
+		return err
+	}
+
+	const drop_procedure = `DROP PROCEDURE IF EXISTS get_superiores`
+	_, err = conn.ExecContext(ctx, drop_procedure)
+	if err != nil {
+		return err
+	}
+
+	const procedure = `
+		CREATE PROCEDURE get_superiores (IN invitees TEXT)
+		BEGIN
+		  DECLARE superiores TEXT;
+		  DECLARE my_invitees TEXT;
+		  SET superiores = 'N/A';
+		  SET my_invitees = invitees;
+		  WHILE my_invitees is not null DO
+		    if superiores = 'N/A' THEN
+			  SET superiores = my_invitees;
+			else
+			  SET superiores = CONCAT(superiores, ',', my_invitees);
+			END if;
+		    SELECT GROUP_CONCAT(inviter_id) INTO my_invitees FROM registrations WHERE FIND_IN_SET(invitee_id, my_invitees);
+		  END WHILE;
+		  SELECT superiores;
+		END
+	`
+	_, err = conn.ExecContext(ctx, procedure)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

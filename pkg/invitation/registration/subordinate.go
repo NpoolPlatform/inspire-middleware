@@ -18,30 +18,35 @@ import (
 )
 
 func CreateSubordinateProcedure(ctx context.Context) error {
-	const procedure = `
-		CREATE PROCEDURE get_subordinates (IN inviters TEXT)
-		BEGIN
-		  DECLARE subordinates TEXT;
-		  DECLARE invitees TEXT;
-		  SET subordinates = 'N/A';
-		  SET invitees = inviters;
-		  WHILE invitees is not null DO
-		    if subordinates = 'N/A' THEN
-			  SET subordinates = invitees;
-			else
-			  SET subordinates = CONCAT(subordinates, ',', invitees);
-			END if;
-		    SELECT GROUP_CONCAT(invitee_id) INTO invitees FROM registrations WHERE FIND_IN_SET(inviter_id, invitees);
-		  END WHILE;
-		  SELECT subordinates;
-		END
-	`
-
 	conn, err := mysql.GetConn()
 	if err != nil {
 		return err
 	}
 
+	const drop_procedure = `DROP PROCEDURE IF EXISTS get_subordinates`
+	_, err = conn.ExecContext(ctx, drop_procedure)
+	if err != nil {
+		return err
+	}
+
+	const procedure = `
+		CREATE PROCEDURE get_subordinates (IN inviters TEXT)
+		BEGIN
+		  DECLARE subordinates TEXT;
+		  DECLARE my_inviters TEXT;
+		  SET subordinates = 'N/A';
+		  SET my_inviters = inviters;
+		  WHILE my_inviters is not null DO
+		    if subordinates = 'N/A' THEN
+			  SET subordinates = my_inviters;
+			else
+			  SET subordinates = CONCAT(subordinates, ',', inviters);
+			END if;
+		    SELECT GROUP_CONCAT(invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
+		  END WHILE;
+		  SELECT subordinates;
+		END
+	`
 	_, err = conn.ExecContext(ctx, procedure)
 	if err != nil {
 		return err
