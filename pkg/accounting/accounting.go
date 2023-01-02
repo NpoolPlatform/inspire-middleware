@@ -11,6 +11,9 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
+	archivement1 "github.com/NpoolPlatform/inspire-middleware/pkg/archivement"
+	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
+
 	comm1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
 	reg1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
@@ -135,7 +138,46 @@ func Accounting(
 		return nil, err
 	}
 
+	commMap := map[string]*npool.Commission{}
+	for _, comm := range _comms {
+		commMap[comm.UserID] = comm
+	}
+
+	currency := paymentCoinUSDCurrency.String()
+	amount := paymentAmount.String()
+	usdAmount := paymentAmount.Mul(paymentCoinUSDCurrency).String()
+
 	// TODO: record user archivement
+	details := []*detailmgrpb.DetailReq{}
+	for _, inviter := range _inviters {
+		comm, ok := commMap[inviter.InviteeID]
+		if !ok {
+			break
+		}
+
+		selfOrder := inviter.InviteeID == userID
+
+		details = append(details, &detailmgrpb.DetailReq{
+			AppID:                  &appID,
+			UserID:                 &inviter.InviteeID,
+			DirectContributorID:    &userID,
+			GoodID:                 &goodID,
+			OrderID:                &orderID,
+			SelfOrder:              &selfOrder,
+			PaymentID:              &paymentID,
+			PaymentCoinUSDCurrency: &currency,
+			Units:                  &units,
+			Amount:                 &amount,
+			USDAmount:              &usdAmount,
+			Commission:             &comm.Amount,
+		})
+	}
+	if len(details) > 0 {
+		err = archivement1.BookKeepingV2(ctx, details)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return _comms, nil
 }
