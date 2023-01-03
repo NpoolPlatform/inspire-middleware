@@ -57,32 +57,29 @@ func CreateFixAmount(
 		return nil, fmt.Errorf("overflow")
 	}
 
-	now := uint32(time.Now().Unix())
-	startAt := now
-
-	if coup.StartAt > now {
+	startAt := info.CreatedAt
+	if coup.StartAt > startAt {
 		startAt = coup.StartAt
 	}
 
 	endAt := startAt + coup.DurationDays*timedef.SecondsPerDay
 
 	return &npool.Coupon{
-		ID:            info.ID,
-		CouponTypeStr: allocatedmgrpb.CouponType_FixAmount.String(),
-		CouponType:    allocatedmgrpb.CouponType_FixAmount,
-		AppID:         info.AppID,
-		UserID:        info.UserID,
-		Value:         coup.Denomination.String(),
-		Circulation:   coup.Circulation.String(),
-		StartAt:       startAt,
-		DurationDays:  coup.DurationDays,
-		EndAt:         endAt,
-		CouponID:      id,
-		CouponName:    coup.Name,
-		Message:       coup.Message,
-		Expired:       false,
-		Valid:         uint32(time.Now().Unix()) >= startAt && uint32(time.Now().Unix()) <= endAt,
-		CreatedAt:     info.CreatedAt,
-		UpdatedAt:     info.UpdatedAt,
+		ID:           info.ID,
+		CouponType:   allocatedmgrpb.CouponType_FixAmount,
+		AppID:        info.AppID,
+		UserID:       info.UserID,
+		Value:        coup.Denomination.String(),
+		Circulation:  coup.Circulation.String(),
+		StartAt:      startAt,
+		DurationDays: coup.DurationDays,
+		EndAt:        endAt,
+		CouponID:     id,
+		CouponName:   coup.Name,
+		Message:      coup.Message,
+		Expired:      false,
+		Valid:        uint32(time.Now().Unix()) >= startAt && uint32(time.Now().Unix()) <= endAt,
+		CreatedAt:    info.CreatedAt,
+		UpdatedAt:    info.UpdatedAt,
 	}, nil
 }

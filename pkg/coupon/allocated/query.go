@@ -24,7 +24,7 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	case allocatedmgrpb.CouponType_FixAmount:
 		return fixamount.GetFixAmount(
 			ctx,
-			id,
+			info.CouponID,
 			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
 				return info, nil
 			})

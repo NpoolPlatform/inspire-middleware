@@ -42,7 +42,7 @@ func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 		case allocatedmgrpb.CouponType_FixAmount:
 			_, err = fixamount.CreateFixAmount(
 				ctx,
-				in.GetID(),
+				in.GetCouponID(),
 				tx,
 				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
 					return info, nil
