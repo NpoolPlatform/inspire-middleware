@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
 	coupon "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon"
 
-	// cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	// commonpb "github.com/NpoolPlatform/message/npool"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commonpb "github.com/NpoolPlatform/message/npool"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
@@ -34,7 +34,7 @@ func init() {
 
 var ret = &couponmwpb.Coupon{
 	ID:               uuid.NewString(),
-	CouponType:       allocatedmgrpb.CouponType_FixAmount,
+	CouponType:       mgrpb.CouponType_FixAmount,
 	AppID:            uuid.NewString(),
 	Value:            "10.01",
 	Circulation:      "100.1",
@@ -61,8 +61,8 @@ var req = &couponmwpb.CouponReq{
 
 var ret1 = &npool.Coupon{
 	ID:           uuid.NewString(),
-	CouponType:   allocatedmgrpb.CouponType_FixAmount,
-	AppID:        uuid.NewString(),
+	CouponType:   mgrpb.CouponType_FixAmount,
+	AppID:        ret.AppID,
 	CouponID:     ret.ID,
 	UserID:       uuid.NewString(),
 	Value:        ret.Value,
@@ -96,6 +96,39 @@ func create(t *testing.T) {
 }
 
 func getCoupon(t *testing.T) {
+	info, err := GetCoupon(context.Background(), ret1.ID)
+	if assert.Nil(t, err) {
+		assert.Equal(t, ret1, info)
+	}
+}
+
+func getManyCoupons(t *testing.T) {
+	infos, err := GetManyCoupons(context.Background(), []string{ret1.ID})
+	if assert.Nil(t, err) {
+		assert.Equal(t, len(infos), 1)
+		assert.Equal(t, ret1, infos[0])
+	}
+}
+
+func getCoupons(t *testing.T) {
+	infos, total, err := GetCoupons(context.Background(), &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.AppID,
+		},
+		UserID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.UserID,
+		},
+	}, int32(0), int32(100))
+	if assert.Nil(t, err) {
+		assert.Equal(t, total, uint32(1))
+		assert.Equal(t, len(infos), 1)
+		assert.Equal(t, ret1, infos[0])
+	}
+}
+
+func getCouponOnly(t *testing.T) {
 }
 
 func TestCoupon(t *testing.T) {
@@ -105,4 +138,7 @@ func TestCoupon(t *testing.T) {
 
 	t.Run("create", create)
 	t.Run("getCoupon", getCoupon)
+	t.Run("getManyCoupons", getManyCoupons)
+	t.Run("getCoupons", getCoupons)
+	t.Run("getCouponOnly", getCouponOnly)
 }
