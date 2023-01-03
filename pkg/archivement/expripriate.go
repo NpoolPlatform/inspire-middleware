@@ -74,20 +74,25 @@ func Expropriate(ctx context.Context, orderID string) error {
 
 			units := -val.Units
 			usdAmount := val.UsdAmount.Neg().String()
+			commission := val.Commission.Neg().String()
 
 			selfUnits := uint32(0)
 			selfAmount := decimal.NewFromInt(0).String()
+			selfCommission := decimal.NewFromInt(0).String()
 
 			if val.SelfOrder {
-				selfUnits += units
+				selfUnits = units
 				selfAmount = usdAmount
+				selfCommission = commission
 			}
 
 			c2, err := generalcrud.UpdateSet(info, &generalmgrpb.GeneralReq{
-				TotalUnits:  &units,
-				SelfUnits:   &selfUnits,
-				TotalAmount: &usdAmount,
-				SelfAmount:  &selfAmount,
+				TotalUnits:      &units,
+				SelfUnits:       &selfUnits,
+				TotalAmount:     &usdAmount,
+				SelfAmount:      &selfAmount,
+				TotalCommission: &commission,
+				SelfCommission:  &selfCommission,
 			})
 			if err != nil {
 				return err

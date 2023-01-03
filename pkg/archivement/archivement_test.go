@@ -144,6 +144,42 @@ func bookKeepingV2(t *testing.T) {
 	}
 }
 
+func expropriate(t *testing.T) {
+	err := Expropriate(context.Background(), ret.OrderID)
+	assert.Nil(t, err)
+
+	_, err = detailmgrcli.GetDetail(context.Background(), ret.ID)
+	assert.NotNil(t, err)
+
+	g, err := generalmgrcli.GetGeneralOnly(context.Background(), &generalmgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		UserID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.UserID,
+		},
+		GoodID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.GoodID,
+		},
+	})
+	if assert.Nil(t, err) {
+		assert.Equal(t, g.AppID, ret.AppID)
+		assert.Equal(t, g.UserID, ret.UserID)
+		assert.Equal(t, g.GoodID, ret.GoodID)
+		assert.Equal(t, g.CoinTypeID, ret.CoinTypeID)
+		assert.Equal(t, g.AppID, ret.AppID)
+		assert.Equal(t, g.TotalUnits, uint32(0))
+		assert.Equal(t, g.SelfUnits, uint32(0))
+		assert.Equal(t, g.TotalAmount, "0")
+		assert.Equal(t, g.SelfAmount, "0")
+		assert.Equal(t, g.TotalCommission, "0")
+		assert.Equal(t, g.SelfCommission, "0")
+	}
+}
+
 func TestDetail(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
@@ -151,4 +187,5 @@ func TestDetail(t *testing.T) {
 
 	t.Run("bookKeeping", bookKeeping)
 	t.Run("bookKeepingV2", bookKeepingV2)
+	t.Run("expropriate", expropriate)
 }

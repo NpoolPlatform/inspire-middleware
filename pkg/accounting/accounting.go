@@ -147,7 +147,6 @@ func Accounting(
 	amount := paymentAmount.String()
 	usdAmount := paymentAmount.Mul(paymentCoinUSDCurrency).String()
 
-	// TODO: record user archivement
 	details := []*detailmgrpb.DetailReq{}
 	for _, inviter := range _inviters {
 		comm, ok := commMap[inviter.InviteeID]
