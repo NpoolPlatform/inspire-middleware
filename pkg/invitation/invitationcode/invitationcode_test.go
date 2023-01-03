@@ -9,6 +9,9 @@ import (
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
 
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commonpb "github.com/NpoolPlatform/message/npool"
+
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
 	"github.com/google/uuid"
@@ -47,11 +50,40 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
+	confirmed := true
+	disabled := true
 
+	req.Confirmed = &confirmed
+	req.Disabled = &disabled
+
+	ret.Confirmed = confirmed
+	ret.Disabled = disabled
+
+	info, err := UpdateInvitationCode(context.Background(), req)
+	if assert.Nil(t, err) {
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, ret, info)
+	}
 }
 
 func getOnly(t *testing.T) {
-
+	info, err := GetInvitationCodeOnly(context.Background(), &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		UserID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.UserID,
+		},
+		InvitationCode: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.InvitationCode,
+		},
+	})
+	if assert.Nil(t, err) {
+		assert.Equal(t, ret, info)
+	}
 }
 
 func TestInvitationCode(t *testing.T) {
