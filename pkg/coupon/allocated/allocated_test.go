@@ -95,6 +95,24 @@ func create(t *testing.T) {
 	}
 }
 
+func update(t *testing.T) {
+	used := true
+	orderID := uuid.NewString()
+
+	ret1.Used = used
+	ret1.UsedByOrderID = &orderID
+
+	req1.Used = &used
+	req1.UsedByOrderID = &orderID
+
+	info, err := UpdateCoupon(context.Background(), req1)
+	if assert.Nil(t, err) {
+		ret1.UpdatedAt = info.UpdatedAt
+		ret1.UsedAt = info.UsedAt
+		assert.Equal(t, ret1, info)
+	}
+}
+
 func getCoupon(t *testing.T) {
 	info, err := GetCoupon(context.Background(), ret1.ID)
 	if assert.Nil(t, err) {
@@ -129,6 +147,27 @@ func getCoupons(t *testing.T) {
 }
 
 func getCouponOnly(t *testing.T) {
+	info, err := GetCouponOnly(context.Background(), &mgrpb.Conds{
+		ID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.ID,
+		},
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.AppID,
+		},
+		UserID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.UserID,
+		},
+		UsedByOrderID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret1.GetUsedByOrderID(),
+		},
+	})
+	if assert.Nil(t, err) {
+		assert.Equal(t, ret1, info)
+	}
 }
 
 func TestCoupon(t *testing.T) {
@@ -137,6 +176,7 @@ func TestCoupon(t *testing.T) {
 	}
 
 	t.Run("create", create)
+	t.Run("update", update)
 	t.Run("getCoupon", getCoupon)
 	t.Run("getManyCoupons", getManyCoupons)
 	t.Run("getCoupons", getCoupons)
