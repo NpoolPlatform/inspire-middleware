@@ -64,14 +64,21 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		}
 	}
 
-	value, err := decimal.NewFromString(info.GetValue())
-	if err != nil {
-		return err
+	value := decimal.NewFromInt(0)
+	circulation := decimal.NewFromInt(0)
+
+	if info.Value != nil {
+		value, err = decimal.NewFromString(info.GetValue())
+		if err != nil {
+			return err
+		}
 	}
 
-	circulation, err := decimal.NewFromString(info.GetCirculation())
-	if err != nil {
-		return err
+	if info.Circulation != nil {
+		circulation, err = decimal.NewFromString(info.GetCirculation())
+		if err != nil {
+			return err
+		}
 	}
 
 	switch info.GetCouponType() {
@@ -86,19 +93,25 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 	case allocatedmgrpb.CouponType_GoodFixAmount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-		if circulation.Cmp(value) < 0 {
-			return fmt.Errorf("value overflow")
+		if info.Value != nil {
+			if circulation.Cmp(value) < 0 {
+				return fmt.Errorf("value overflow")
+			}
 		}
 	case allocatedmgrpb.CouponType_Discount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodDiscount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-		if value.Cmp(decimal.NewFromInt(100)) >= 0 { //nolint
-			return fmt.Errorf("value overflow")
+		if info.Value != nil {
+			if value.Cmp(decimal.NewFromInt(100)) >= 0 { //nolint
+				return fmt.Errorf("value overflow")
+			}
 		}
-		if circulation.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("invalid circulation")
+		if info.Circulation != nil {
+			if circulation.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return fmt.Errorf("invalid circulation")
+			}
 		}
 	default:
 	}
