@@ -2,7 +2,6 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
@@ -50,20 +49,6 @@ func (s *Server) GetManyCoupons(ctx context.Context, in *npool.GetManyCouponsReq
 }
 
 func ValidateConds(conds *allocatedmgrpb.Conds) error { //nolint
-	switch allocatedmgrpb.CouponType(conds.GetCouponType().GetValue()) {
-	case allocatedmgrpb.CouponType_FixAmount:
-	case allocatedmgrpb.CouponType_Discount:
-	case allocatedmgrpb.CouponType_SpecialOffer:
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return fmt.Errorf("unknown coupon type")
-	}
-
 	if conds.ID != nil {
 		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
 			return err

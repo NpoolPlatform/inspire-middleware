@@ -84,7 +84,7 @@ func ValidateCreate(ctx context.Context, info *npool.CouponReq) error { //nolint
 			return err
 		}
 		allocated = value.Mul(allocated)
-		if allocated.Add(value).Cmp(circulation) < 0 {
+		if allocated.Add(value).Cmp(circulation) > 0 {
 			return fmt.Errorf("overflow")
 		}
 	case allocatedmgrpb.CouponType_Discount:
