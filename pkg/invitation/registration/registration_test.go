@@ -64,7 +64,20 @@ func update(t *testing.T) {
 }
 
 func getRegistrations(t *testing.T) {
-
+	infos, total, err := GetRegistrations(context.Background(), &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		InviterID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.InviterID,
+		},
+	}, int32(0), int32(1))
+	if assert.Nil(t, err) {
+		assert.Equal(t, total, uint32(1))
+		assert.Equal(t, ret, infos[0])
+	}
 }
 
 func getRegistrationOnly(t *testing.T) {
