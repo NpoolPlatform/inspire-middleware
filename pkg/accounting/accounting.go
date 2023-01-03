@@ -14,8 +14,8 @@ import (
 	archivement1 "github.com/NpoolPlatform/inspire-middleware/pkg/archivement"
 	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
 
-	comm1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
-	reg1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
 	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
 
@@ -42,7 +42,7 @@ func Accounting(
 
 	inviters := []*regmgrpb.Registration{}
 	for {
-		_inviters, _, err := reg1.GetSuperiores(ctx, &regmgrpb.Conds{
+		_inviters, _, err := registration1.GetSuperiores(ctx, &regmgrpb.Conds{
 			AppID: &commonpb.StringVal{
 				Op:    cruder.EQ,
 				Value: appID,
@@ -100,7 +100,7 @@ func Accounting(
 		inviterIDs = append(inviterIDs, inviter.InviteeID)
 	}
 
-	comms, _, err := comm1.GetCommissions(ctx, &commmwpb.Conds{
+	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{
 		AppID: &commonpb.StringVal{
 			Op:    cruder.EQ,
 			Value: appID,
@@ -126,7 +126,7 @@ func Accounting(
 		return nil, err
 	}
 
-	_comms, err := comm1.Accounting(
+	_comms, err := commission1.Accounting(
 		ctx,
 		settleType,
 		_inviters,
