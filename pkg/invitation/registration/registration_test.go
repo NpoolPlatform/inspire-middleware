@@ -189,7 +189,37 @@ func getSubordinates(t *testing.T) {
 }
 
 func getSuperiores(t *testing.T) {
+	infos, total, err := GetSuperiores(context.Background(), &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		InviteeIDs: &commonpb.StringSliceVal{
+			Op:    cruder.IN,
+			Value: []string{ret2.InviteeID},
+		},
+	}, int32(0), int32(100))
+	if assert.Nil(t, err) {
+		assert.Equal(t, total, uint32(2))
 
+		found := false
+		for _, info := range infos {
+			if info.ID == ret.ID {
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, info := range infos {
+			if info.ID == ret2.ID {
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+	}
 }
 
 func TestRegistration(t *testing.T) {

@@ -76,16 +76,24 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 		}
 	}
 
-	ninviteeIDs := strings.Split(superiores, ",")
-	// reassign invitee_id too cond
-	conds.InviteeIDs.Value = ninviteeIDs
+	_inviteeIDs := strings.Split(superiores, ",")
+	conds.InviteeIDs.Value = _inviteeIDs
+
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
 			return err
 		}
 
-		sel := stm.
+		_total, err := stm.Count(ctx)
+		if err != nil {
+			return err
+		}
+		total = uint32(_total)
+
+		return stm.
+			Offset(int(offset)).
+			Limit(int(limit)).
 			Select(
 				entreg.FieldID,
 				entreg.FieldAppID,
@@ -94,18 +102,6 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 				entreg.FieldCreatedAt,
 				entreg.FieldUpdatedAt,
 			).
-			Modify(func(s *sql.Selector) {
-			})
-
-		_total, err := sel.Count(ctx)
-		if err != nil {
-			return err
-		}
-		total = uint32(_total)
-
-		return sel.
-			Offset(int(offset)).
-			Limit(int(limit)).
 			Modify(func(s *sql.Selector) {
 			}).
 			Scan(ctx, &infos)
