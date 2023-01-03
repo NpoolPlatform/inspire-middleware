@@ -17,8 +17,6 @@ import (
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
-	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
-
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
 )
@@ -47,7 +45,7 @@ func Accounting(
 				Op:    cruder.EQ,
 				Value: appID,
 			},
-			InviterIDs: &commonpb.StringSliceVal{
+			InviteeIDs: &commonpb.StringSliceVal{
 				Op:    cruder.IN,
 				Value: []string{userID},
 			},
@@ -64,9 +62,15 @@ func Accounting(
 		offset += limit
 	}
 
+	inviteeMap := map[string]struct{}{}
+	for _, inviter := range inviters {
+		inviteeMap[inviter.InviteeID] = struct{}{}
+	}
+
 	_inviters := []*regmgrpb.Registration{}
 	for i, inviter := range inviters {
-		if inviter.InviterID == uuid1.InvalidUUIDStr || inviter.InviterID == "" {
+		_, ok := inviteeMap[inviter.InviterID]
+		if !ok {
 			_inviters = append(_inviters, inviter)
 			inviters = append(inviters[0:i], inviters[i+1:]...)
 			break
@@ -79,7 +83,7 @@ func Accounting(
 
 	for {
 		if len(inviters) == 1 {
-			if _inviters[len(_inviters)-1].InviteeID == inviters[0].InviterID {
+			if _inviters[len(_inviters)-1].InviteeID != inviters[0].InviterID {
 				return nil, fmt.Errorf("mismatch registration")
 			}
 			_inviters = append(_inviters, inviters[0])
@@ -95,7 +99,7 @@ func Accounting(
 		}
 	}
 
-	inviterIDs := []string{}
+	inviterIDs := []string{_inviters[0].InviterID}
 	for _, inviter := range _inviters {
 		inviterIDs = append(inviterIDs, inviter.InviteeID)
 	}
@@ -164,6 +168,7 @@ func Accounting(
 			OrderID:                &orderID,
 			SelfOrder:              &selfOrder,
 			PaymentID:              &paymentID,
+			CoinTypeID:             &coinTypeID,
 			PaymentCoinUSDCurrency: &currency,
 			Units:                  &units,
 			Amount:                 &amount,

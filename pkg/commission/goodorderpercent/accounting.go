@@ -25,44 +25,56 @@ func Accounting(
 		commMap[comm.UserID] = comm
 	}
 
-	upperPercent := decimal.NewFromInt(90) //nolint
-	for _, inviter := range inviters {
-		comm, ok := commMap[inviter.InviteeID]
-		if !ok {
-			upperPercent = decimal.NewFromInt(0)
-			continue
-		}
-
-		percent, err := decimal.NewFromString(comm.GetPercent())
-		if err != nil {
-			return nil, err
-		}
-
-		if upperPercent.Cmp(percent) < 0 {
-			return nil, fmt.Errorf("invalid commission")
-		}
-	}
-
 	_comms := []*accmwpb.Commission{}
-	lowerPercent := decimal.NewFromInt(0)
 
-	for i := len(inviters) - 1; i >= 0; i-- {
-		comm, ok := commMap[inviters[i].InviteeID]
-		if !ok {
-			break
+	for _, inviter := range inviters {
+		percent1 := decimal.NewFromInt(0)
+		percent2 := decimal.NewFromInt(0)
+
+		var err error
+
+		comm1, ok := commMap[inviter.InviteeID]
+		if ok {
+			percent1, err = decimal.NewFromString(comm1.GetPercent())
+			if err != nil {
+				return nil, err
+			}
 		}
 
-		percent, err := decimal.NewFromString(comm.GetPercent())
-		if err != nil {
-			return nil, err
+		comm2, ok := commMap[inviter.InviterID]
+		if ok {
+			percent2, err = decimal.NewFromString(comm2.GetPercent())
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if percent2.Cmp(percent1) < 0 {
+			return nil, fmt.Errorf("invalid commission")
 		}
 
 		_comms = append(_comms, &accmwpb.Commission{
-			AppID:  inviters[i].AppID,
-			UserID: inviters[i].InviteeID,
-			Amount: amount.Mul(percent.Sub(lowerPercent)).String(),
+			AppID:  inviter.AppID,
+			UserID: inviter.InviterID,
+			Amount: amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(),
 		})
 	}
+
+	commLast, ok := commMap[inviters[len(inviters)-1].InviteeID]
+	if !ok {
+		return _comms, nil
+	}
+
+	percent, err := decimal.NewFromString(commLast.GetPercent())
+	if err != nil {
+		return nil, err
+	}
+
+	_comms = append(_comms, &accmwpb.Commission{
+		AppID:  inviters[len(inviters)-1].AppID,
+		UserID: inviters[len(inviters)-1].InviteeID,
+		Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(),
+	})
 
 	return _comms, nil
 }

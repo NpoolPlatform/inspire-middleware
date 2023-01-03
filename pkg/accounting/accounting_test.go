@@ -169,7 +169,7 @@ var _comm4 = commmwpb.CommissionReq{
 	StartAt:    &comm4.StartAt,
 }
 
-var percent5 = "10"
+var percent5 = "12.4"
 var comm5 = commmwpb.Commission{
 	AppID:      reg1.AppID,
 	UserID:     reg5.InviterID,
@@ -188,7 +188,7 @@ var _comm5 = commmwpb.CommissionReq{
 	StartAt:    &comm5.StartAt,
 }
 
-var percent6 = "5"
+var percent6 = "7"
 var comm6 = commmwpb.Commission{
 	AppID:      reg1.AppID,
 	UserID:     reg5.InviteeID,
@@ -259,6 +259,66 @@ func accounting(t *testing.T) {
 	)
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(comms), 6)
+
+		found := false
+		for _, comm := range comms {
+			if comm.UserID == comm1.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm2.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm3.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm4.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm5.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm6.UserID {
+				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
 	}
 }
 
