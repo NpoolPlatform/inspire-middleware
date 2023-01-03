@@ -39,6 +39,7 @@ func fixAmount2Coupon(info *fixamountmgrpb.FixAmount) *npool.Coupon {
 	return &npool.Coupon{
 		ID:               info.ID,
 		CouponType:       allocatedmgrpb.CouponType_FixAmount,
+		AppID:            info.AppID,
 		Value:            info.Denomination,
 		Circulation:      info.Circulation,
 		ReleasedByUserID: info.ReleasedByUserID,
