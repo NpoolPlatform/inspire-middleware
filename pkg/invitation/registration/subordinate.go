@@ -8,7 +8,6 @@ import (
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
@@ -38,7 +37,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 		    if subordinates = 'N/A' THEN
 			  SET subordinates = my_inviters;
 			else
-			  SET subordinates = CONCAT(subordinates, ',', inviters);
+			  SET subordinates = CONCAT(subordinates, ',', my_inviters);
 			END if;
 		    SELECT GROUP_CONCAT(DISTINCT invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
 		  END WHILE;
@@ -78,8 +77,6 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 
 	_inviterIDs := strings.Split(subordinates, ",")
 	conds.InviterIDs.Value = _inviterIDs
-
-	logger.Sugar().Infow("XXXXXX", "Inviters", inviterIDs)
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)

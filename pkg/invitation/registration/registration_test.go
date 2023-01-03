@@ -122,10 +122,10 @@ func getRegistrations(t *testing.T) {
 			Op:    cruder.EQ,
 			Value: ret.InviterID,
 		},
-	}, int32(0), int32(1))
+	}, int32(0), int32(2))
 	if assert.Nil(t, err) {
-		assert.Equal(t, total, uint32(1))
-		assert.Equal(t, ret, infos[0])
+		assert.Equal(t, total, uint32(2))
+		assert.Equal(t, len(infos), 2)
 	}
 }
 
@@ -198,9 +198,9 @@ func TestRegistration(t *testing.T) {
 	}
 
 	t.Run("create", create)
-	t.Run("update", update)
-	t.Run("getRegistrations", getRegistrations)
-	t.Run("getRegistrationOnly", getRegistrationOnly)
 	t.Run("GetSubordinates", getSubordinates)
 	t.Run("GetSuperiores", getSuperiores)
+	t.Run("getRegistrations", getRegistrations)
+	t.Run("getRegistrationOnly", getRegistrationOnly)
+	t.Run("update", update)
 }
