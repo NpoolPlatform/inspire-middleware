@@ -25,6 +25,13 @@ func init() {
 	if err := testinit.Init(); err != nil {
 		fmt.Printf("cannot init test stub: %v\n", err)
 	}
+
+	if err := CreateSubordinateProcedure(context.Background()); err != nil {
+		return
+	}
+	if err := CreateSuperiorProcedure(context.Background()); err != nil {
+		return
+	}
 }
 
 var ret = &mgrpb.Registration{
@@ -139,7 +146,46 @@ func getRegistrationOnly(t *testing.T) {
 }
 
 func getSubordinates(t *testing.T) {
+	infos, total, err := GetSubordinates(context.Background(), &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: ret.AppID,
+		},
+		InviterIDs: &commonpb.StringSliceVal{
+			Op:    cruder.IN,
+			Value: []string{ret.InviterID},
+		},
+	}, int32(0), int32(100))
+	if assert.Nil(t, err) {
+		assert.Equal(t, total, uint32(3))
 
+		found := false
+		for _, info := range infos {
+			if info.ID == ret.ID {
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, info := range infos {
+			if info.ID == ret1.ID {
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+
+		found = false
+		for _, info := range infos {
+			if info.ID == ret2.ID {
+				found = true
+				break
+			}
+		}
+		assert.Equal(t, found, true)
+	}
 }
 
 func getSuperiores(t *testing.T) {

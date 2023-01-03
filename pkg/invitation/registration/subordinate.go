@@ -8,7 +8,7 @@ import (
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 
-	"entgo.io/ent/dialect/sql"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
@@ -76,16 +76,26 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 		}
 	}
 
-	ninviterIDs := strings.Split(subordinates, ",")
-	// reassign inviter_id too cond
-	conds.InviterIDs.Value = ninviterIDs
+	_inviterIDs := strings.Split(subordinates, ",")
+	conds.InviterIDs.Value = _inviterIDs
+
+	logger.Sugar().Infow("XXXXXX", "Inviters", inviterIDs)
+
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := crud.SetQueryConds(conds, cli)
 		if err != nil {
 			return err
 		}
 
-		sel := stm.
+		_total, err := stm.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		total = uint32(_total)
+
+		return stm.
+			Offset(int(offset)).
+			Limit(int(limit)).
 			Select(
 				entreg.FieldID,
 				entreg.FieldAppID,
@@ -94,20 +104,6 @@ func GetSubordinates(ctx context.Context, conds *mgrpb.Conds, offset, limit int3
 				entreg.FieldCreatedAt,
 				entreg.FieldUpdatedAt,
 			).
-			Modify(func(s *sql.Selector) {
-			})
-
-		_total, err := sel.Count(ctx)
-		if err != nil {
-			return err
-		}
-		total = uint32(_total)
-
-		return sel.
-			Offset(int(offset)).
-			Limit(int(limit)).
-			Modify(func(s *sql.Selector) {
-			}).
 			Scan(ctx, &infos)
 	})
 	if err != nil {
