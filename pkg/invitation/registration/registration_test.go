@@ -41,8 +41,50 @@ var req = &mgrpb.RegistrationReq{
 	InviteeID: &ret.InviteeID,
 }
 
+var ret1 = &mgrpb.Registration{
+	ID:        uuid.NewString(),
+	AppID:     ret.AppID,
+	InviterID: ret.InviterID,
+	InviteeID: uuid.NewString(),
+}
+
+var req1 = &mgrpb.RegistrationReq{
+	ID:        &ret1.ID,
+	AppID:     &ret.AppID,
+	InviterID: &ret.InviterID,
+	InviteeID: &ret1.InviteeID,
+}
+
+var ret2 = &mgrpb.Registration{
+	ID:        uuid.NewString(),
+	AppID:     ret.AppID,
+	InviterID: ret.InviteeID,
+	InviteeID: uuid.NewString(),
+}
+
+var req2 = &mgrpb.RegistrationReq{
+	ID:        &ret2.ID,
+	AppID:     &ret.AppID,
+	InviterID: &ret.InviteeID,
+	InviteeID: &ret2.InviteeID,
+}
+
 func create(t *testing.T) {
-	info, err := CreateRegistration(context.Background(), req)
+	info, err := CreateRegistration(context.Background(), req1)
+	if assert.Nil(t, err) {
+		ret1.CreatedAt = info.CreatedAt
+		ret1.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, ret1, info)
+	}
+
+	info, err = CreateRegistration(context.Background(), req2)
+	if assert.Nil(t, err) {
+		ret2.CreatedAt = info.CreatedAt
+		ret2.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, ret2, info)
+	}
+
+	info, err = CreateRegistration(context.Background(), req)
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
