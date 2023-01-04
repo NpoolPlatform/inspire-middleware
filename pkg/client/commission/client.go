@@ -64,6 +64,22 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 	return info.(*npool.Commission), nil
 }
 
+func GetCommission(ctx context.Context, id string) (*npool.Commission, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetCommission(ctx, &npool.GetCommissionRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.Commission), nil
+}
+
 func GetCommissions(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Commission, uint32, error) {
 	var total uint32
 

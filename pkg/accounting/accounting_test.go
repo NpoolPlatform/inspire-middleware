@@ -207,7 +207,7 @@ var _comm6 = commmwpb.CommissionReq{
 	StartAt:    &comm6.StartAt,
 }
 
-func accounting(t *testing.T) {
+func accounting(t *testing.T) { //nolint
 	_, err := registra1.CreateRegistration(context.Background(), &_reg1)
 	assert.Nil(t, err)
 	_, err = registra1.CreateRegistration(context.Background(), &_reg2)

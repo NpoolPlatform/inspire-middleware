@@ -56,7 +56,7 @@ func Accounting(
 		_comms = append(_comms, &accmwpb.Commission{
 			AppID:  inviter.AppID,
 			UserID: inviter.InviterID,
-			Amount: amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(),
+			Amount: amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
 	}
 
@@ -73,7 +73,7 @@ func Accounting(
 	_comms = append(_comms, &accmwpb.Commission{
 		AppID:  inviters[len(inviters)-1].AppID,
 		UserID: inviters[len(inviters)-1].InviteeID,
-		Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(),
+		Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
 
 	return _comms, nil

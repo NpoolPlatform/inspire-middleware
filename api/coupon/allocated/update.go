@@ -1,3 +1,4 @@
+//nolint:dupl
 package allocated
 
 import (
@@ -13,7 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
+func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error {
 	if _, err := uuid.Parse(info.GetID()); err != nil {
 		return err
 	}

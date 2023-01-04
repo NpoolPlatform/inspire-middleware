@@ -218,7 +218,7 @@ var _comm6 = commmwpb.CommissionReq{
 	StartAt:    &comm6.StartAt,
 }
 
-func accounting(t *testing.T) {
+func accounting(t *testing.T) { //nolint
 	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
 		AppID:  &reg1.AppID,
 		UserID: &reg1.InviterID,
