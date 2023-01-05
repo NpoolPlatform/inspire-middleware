@@ -98,3 +98,24 @@ func (s *Server) GetRegistrationOnly(
 		Info: info,
 	}, nil
 }
+
+func (s *Server) GetRegistration(
+	ctx context.Context,
+	in *npool.GetRegistrationRequest,
+) (
+	*npool.GetRegistrationResponse,
+	error,
+) {
+	if _, err := uuid.Parse(in.GetID()); err != nil {
+		return &npool.GetRegistrationResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := reg1.GetRegistration(ctx, in.GetID())
+	if err != nil {
+		return &npool.GetRegistrationResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetRegistrationResponse{
+		Info: info,
+	}, nil
+}

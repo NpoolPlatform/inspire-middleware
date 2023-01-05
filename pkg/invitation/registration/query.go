@@ -11,6 +11,10 @@ func GetRegistrations(ctx context.Context, conds *mgrpb.Conds, offset, limit int
 	return mgrcli.GetRegistrations(ctx, conds, offset, limit)
 }
 
+func GetRegistration(ctx context.Context, id string) (*mgrpb.Registration, error) {
+	return mgrcli.GetRegistration(ctx, id)
+}
+
 func GetRegistrationOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Registration, error) {
 	return mgrcli.GetRegistrationOnly(ctx, conds)
 }

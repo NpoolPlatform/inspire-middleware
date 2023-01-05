@@ -150,3 +150,19 @@ func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32)
 	}
 	return infos.([]*mgrpb.Registration), total, nil
 }
+
+func GetRegistration(ctx context.Context, id string) (*mgrpb.Registration, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetRegistration(ctx, &npool.GetRegistrationRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*mgrpb.Registration), nil
+}
