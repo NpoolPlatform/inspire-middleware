@@ -63,11 +63,6 @@ func ValidateCreate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		return fmt.Errorf("invalid coupon")
 	}
 
-	allocated, err := decimal.NewFromString(coup.Allocated)
-	if err != nil {
-		return err
-	}
-
 	switch info.GetCouponType() {
 	case allocatedmgrpb.CouponType_FixAmount:
 		fallthrough //nolint
@@ -84,6 +79,10 @@ func ValidateCreate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		if err != nil {
 			return err
 		}
+		allocated, err := decimal.NewFromString(coup.Allocated)
+		if err != nil {
+			return err
+		}
 		allocated = value.Mul(allocated)
 		if allocated.Add(value).Cmp(circulation) > 0 {
 			return fmt.Errorf("overflow")
@@ -93,6 +92,10 @@ func ValidateCreate(ctx context.Context, info *npool.CouponReq) error { //nolint
 	case allocatedmgrpb.CouponType_GoodDiscount:
 	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
 		circulation, err := decimal.NewFromString(coup.Circulation)
+		if err != nil {
+			return err
+		}
+		allocated, err := decimal.NewFromString(coup.Allocated)
 		if err != nil {
 			return err
 		}

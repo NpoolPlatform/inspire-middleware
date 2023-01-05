@@ -12,7 +12,9 @@ import (
 	converter "github.com/NpoolPlatform/inspire-manager/pkg/converter/coupon/allocated"
 	crud "github.com/NpoolPlatform/inspire-manager/pkg/crud/coupon/allocated"
 
+	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/discount"
 	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/fixamount"
+	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/specialoffer"
 )
 
 func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
@@ -48,7 +50,21 @@ func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 					return info, nil
 				})
 		case allocatedmgrpb.CouponType_Discount:
+			_, err = discount.CreateDiscount(
+				ctx,
+				in.GetCouponID(),
+				tx,
+				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+					return info, nil
+				})
 		case allocatedmgrpb.CouponType_SpecialOffer:
+			_, err = specialoffer.CreateSpecialOffer(
+				ctx,
+				in.GetCouponID(),
+				tx,
+				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+					return info, nil
+				})
 		case allocatedmgrpb.CouponType_ThresholdFixAmount:
 		case allocatedmgrpb.CouponType_ThresholdDiscount:
 		case allocatedmgrpb.CouponType_GoodFixAmount:
