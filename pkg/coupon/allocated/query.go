@@ -1,3 +1,4 @@
+//nolint:dupl
 package allocated
 
 import (
@@ -8,7 +9,9 @@ import (
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
+	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/discount"
 	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/fixamount"
+	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/specialoffer"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
@@ -19,7 +22,6 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	switch info.CouponType {
 	case allocatedmgrpb.CouponType_FixAmount:
 		return fixamount.GetFixAmount(
@@ -29,7 +31,19 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 				return info, nil
 			})
 	case allocatedmgrpb.CouponType_Discount:
+		return discount.GetDiscount(
+			ctx,
+			info.CouponID,
+			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+				return info, nil
+			})
 	case allocatedmgrpb.CouponType_SpecialOffer:
+		return specialoffer.GetSpecialOffer(
+			ctx,
+			info.CouponID,
+			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+				return info, nil
+			})
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 	case allocatedmgrpb.CouponType_ThresholdDiscount:
 	case allocatedmgrpb.CouponType_GoodFixAmount:
@@ -78,6 +92,36 @@ func expandManyCoupons(ctx context.Context, infos []*allocatedmgrpb.Allocated) (
 			fmIDs,
 			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
 				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_FixAmount), nil
+			})
+		if err != nil {
+			return nil, err
+		}
+
+		coups = append(coups, _coups...)
+	}
+
+	fmIDs = getTypeCouponIDs(infos, allocatedmgrpb.CouponType_Discount)
+	if len(fmIDs) > 0 {
+		_coups, err := discount.GetManyDiscounts(
+			ctx,
+			fmIDs,
+			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
+				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_Discount), nil
+			})
+		if err != nil {
+			return nil, err
+		}
+
+		coups = append(coups, _coups...)
+	}
+
+	fmIDs = getTypeCouponIDs(infos, allocatedmgrpb.CouponType_SpecialOffer)
+	if len(fmIDs) > 0 {
+		_coups, err := specialoffer.GetManySpecialOffers(
+			ctx,
+			fmIDs,
+			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
+				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_SpecialOffer), nil
 			})
 		if err != nil {
 			return nil, err
@@ -144,7 +188,19 @@ func GetCouponOnly(ctx context.Context, conds *allocatedmgrpb.Conds) (*npool.Cou
 				return info, nil
 			})
 	case allocatedmgrpb.CouponType_Discount:
+		return discount.GetDiscount(
+			ctx,
+			info.CouponID,
+			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+				return info, nil
+			})
 	case allocatedmgrpb.CouponType_SpecialOffer:
+		return specialoffer.GetSpecialOffer(
+			ctx,
+			info.CouponID,
+			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
+				return info, nil
+			})
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 	case allocatedmgrpb.CouponType_ThresholdDiscount:
 	case allocatedmgrpb.CouponType_GoodFixAmount:

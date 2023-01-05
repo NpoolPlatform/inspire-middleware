@@ -53,15 +53,8 @@ func ValidateCreate(info *npool.CouponReq) error { //nolint
 		return err
 	}
 
-	circulation, err := decimal.NewFromString(info.GetCirculation())
-	if err != nil {
-		return err
-	}
-
 	switch info.GetCouponType() {
 	case allocatedmgrpb.CouponType_FixAmount:
-		fallthrough //nolint
-	case allocatedmgrpb.CouponType_SpecialOffer:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 		fallthrough //nolint
@@ -70,6 +63,10 @@ func ValidateCreate(info *npool.CouponReq) error { //nolint
 	case allocatedmgrpb.CouponType_GoodFixAmount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
+		circulation, err := decimal.NewFromString(info.GetCirculation())
+		if err != nil {
+			return err
+		}
 		if circulation.Cmp(value) < 0 {
 			return fmt.Errorf("value overflow")
 		}
@@ -78,6 +75,10 @@ func ValidateCreate(info *npool.CouponReq) error { //nolint
 	case allocatedmgrpb.CouponType_GoodDiscount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
+		circulation, err := decimal.NewFromString(info.GetCirculation())
+		if err != nil {
+			return err
+		}
 		if value.Cmp(decimal.NewFromInt(100)) >= 0 { //nolint
 			return fmt.Errorf("value overflow")
 		}

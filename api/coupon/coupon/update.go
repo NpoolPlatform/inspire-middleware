@@ -53,13 +53,15 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		return fmt.Errorf("invalid coupon")
 	}
 
-	allocated, err := decimal.NewFromString(coup.Allocated)
-	if err != nil {
-		return err
-	}
-	if allocated.Cmp(decimal.NewFromInt(0)) > 0 {
-		if info.Value != nil || info.Circulation != nil {
-			return fmt.Errorf("permission denied")
+	if coup.CouponType != allocatedmgrpb.CouponType_SpecialOffer {
+		allocated, err := decimal.NewFromString(coup.Allocated)
+		if err != nil {
+			return err
+		}
+		if allocated.Cmp(decimal.NewFromInt(0)) > 0 {
+			if info.Value != nil || info.Circulation != nil {
+				return fmt.Errorf("permission denied")
+			}
 		}
 	}
 
@@ -82,8 +84,6 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 
 	switch info.GetCouponType() {
 	case allocatedmgrpb.CouponType_FixAmount:
-		fallthrough //nolint
-	case allocatedmgrpb.CouponType_SpecialOffer:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 		fallthrough //nolint
@@ -122,7 +122,7 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 	if info.GetMessage() == "" {
 		return fmt.Errorf("invalid message")
 	}
-	if info.GetName() == "" {
+	if info.GetName() == "" && info.GetCouponType() != allocatedmgrpb.CouponType_SpecialOffer {
 		return fmt.Errorf("invalid name")
 	}
 
@@ -160,6 +160,8 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 
 func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest) (*npool.UpdateCouponResponse, error) {
 	if err := ValidateUpdate(ctx, in.GetInfo()); err != nil {
+		fmt.Println("******************err")
+		fmt.Println(err)
 		logger.Sugar().Errorw("UpdateCoupon", "error", err)
 		return &npool.UpdateCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}

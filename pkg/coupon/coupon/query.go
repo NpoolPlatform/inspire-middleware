@@ -17,7 +17,9 @@ func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponT
 	case allocatedmgrpb.CouponType_FixAmount:
 		return fixamount.GetFixAmount(ctx, id)
 	case allocatedmgrpb.CouponType_Discount:
+		return discount.GetDiscount(ctx, id)
 	case allocatedmgrpb.CouponType_SpecialOffer:
+		return specialoffer.GetSpecialOffer(ctx, id)
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 	case allocatedmgrpb.CouponType_ThresholdDiscount:
 	case allocatedmgrpb.CouponType_GoodFixAmount:
