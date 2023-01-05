@@ -56,7 +56,7 @@ var req = &npool.CouponReq{
 	Name:             &ret.Name,
 }
 
-func create(t *testing.T) {
+func createFixAmount(t *testing.T) {
 	info, err := CreateCoupon(context.Background(), req)
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
@@ -65,7 +65,7 @@ func create(t *testing.T) {
 	}
 }
 
-func update(t *testing.T) {
+func updateFixAmount(t *testing.T) {
 	value := "10.02"
 	circulation := "200.4"
 
@@ -104,7 +104,7 @@ func update(t *testing.T) {
 	}
 }
 
-func get(t *testing.T) {
+func getFixAmount(t *testing.T) {
 	infos, total, err := GetCoupons(context.Background(), &npool.Conds{
 		CouponType: &commonpb.Int32Val{
 			Op:    cruder.EQ,
@@ -121,12 +121,12 @@ func get(t *testing.T) {
 	}
 }
 
-func TestCoupon(t *testing.T) {
+func TestCouponFixAmount(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
 
-	t.Run("create", create)
-	t.Run("update", update)
-	t.Run("get", get)
+	t.Run("createFixAmount", createFixAmount)
+	t.Run("updateFixAmount", updateFixAmount)
+	t.Run("getFixAmount", getFixAmount)
 }

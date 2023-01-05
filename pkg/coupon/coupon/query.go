@@ -7,7 +7,9 @@ import (
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
+	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/discount"
 	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
+	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
 )
 
 func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponType) (*npool.Coupon, error) {
@@ -33,7 +35,9 @@ func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([
 	case allocatedmgrpb.CouponType_FixAmount:
 		return fixamount.GetFixAmounts(ctx, conds, offset, limit)
 	case allocatedmgrpb.CouponType_Discount:
+		return discount.GetDiscounts(ctx, conds, offset, limit)
 	case allocatedmgrpb.CouponType_SpecialOffer:
+		return specialoffer.GetSpecialOffers(ctx, conds, offset, limit)
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 	case allocatedmgrpb.CouponType_ThresholdDiscount:
 	case allocatedmgrpb.CouponType_GoodFixAmount:

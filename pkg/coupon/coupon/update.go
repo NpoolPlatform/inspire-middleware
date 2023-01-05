@@ -1,3 +1,4 @@
+//nolint:dupl
 package coupon
 
 import (
@@ -7,7 +8,9 @@ import (
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
+	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/discount"
 	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
+	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
 )
 
 func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
@@ -15,7 +18,9 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 	case allocatedmgrpb.CouponType_FixAmount:
 		return fixamount.UpdateFixAmount(ctx, in)
 	case allocatedmgrpb.CouponType_Discount:
+		return discount.UpdateDiscount(ctx, in)
 	case allocatedmgrpb.CouponType_SpecialOffer:
+		return specialoffer.UpdateSpecialOffer(ctx, in)
 	case allocatedmgrpb.CouponType_ThresholdFixAmount:
 	case allocatedmgrpb.CouponType_ThresholdDiscount:
 	case allocatedmgrpb.CouponType_GoodFixAmount:

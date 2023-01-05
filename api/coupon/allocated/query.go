@@ -48,7 +48,7 @@ func (s *Server) GetManyCoupons(ctx context.Context, in *npool.GetManyCouponsReq
 	}, nil
 }
 
-func ValidateConds(conds *allocatedmgrpb.Conds) error { //nolint
+func ValidateConds(conds *allocatedmgrpb.Conds) error {
 	if conds.ID != nil {
 		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
 			return err
