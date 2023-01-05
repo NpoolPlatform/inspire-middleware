@@ -2,7 +2,9 @@ package coupon
 
 import (
 	"context"
+	"fmt"
 
+	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon"
@@ -58,5 +60,40 @@ func (s *Server) GetCoupons(ctx context.Context, in *npool.GetCouponsRequest) (*
 	return &npool.GetCouponsResponse{
 		Infos: infos,
 		Total: total,
+	}, nil
+}
+
+func (s *Server) GetCoupon(ctx context.Context, in *npool.GetCouponRequest) (*npool.GetCouponResponse, error) {
+	if _, err := uuid.Parse(in.GetID()); err != nil {
+		return &npool.GetCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	switch in.GetCouponType() {
+	case allocatedmgrpb.CouponType_FixAmount:
+	case allocatedmgrpb.CouponType_Discount:
+	case allocatedmgrpb.CouponType_SpecialOffer:
+	case allocatedmgrpb.CouponType_ThresholdFixAmount:
+		fallthrough //nolint
+	case allocatedmgrpb.CouponType_ThresholdDiscount:
+		fallthrough //nolint
+	case allocatedmgrpb.CouponType_GoodFixAmount:
+		fallthrough //nolint
+	case allocatedmgrpb.CouponType_GoodDiscount:
+		fallthrough //nolint
+	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
+		fallthrough //nolint
+	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
+		return nil, fmt.Errorf("not implemented")
+	default:
+		return nil, fmt.Errorf("unknown coupon type")
+	}
+
+	info, err := coupon1.GetCoupon(ctx, in.GetID(), in.GetCouponType())
+	if err != nil {
+		return &npool.GetCouponResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetCouponResponse{
+		Info: info,
 	}, nil
 }
