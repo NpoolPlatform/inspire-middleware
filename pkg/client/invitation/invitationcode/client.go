@@ -80,3 +80,42 @@ func UpdateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mg
 	}
 	return info.(*mgrpb.InvitationCode), nil
 }
+
+func GetInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetInvitationCode(ctx, &npool.GetInvitationCodeRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*mgrpb.InvitationCode), nil
+}
+
+func GetInvitationCodes(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.InvitationCode, uint32, error) {
+	var total uint32
+
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
+			Conds:  conds,
+			Offset: offset,
+			Limit:  limit,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		total = resp.Total
+
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	return infos.([]*mgrpb.InvitationCode), total, nil
+}

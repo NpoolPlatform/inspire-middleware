@@ -10,6 +10,8 @@ import (
 
 	ivcode "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/invitationcode"
 
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
+
 	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
@@ -31,6 +33,54 @@ func ValidateConds(conds *mgrpb.Conds) error {
 		return fmt.Errorf("invalid invitation code")
 	}
 	return nil
+}
+
+func (s *Server) GetInvitationCode(
+	ctx context.Context,
+	in *npool.GetInvitationCodeRequest,
+) (
+	*npool.GetInvitationCodeResponse,
+	error,
+) {
+	if _, err := uuid.Parse(in.GetID()); err != nil {
+		return &npool.GetInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := ivcode.GetInvitationCode(ctx, in.GetID())
+	if err != nil {
+		return &npool.GetInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &npool.GetInvitationCodeResponse{
+		Info: info,
+	}, nil
+}
+
+func (s *Server) GetInvitationCodes(
+	ctx context.Context,
+	in *npool.GetInvitationCodesRequest,
+) (
+	*npool.GetInvitationCodesResponse,
+	error,
+) {
+	if err := ValidateConds(in.GetConds()); err != nil {
+		return &npool.GetInvitationCodesResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	limit := constant.DefaultRowLimit
+	if in.GetLimit() > 0 {
+		limit = in.GetLimit()
+	}
+
+	infos, total, err := ivcode.GetInvitationCodes(ctx, in.GetConds(), in.GetOffset(), limit)
+	if err != nil {
+		return &npool.GetInvitationCodesResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &npool.GetInvitationCodesResponse{
+		Infos: infos,
+		Total: total,
+	}, nil
 }
 
 func (s *Server) GetInvitationCodeOnly(
