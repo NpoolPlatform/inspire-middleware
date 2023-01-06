@@ -153,17 +153,17 @@ func Accounting(
 
 	details := []*detailmgrpb.DetailReq{}
 	for _, inviter := range _inviters {
-		comm, ok := commMap[inviter.InviteeID]
+		comm, ok := commMap[inviter.InviterID]
 		if !ok {
 			break
 		}
 
-		selfOrder := inviter.InviteeID == userID
+		selfOrder := false
 
 		details = append(details, &detailmgrpb.DetailReq{
 			AppID:                  &appID,
-			UserID:                 &inviter.InviteeID,
-			DirectContributorID:    &userID,
+			UserID:                 &inviter.InviterID,
+			DirectContributorID:    &inviter.InviteeID,
 			GoodID:                 &goodID,
 			OrderID:                &orderID,
 			SelfOrder:              &selfOrder,
@@ -176,6 +176,27 @@ func Accounting(
 			Commission:             &comm.Amount,
 		})
 	}
+
+	comm, ok := commMap[userID]
+	if ok {
+		selfOrder := true
+
+		details = append(details, &detailmgrpb.DetailReq{
+			AppID:                  &appID,
+			UserID:                 &userID,
+			GoodID:                 &goodID,
+			OrderID:                &orderID,
+			SelfOrder:              &selfOrder,
+			PaymentID:              &paymentID,
+			CoinTypeID:             &coinTypeID,
+			PaymentCoinUSDCurrency: &currency,
+			Units:                  &units,
+			Amount:                 &amount,
+			USDAmount:              &usdAmount,
+			Commission:             &comm.Amount,
+		})
+	}
+
 	if len(details) > 0 {
 		err = archivement1.BookKeepingV2(ctx, details)
 		if err != nil {
