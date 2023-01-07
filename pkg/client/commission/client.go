@@ -7,6 +7,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
@@ -64,10 +65,11 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 	return info.(*npool.Commission), nil
 }
 
-func GetCommission(ctx context.Context, id string) (*npool.Commission, error) {
+func GetCommission(ctx context.Context, id string, settleType mgrpb.SettleType) (*npool.Commission, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCommission(ctx, &npool.GetCommissionRequest{
-			ID: id,
+			ID:         id,
+			SettleType: settleType,
 		})
 		if err != nil {
 			return nil, err
