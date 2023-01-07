@@ -86,3 +86,18 @@ func (s *Server) GetCommissionOnly(ctx context.Context, in *npool.GetCommissionO
 		Info: info,
 	}, nil
 }
+
+func (s *Server) GetCommission(ctx context.Context, in *npool.GetCommissionRequest) (*npool.GetCommissionResponse, error) {
+	if _, err := uuid.Parse(in.GetID()); err != nil {
+		return &npool.GetCommissionResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := commission1.GetCommission(ctx, in.GetID(), in.GetSettleType())
+	if err != nil {
+		return &npool.GetCommissionResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetCommissionResponse{
+		Info: info,
+	}, nil
+}

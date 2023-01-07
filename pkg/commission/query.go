@@ -35,3 +35,16 @@ func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commissi
 	}
 	return nil, fmt.Errorf("not implemented")
 }
+
+func GetCommission(ctx context.Context, id string, settleType mgrpb.SettleType) (*npool.Commission, error) {
+	switch settleType {
+	case mgrpb.SettleType_GoodOrderPercent:
+		return goodorderpercent.GetGoodOrderPercent(ctx, id)
+	case mgrpb.SettleType_LimitedOrderPercent:
+		fallthrough //nolint
+	case mgrpb.SettleType_AmountThreshold:
+	default:
+		return nil, fmt.Errorf("invalid settle type")
+	}
+	return nil, fmt.Errorf("not implemented")
+}
