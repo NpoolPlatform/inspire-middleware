@@ -42,12 +42,14 @@ func ValidateUpdate(ctx context.Context, in *npool.CommissionReq) error { //noli
 		case mgrpb.SettleType_GoodOrderPercent:
 			fallthrough //nolint
 		case mgrpb.SettleType_LimitedOrderPercent:
-			percent, err := decimal.NewFromString(in.GetPercent())
-			if err != nil {
-				return err
-			}
-			if percent.Cmp(decimal.NewFromInt(100)) >= 0 { //nolint
-				return fmt.Errorf("invalid percent")
+			if in.Percent != nil {
+				percent, err := decimal.NewFromString(in.GetPercent())
+				if err != nil {
+					return err
+				}
+				if percent.Cmp(decimal.NewFromInt(100)) >= 0 { //nolint
+					return fmt.Errorf("invalid percent")
+				}
 			}
 		case mgrpb.SettleType_AmountThreshold:
 			if _, err := decimal.NewFromString(in.GetThreshold()); err != nil {
