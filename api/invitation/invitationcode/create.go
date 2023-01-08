@@ -9,6 +9,9 @@ import (
 
 	ivcode "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/invitationcode"
 
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commonpb "github.com/NpoolPlatform/message/npool"
+
 	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
@@ -41,7 +44,24 @@ func (s *Server) CreateInvitationCode(
 		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := ivcode.CreateInvitationCode(ctx, in.GetInfo())
+	info, err := ivcode.GetInvitationCodeOnly(ctx, &mgrpb.Conds{
+		AppID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: in.GetInfo().GetAppID(),
+		},
+		UserID: &commonpb.StringVal{
+			Op:    cruder.EQ,
+			Value: in.GetInfo().GetUserID(),
+		},
+	})
+	if err != nil {
+		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	if info != nil {
+		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.Internal, "InvitationCode exist")
+	}
+
+	info, err = ivcode.CreateInvitationCode(ctx, in.GetInfo())
 	if err != nil {
 		return &npool.CreateInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
