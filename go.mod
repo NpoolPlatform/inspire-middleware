@@ -7,7 +7,7 @@ require (
 	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
-	github.com/NpoolPlatform/inspire-manager v0.0.0-20230105082813-e8d807b7ec2c
+	github.com/NpoolPlatform/inspire-manager v0.0.0-20230108095052-f9d82af808ed
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
 	github.com/NpoolPlatform/message v0.0.0-20230107074133-b1441a46f060
 	github.com/google/uuid v1.3.0

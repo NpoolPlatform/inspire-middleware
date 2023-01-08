@@ -50,13 +50,20 @@ func CreateGoodOrderPercent(ctx context.Context, in *npool.CommissionReq) (*npoo
 			}
 		}
 
+		startAt := in.StartAt
+		now := uint32(time.Now().Unix())
+
+		if startAt == nil {
+			startAt = &now
+		}
+
 		c, err := crud.CreateSet(tx.GoodOrderPercent.Create(), &gopmgrpb.OrderPercentReq{
 			ID:      in.ID,
 			AppID:   in.AppID,
 			UserID:  in.UserID,
 			GoodID:  in.GoodID,
 			Percent: in.Percent,
-			StartAt: in.StartAt,
+			StartAt: startAt,
 		})
 		if err != nil {
 			return err
