@@ -65,8 +65,15 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		}
 	}
 
-	value := decimal.NewFromInt(0)
-	circulation := decimal.NewFromInt(0)
+	value, err := decimal.NewFromString(coup.Value)
+	if err != nil {
+		return err
+	}
+
+	circulation, err := decimal.NewFromString(coup.Circulation)
+	if err != nil {
+		return err
+	}
 
 	if info.Value != nil {
 		value, err = decimal.NewFromString(info.GetValue())
@@ -92,7 +99,7 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 	case allocatedmgrpb.CouponType_GoodFixAmount:
 		fallthrough //nolint
 	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-		if info.Value != nil {
+		if info.Value != nil || info.Circulation != nil {
 			if circulation.Cmp(value) < 0 {
 				return fmt.Errorf("value overflow")
 			}
@@ -115,7 +122,7 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 	default:
 	}
 
-	if info.GetDurationDays() <= 0 {
+	if info.DurationDays != nil && info.GetDurationDays() <= 0 {
 		return fmt.Errorf("invalid durationdays")
 	}
 
