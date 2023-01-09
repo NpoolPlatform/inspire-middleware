@@ -50,13 +50,9 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
-	confirmed := true
 	disabled := true
 
-	req.Confirmed = &confirmed
 	req.Disabled = &disabled
-
-	ret.Confirmed = confirmed
 	ret.Disabled = disabled
 
 	info, err := UpdateInvitationCode(context.Background(), req)
