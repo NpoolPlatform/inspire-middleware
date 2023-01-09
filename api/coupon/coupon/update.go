@@ -126,10 +126,10 @@ func ValidateUpdate(ctx context.Context, info *npool.CouponReq) error { //nolint
 		return fmt.Errorf("invalid durationdays")
 	}
 
-	if info.GetMessage() == "" {
+	if info.Message != nil && info.GetMessage() == "" {
 		return fmt.Errorf("invalid message")
 	}
-	if info.GetName() == "" && info.GetCouponType() != allocatedmgrpb.CouponType_SpecialOffer {
+	if info.Name != nil && info.GetName() == "" && info.GetCouponType() != allocatedmgrpb.CouponType_SpecialOffer {
 		return fmt.Errorf("invalid name")
 	}
 
