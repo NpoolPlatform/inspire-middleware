@@ -38,11 +38,13 @@ func specialOffer2Coupon(info *specialoffermgrpb.SpecialOffer) *npool.Coupon {
 		CouponType:       allocatedmgrpb.CouponType_SpecialOffer,
 		AppID:            info.AppID,
 		Value:            info.Amount,
+		Circulation:      info.Amount,
 		ReleasedByUserID: info.ReleasedByUserID,
 		StartAt:          info.StartAt,
 		DurationDays:     info.DurationDays,
 		Message:          info.Message,
 		UserID:           &info.UserID,
+		Allocated:        info.Amount,
 		CreatedAt:        info.CreatedAt,
 		UpdatedAt:        info.UpdatedAt,
 	}
