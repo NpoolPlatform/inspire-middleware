@@ -30,49 +30,53 @@ func init() {
 }
 
 var userID = uuid.NewString()
-var specialOffer = &npool.Coupon{
+var sret = &npool.Coupon{
 	ID:               uuid.NewString(),
 	CouponType:       allocatedmgrpb.CouponType_SpecialOffer,
 	AppID:            uuid.NewString(),
 	Value:            "10.01",
+	Circulation:      "10.01",
 	ReleasedByUserID: uuid.NewString(),
 	StartAt:          uint32(time.Now().Unix()),
 	DurationDays:     30,
 	Message:          "Test coupon message",
 	UserID:           &userID,
+	Allocated:        "10.01",
 }
 
-var specialOfferReq = &npool.CouponReq{
-	ID:               &specialOffer.ID,
-	CouponType:       &specialOffer.CouponType,
-	AppID:            &specialOffer.AppID,
-	Value:            &specialOffer.Value,
-	ReleasedByUserID: &specialOffer.ReleasedByUserID,
-	StartAt:          &specialOffer.StartAt,
-	DurationDays:     &specialOffer.DurationDays,
-	Message:          &specialOffer.Message,
-	UserID:           specialOffer.UserID,
+var sreq = &npool.CouponReq{
+	ID:               &sret.ID,
+	CouponType:       &sret.CouponType,
+	AppID:            &sret.AppID,
+	Value:            &sret.Value,
+	ReleasedByUserID: &sret.ReleasedByUserID,
+	StartAt:          &sret.StartAt,
+	DurationDays:     &sret.DurationDays,
+	Message:          &sret.Message,
+	UserID:           sret.UserID,
 }
 
 func createSpecialOffer(t *testing.T) {
-	info, err := CreateCoupon(context.Background(), specialOfferReq)
+	info, err := CreateCoupon(context.Background(), sreq)
 	if assert.Nil(t, err) {
-		specialOffer.CreatedAt = info.CreatedAt
-		specialOffer.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, specialOffer, info)
+		sret.CreatedAt = info.CreatedAt
+		sret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, sret, info)
 	}
 }
 
 func updateSpecialOffer(t *testing.T) {
 	value := "10.02"
 
-	specialOfferReq.Value = &value
-	specialOffer.Value = value
+	sreq.Value = &value
+	sret.Value = value
+	sret.Circulation = value
+	sret.Allocated = value
 
-	info, err := UpdateCoupon(context.Background(), specialOfferReq)
+	info, err := UpdateCoupon(context.Background(), sreq)
 	if assert.Nil(t, err) {
-		specialOffer.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, specialOffer, info)
+		sret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, sret, info)
 	}
 }
 
@@ -84,12 +88,12 @@ func getSpecialOffer(t *testing.T) {
 		},
 		AppID: &commonpb.StringVal{
 			Op:    cruder.EQ,
-			Value: specialOffer.AppID,
+			Value: sret.AppID,
 		},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(1))
-		assert.Equal(t, specialOffer, infos[0])
+		assert.Equal(t, sret, infos[0])
 	}
 }
 

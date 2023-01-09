@@ -44,12 +44,14 @@ var retSpecialOffer = &npool.Coupon{
 	CouponType:       allocatedmgrpb.CouponType_SpecialOffer,
 	AppID:            uuid.NewString(),
 	Value:            "10.01",
+	Circulation:      "10.01",
 	ReleasedByUserID: uuid.NewString(),
 	StartAt:          uint32(time.Now().Unix()),
 	DurationDays:     30,
 	Message:          "Test coupon message",
 	Name:             "Test coupon name",
 	UserID:           &userID,
+	Allocated:        "10.01",
 }
 
 var reqSpecialOffer = &npool.CouponReq{
@@ -79,12 +81,11 @@ func updateSpecialOffer(t *testing.T) {
 	value := "10.02"
 
 	reqSpecialOffer.Value = &value
-
 	retSpecialOffer.Value = value
+	retSpecialOffer.Circulation = value
+	retSpecialOffer.Allocated = value
 
 	info, err := UpdateCoupon(context.Background(), reqSpecialOffer)
-	fmt.Println("*****************err")
-	fmt.Println(err)
 	if assert.Nil(t, err) {
 		retSpecialOffer.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, retSpecialOffer, info)
