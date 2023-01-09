@@ -87,14 +87,8 @@ func create(t *testing.T) {
 	assert.Nil(t, err)
 
 	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
-		AppID:  &ret1.AppID,
-		UserID: &ret1.InviterID,
-	})
-	assert.Nil(t, err)
-
-	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
-		AppID:  &ret2.AppID,
-		UserID: &ret2.InviterID,
+		AppID:  &ret.AppID,
+		UserID: &ret.InviteeID,
 	})
 	assert.Nil(t, err)
 
