@@ -52,6 +52,10 @@ func GetGoodOrderPercentOnly(ctx context.Context, conds *npool.Conds) (*npool.Co
 }
 
 func gop2Comm(info *gopmgrpb.OrderPercent) *npool.Commission {
+	if info == nil {
+		return nil
+	}
+
 	return &npool.Commission{
 		ID:             info.ID,
 		AppID:          info.AppID,
