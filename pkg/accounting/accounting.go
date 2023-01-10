@@ -19,6 +19,8 @@ import (
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
+
+	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
 )
 
 //nolint
@@ -77,11 +79,23 @@ func Accounting(
 		}
 	}
 
+	if len(inviters) == 0 {
+		_inviters = append(_inviters, &regmgrpb.Registration{
+			AppID:     appID,
+			InviterID: uuid1.InvalidUUIDStr,
+			InviteeID: userID,
+		})
+	}
+
 	if len(_inviters) == 0 {
 		return nil, fmt.Errorf("invalid top inviter")
 	}
 
 	for {
+		if len(inviters) == 0 {
+			break
+		}
+
 		if len(inviters) == 1 {
 			if _inviters[len(_inviters)-1].InviteeID != inviters[0].InviterID {
 				return nil, fmt.Errorf("mismatch registration")
@@ -99,9 +113,12 @@ func Accounting(
 		}
 	}
 
-	inviterIDs := []string{_inviters[0].InviterID}
-	for _, inviter := range _inviters {
-		inviterIDs = append(inviterIDs, inviter.InviteeID)
+	inviterIDs := []string{userID}
+	if len(inviters) > 0 {
+		inviterIDs = []string{_inviters[0].InviterID}
+		for _, inviter := range _inviters {
+			inviterIDs = append(inviterIDs, inviter.InviteeID)
+		}
 	}
 
 	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{

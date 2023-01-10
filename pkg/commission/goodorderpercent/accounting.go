@@ -8,6 +8,8 @@ import (
 	accmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
+	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
+
 	"github.com/shopspring/decimal"
 )
 
@@ -28,6 +30,10 @@ func Accounting(
 	_comms := []*accmwpb.Commission{}
 
 	for _, inviter := range inviters {
+		if inviter.InviterID == uuid1.InvalidUUIDStr {
+			break
+		}
+
 		percent1 := decimal.NewFromInt(0)
 		percent2 := decimal.NewFromInt(0)
 
