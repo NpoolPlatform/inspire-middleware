@@ -59,6 +59,10 @@ func Accounting(
 			return nil, fmt.Errorf("invalid commission")
 		}
 
+		if percent2.Cmp(percent1) == 0 {
+			continue
+		}
+
 		_comms = append(_comms, &accmwpb.Commission{
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
