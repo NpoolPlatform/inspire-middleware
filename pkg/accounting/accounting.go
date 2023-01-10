@@ -69,7 +69,9 @@ func Accounting(
 		inviteeMap[inviter.InviteeID] = struct{}{}
 	}
 
+	inviterCount := len(inviters)
 	_inviters := []*regmgrpb.Registration{}
+
 	for i, inviter := range inviters {
 		_, ok := inviteeMap[inviter.InviterID]
 		if !ok {
@@ -79,7 +81,7 @@ func Accounting(
 		}
 	}
 
-	if len(inviters) == 0 {
+	if inviterCount == 0 {
 		_inviters = append(_inviters, &regmgrpb.Registration{
 			AppID:     appID,
 			InviterID: uuid1.InvalidUUIDStr,
@@ -92,7 +94,7 @@ func Accounting(
 	}
 
 	for {
-		if len(inviters) == 0 {
+		if inviterCount == 0 || len(inviters) == 0 {
 			break
 		}
 
@@ -114,7 +116,7 @@ func Accounting(
 	}
 
 	inviterIDs := []string{userID}
-	if len(inviters) > 0 {
+	if inviterCount > 0 {
 		inviterIDs = []string{_inviters[0].InviterID}
 		for _, inviter := range _inviters {
 			inviterIDs = append(inviterIDs, inviter.InviteeID)
