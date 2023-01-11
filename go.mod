@@ -3,21 +3,21 @@ module github.com/NpoolPlatform/inspire-middleware
 go 1.17
 
 require (
-	entgo.io/ent v0.11.2
+	bou.ke/monkey v1.0.2
+	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
-	github.com/NpoolPlatform/cloud-hashing-inspire v0.0.0-20220731100543-621262acb09b
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20220818105452-9457611ae070
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20220621110548-8f3f8049ecc5
-	github.com/NpoolPlatform/message v0.0.0-20220819134247-1dc75c85fe43
-	github.com/go-resty/resty/v2 v2.7.0
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
+	github.com/NpoolPlatform/inspire-manager v0.0.0-20230111060352-abcf8121824b
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
+	github.com/NpoolPlatform/message v0.0.0-20230110162534-83df43757858
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/shopspring/decimal v1.3.1
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.0
 	github.com/urfave/cli/v2 v2.4.0
 	go.opentelemetry.io/otel v1.8.0
 	go.opentelemetry.io/otel/trace v1.8.0
-	google.golang.org/grpc v1.48.0
+	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -34,6 +34,7 @@ require (
 	github.com/coocood/freecache v1.0.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-chassis/go-archaius v1.5.3 // indirect
@@ -41,6 +42,8 @@ require (
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
+	github.com/go-redis/redis/v8 v8.11.4 // indirect
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
@@ -55,7 +58,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.10.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/hashicorp/serf v0.9.7 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
@@ -90,13 +93,17 @@ require (
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
 	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220411194840-2f41105eb62f // indirect
 	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace google.golang.org/grpc => github.com/grpc/grpc-go v1.41.0
+
+replace entgo.io/ent => entgo.io/ent v0.11.2
+
+replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
