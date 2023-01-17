@@ -5,7 +5,7 @@ go 1.17
 require (
 	bou.ke/monkey v1.0.2
 	entgo.io/ent v0.11.3
-	github.com/NpoolPlatform/api-manager v0.0.0-20220826022307-d72866fe3ec0
+	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
 	github.com/NpoolPlatform/inspire-manager v0.0.0-20230117123047-6c63abc55a12
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
@@ -107,3 +107,5 @@ replace google.golang.org/grpc => github.com/grpc/grpc-go v1.41.0
 replace entgo.io/ent => entgo.io/ent v0.11.2
 
 replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
+
+replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
