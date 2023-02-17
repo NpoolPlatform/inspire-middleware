@@ -29,7 +29,7 @@ func Accounting(
 	appID, userID, goodID, orderID string,
 	paymentID, coinTypeID, paymentCoinTypeID string,
 	paymentCoinUSDCurrency decimal.Decimal,
-	units uint32,
+	units string,
 	settleType commmgrpb.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,

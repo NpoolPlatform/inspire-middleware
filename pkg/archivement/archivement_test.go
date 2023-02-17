@@ -43,7 +43,7 @@ var ret = &detailmgrpb.Detail{
 	CoinTypeID:             uuid.NewString(),
 	PaymentCoinTypeID:      uuid.NewString(),
 	PaymentCoinUSDCurrency: "10.101",
-	Units:                  10,
+	Units:                  "10",
 	Amount:                 "10000",
 	USDAmount:              "20000",
 	Commission:             "300",
@@ -172,8 +172,8 @@ func expropriate(t *testing.T) {
 		assert.Equal(t, g.GoodID, ret.GoodID)
 		assert.Equal(t, g.CoinTypeID, ret.CoinTypeID)
 		assert.Equal(t, g.AppID, ret.AppID)
-		assert.Equal(t, g.TotalUnits, uint32(0))
-		assert.Equal(t, g.SelfUnits, uint32(0))
+		assert.Equal(t, g.TotalUnits, "0")
+		assert.Equal(t, g.SelfUnits, "0")
 		assert.Equal(t, g.TotalAmount, "0")
 		assert.Equal(t, g.SelfAmount, "0")
 		assert.Equal(t, g.TotalCommission, "0")

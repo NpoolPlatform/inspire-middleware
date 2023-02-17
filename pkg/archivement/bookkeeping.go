@@ -158,12 +158,12 @@ func BookKeeping(ctx context.Context, in *detailmgrpb.DetailReq) error { //nolin
 			return err
 		}
 
-		selfUnits := uint32(0)
+		selfUnits := decimal.NewFromInt(0).String()
 		selfAmount := decimal.NewFromInt(0).String()
 		selfCommission := decimal.NewFromInt(0).String()
 
 		if in.GetSelfOrder() {
-			selfUnits += *in.Units
+			selfUnits = in.GetUnits()
 			selfAmount = in.GetUSDAmount()
 			selfCommission = in.GetCommission()
 		}
@@ -250,12 +250,12 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 					return err
 				}
 
-				selfUnits := uint32(0)
+				selfUnits := decimal.NewFromInt(0).String()
 				selfAmount := decimal.NewFromInt(0).String()
 				selfCommission := decimal.NewFromInt(0).String()
 
 				if info.GetSelfOrder() {
-					selfUnits += info.GetUnits()
+					selfUnits = info.GetUnits()
 					selfAmount = info.GetUSDAmount()
 					selfCommission = info.GetCommission()
 				}

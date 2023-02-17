@@ -279,7 +279,7 @@ func accounting(t *testing.T) {
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
 	paymentCoinUSDCurrency := decimal.RequireFromString("12.345")
-	units := uint32(10)
+	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000)
 	goodValue := decimal.NewFromInt(3000)
 	settleType := commmgrpb.SettleType_GoodOrderPercent
