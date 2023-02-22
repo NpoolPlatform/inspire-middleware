@@ -25,6 +25,8 @@ func ValidateUpdate(ctx context.Context, in *npool.CommissionReq) error { //noli
 	if in.SettleType != nil {
 		switch in.GetSettleType() {
 		case mgrpb.SettleType_GoodOrderPercent:
+			fallthrough //nolint
+		case mgrpb.SettleType_GoodOrderValuePercent:
 			if in.GoodID != nil {
 				if _, err := uuid.Parse(in.GetGoodID()); err != nil {
 					return err
@@ -40,6 +42,7 @@ func ValidateUpdate(ctx context.Context, in *npool.CommissionReq) error { //noli
 
 		switch in.GetSettleType() {
 		case mgrpb.SettleType_GoodOrderPercent:
+		case mgrpb.SettleType_GoodOrderValuePercent:
 			fallthrough //nolint
 		case mgrpb.SettleType_LimitedOrderPercent:
 			if in.Percent != nil {

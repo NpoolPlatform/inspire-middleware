@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodordervaluepercent"
+
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 	accmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
@@ -28,6 +30,8 @@ func Accounting(
 	switch settleType {
 	case mgrpb.SettleType_GoodOrderPercent:
 		return goodorderpercent.Accounting(ctx, inviters, comms, paymentAmount)
+	case mgrpb.SettleType_GoodOrderValuePercent:
+		return goodordervaluepercent.Accounting(ctx, inviters, comms, goodValue)
 	case mgrpb.SettleType_LimitedOrderPercent:
 		fallthrough //nolint
 	case mgrpb.SettleType_AmountThreshold:

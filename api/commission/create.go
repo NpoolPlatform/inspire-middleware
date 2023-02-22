@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//nolint:gocyclo
 func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error {
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
@@ -31,6 +32,8 @@ func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error {
 	}
 
 	switch in.GetSettleType() {
+	case mgrpb.SettleType_GoodOrderValuePercent:
+		fallthrough //nolint
 	case mgrpb.SettleType_GoodOrderPercent:
 		if _, err := uuid.Parse(in.GetGoodID()); err != nil {
 			return err
@@ -45,6 +48,8 @@ func ValidateCreate(ctx context.Context, in *npool.CommissionReq) error {
 
 	switch in.GetSettleType() {
 	case mgrpb.SettleType_GoodOrderPercent:
+		fallthrough //nolint
+	case mgrpb.SettleType_GoodOrderValuePercent:
 		fallthrough //nolint
 	case mgrpb.SettleType_LimitedOrderPercent:
 		percent, err := decimal.NewFromString(in.GetPercent())

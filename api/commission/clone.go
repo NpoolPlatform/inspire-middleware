@@ -3,6 +3,8 @@ package commission
 import (
 	"context"
 
+	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	comm1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
@@ -24,7 +26,19 @@ func (s *Server) CloneCommissions(ctx context.Context, in *npool.CloneCommission
 		return &npool.CloneCommissionsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	err := comm1.CloneCommissions(ctx, in.GetAppID(), in.GetFromGoodID(), in.GetToGoodID())
+	switch in.GetSettleType() {
+	case mgrpb.SettleType_GoodOrderPercent:
+	case mgrpb.SettleType_GoodOrderValuePercent:
+	default:
+		return &npool.CloneCommissionsResponse{}, status.Error(codes.InvalidArgument, "SettleType is invalid")
+	}
+	err := comm1.CloneCommissions(
+		ctx,
+		in.GetAppID(),
+		in.GetFromGoodID(),
+		in.GetToGoodID(),
+		in.GetSettleType(),
+	)
 	if err != nil {
 		return &npool.CloneCommissionsResponse{}, status.Error(codes.Internal, err.Error())
 	}

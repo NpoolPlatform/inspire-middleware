@@ -1,14 +1,13 @@
-package goodorderpercent
+package goodordervaluepercent
 
 import (
 	"context"
-
-	percent1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission/percent"
 
 	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 	accmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
+	percent1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission/percent"
 	"github.com/shopspring/decimal"
 )
 
