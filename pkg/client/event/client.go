@@ -11,6 +11,8 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
+
+	"github.com/shopspring/decimal"
 )
 
 var timeout = 10 * time.Second
@@ -34,7 +36,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func GetEventOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Event, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetEventOnly(ctx, &npool.GetEventOnlyRequest{
 			Conds: conds,
 		})
@@ -47,5 +49,20 @@ func GetEventOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Event, error)
 	if err != nil {
 		return nil, err
 	}
-	return infos.(*mgrpb.Event), nil
+	return info.(*mgrpb.Event), nil
+}
+
+func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) (decimal.Decimal, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.RewardEvent(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp.Info, nil
+	})
+	if err != nil {
+		return decimal.Decimal{}, err
+	}
+	return decimal.RequireFromString(info.(string)), nil
 }
