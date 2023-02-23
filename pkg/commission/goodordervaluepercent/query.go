@@ -62,7 +62,7 @@ func gop2Comm(info *gopmgrpb.OrderValuePercent) *npool.Commission {
 		UserID:         info.UserID,
 		GoodID:         &info.GoodID,
 		SettleType:     commmgrpb.SettleType_GoodOrderValuePercent,
-		SettleMode:     commmgrpb.SettleMode_SettleWithPaymentAmount,
+		SettleMode:     commmgrpb.SettleMode_SettleWithGoodValue,
 		SettleInterval: commmgrpb.SettleInterval_SettleEveryOrder,
 		Percent:        &info.Percent,
 		StartAt:        info.StartAt,
