@@ -33,6 +33,7 @@ func Accounting(
 	settleType commmgrpb.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
+	hasCommission bool,
 ) (
 	[]*npool.Commission,
 	error,
@@ -201,7 +202,7 @@ func Accounting(
 	commission := decimal.NewFromInt(0).String()
 	selfOrder := true
 	comm, ok := commMap[userID]
-	if ok {
+	if ok && hasCommission {
 		commission = comm.Amount
 	}
 
