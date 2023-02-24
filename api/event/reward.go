@@ -62,7 +62,7 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 		return &npool.RewardEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := event1.RewardEvent(
+	infos, err := event1.RewardEvent(
 		ctx,
 		in.GetAppID(),
 		in.GetUserID(),
@@ -77,6 +77,6 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 	}
 
 	return &npool.RewardEventResponse{
-		Info: info.String(),
+		Infos: infos,
 	}, nil
 }

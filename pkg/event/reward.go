@@ -9,6 +9,8 @@ import (
 	affiliate "github.com/NpoolPlatform/inspire-middleware/pkg/event/affiliate"
 	self "github.com/NpoolPlatform/inspire-middleware/pkg/event/self"
 
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+
 	"github.com/shopspring/decimal"
 )
 
@@ -19,12 +21,12 @@ func RewardEvent(
 	goodID *string,
 	consecutive uint32,
 	amount decimal.Decimal,
-) (decimal.Decimal, error) {
+) ([]*npool.Credit, error) {
 	switch eventType {
 	case basetypes.UsedFor_Purchase:
 		return self.RewardEvent(ctx, appID, userID, eventType, goodID, consecutive, amount)
 	case basetypes.UsedFor_AffiliatePurchase:
-		return affiliate.RewardEvent(ctx, appID, userID, eventType, goodID, consecutive, amount)
+		return affiliate.RewardEvent(ctx, appID, userID, eventType, amount)
 	}
-	return decimal.Decimal{}, fmt.Errorf("NOT IMPLEMENTED")
+	return []*npool.Credit{}, fmt.Errorf("NOT IMPLEMENTED")
 }
