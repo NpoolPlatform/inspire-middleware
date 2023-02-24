@@ -52,14 +52,16 @@ func RewardEvent(
 
 	credits := []*npool.Credit{}
 
-	for i := uint32(0); i < info.InviterLayers; i++ {
-		inviterID := inviterIDs[len(inviterIDs)-1-int(i)]
-		credit, err := self.RewardEvent(ctx, appID, inviterID, eventType, nil, 0, amount)
+	i := uint32(0)
+	j := len(inviterIDs) - 2
+	for ; i < info.InviterLayers && j >= 0; i++ {
+		credit, err := self.RewardEvent(ctx, appID, inviterIDs[j], eventType, nil, 0, amount)
 		if err != nil {
 			return nil, err
 		}
 
 		credits = append(credits, credit...)
+		j--
 	}
 
 	return credits, fmt.Errorf("NOT IMPLEMENTED")
