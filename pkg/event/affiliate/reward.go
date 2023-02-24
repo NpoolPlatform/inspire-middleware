@@ -60,8 +60,12 @@ func RewardEvent(
 			return nil, err
 		}
 
-		credits = append(credits, credit...)
 		j--
+		if len(credit) == 0 {
+			continue
+		}
+
+		credits = append(credits, credit...)
 	}
 
 	return credits, fmt.Errorf("NOT IMPLEMENTED")

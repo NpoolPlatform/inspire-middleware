@@ -88,6 +88,10 @@ func RewardEvent(
 		}
 	}
 
+	if credits.Cmp(decimal.NewFromInt(0)) <= 0 {
+		return nil, nil
+	}
+
 	return []*npool.Credit{
 		{
 			AppID:   appID,
