@@ -257,6 +257,7 @@ func accounting(t *testing.T) {
 		settleType,
 		paymentAmount,
 		goodValue,
+		true,
 	)
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(comms), 6)
