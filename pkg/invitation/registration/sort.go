@@ -12,9 +12,9 @@ import (
 	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
 )
 
-func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registration, []string, error) {
+func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registration, []string, error) { //nolint
 	offset := int32(0)
-	limit := int32(100)
+	const limit = int32(100)
 
 	inviters := []*regmgrpb.Registration{}
 	for {

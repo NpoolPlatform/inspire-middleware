@@ -17,6 +17,8 @@ import (
 	allocated "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated"
 	allocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+
 	"github.com/shopspring/decimal"
 )
 
@@ -27,7 +29,7 @@ func RewardEvent(
 	goodID *string,
 	consecutive uint32,
 	amount decimal.Decimal,
-) (decimal.Decimal, error) {
+) ([]*npool.Credit, error) {
 	conds := &mgrpb.Conds{
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: appID},
 		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(eventType)},
@@ -38,24 +40,24 @@ func RewardEvent(
 
 	info, err := mgrcli.GetEventOnly(ctx, conds)
 	if err != nil {
-		return decimal.Decimal{}, err
+		return nil, err
 	}
 	if info == nil {
-		return decimal.Decimal{}, fmt.Errorf("event is invalid")
+		return nil, fmt.Errorf("event is invalid")
 	}
 
 	if consecutive > info.MaxConsecutive {
-		return decimal.Decimal{}, nil
+		return nil, nil
 	}
 
 	credits, err := decimal.NewFromString(info.Credits)
 	if err != nil {
-		return decimal.Decimal{}, err
+		return nil, err
 	}
 
 	_credits, err := decimal.NewFromString(info.CreditsPerUSD)
 	if err != nil {
-		return decimal.Decimal{}, err
+		return nil, err
 	}
 
 	credits = credits.Add(_credits.Mul(amount))
@@ -65,10 +67,10 @@ func RewardEvent(
 	for _, coup := range info.Coupons {
 		_coupon, err := coupon.GetCoupon(ctx, coup.ID, coup.CouponType)
 		if err != nil {
-			return decimal.Decimal{}, err
+			return nil, err
 		}
 		if _coupon == nil {
-			return decimal.Decimal{}, fmt.Errorf("coupon is invalid")
+			return nil, fmt.Errorf("coupon is invalid")
 		}
 
 		coups = append(coups, _coupon)
@@ -82,9 +84,15 @@ func RewardEvent(
 			CouponType: &coup.CouponType,
 		})
 		if err != nil {
-			return decimal.Decimal{}, err
+			return nil, err
 		}
 	}
 
-	return credits, nil
+	return []*npool.Credit{
+		{
+			AppID:   appID,
+			UserID:  userID,
+			Credits: credits.String(),
+		},
+	}, nil
 }
