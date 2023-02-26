@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//nolint:gocyclo
 func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*npool.AccountingResponse, error) {
 	if _, err := uuid.Parse(in.GetAppID()); err != nil {
 		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -43,7 +44,11 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 	if paymentCoinUSDCurrency.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, "PaymentCoinUSDCurrency <= 0")
 	}
-	if in.GetUnits() == 0 {
+	untis, err := decimal.NewFromString(in.GetUnits())
+	if err != nil {
+		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, "Units == 0")
+	}
+	if untis.Cmp(decimal.NewFromInt(0)) == 0 {
 		return &npool.AccountingResponse{}, status.Error(codes.InvalidArgument, "Units == 0")
 	}
 
@@ -73,6 +78,7 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 		in.GetSettleType(),
 		paymentAmount,
 		goodValue,
+		in.GetHasCommission(),
 	)
 	if err != nil {
 		return &npool.AccountingResponse{}, status.Error(codes.Internal, err.Error())

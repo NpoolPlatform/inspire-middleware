@@ -72,11 +72,11 @@ func Expropriate(ctx context.Context, orderID string) error {
 				return err
 			}
 
-			units := -val.Units
+			units := val.UnitsV1.Neg().String()
 			usdAmount := val.UsdAmount.Neg().String()
 			commission := val.Commission.Neg().String()
 
-			selfUnits := uint32(0)
+			selfUnits := decimal.NewFromInt(0).String()
 			selfAmount := decimal.NewFromInt(0).String()
 			selfCommission := decimal.NewFromInt(0).String()
 
