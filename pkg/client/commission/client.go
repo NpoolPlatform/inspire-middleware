@@ -121,12 +121,13 @@ func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commissi
 	return info.(*npool.Commission), nil
 }
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID string) error {
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, value string) error {
 	_, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		_, err := cli.CloneCommissions(ctx, &npool.CloneCommissionsRequest{
 			AppID:      appID,
 			FromGoodID: fromGoodID,
 			ToGoodID:   toGoodID,
+			Value:      value,
 		})
 		if err != nil {
 			return nil, err
