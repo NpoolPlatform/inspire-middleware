@@ -15,6 +15,7 @@ func GetFixAmounts(ctx context.Context, conds *npool.Conds, offset, limit int32)
 	infos, total, err := fixamountmgrcli.GetFixAmounts(ctx, &fixamountmgrpb.Conds{
 		ID:    conds.ID,
 		AppID: conds.AppID,
+		IDs:   conds.IDs,
 	}, offset, limit)
 	if err != nil {
 		return nil, 0, err
