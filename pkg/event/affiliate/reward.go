@@ -53,7 +53,7 @@ func RewardEvent(
 	credits := []*npool.Credit{}
 
 	i := uint32(0)
-	j := len(inviterIDs) - 2
+	j := len(inviterIDs) - 2 //nolint
 	for ; i < info.InviterLayers && j >= 0; i++ {
 		credit, err := self.RewardEvent(ctx, appID, inviterIDs[j], eventType, nil, 0, amount)
 		if err != nil {
