@@ -43,7 +43,7 @@ func RewardEvent(
 		return nil, err
 	}
 	if info == nil {
-		return nil, fmt.Errorf("event is invalid")
+		return nil, nil
 	}
 
 	if info.InviterLayers == 0 {
