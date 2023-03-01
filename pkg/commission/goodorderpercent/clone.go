@@ -56,7 +56,8 @@ func CloneGoodOrderPercents(ctx context.Context, appID, fromGoodID, toGoodID, va
 			if _gop != nil {
 				continue
 			}
-			if _gop.Percent.Cmp(decimal.NewFromInt(0)) == 0 {
+
+			if gop.Percent.Cmp(decimal.NewFromInt(0)) == 0 {
 				continue
 			}
 
