@@ -14,6 +14,7 @@ func GetSpecialOffers(ctx context.Context, conds *npool.Conds, offset, limit int
 	infos, total, err := specialoffermgrcli.GetSpecialOffers(ctx, &specialoffermgrpb.Conds{
 		ID:    conds.ID,
 		AppID: conds.AppID,
+		IDs:   conds.IDs,
 	}, offset, limit)
 	if err != nil {
 		return nil, 0, err
