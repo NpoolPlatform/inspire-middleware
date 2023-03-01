@@ -2,7 +2,6 @@ package affiliate
 
 import (
 	"context"
-	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
@@ -70,5 +69,5 @@ func RewardEvent(
 		credits = append(credits, credit...)
 	}
 
-	return credits, fmt.Errorf("NOT IMPLEMENTED")
+	return credits, nil
 }
