@@ -26,7 +26,7 @@ func RewardEvent(
 	case basetypes.UsedFor_Purchase:
 		return self.RewardEvent(ctx, appID, userID, eventType, goodID, consecutive, amount)
 	case basetypes.UsedFor_AffiliatePurchase:
-		return affiliate.RewardEvent(ctx, appID, userID, eventType, amount)
+		return affiliate.RewardEvent(ctx, appID, userID, eventType, goodID, amount)
 	}
 	return []*npool.Credit{}, fmt.Errorf("NOT IMPLEMENTED")
 }

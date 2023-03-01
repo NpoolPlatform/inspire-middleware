@@ -34,8 +34,13 @@ func RewardEvent(
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: appID},
 		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(eventType)},
 	}
-	if goodID != nil && eventType == basetypes.UsedFor_Purchase {
-		conds.GoodID = &basetypes.StringVal{Op: cruder.EQ, Value: *goodID}
+	if goodID != nil {
+		switch eventType {
+		case basetypes.UsedFor_Purchase:
+			fallthrough //nolint
+		case basetypes.UsedFor_AffiliatePurchase:
+			conds.GoodID = &basetypes.StringVal{Op: cruder.EQ, Value: *goodID}
+		}
 	}
 
 	info, err := mgrcli.GetEventOnly(ctx, conds)

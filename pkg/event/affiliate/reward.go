@@ -22,6 +22,7 @@ func RewardEvent(
 	ctx context.Context,
 	appID, userID string,
 	eventType basetypes.UsedFor,
+	goodID *string,
 	amount decimal.Decimal,
 ) ([]*npool.Credit, error) {
 	_, inviterIDs, err := registration1.GetInviters(ctx, appID, userID)
@@ -35,6 +36,9 @@ func RewardEvent(
 	conds := &mgrpb.Conds{
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: appID},
 		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(eventType)},
+	}
+	if goodID != nil && eventType == basetypes.UsedFor_AffiliatePurchase {
+		conds.GoodID = &basetypes.StringVal{Op: cruder.EQ, Value: *goodID}
 	}
 
 	info, err := mgrcli.GetEventOnly(ctx, conds)
@@ -56,7 +60,7 @@ func RewardEvent(
 	j := len(inviterIDs) - layerIgnore
 
 	for ; i < info.InviterLayers && j >= 0; i++ {
-		credit, err := self.RewardEvent(ctx, appID, inviterIDs[j], eventType, nil, 0, amount)
+		credit, err := self.RewardEvent(ctx, appID, inviterIDs[j], eventType, goodID, 0, amount)
 		if err != nil {
 			return nil, err
 		}
