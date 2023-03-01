@@ -75,7 +75,7 @@ func Accounting(
 	for _, inviter := range inviters {
 		commission := decimal.NewFromInt(0).String()
 		comm, ok := commMap[inviter.InviterID]
-		if ok {
+		if ok && hasCommission {
 			commission = comm.Amount
 		}
 
