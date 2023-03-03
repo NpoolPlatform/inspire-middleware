@@ -81,11 +81,13 @@ func Accounting(
 		return nil, err
 	}
 
-	_comms = append(_comms, &accmwpb.Commission{
-		AppID:  inviters[len(inviters)-1].AppID,
-		UserID: inviters[len(inviters)-1].InviteeID,
-		Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
-	})
+	if percent.Cmp(decimal.NewFromInt(0)) > 0 {
+		_comms = append(_comms, &accmwpb.Commission{
+			AppID:  inviters[len(inviters)-1].AppID,
+			UserID: inviters[len(inviters)-1].InviteeID,
+			Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
+		})
+	}
 
 	return _comms, nil
 }
