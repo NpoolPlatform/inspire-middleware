@@ -7,9 +7,9 @@ require (
 	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
-	github.com/NpoolPlatform/inspire-manager v0.0.0-20230301024401-bdd6ade24d27
+	github.com/NpoolPlatform/inspire-manager v0.0.0-20230302051245-fe4ac87bf4ef
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230228104105-f383b5dd3ba3
+	github.com/NpoolPlatform/message v0.0.0-20230303022901-03e380988f66
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/shopspring/decimal v1.3.1
