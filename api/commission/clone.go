@@ -24,7 +24,7 @@ func (s *Server) CloneCommissions(ctx context.Context, in *npool.CloneCommission
 		return &npool.CloneCommissionsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	err := comm1.CloneCommissions(ctx, in.GetAppID(), in.GetFromGoodID(), in.GetToGoodID())
+	err := comm1.CloneCommissions(ctx, in.GetAppID(), in.GetFromGoodID(), in.GetToGoodID(), in.GetValue())
 	if err != nil {
 		return &npool.CloneCommissionsResponse{}, status.Error(codes.Internal, err.Error())
 	}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/api/accounting"
 	"github.com/NpoolPlatform/inspire-middleware/api/archivement"
+	"github.com/NpoolPlatform/inspire-middleware/api/archivement/detail"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/coupon"
@@ -32,6 +33,7 @@ func Register(server grpc.ServiceRegistrar) {
 	archivement.Register(server)
 	accounting.Register(server)
 	event.Register(server)
+	detail.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
