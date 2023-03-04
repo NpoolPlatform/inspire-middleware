@@ -56,7 +56,7 @@ func Accounting(
 		}
 
 		if percent2.Cmp(percent1) < 0 {
-			return nil, fmt.Errorf("invalid commission")
+			return nil, fmt.Errorf("%v/%v < %v/%v (%v)", inviter.InviterID, percent2, inviter.InviteeID, percent1, comm1.GetGoodID())
 		}
 
 		if percent2.Cmp(percent1) == 0 {
