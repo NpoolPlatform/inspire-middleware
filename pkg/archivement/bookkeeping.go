@@ -248,6 +248,48 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 						UpdateOneID(d.ID).
 						SetCommission(decimal.RequireFromString(info.GetCommission())).
 						Save(_ctx)
+					if err != nil {
+						return err
+					}
+					g, err := tx.
+						ArchivementGeneral.
+						Query().
+						Where(
+							entarchivementgeneral.AppID(uuid.MustParse(info.GetAppID())),
+							entarchivementgeneral.UserID(uuid.MustParse(info.GetUserID())),
+							entarchivementgeneral.GoodID(uuid.MustParse(info.GetGoodID())),
+							entarchivementgeneral.CoinTypeID(uuid.MustParse(info.GetCoinTypeID())),
+						).
+						ForUpdate().
+						Only(_ctx)
+					if err != nil {
+						return err
+					}
+					if g == nil {
+						return fmt.Errorf("general not exist")
+					}
+
+					selfCommission := decimal.NewFromInt(0).String()
+					if info.GetSelfOrder() {
+						selfCommission = info.GetCommission()
+					}
+
+					c2, err := generalcrud.UpdateSet(g, &generalmgrpb.GeneralReq{
+						AppID:           info.AppID,
+						UserID:          info.UserID,
+						GoodID:          info.GoodID,
+						CoinTypeID:      info.CoinTypeID,
+						TotalCommission: info.Commission,
+						SelfCommission:  &selfCommission,
+					})
+					if err != nil {
+						return err
+					}
+
+					_, err = c2.Save(_ctx)
+					if err != nil {
+						return err
+					}
 					return err
 				}
 
