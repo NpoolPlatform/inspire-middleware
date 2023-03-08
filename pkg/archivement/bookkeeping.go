@@ -237,7 +237,18 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 					}
 				}
 				if d != nil {
-					return nil
+					if d.Commission.Cmp(decimal.NewFromInt(0)) > 0 {
+						return nil
+					}
+					if info.Commission == nil {
+						return nil
+					}
+					_, err := tx.
+						ArchivementDetail.
+						UpdateOneID(d.ID).
+						SetCommission(decimal.RequireFromString(info.GetCommission())).
+						Save(_ctx)
+					return err
 				}
 
 				c1, err := detailcrud.CreateSet(tx.ArchivementDetail.Create(), info)
@@ -245,7 +256,7 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 					return err
 				}
 
-				_, err = c1.Save(ctx)
+				_, err = c1.Save(_ctx)
 				if err != nil {
 					return err
 				}
@@ -270,7 +281,7 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 						entarchivementgeneral.CoinTypeID(uuid.MustParse(info.GetCoinTypeID())),
 					).
 					ForUpdate().
-					Only(ctx)
+					Only(_ctx)
 				if err != nil {
 					if !ent.IsNotFound(err) {
 						return err
@@ -286,7 +297,7 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 							CoinTypeID: info.CoinTypeID,
 						})
 
-					g, err = c2.Save(ctx)
+					g, err = c2.Save(_ctx)
 					if err != nil {
 						return err
 					}
@@ -308,7 +319,7 @@ func BookKeepingV2(ctx context.Context, in []*detailmgrpb.DetailReq) error { //n
 					return err
 				}
 
-				_, err = c2.Save(ctx)
+				_, err = c2.Save(_ctx)
 				if err != nil {
 					return err
 				}
