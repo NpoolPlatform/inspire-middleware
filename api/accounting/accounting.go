@@ -79,6 +79,7 @@ func (s *Server) Accounting(ctx context.Context, in *npool.AccountingRequest) (*
 		paymentAmount,
 		goodValue,
 		in.GetHasCommission(),
+		in.GetOrderCreatedAt(),
 	)
 	if err != nil {
 		return &npool.AccountingResponse{}, status.Error(codes.Internal, err.Error())

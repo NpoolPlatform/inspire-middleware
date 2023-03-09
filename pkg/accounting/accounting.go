@@ -30,6 +30,7 @@ func Accounting(
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
 	hasCommission bool,
+	orderCreatedAt uint32,
 ) (
 	[]*npool.Commission,
 	error,
@@ -45,6 +46,7 @@ func Accounting(
 		GoodID:     &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
 		SettleType: &commonpb.Int32Val{Op: cruder.EQ, Value: int32(settleType)},
 		EndAt:      &commonpb.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+		StartAt:    &commonpb.Uint32Val{Op: cruder.LT, Value: orderCreatedAt},
 	}, int32(0), int32(len(inviterIDs)))
 	if err != nil {
 		return nil, err
