@@ -52,16 +52,19 @@ func Accounting(
 		return nil, err
 	}
 
-	_comms, err := commission1.Accounting(
-		ctx,
-		settleType,
-		inviters,
-		comms,
-		paymentAmount,
-		goodValue,
-	)
-	if err != nil {
-		return nil, err
+	_comms := []*npool.Commission{}
+	if hasCommission {
+		_comms, err = commission1.Accounting(
+			ctx,
+			settleType,
+			inviters,
+			comms,
+			paymentAmount,
+			goodValue,
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	commMap := map[string]*npool.Commission{}
