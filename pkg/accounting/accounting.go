@@ -90,7 +90,7 @@ func Accounting(
 			detailMap[detail.UserID] = detail
 		}
 
-		for _, inviter := range inviterIDs {
+		for i, inviter := range inviterIDs {
 			detail, ok := detailMap[inviter]
 			if !ok {
 				continue
@@ -110,7 +110,9 @@ func Accounting(
 			if decimal.RequireFromString(detail.Commission).Cmp(
 				decimal.RequireFromString(comm.Amount),
 			) == 0 {
-				continue
+				if i == len(inviterIDs)-1 {
+					continue
+				}
 			}
 
 			return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
