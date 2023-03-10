@@ -2,6 +2,7 @@ package accounting
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shopspring/decimal"
 
@@ -38,6 +39,25 @@ func Accounting(
 	inviters, inviterIDs, err := registration1.GetInviters(ctx, appID, userID)
 	if err != nil {
 		return nil, err
+	}
+
+	_details, _, err := archivement1.GetDetails(ctx, &detailmgrpb.Conds{
+		AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: appID},
+		UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
+		GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
+		OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
+	}, 0, int32(len(inviters)))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, inviter := range inviterIDs {
+		for _, detail := range _details {
+			if detail.UserID == inviter &&
+				decimal.RequireFromString(detail.Commission).Cmp(decimal.NewFromInt(0)) > 0 {
+				return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
+			}
+		}
 	}
 
 	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{
