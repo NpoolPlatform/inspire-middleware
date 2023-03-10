@@ -96,21 +96,20 @@ func Accounting(
 				continue
 			}
 
-			if decimal.RequireFromString(detail.Commission).Cmp(
-				decimal.NewFromInt(0),
-			) == 0 {
+			commission := decimal.RequireFromString(detail.Commission)
+
+			if commission.Cmp(decimal.NewFromInt(0)) == 0 {
 				continue
 			}
 
-			commission := decimal.NewFromInt(0)
 			comm, ok := commMap[inviter]
-			if ok {
-				commission = decimal.RequireFromString(comm.Amount)
+			if !ok {
+				continue
 			}
 
-			if decimal.RequireFromString(detail.Commission).Cmp(
-				commission,
-			) == 0 {
+			commission1 := decimal.RequireFromString(comm.Amount)
+
+			if commission1.Cmp(commission) == 0 {
 				continue
 			}
 
