@@ -80,7 +80,7 @@ func Accounting(
 			UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
 			GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
 			OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
-		}, 0, int32(len(inviters)))
+		}, 0, int32(len(inviterIDs)))
 		if err != nil {
 			return nil, err
 		}
