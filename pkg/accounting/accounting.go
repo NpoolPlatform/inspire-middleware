@@ -107,6 +107,12 @@ func Accounting(
 				continue
 			}
 
+			if decimal.RequireFromString(comm.Amount).Cmp(
+				decimal.NewFromInt(0),
+			) == 0 {
+				continue
+			}
+
 			if decimal.RequireFromString(detail.Commission).Cmp(
 				decimal.RequireFromString(comm.Amount),
 			) == 0 {
