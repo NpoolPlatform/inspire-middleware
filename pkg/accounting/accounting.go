@@ -41,25 +41,6 @@ func Accounting(
 		return nil, err
 	}
 
-	_details, _, err := archivement1.GetDetails(ctx, &detailmgrpb.Conds{
-		AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: appID},
-		UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
-		GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
-		OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
-	}, 0, int32(len(inviters)))
-	if err != nil {
-		return nil, err
-	}
-
-	for _, inviter := range inviterIDs {
-		for _, detail := range _details {
-			if detail.UserID == inviter &&
-				decimal.RequireFromString(detail.Commission).Cmp(decimal.NewFromInt(0)) > 0 {
-				return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
-			}
-		}
-	}
-
 	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{
 		AppID:      &commonpb.StringVal{Op: cruder.EQ, Value: appID},
 		UserIDs:    &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
@@ -85,11 +66,55 @@ func Accounting(
 		if err != nil {
 			return nil, err
 		}
+
 	}
 
 	commMap := map[string]*npool.Commission{}
 	for _, comm := range _comms {
 		commMap[comm.UserID] = comm
+	}
+
+	if hasCommission {
+		_details, _, err := archivement1.GetDetails(ctx, &detailmgrpb.Conds{
+			AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: appID},
+			UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
+			GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
+			OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
+		}, 0, int32(len(inviters)))
+		if err != nil {
+			return nil, err
+		}
+
+		detailMap := map[string]*detailmgrpb.Detail{}
+		for _, detail := range _details {
+			detailMap[detail.UserID] = detail
+		}
+
+		for _, inviter := range inviterIDs {
+			detail, ok := detailMap[inviter]
+			if !ok {
+				continue
+			}
+
+			if decimal.RequireFromString(detail.Commission).Cmp(
+				decimal.NewFromInt(0),
+			) == 0 {
+				continue
+			}
+
+			comm, ok := commMap[inviter]
+			if !ok {
+				continue
+			}
+
+			if decimal.RequireFromString(detail.Commission).Cmp(
+				decimal.RequireFromString(comm.Amount),
+			) == 0 {
+				continue
+			}
+
+			return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
+		}
 	}
 
 	currency := paymentCoinUSDCurrency.String()
