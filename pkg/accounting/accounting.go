@@ -102,13 +102,14 @@ func Accounting(
 				continue
 			}
 
+			commission := decimal.NewFromInt(0)
 			comm, ok := commMap[inviter]
-			if !ok {
-				continue
+			if ok {
+				commission = decimal.RequireFromString(comm.Amount)
 			}
 
 			if decimal.RequireFromString(detail.Commission).Cmp(
-				decimal.RequireFromString(comm.Amount),
+				commission,
 			) == 0 {
 				continue
 			}
