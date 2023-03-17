@@ -38,6 +38,7 @@ func (s *Server) CloneCommissions(ctx context.Context, in *npool.CloneCommission
 		in.GetFromGoodID(),
 		in.GetToGoodID(),
 		in.GetSettleType(),
+		in.GetValue(),
 	)
 	if err != nil {
 		return &npool.CloneCommissionsResponse{}, status.Error(codes.Internal, err.Error())

@@ -7,7 +7,6 @@ import (
 	"github.com/shopspring/decimal"
 
 	commmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
-	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
@@ -19,8 +18,6 @@ import (
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
-
-	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
 )
 
 //nolint
@@ -33,132 +30,43 @@ func Accounting(
 	settleType commmgrpb.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
+	hasCommission bool,
+	orderCreatedAt uint32,
 ) (
 	[]*npool.Commission,
 	error,
 ) {
-	offset := int32(0)
-	limit := int32(100)
-
-	inviters := []*regmgrpb.Registration{}
-	for {
-		_inviters, _, err := registration1.GetSuperiores(ctx, &regmgrpb.Conds{
-			AppID: &commonpb.StringVal{
-				Op:    cruder.EQ,
-				Value: appID,
-			},
-			InviteeIDs: &commonpb.StringSliceVal{
-				Op:    cruder.IN,
-				Value: []string{userID},
-			},
-		}, offset, limit)
-		if err != nil {
-			return nil, err
-		}
-		if len(_inviters) == 0 {
-			break
-		}
-
-		inviters = append(inviters, _inviters...)
-
-		offset += limit
-	}
-
-	inviteeMap := map[string]struct{}{}
-	for _, inviter := range inviters {
-		inviteeMap[inviter.InviteeID] = struct{}{}
-	}
-
-	inviterCount := len(inviters)
-	_inviters := []*regmgrpb.Registration{}
-
-	for i, inviter := range inviters {
-		_, ok := inviteeMap[inviter.InviterID]
-		if !ok {
-			_inviters = append(_inviters, inviter)
-			inviters = append(inviters[0:i], inviters[i+1:]...)
-			break
-		}
-	}
-
-	if inviterCount == 0 {
-		_inviters = append(_inviters, &regmgrpb.Registration{
-			AppID:     appID,
-			InviterID: uuid1.InvalidUUIDStr,
-			InviteeID: userID,
-		})
-	}
-
-	if len(_inviters) == 0 {
-		return nil, fmt.Errorf("invalid top inviter")
-	}
-
-	for {
-		if inviterCount == 0 || len(inviters) == 0 {
-			break
-		}
-
-		if len(inviters) == 1 {
-			if _inviters[len(_inviters)-1].InviteeID != inviters[0].InviterID {
-				return nil, fmt.Errorf("mismatch registration")
-			}
-			_inviters = append(_inviters, inviters[0])
-			break
-		}
-
-		for i, inviter := range inviters {
-			if _inviters[len(_inviters)-1].InviteeID == inviter.InviterID {
-				_inviters = append(_inviters, inviter)
-				inviters = append(inviters[0:i], inviters[i+1:]...)
-				break
-			}
-		}
-	}
-
-	inviterIDs := []string{userID}
-	if inviterCount > 0 {
-		inviterIDs = []string{_inviters[0].InviterID}
-		for _, inviter := range _inviters {
-			inviterIDs = append(inviterIDs, inviter.InviteeID)
-		}
+	inviters, inviterIDs, err := registration1.GetInviters(ctx, appID, userID)
+	if err != nil {
+		return nil, err
 	}
 
 	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: appID,
-		},
-		UserIDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: inviterIDs,
-		},
-		GoodID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: goodID,
-		},
-		SettleType: &commonpb.Int32Val{
-			Op:    cruder.EQ,
-			Value: int32(settleType),
-		},
-		EndAt: &commonpb.Uint32Val{
-			Op:    cruder.EQ,
-			Value: uint32(0),
-		},
+		AppID:      &commonpb.StringVal{Op: cruder.EQ, Value: appID},
+		UserIDs:    &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
+		GoodID:     &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
+		SettleType: &commonpb.Int32Val{Op: cruder.EQ, Value: int32(settleType)},
+		EndAt:      &commonpb.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+		StartAt:    &commonpb.Uint32Val{Op: cruder.LT, Value: orderCreatedAt},
 	}, int32(0), int32(len(inviterIDs)))
 	if err != nil {
 		return nil, err
 	}
 
-	_comms, err := commission1.Accounting(
-		ctx,
-		settleType,
-		_inviters,
-		comms,
-		paymentAmount,
-		goodValue,
-	)
-	if err != nil {
-		return nil, err
+	_comms := []*npool.Commission{}
+	if hasCommission {
+		_comms, err = commission1.Accounting(
+			ctx,
+			settleType,
+			inviters,
+			comms,
+			paymentAmount,
+			goodValue,
+		)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	commMap := map[string]*npool.Commission{}
@@ -166,15 +74,58 @@ func Accounting(
 		commMap[comm.UserID] = comm
 	}
 
+	if hasCommission {
+		_details, _, err := archivement1.GetDetails(ctx, &detailmgrpb.Conds{
+			AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: appID},
+			UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
+			GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
+			OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
+		}, 0, int32(len(inviterIDs)))
+		if err != nil {
+			return nil, err
+		}
+
+		detailMap := map[string]*detailmgrpb.Detail{}
+		for _, detail := range _details {
+			detailMap[detail.UserID] = detail
+		}
+
+		for _, inviter := range inviterIDs {
+			detail, ok := detailMap[inviter]
+			if !ok {
+				continue
+			}
+
+			commission := decimal.RequireFromString(detail.Commission)
+
+			if commission.Cmp(decimal.NewFromInt(0)) == 0 {
+				continue
+			}
+
+			comm, ok := commMap[inviter]
+			if !ok {
+				continue
+			}
+
+			commission1 := decimal.RequireFromString(comm.Amount)
+
+			if commission1.Cmp(commission) == 0 {
+				continue
+			}
+
+			return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
+		}
+	}
+
 	currency := paymentCoinUSDCurrency.String()
 	amount := paymentAmount.String()
 	usdAmount := paymentAmount.Mul(paymentCoinUSDCurrency).String()
 
 	details := []*detailmgrpb.DetailReq{}
-	for _, inviter := range _inviters {
+	for _, inviter := range inviters {
 		commission := decimal.NewFromInt(0).String()
 		comm, ok := commMap[inviter.InviterID]
-		if ok {
+		if ok && hasCommission {
 			commission = comm.Amount
 		}
 
@@ -201,7 +152,7 @@ func Accounting(
 	commission := decimal.NewFromInt(0).String()
 	selfOrder := true
 	comm, ok := commMap[userID]
-	if ok {
+	if ok && hasCommission {
 		commission = comm.Amount
 	}
 

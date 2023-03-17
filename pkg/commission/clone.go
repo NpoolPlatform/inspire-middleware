@@ -10,12 +10,12 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodorderpercent"
 )
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID string, settleType mgrpb.SettleType) error {
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID string, settleType mgrpb.SettleType, value string) error {
 	switch settleType {
 	case mgrpb.SettleType_GoodOrderPercent:
-		return goodorderpercent.CloneGoodOrderPercents(ctx, appID, fromGoodID, toGoodID)
+		return goodorderpercent.CloneGoodOrderPercents(ctx, appID, fromGoodID, toGoodID, value)
 	case mgrpb.SettleType_GoodOrderValuePercent:
-		return goodordervaluepercent.CloneGoodOrderValuePercents(ctx, appID, fromGoodID, toGoodID)
+		return goodordervaluepercent.CloneGoodOrderValuePercents(ctx, appID, fromGoodID, toGoodID, value)
 	case mgrpb.SettleType_LimitedOrderPercent:
 	case mgrpb.SettleType_AmountThreshold:
 	default:

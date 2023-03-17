@@ -28,6 +28,7 @@ func GetGoodOrderPercents(ctx context.Context, conds *npool.Conds, offset, limit
 		EndAt:   conds.EndAt,
 		UserIDs: conds.UserIDs,
 		GoodIDs: conds.GoodIDs,
+		StartAt: conds.StartAt,
 	}, offset, limit)
 	if err != nil {
 		return nil, 0, err

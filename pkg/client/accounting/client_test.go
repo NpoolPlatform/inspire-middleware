@@ -299,6 +299,8 @@ func accounting(t *testing.T) {
 			SettleType:             settleType,
 			PaymentAmount:          paymentAmount.String(),
 			GoodValue:              goodValue.String(),
+			HasCommission:          true,
+			OrderCreatedAt:         uint32(time.Now().Unix()),
 		},
 	)
 	if assert.Nil(t, err) {
