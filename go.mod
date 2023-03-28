@@ -6,13 +6,14 @@ require (
 	bou.ke/monkey v1.0.2
 	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20230102062414-c71643aee0bd
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20230328075800-b76a3e4eceba
 	github.com/NpoolPlatform/inspire-manager v0.0.0-20230317063808-11303831d790
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
 	github.com/NpoolPlatform/message v0.0.0-20230316133715-23961236f164
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/shopspring/decimal v1.3.1
+	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.0
 	github.com/urfave/cli/v2 v2.4.0
 	go.opentelemetry.io/otel v1.8.0
@@ -109,3 +110,5 @@ replace entgo.io/ent => entgo.io/ent v0.11.2
 replace ariga.io/atlas => ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e
 
 replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
+
+replace github.com/NpoolPlatform/go-service-framework v0.0.0-20230327065405-91484c9b17ea => ../go-service-framework
