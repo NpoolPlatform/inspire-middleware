@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/NpoolPlatform/inspire-middleware/api"
+	msgcli "github.com/NpoolPlatform/inspire-middleware/pkg/message/client"
+	msglistener "github.com/NpoolPlatform/inspire-middleware/pkg/message/listener"
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 
@@ -40,6 +42,11 @@ var runCmd = &cli.Command{
 				logger.Sugar().Errorf("fail to run grpc server: %v", err)
 			}
 		}()
+		if err := msgcli.Init(); err != nil {
+			return err
+		}
+
+		go msglistener.Listen()
 
 		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
 	},
