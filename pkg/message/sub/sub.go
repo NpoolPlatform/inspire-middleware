@@ -7,18 +7,18 @@ import (
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
 )
 
-type SignMsg struct {
+type SignupMsg struct {
 	AppID     string `json:"app_id"`
 	InviterID string `json:"inviter_id"`
 	InviteeID string `json:"invitee_id"`
 }
 
-func Sign(h func(*SignMsg) error) error {
+func Signup(h func(*SignupMsg) error) error {
 	myClient, err := msgcli.New(constant.ServiceName)
 	if err != nil {
 		return err
 	}
-	err = myClient.DeclareSub(constant.ServiceName, "sign")
+	err = myClient.DeclareSub(constant.ServiceName, "signup")
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func Sign(h func(*SignMsg) error) error {
 		return err
 	}
 	for d := range msgs {
-		msg := SignMsg{}
+		msg := SignupMsg{}
 		err := json.Unmarshal(d.Body, &msg)
 		if err != nil {
 			return fmt.Errorf("parse message example error: %v", err)

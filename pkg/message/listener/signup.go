@@ -6,15 +6,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/message/sub"
 )
 
-func sign() {
+func signup() {
 	for {
-		err := sub.Sign(func(msg *sub.SignMsg) error {
+		err := sub.Signup(func(msg *sub.SignupMsg) error {
 			fmt.Println(msg)
 			// Call event handler in api module
 			return nil
 		})
 		if err != nil {
-			logger.Sugar().Errorf("fail to consume example: %v", err)
+			logger.Sugar().Errorf("fail to consume signup: %v", err)
 			return
 		}
 	}
