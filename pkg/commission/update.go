@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodordervaluepercent"
+
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
@@ -14,6 +16,8 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 	switch in.GetSettleType() {
 	case mgrpb.SettleType_GoodOrderPercent:
 		return goodorderpercent.UpdateGoodOrderPercent(ctx, in)
+	case mgrpb.SettleType_GoodOrderValuePercent:
+		return goodordervaluepercent.UpdateGoodOrderValuePercent(ctx, in)
 	case mgrpb.SettleType_LimitedOrderPercent:
 	case mgrpb.SettleType_AmountThreshold:
 	default:

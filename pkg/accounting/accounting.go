@@ -118,8 +118,8 @@ func Accounting(
 	}
 
 	currency := paymentCoinUSDCurrency.String()
-	amount := paymentAmount.String()
-	usdAmount := paymentAmount.Mul(paymentCoinUSDCurrency).String()
+	amount := goodValue.Div(paymentCoinUSDCurrency).String()
+	usdAmount := goodValue.String()
 
 	details := []*detailmgrpb.DetailReq{}
 	for _, inviter := range inviters {

@@ -40,6 +40,7 @@ func ValidateConds(conds *npool.Conds) error {
 
 	switch mgrpb.SettleType(conds.GetSettleType().GetValue()) {
 	case mgrpb.SettleType_GoodOrderPercent:
+	case mgrpb.SettleType_GoodOrderValuePercent:
 	case mgrpb.SettleType_LimitedOrderPercent:
 		fallthrough //nolint
 	case mgrpb.SettleType_AmountThreshold:

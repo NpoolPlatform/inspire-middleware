@@ -2,13 +2,24 @@ package commission
 
 import (
 	"context"
+	"fmt"
 
-	gop "github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodorderpercent"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodordervaluepercent"
+	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+
+	"github.com/NpoolPlatform/inspire-middleware/pkg/commission/goodorderpercent"
 )
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, value string) error {
-	if err := gop.CloneGoodOrderPercents(ctx, appID, fromGoodID, toGoodID, value); err != nil {
-		return err
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID string, settleType mgrpb.SettleType, value string) error {
+	switch settleType {
+	case mgrpb.SettleType_GoodOrderPercent:
+		return goodorderpercent.CloneGoodOrderPercents(ctx, appID, fromGoodID, toGoodID, value)
+	case mgrpb.SettleType_GoodOrderValuePercent:
+		return goodordervaluepercent.CloneGoodOrderValuePercents(ctx, appID, fromGoodID, toGoodID, value)
+	case mgrpb.SettleType_LimitedOrderPercent:
+	case mgrpb.SettleType_AmountThreshold:
+	default:
+		return fmt.Errorf("unknown settle type")
 	}
-	return nil
+	return fmt.Errorf("not implemented")
 }
