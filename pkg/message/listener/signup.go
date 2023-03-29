@@ -2,6 +2,7 @@ package listener
 
 import (
 	"fmt"
+
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/message/sub"
 )
