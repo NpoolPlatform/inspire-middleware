@@ -29,13 +29,13 @@ func Accounting(
 
 	_comms := []*accmwpb.Commission{}
 
+	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		return _comms, nil
+	}
+
 	for _, inviter := range inviters {
 		if inviter.InviterID == uuid1.InvalidUUIDStr {
 			break
-		}
-
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			continue
 		}
 
 		percent1 := decimal.NewFromInt(0)
