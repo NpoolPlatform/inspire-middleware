@@ -3,6 +3,7 @@ package sub
 import (
 	"encoding/json"
 	"fmt"
+
 	msgcli "github.com/NpoolPlatform/go-service-framework/pkg/rabbitmq/client"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
 )
