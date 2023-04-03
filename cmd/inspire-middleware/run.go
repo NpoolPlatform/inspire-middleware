@@ -1,15 +1,14 @@
 package main
 
 import (
-	"github.com/NpoolPlatform/inspire-middleware/api"
-	msglistener "github.com/NpoolPlatform/inspire-middleware/pkg/message/listener"
+	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/action"
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
-
-	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-
-	registration "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	"github.com/NpoolPlatform/inspire-middleware/api"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/feeder"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/watcher"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 
@@ -18,6 +17,8 @@ import (
 	cli "github.com/urfave/cli/v2"
 
 	"google.golang.org/grpc"
+
+	"github.com/NpoolPlatform/inspire-middleware/pkg/pubsub"
 )
 
 var runCmd = &cli.Command{
@@ -25,26 +26,29 @@ var runCmd = &cli.Command{
 	Aliases: []string{"s"},
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
-		if err := db.Init(); err != nil {
-			return err
-		}
-
-		if err := registration.CreateSubordinateProcedure(c.Context); err != nil {
-			return err
-		}
-		if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
-			return err
-		}
-
-		go func() {
-			if err := grpc2.RunGRPC(rpcRegister); err != nil {
-				logger.Sugar().Errorf("fail to run grpc server: %v", err)
-			}
-		}()
-
-		go msglistener.Listen()
-
-		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
+		return action.Run(
+			c.Context,
+			func(ctx context.Context) error {
+				if err := db.Init(); err != nil {
+					return err
+				}
+				if err := registration.CreateSubordinateProcedure(c.Context); err != nil {
+					return err
+				}
+				if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
+					return err
+				}
+				pubsub.Subscrib(ctx)
+				return nil
+			},
+			rpcRegister,
+			rpcGatewayRegister,
+			func(ctx context.Context) error {
+				go watcher.Watch(ctx)
+				go feeder.Watch(ctx)
+				return nil
+			},
+		)
 	},
 }
 
