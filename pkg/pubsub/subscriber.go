@@ -30,7 +30,7 @@ func Subscrib(ctx context.Context) {
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"Subscriber",
+			"Subscrib",
 			"Error", err,
 		)
 	}
