@@ -52,14 +52,12 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c h1:W3EFJZAVasYnc+mqoUn4YjX5QQW+T+6kJh1ujJ2KAiQ=
 github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c/go.mod h1:2ve2qsnYtLc5YOuMUQDt3pzYUAokI9bWaK2fjJSNjmY=
-github.com/NpoolPlatform/go-service-framework v0.0.0-20230403084721-b8ac93e212c5 h1:+DqawJy+pRmPQ0ggG1/kPUylA5meNtr7osGVXdCaBnM=
-github.com/NpoolPlatform/go-service-framework v0.0.0-20230403084721-b8ac93e212c5/go.mod h1:Kh7DMkWnYOMHxEKq7QfJqbxm1HaUPkhTNN74lfHQxyE=
+github.com/NpoolPlatform/go-service-framework v0.0.0-20230403113345-9e92460580a4 h1:gOzW9Qs9sOA0iE9A244t5B5N0OuCBz5M38CAfw5W51s=
+github.com/NpoolPlatform/go-service-framework v0.0.0-20230403113345-9e92460580a4/go.mod h1:Kh7DMkWnYOMHxEKq7QfJqbxm1HaUPkhTNN74lfHQxyE=
 github.com/NpoolPlatform/inspire-manager v0.0.0-20230403105416-6089d959d6e6 h1:7LG0zvSg6Irf3eA3Syf4/eEwyU3khGq7jrLrRwJluRI=
 github.com/NpoolPlatform/inspire-manager v0.0.0-20230403105416-6089d959d6e6/go.mod h1:J9nhUSdhtAUxnmsLA60O20vUgu153eLzto06OQCagN4=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
-github.com/NpoolPlatform/message v0.0.0-20230403105532-c79e00714aa8 h1:j0AmV3erCNlwOiKVfd4ufsI8RU362xnK/URz8mvz2TU=
-github.com/NpoolPlatform/message v0.0.0-20230403105532-c79e00714aa8/go.mod h1:siMqIrLuxDkKaqlPyeNSXCfvGsiEwmDBoEqgXMXFyjc=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=

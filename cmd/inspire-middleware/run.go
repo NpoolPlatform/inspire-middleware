@@ -38,7 +38,7 @@ var runCmd = &cli.Command{
 				if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
 					return err
 				}
-				pubsub.Subscrib(ctx)
+				pubsub.Subscribe(ctx)
 				return nil
 			},
 			rpcRegister,

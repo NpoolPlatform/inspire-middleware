@@ -16,7 +16,7 @@ func Watch(ctx context.Context) {
 		select {
 		case <-ticker.C:
 		case <-ctx.Done():
-			err := pubsub.AdjustmentMessageState()
+			err := pubsub.SetMessageStatusOnExit()
 			if err != nil {
 				logger.Sugar().Errorw("Watch updatePubsubMessageState", "Error", err)
 				return
