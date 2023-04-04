@@ -151,13 +151,13 @@ func process(ctx context.Context, msgID string, uid uuid.UUID, req interface{}) 
 	return err
 }
 
-func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []byte, respToID *uuid.UUID) error {
+func handlerMessage(ctx context.Context, msgID, sender string, uid uuid.UUID, body []byte, respToID *uuid.UUID) error {
 	req, err := prepare(msgID, body)
 	if err != nil {
-		return response(msgID, &uid, body, err.Error(), -1)
+		return err
 	}
 	if req == nil {
-		return response(msgID, &uid, body, "", 0)
+		return nil
 	}
 
 	processingMsg.Store(uid, true)
@@ -165,15 +165,23 @@ func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []by
 
 	appliable, err := stat(ctx, msgID, uid, respToID)
 	if err != nil {
-		return response(msgID, &uid, body, err.Error(), -1)
+		return err
 	}
 	if !appliable {
-		return response(msgID, &uid, body, "", -1)
+		return fmt.Errorf("state is not appliable")
 	}
 
 	err = process(ctx, msgID, uid, req)
 	if err != nil {
-		return response(msgID, &uid, body, "", -1)
+		return err
+	}
+	return nil
+}
+
+func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []byte, respToID *uuid.UUID) error {
+	err := handlerMessage(ctx, msgID, sender, uid, body, respToID)
+	if err != nil {
+		return response(msgID, &uid, body, err.Error(), -1)
 	}
 	return response(msgID, &uid, body, "", 0)
 }
