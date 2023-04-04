@@ -152,6 +152,9 @@ func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []by
 		return nil
 	}
 
+	processingMsg.Store(uid, true)
+	defer processingMsg.Delete(uid)
+
 	appliable, err := stat(ctx, msgID, uid, respToID)
 	if err != nil {
 		return err
@@ -159,9 +162,6 @@ func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []by
 	if !appliable {
 		return nil
 	}
-
-	processingMsg.Store(uid, true)
-	defer processingMsg.Delete(uid)
 
 	return process(ctx, msgID, uid, req)
 }
