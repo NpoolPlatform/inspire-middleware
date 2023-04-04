@@ -44,8 +44,7 @@ func run(ctx context.Context) error {
 	if err := registration.CreateSuperiorProcedure(ctx); err != nil {
 		return err
 	}
-	pubsub.Subscribe(ctx)
-	return nil
+	return pubsub.Subscribe(ctx)
 }
 
 func watch(ctx context.Context) error {
