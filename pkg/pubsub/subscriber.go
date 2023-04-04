@@ -60,8 +60,8 @@ func createMessage(
 
 func processMessage(
 	ctx context.Context,
-	messageID string,
 	tx *ent.Tx,
+	messageID string,
 	body []byte,
 	isFailed bool,
 	isFailedMessage string,
@@ -119,7 +119,7 @@ func Subscribe(ctx context.Context) {
 			}
 
 			err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-				tx, err = processMessage(ctx, messageID, tx, body, isFailed, failedMessage)
+				tx, err = processMessage(ctx, tx, messageID, body, isFailed, failedMessage)
 				if err != nil {
 					return err
 				}
