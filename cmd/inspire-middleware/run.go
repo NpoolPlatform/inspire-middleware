@@ -6,9 +6,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/action"
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/api"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/feeder"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/watcher"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 
@@ -28,28 +26,30 @@ var runCmd = &cli.Command{
 	Action: func(c *cli.Context) error {
 		return action.Run(
 			c.Context,
-			func(ctx context.Context) error {
-				if err := db.Init(); err != nil {
-					return err
-				}
-				if err := registration.CreateSubordinateProcedure(c.Context); err != nil {
-					return err
-				}
-				if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
-					return err
-				}
-				pubsub.Subscribe(ctx)
-				return nil
-			},
+			run,
 			rpcRegister,
 			rpcGatewayRegister,
-			func(ctx context.Context) error {
-				go watcher.Watch(ctx)
-				go feeder.Watch(ctx)
-				return nil
-			},
+			watch,
 		)
 	},
+}
+
+func run(ctx context.Context) error {
+	if err := db.Init(); err != nil {
+		return err
+	}
+	if err := registration.CreateSubordinateProcedure(ctx); err != nil {
+		return err
+	}
+	if err := registration.CreateSuperiorProcedure(ctx); err != nil {
+		return err
+	}
+	pubsub.Subscribe(ctx)
+	return nil
+}
+
+func watch(ctx context.Context) error {
+	return nil
 }
 
 func rpcRegister(server grpc.ServiceRegistrar) error {

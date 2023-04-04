@@ -28,8 +28,8 @@ cloud.google.com/go/bigquery v1.5.0/go.mod h1:snEHRnqQbz117VIFhE8bmtwIDY80NLUZUM
 cloud.google.com/go/bigquery v1.7.0/go.mod h1://okPTzCYNXSlb24MZs83e2Do+h+VXtc4gLoIoXIAPc=
 cloud.google.com/go/bigquery v1.8.0/go.mod h1:J5hqkt3O0uAFnINi6JXValWIb1v0goeZM77hZzJN/fQ=
 cloud.google.com/go/compute v1.14.0 h1:hfm2+FfxVmnRlh6LpB7cg1ZNU+5edAHmW679JePztk0=
+cloud.google.com/go/compute v1.14.0/go.mod h1:YfLtxrj9sU4Yxv+sXzZkyPjEyPBZfXHUvjxega5vAdo=
 cloud.google.com/go/compute/metadata v0.2.3 h1:mg4jlk7mCAj6xXp9UJ4fjI9VUI5rubuGBW5aJ7UnBMY=
-cloud.google.com/go/compute/metadata v0.2.3/go.mod h1:VAV5nSsACxMJvgaAuX6Pk2AawlZn8kiOGuCv6gTkwuA=
 cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7TKLgZqpHYE=
 cloud.google.com/go/datastore v1.1.0/go.mod h1:umbIZjpQpHh4hmRpGhH4tLFup+FVzqBi1b3c64qFpCk=
 cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
@@ -54,8 +54,8 @@ github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c h1:
 github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c/go.mod h1:2ve2qsnYtLc5YOuMUQDt3pzYUAokI9bWaK2fjJSNjmY=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230403113345-9e92460580a4 h1:gOzW9Qs9sOA0iE9A244t5B5N0OuCBz5M38CAfw5W51s=
 github.com/NpoolPlatform/go-service-framework v0.0.0-20230403113345-9e92460580a4/go.mod h1:Kh7DMkWnYOMHxEKq7QfJqbxm1HaUPkhTNN74lfHQxyE=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20230403105416-6089d959d6e6 h1:7LG0zvSg6Irf3eA3Syf4/eEwyU3khGq7jrLrRwJluRI=
-github.com/NpoolPlatform/inspire-manager v0.0.0-20230403105416-6089d959d6e6/go.mod h1:J9nhUSdhtAUxnmsLA60O20vUgu153eLzto06OQCagN4=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20230404035359-4cc452cb6ee4 h1:c5tC9e1r+p52vP4Uk9/DK6WYqQuvIwfcAA4pqWbtSZk=
+github.com/NpoolPlatform/inspire-manager v0.0.0-20230404035359-4cc452cb6ee4/go.mod h1:0Kf6+uNtnQpLUayYkOUAW40j4G3176xNfJbk5ckykpQ=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=

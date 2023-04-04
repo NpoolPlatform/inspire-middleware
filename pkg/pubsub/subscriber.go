@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	pubsubmessagecrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/pubsubmessage"
-	entpubsubmessage "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
+	pubsubmsgcrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/pubsubmessage"
+	entpubsubmsg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
+
 	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 
-	msg "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
@@ -74,6 +75,12 @@ func processMessage(
 		return registration.TxCreateRegistration(ctx, tx, body)
 	default:
 		return tx, nil
+	}
+}
+
+func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, respToID *uuid.UUID) error {
+	switch msgID {
+	case msg.Message
 	}
 }
 

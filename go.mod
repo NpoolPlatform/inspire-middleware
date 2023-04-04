@@ -7,9 +7,9 @@ require (
 	entgo.io/ent v0.11.3
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20221228013048-951da3e0461c
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20230403113345-9e92460580a4
-	github.com/NpoolPlatform/inspire-manager v0.0.0-20230403105416-6089d959d6e6
+	github.com/NpoolPlatform/inspire-manager v0.0.0-20230404035359-4cc452cb6ee4
 	github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb
-	github.com/NpoolPlatform/message v0.0.0-20230403105532-c79e00714aa8
+	github.com/NpoolPlatform/message v0.0.0-20230404032746-8e2c6749b4cc
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/shopspring/decimal v1.3.1
@@ -23,7 +23,7 @@ require (
 
 require (
 	ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute v1.14.0 // indirect
 	github.com/Shonminh/apollo-client v0.4.0 // indirect
 	github.com/ThreeDotsLabs/watermill v1.2.0 // indirect
 	github.com/ThreeDotsLabs/watermill-amqp/v2 v2.0.7 // indirect
