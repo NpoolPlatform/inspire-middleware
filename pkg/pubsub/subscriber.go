@@ -24,6 +24,14 @@ import (
 
 var processingMsg sync.Map
 
+func response(msgID string, respID *uuid.UUID, body []byte, msg string, code int) error {
+	return pubsub.Publish(msgID, respID, pubsub.MessageResp{
+		Code:    code,
+		Message: msg,
+		Body:    body,
+	})
+}
+
 func postHandler(ctx context.Context, tx *ent.Tx, msgID string, uid uuid.UUID, err error) error {
 	state := msgpb.MessageState_Success
 	if err != nil {
@@ -40,7 +48,7 @@ func postHandler(ctx context.Context, tx *ent.Tx, msgID string, uid uuid.UUID, e
 	}
 
 	// Dispatch resp according to err and message type
-	switch msgID {
+	switch msgID { //nolint
 	case msgpb.MessageID_CreateRegistrationInvitationReq.String():
 		return nil
 	}
@@ -61,7 +69,7 @@ func prepare(msgID string, body []byte) (interface{}, error) {
 				"Body", string(body),
 			)
 			// For message with invalid body, nobody can process it, so just act directly
-			return nil, nil
+			return nil, err
 		}
 		req = &_req
 	default:
@@ -146,10 +154,10 @@ func process(ctx context.Context, msgID string, uid uuid.UUID, req interface{}) 
 func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []byte, respToID *uuid.UUID) error {
 	req, err := prepare(msgID, body)
 	if err != nil {
-		return err
+		return response(msgID, &uid, body, err.Error(), -1)
 	}
 	if req == nil {
-		return nil
+		return response(msgID, &uid, body, "", 0)
 	}
 
 	processingMsg.Store(uid, true)
@@ -157,13 +165,17 @@ func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []by
 
 	appliable, err := stat(ctx, msgID, uid, respToID)
 	if err != nil {
-		return err
+		return response(msgID, &uid, body, err.Error(), -1)
 	}
 	if !appliable {
-		return nil
+		return response(msgID, &uid, body, "", -1)
 	}
 
-	return process(ctx, msgID, uid, req)
+	err = process(ctx, msgID, uid, req)
+	if err != nil {
+		return response(msgID, &uid, body, "", -1)
+	}
+	return response(msgID, &uid, body, "", 0)
 }
 
 func Subscribe(ctx context.Context) error {
@@ -179,10 +191,7 @@ func Shutdown(ctx context.Context) error {
 				UpdateOneID(key.(uuid.UUID)).
 				SetState(msgpb.MessageState_Fail.String()).
 				Save(_ctx)
-			if err != nil {
-				return false
-			}
-			return true
+			return err == nil
 		})
 		return err
 	})

@@ -28,7 +28,7 @@ func CreateRegistrationV2(
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		defer func() {
 			if postHandler != nil {
-				postHandler(ctx, tx, err)
+				_ = postHandler(ctx, tx, err)
 			}
 		}()
 
