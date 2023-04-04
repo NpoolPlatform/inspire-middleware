@@ -2,11 +2,15 @@ package registration
 
 import (
 	"context"
-	"encoding/json"
+
+	"github.com/NpoolPlatform/inspire-manager/pkg/db"
+	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
+
+	registrationcrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/invitation/registration"
+
+	pubsubhandler "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/handler"
 
 	mgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/invitation/registration"
-	registrationcrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/invitation/registration"
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 )
 
@@ -14,21 +18,26 @@ func CreateRegistration(ctx context.Context, in *mgrpb.RegistrationReq) (*mgrpb.
 	return mgrcli.CreateRegistration(ctx, in)
 }
 
-func TxCreateRegistration(
+func CreateRegistrationV2(
 	ctx context.Context,
-	tx *ent.Tx,
-	body []byte,
-) (*ent.Tx, error) {
-	var req = mgrpb.RegistrationReq{}
-	err := json.Unmarshal(body, &req)
-	if err != nil {
-		return nil, err
-	}
-	c, err := registrationcrud.CreateSet(tx.Registration.Create(), &req)
-	if err != nil {
-		return nil, err
-	}
-	_, err = c.Save(ctx)
+	in *mgrpb.RegistrationReq,
+	postHandler pubsubhandler.PostHandler,
+) error {
+	var err error
 
-	return nil, err
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		defer func() {
+			if postHandler != nil {
+				postHandler(ctx, tx, err)
+			}
+		}()
+
+		var c *ent.RegistrationCreate
+		c, err = registrationcrud.CreateSet(tx.Registration.Create(), in)
+		if err != nil {
+			return err
+		}
+		_, err = c.Save(ctx)
+		return err
+	})
 }
