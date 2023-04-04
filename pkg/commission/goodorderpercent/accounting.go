@@ -38,10 +38,6 @@ func Accounting(
 			break
 		}
 
-		if amount.Cmp(decimal.NewFromInt(0)) == 0 {
-			continue
-		}
-
 		percent1 := decimal.NewFromInt(0)
 		percent2 := decimal.NewFromInt(0)
 
