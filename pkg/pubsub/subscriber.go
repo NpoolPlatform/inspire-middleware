@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 
 	pubsubmsgcrud "github.com/NpoolPlatform/inspire-manager/pkg/crud/pubsubmessage"
-	entpubsubmsg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
@@ -22,8 +22,29 @@ import (
 	"github.com/google/uuid"
 )
 
+var processingMsg sync.Map
+
 func postHandler(ctx context.Context, tx *ent.Tx, msgID string, uid uuid.UUID, err error) error {
-	// TODO: dispatch resp according to err
+	state := msgpb.MessageState_Success
+	if err != nil {
+		state = msgpb.MessageState_Fail
+	}
+
+	_, err = tx.
+		PubsubMessage.
+		UpdateOneID(uid).
+		SetState(state.String()).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Dispatch resp according to err and message type
+	switch msgID {
+	case msgpb.MessageID_CreateRegistrationInvitationReq.String():
+		return nil
+	}
+
 	return nil
 }
 
@@ -37,9 +58,6 @@ func prepare(msgID string, body []byte) (interface{}, error) {
 			logger.Sugar().Errorw(
 				"handler",
 				"MsgID", msgID,
-				"Sender", sender,
-				"Uid", uid,
-				"RespToID", respToID,
 				"Body", string(body),
 			)
 			// For message with invalid body, nobody can process it, so just act directly
@@ -53,19 +71,61 @@ func prepare(msgID string, body []byte) (interface{}, error) {
 	return req, nil
 }
 
-func stat(ctx context.Context, msgID string, uid uuid.UUID, respToID *uuid.UUID) (bool, error) {
-	switch msgID {
-	case msgpb.MessageID_CreateRegistrationInvitationReq.String():
-		// TODO: here we need to decide if we need to ack, or resp a fail
-		if err := checkMessageState(ctx, msgID, uid, respToID); err != nil {
-			return err
-		}
-	default:
-		return nil
-	}
+var applyWhenFail = map[string]bool{}
+
+func init() {
+	applyWhenFail[msgpb.MessageID_CreateRegistrationInvitationReq.String()] = false
 }
 
-func process(ctx context.Context, req interface{}) error {
+/// Stat if message in right status, and is appliable
+///  Return
+///   bool    appliable = true, the message needs to be applied
+///   error   error happens
+func stat(ctx context.Context, msgID string, uid uuid.UUID, respToID *uuid.UUID) (bool, error) {
+	var msg *ent.PubsubMessage
+	var err error
+
+	switch msgID {
+	case msgpb.MessageID_CreateRegistrationInvitationReq.String():
+		msg, err = pubsubmsgcrud.Row(ctx, uid)
+		if err != nil {
+			if !ent.IsNotFound(err) {
+				return false, err
+			}
+		}
+	default:
+		return false, nil
+	}
+
+	if msg != nil {
+		switch msg.State {
+		case msgpb.MessageState_Processing.String():
+			return false, fmt.Errorf("processing")
+		case msgpb.MessageState_Success.String():
+			return false, nil
+		case msgpb.MessageState_Fail.String():
+			return applyWhenFail[msg.MessageID], nil
+		}
+	}
+
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		c := cli.
+			PubsubMessage.
+			Create().
+			SetID(uid).
+			SetMessageID(msgID).
+			SetState(msgpb.MessageState_Processing.String())
+		if respToID != nil {
+			c.SetRespToID(*respToID)
+		}
+		_, err := c.Save(_ctx)
+		return err
+	})
+
+	return err == nil, err
+}
+
+func process(ctx context.Context, msgID string, uid uuid.UUID, req interface{}) error {
 	var err error
 
 	switch msgID {
@@ -83,7 +143,7 @@ func process(ctx context.Context, req interface{}) error {
 	return err
 }
 
-func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, respToID *uuid.UUID, body []byte) error {
+func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, body []byte, respToID *uuid.UUID) error {
 	req, err := prepare(msgID, body)
 	if err != nil {
 		return err
@@ -100,13 +160,30 @@ func handler(ctx context.Context, msgID, sender string, uid uuid.UUID, respToID 
 		return nil
 	}
 
-	return process(ctx, req)
+	processingMsg.Store(uid, true)
+	defer processingMsg.Delete(uid)
+
+	return process(ctx, msgID, uid, req)
 }
 
 func Subscribe(ctx context.Context) error {
 	return pubsub.Subscribe(ctx, handler)
 }
 
-func Shutdown() error {
-	return nil
+func Shutdown(ctx context.Context) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		var err error
+		processingMsg.Range(func(key, value interface{}) bool {
+			_, err = tx.
+				PubsubMessage.
+				UpdateOneID(key.(uuid.UUID)).
+				SetState(msgpb.MessageState_Fail.String()).
+				Save(_ctx)
+			if err != nil {
+				return false
+			}
+			return true
+		})
+		return err
+	})
 }
