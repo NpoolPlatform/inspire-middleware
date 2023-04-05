@@ -21,14 +21,14 @@ func CreateRegistration(ctx context.Context, in *mgrpb.RegistrationReq) (*mgrpb.
 func CreateRegistrationV2(
 	ctx context.Context,
 	in *mgrpb.RegistrationReq,
-	postHandler pubsubhandler.PostHandler,
+	msgCommiter pubsubhandler.MsgCommiter,
 ) error {
 	var err error
 
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		defer func() {
-			if postHandler != nil {
-				_ = postHandler(ctx, tx, err)
+			if msgCommiter != nil {
+				_ = msgCommiter(ctx, tx, err)
 			}
 		}()
 
@@ -40,4 +40,6 @@ func CreateRegistrationV2(
 		_, err = c.Save(ctx)
 		return err
 	})
+
+	return err
 }

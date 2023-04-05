@@ -6,4 +6,4 @@ import (
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 )
 
-type PostHandler func(ctx context.Context, tx *ent.Tx, err error) error
+type MsgCommiter func(ctx context.Context, tx *ent.Tx, err error) error
