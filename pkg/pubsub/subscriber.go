@@ -83,8 +83,8 @@ func prepare(mid, body string) (interface{}, error) {
 
 /// Query a request message
 ///  Return
-///   bool                 appliable == true, caller should go ahead to apply this message
-///   error                error message
+///   bool   appliable == true, caller should go ahead to apply this message
+///   error  error message
 func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 	var msg *ent.PubsubMessage
 	var err error
