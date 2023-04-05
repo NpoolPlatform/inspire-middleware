@@ -21,6 +21,11 @@ import (
 	"github.com/google/uuid"
 )
 
+/// 1 Every received message should be acked and responded
+/// 2 If 1 cannot fullfiled due to crashed, when it's received again, just responded and acked
+/// 3 Never re-apply a message, if it resends due to 2, just responded and acked
+/// 4 All message should be one-on-one message
+
 var processingMsg sync.Map
 
 func resp(mid string, rid uuid.UUID, err error) error {
