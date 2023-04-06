@@ -274,7 +274,7 @@ func Subscribe(ctx context.Context) (err error) {
 		return err
 	}
 
-	return subscriber.Subscribe(ctx, handler)
+	return subscriber.Subscribe(ctx, handler, true)
 }
 
 func Shutdown(ctx context.Context) error {
