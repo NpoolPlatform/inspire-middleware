@@ -34,7 +34,7 @@ func resp(mid string, rid uuid.UUID, err error) error {
 		_resp.Code = -1
 		_resp.Msg = err.Error()
 	}
-	return pubsub.Publish(mid, nil, &rid, &_resp)
+	return pubsub.Publish(mid, nil, &rid, nil, &_resp)
 }
 
 func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error {
