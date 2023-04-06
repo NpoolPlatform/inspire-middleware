@@ -240,8 +240,8 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 
 /// No matter what handler return, the message will be acked, unless handler halt
 /// If handler halt, the service will be restart, all message will be requeue
-func handler(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID, body string) error {
-	req, err := prepare(mid, body)
+func handler(ctx context.Context, msg *pubsub.Msg) error {
+	req, err := prepare(msg.MID, msg.Body)
 	if err != nil {
 		return err
 	}
@@ -249,10 +249,13 @@ func handler(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID, bod
 		return nil
 	}
 
-	processingMsg.Store(uid, true)
-	defer processingMsg.Delete(uid)
+	processingMsg.Store(msg.UID, msg)
+	defer func() {
+		msg.Ack()
+		processingMsg.Delete(msg.UID)
+	}()
 
-	appliable, err := stat(ctx, mid, uid, rid)
+	appliable, err := stat(ctx, msg.MID, msg.UID, msg.RID)
 	if err != nil {
 		return err
 	}
@@ -260,7 +263,7 @@ func handler(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID, bod
 		return nil
 	}
 
-	return process(ctx, mid, uid, req)
+	return process(ctx, msg.MID, msg.UID, req)
 }
 
 func Subscribe(ctx context.Context) (err error) {
@@ -274,10 +277,45 @@ func Subscribe(ctx context.Context) (err error) {
 		return err
 	}
 
-	return subscriber.Subscribe(ctx, handler, true)
+	return subscriber.Subscribe(ctx, handler)
 }
 
+/// TODO: if this will be run after signal catched ?
 func Shutdown(ctx context.Context) error {
+	if err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		var err error
+		var info *ent.PubsubMessage
+		processingMsg.Range(func(key, msg interface{}) bool {
+			info, err = tx.
+				PubsubMessage.
+				Query().
+				Where(
+					entpubsubmsg.ID(key.(uuid.UUID)),
+				).
+				Only(_ctx)
+			if err != nil {
+				if !ent.IsNotFound(err) {
+					return false
+				}
+			}
+			if info == nil {
+				msg.(*pubsub.Msg).Nack()
+				return true
+			}
+
+			_, err = tx.
+				PubsubMessage.
+				UpdateOneID(key.(uuid.UUID)).
+				SetState(msgpb.MsgState_StateFail.String()).
+				Save(_ctx)
+			msg.(*pubsub.Msg).Ack()
+			return err == nil
+		})
+		return err
+	}); err != nil {
+		return err
+	}
+
 	if subscriber != nil {
 		subscriber.Close()
 	}
@@ -285,16 +323,5 @@ func Shutdown(ctx context.Context) error {
 		publisher.Close()
 	}
 
-	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		var err error
-		processingMsg.Range(func(key, value interface{}) bool {
-			_, err = tx.
-				PubsubMessage.
-				UpdateOneID(key.(uuid.UUID)).
-				SetState(msgpb.MsgState_StateFail.String()).
-				Save(_ctx)
-			return err == nil
-		})
-		return err
-	})
+	return nil
 }
