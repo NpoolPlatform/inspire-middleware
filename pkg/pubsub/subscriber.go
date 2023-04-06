@@ -27,6 +27,8 @@ import (
 /// 4 All message should be one-on-one message
 
 var processingMsg sync.Map
+var subscriber *pubsub.Subscriber
+var publisher *pubsub.Publisher
 
 func resp(mid string, rid uuid.UUID, err error) error {
 	_resp := pubsub.Resp{}
@@ -34,7 +36,10 @@ func resp(mid string, rid uuid.UUID, err error) error {
 		_resp.Code = -1
 		_resp.Msg = err.Error()
 	}
-	return pubsub.Publish(mid, nil, &rid, nil, &_resp)
+	if err := publisher.Update(mid, nil, &rid, nil, &_resp); err != nil {
+		return err
+	}
+	return publisher.Publish()
 }
 
 func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error {
@@ -258,11 +263,28 @@ func handler(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID, bod
 	return process(ctx, mid, uid, req)
 }
 
-func Subscribe(ctx context.Context) error {
-	return pubsub.Subscribe(ctx, handler)
+func Subscribe(ctx context.Context) (err error) {
+	subscriber, err = pubsub.NewSubscriber()
+	if err != nil {
+		return err
+	}
+
+	publisher, err = pubsub.NewPublisher()
+	if err != nil {
+		return err
+	}
+
+	return subscriber.Subscribe(ctx, handler)
 }
 
 func Shutdown(ctx context.Context) error {
+	if subscriber != nil {
+		subscriber.Close()
+	}
+	if publisher != nil {
+		publisher.Close()
+	}
+
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		var err error
 		processingMsg.Range(func(key, value interface{}) bool {
