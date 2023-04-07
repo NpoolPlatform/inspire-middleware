@@ -119,3 +119,21 @@ func GetInvitationCodes(ctx context.Context, conds *mgrpb.Conds, offset, limit i
 	}
 	return infos.([]*mgrpb.InvitationCode), total, nil
 }
+
+func DeleteInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteInvitationCode(ctx, &npool.DeleteInvitationCodeRequest{
+			Info: &mgrpb.InvitationCodeReq{
+				ID: &id,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*mgrpb.InvitationCode), nil
+}
