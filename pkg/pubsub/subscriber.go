@@ -10,11 +10,9 @@ import (
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 	entpubsubmsg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
-
 	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
-	registrationmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
+	allocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
@@ -30,19 +28,7 @@ var processingMsg sync.Map
 var subscriber *pubsub.Subscriber
 var publisher *pubsub.Publisher
 
-func resp(mid string, rid uuid.UUID, err error) error {
-	_resp := pubsub.Resp{}
-	if err != nil {
-		_resp.Code = -1
-		_resp.Msg = err.Error()
-	}
-	if err := publisher.Update(mid, nil, &rid, nil, &_resp); err != nil {
-		return err
-	}
-	return publisher.Publish()
-}
-
-func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error {
+func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error { //nolint
 	state := msgpb.MsgState_StateSuccess
 	if err != nil {
 		state = msgpb.MsgState_StateFail
@@ -64,12 +50,8 @@ func prepare(mid, body string) (interface{}, error) {
 	var req interface{}
 
 	switch mid {
-	case msgpb.MsgID_CreateRegistrationInvitationTry.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationConfirm.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationCancel.String():
-		_req := registrationmgrpb.RegistrationReq{}
+	case msgpb.MsgID_CreateAllocatedCouponReq.String():
+		_req := allocatedmwpb.CouponReq{}
 		if err := json.Unmarshal([]byte(body), &req); err != nil {
 			logger.Sugar().Errorw(
 				"handler",
@@ -91,11 +73,10 @@ func prepare(mid, body string) (interface{}, error) {
 ///   bool   appliable == true, caller should go ahead to apply this message
 ///   error  error message
 func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
-	var msg *ent.PubsubMessage
 	var err error
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		msg, err = cli.
+		_, err = cli.
 			PubsubMessage.
 			Query().
 			Where(
@@ -117,43 +98,6 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 			"UID", uid,
 			"Error", err,
 		)
-		return false, resp(mid, uid, err)
-	}
-
-	switch msg.State {
-	case msgpb.MsgState_StateSuccess.String():
-		return false, resp(mid, uid, nil)
-	case msgpb.MsgState_StateFail.String():
-		return false, resp(mid, uid, fmt.Errorf("unknown error"))
-	}
-
-	return false, nil
-}
-
-func statResp(ctx context.Context, mid string, rid uuid.UUID) (bool, error) {
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		_, err := cli.
-			PubsubMessage.
-			Query().
-			Where(
-				entpubsubmsg.RespToID(rid),
-			).
-			Only(_ctx)
-		return err
-	})
-
-	switch err {
-	case nil:
-	default:
-		if !ent.IsNotFound(err) {
-			return true, nil
-		}
-		logger.Sugar().Warnw(
-			"stat",
-			"MID", mid,
-			"RID", rid,
-			"Error", err,
-		)
 		return false, err
 	}
 
@@ -164,26 +108,10 @@ func statResp(ctx context.Context, mid string, rid uuid.UUID) (bool, error) {
 ///  Return
 ///   bool    appliable == true, caller should go ahead to apply this message
 ///   error   error message
-func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool, error) {
+func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool, error) { //nolint
 	switch mid {
-	case msgpb.MsgID_CreateRegistrationInvitationTry.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationConfirm.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationCancel.String():
+	case msgpb.MsgID_CreateAllocatedCouponReq.String():
 		return statReq(ctx, mid, uid)
-	/// We do not need to process resp here, but we keep it as a template
-	case msgpb.MsgID_CreateRegistrationInvitationTryResp.String():
-		if rid == nil {
-			logger.Sugar().Warnw(
-				"stat",
-				"MID", mid,
-				"UID", uid,
-				"State", "Resp Without rid",
-			)
-			return false, fmt.Errorf("resp without id")
-		}
-		return statResp(ctx, mid, *rid)
 	default:
 		return false, fmt.Errorf("invalid message")
 	}
@@ -200,17 +128,9 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 /// Process will consume the message and return consuming state
 ///  Return
 ///   error   reason of error, if nil, means the message should be acked
-func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) {
+func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
 	switch mid {
-	case msgpb.MsgID_CreateRegistrationInvitationTry.String():
-	case msgpb.MsgID_CreateRegistrationInvitationConfirm.String():
-		err = registration.CreateRegistrationV2(
-			ctx,
-			req.(*registrationmgrpb.RegistrationReq),
-			func(ctx context.Context, tx *ent.Tx, err error) error {
-				return msgCommiter(ctx, tx, mid, uid, nil, err)
-			})
-	case msgpb.MsgID_CreateRegistrationInvitationCancel.String():
+	case msgpb.MsgID_CreateAllocatedCouponReq.String():
 	default:
 		return nil
 	}
@@ -223,16 +143,6 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 			"Req", req,
 			"Error", err,
 		)
-	}
-
-	switch mid {
-	case msgpb.MsgID_CreateRegistrationInvitationTry.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationConfirm.String():
-		fallthrough //nolint
-	case msgpb.MsgID_CreateRegistrationInvitationCancel.String():
-		return resp(mid, uid, err)
-	default:
 	}
 
 	return err
