@@ -9,7 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
 	entpubsubmsg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
 
-	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
@@ -21,9 +21,9 @@ var subscriber *pubsub.Subscriber
 var publisher *pubsub.Publisher
 
 func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error { //nolint
-	state := msgpb.MsgState_StateSuccess
+	state := basetypes.MsgState_StateSuccess
 	if err != nil {
-		state = msgpb.MsgState_StateFail
+		state = basetypes.MsgState_StateFail
 	}
 
 	c := tx.PubsubMessage.
@@ -40,7 +40,7 @@ func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid
 
 func prepare(mid, body string) (req interface{}, err error) {
 	switch mid {
-	case msgpb.MsgID_RewardEventReq.String():
+	case basetypes.MsgID_RewardEventReq.String():
 		req, err = prepareRewardEvent(body)
 	default:
 		return nil, nil
@@ -100,7 +100,7 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 ///   error   error message
 func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool, error) { //nolint
 	switch mid {
-	case msgpb.MsgID_RewardEventReq.String():
+	case basetypes.MsgID_RewardEventReq.String():
 		return statReq(ctx, mid, uid)
 	default:
 		return false, fmt.Errorf("invalid message")
@@ -132,7 +132,7 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 	}()
 
 	switch mid {
-	case msgpb.MsgID_RewardEventReq.String():
+	case basetypes.MsgID_RewardEventReq.String():
 		err = handleRewardEvent(ctx, req)
 		if err != nil {
 			return err
@@ -212,7 +212,7 @@ func Shutdown(ctx context.Context) error {
 			_, err = tx.
 				PubsubMessage.
 				UpdateOneID(key.(uuid.UUID)).
-				SetState(msgpb.MsgState_StateFail.String()).
+				SetState(basetypes.MsgState_StateFail.String()).
 				Save(_ctx)
 			msg.(*pubsub.Msg).Ack()
 			return err == nil
