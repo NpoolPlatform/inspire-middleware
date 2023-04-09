@@ -50,7 +50,7 @@ func prepare(mid, body string) (interface{}, error) {
 	var req interface{}
 
 	switch mid {
-	case msgpb.MsgID_CreateAllocatedCouponReq.String():
+	case msgpb.MsgID_RewardEventReq.String():
 		_req := allocatedmwpb.CouponReq{}
 		if err := json.Unmarshal([]byte(body), &req); err != nil {
 			logger.Sugar().Errorw(
@@ -110,7 +110,7 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 ///   error   error message
 func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool, error) { //nolint
 	switch mid {
-	case msgpb.MsgID_CreateAllocatedCouponReq.String():
+	case msgpb.MsgID_RewardEventReq.String():
 		return statReq(ctx, mid, uid)
 	default:
 		return false, fmt.Errorf("invalid message")
@@ -130,7 +130,7 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 ///   error   reason of error, if nil, means the message should be acked
 func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
 	switch mid {
-	case msgpb.MsgID_CreateAllocatedCouponReq.String():
+	case msgpb.MsgID_RewardEventReq.String():
 	default:
 		return nil
 	}
