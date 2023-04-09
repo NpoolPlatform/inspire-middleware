@@ -151,7 +151,8 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 
 	credits := []*npool.Credit{}
 	i := uint32(0)
-	j := len(inviterIDs) - 2
+	const inviterIgnore = 2
+	j := len(inviterIDs) - inviterIgnore
 
 	for ; i < ev.InviterLayers && j >= 0; i++ {
 		handler, err := NewHandler(
