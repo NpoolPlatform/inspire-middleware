@@ -20,22 +20,30 @@ var processingMsg sync.Map
 var subscriber *pubsub.Subscriber
 var publisher *pubsub.Publisher
 
-func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid *uuid.UUID, err error) error { //nolint
+/// TODO: here we should call from DB transaction context
+func finish(ctx context.Context, msg *pubsub.Msg, err error) error {
 	state := basetypes.MsgState_StateSuccess
 	if err != nil {
 		state = basetypes.MsgState_StateFail
 	}
 
-	c := tx.PubsubMessage.
-		Create().
-		SetID(uid).
-		SetMessageID(mid).
-		SetState(state.String())
-	if rid != nil {
-		c.SetRespToID(*rid)
-	}
-	_, err = c.Save(ctx)
-	return err
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		c := cli.
+			PubsubMessage.
+			Create().
+			SetID(msg.UID).
+			SetMessageID(msg.MID).
+			SetArguments(msg.Body).
+			SetState(state.String())
+		if msg.RID != nil {
+			c.SetRespToID(*msg.RID)
+		}
+		if msg.UnID != nil {
+			c.SetUndoID(*msg.UnID)
+		}
+		_, err = c.Save(ctx)
+		return err
+	})
 }
 
 func prepare(mid, body string) (req interface{}, err error) {
@@ -159,6 +167,7 @@ func handler(ctx context.Context, msg *pubsub.Msg) error {
 	defer func() {
 		msg.Ack()
 		processingMsg.Delete(msg.UID)
+		_ = finish(ctx, msg, err)
 	}()
 
 	appliable, err := stat(ctx, msg.MID, msg.UID, msg.RID)
