@@ -2,7 +2,6 @@ package pubsub
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -12,17 +11,10 @@ import (
 
 	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
-	allocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
 	"github.com/google/uuid"
 )
-
-/// 1 Every received message should be acked and responded
-/// 2 If 1 cannot fullfiled due to crashed, when it's received again, just responded and acked
-/// 3 Never re-apply a message, if it resends due to 2, just responded and acked
-/// 4 All message should be one-on-one message
 
 var processingMsg sync.Map
 var subscriber *pubsub.Subscriber
@@ -46,23 +38,21 @@ func msgCommiter(ctx context.Context, tx *ent.Tx, mid string, uid uuid.UUID, rid
 	return err
 }
 
-func prepare(mid, body string) (interface{}, error) {
-	var req interface{}
-
+func prepare(mid, body string) (req interface{}, err error) {
 	switch mid {
 	case msgpb.MsgID_RewardEventReq.String():
-		_req := allocatedmwpb.CouponReq{}
-		if err := json.Unmarshal([]byte(body), &req); err != nil {
-			logger.Sugar().Errorw(
-				"handler",
-				"MID", mid,
-				"Body", body,
-			)
-			return nil, err
-		}
-		req = &_req
+		req, err = prepareRewardEvent(body)
 	default:
 		return nil, nil
+	}
+
+	if err != nil {
+		logger.Sugar().Errorw(
+			"handler",
+			"MID", mid,
+			"Body", body,
+		)
+		return nil, err
 	}
 
 	return req, nil
@@ -128,24 +118,30 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 /// Process will consume the message and return consuming state
 ///  Return
 ///   error   reason of error, if nil, means the message should be acked
-func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
+func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) {
+	defer func() {
+		if err != nil {
+			logger.Sugar().Warnw(
+				"process",
+				"MID", mid,
+				"UID", uid,
+				"Req", req,
+				"Error", err,
+			)
+		}
+	}()
+
 	switch mid {
 	case msgpb.MsgID_RewardEventReq.String():
+		err = handleRewardEvent(ctx, req)
+		if err != nil {
+			return err
+		}
 	default:
 		return nil
 	}
 
-	if err != nil {
-		logger.Sugar().Warnw(
-			"process",
-			"MID", mid,
-			"UID", uid,
-			"Req", req,
-			"Error", err,
-		)
-	}
-
-	return err
+	return nil
 }
 
 /// No matter what handler return, the message will be acked, unless handler halt
