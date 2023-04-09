@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	msgpb "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	event "github.com/NpoolPlatform/inspire-middleware/pkg/event"
 	eventmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
@@ -38,7 +38,7 @@ func handleRewardEvent(ctx context.Context, req interface{}) error {
 		return err
 	}
 	if err := publisher.Update(
-		msgpb.MsgID_IncreaseUserActionCreditsReq.String(),
+		basetypes.MsgID_IncreaseUserActionCreditsReq.String(),
 		nil,
 		nil,
 		nil,
