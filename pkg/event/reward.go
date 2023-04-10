@@ -105,6 +105,9 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 	if err != nil {
 		return nil, err
 	}
+	if ev == nil {
+		return nil, nil
+	}
 
 	if h.Consecutive > ev.MaxConsecutive {
 		return nil, nil
@@ -143,6 +146,9 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 	ev, err := h.getEvent(ctx)
 	if err != nil {
 		return nil, err
+	}
+	if ev == nil {
+		return nil, nil
 	}
 
 	if ev.InviterLayers == 0 {

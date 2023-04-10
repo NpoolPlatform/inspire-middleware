@@ -37,6 +37,9 @@ func handleRewardEvent(ctx context.Context, req interface{}) error {
 	if err != nil {
 		return err
 	}
+	if len(credits) == 0 {
+		return nil
+	}
 	if err := publisher.Update(
 		basetypes.MsgID_IncreaseUserActionCreditsReq.String(),
 		nil,
