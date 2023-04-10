@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/action"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/api"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
@@ -47,7 +49,18 @@ func run(ctx context.Context) error {
 	return pubsub.Subscribe(ctx)
 }
 
+func shutdown(ctx context.Context) {
+	<-ctx.Done()
+	logger.Sugar().Infow(
+		"Watch",
+		"State", "Done",
+		"Error", ctx.Err(),
+	)
+	_ = pubsub.Shutdown(ctx)
+}
+
 func watch(ctx context.Context) error {
+	go shutdown(ctx)
 	return nil
 }
 
