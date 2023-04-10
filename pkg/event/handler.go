@@ -119,10 +119,11 @@ func WithConsecutive(consecutive uint32) func(context.Context, *Handler) error {
 
 func WithAmount(amount string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if _, err := decimal.NewFromString(amount); err != nil {
-			return err
+		_amount, err := decimal.NewFromString(amount)
+		if err != nil {
+			_amount = decimal.NewFromInt(0)
 		}
-		h.Amount = amount
+		h.Amount = _amount.String()
 		return nil
 	}
 }
