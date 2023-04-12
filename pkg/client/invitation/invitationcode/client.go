@@ -10,7 +10,7 @@ import (
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 )
 
 var timeout = 10 * time.Second
@@ -21,7 +21,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	conn, err := grpc2.GetGRPCConn(constant.ServiceName, grpc2.GRPCTAG)
+	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
 	if err != nil {
 		return nil, err
 	}
@@ -118,4 +118,22 @@ func GetInvitationCodes(ctx context.Context, conds *mgrpb.Conds, offset, limit i
 		return nil, 0, err
 	}
 	return infos.([]*mgrpb.InvitationCode), total, nil
+}
+
+func DeleteInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteInvitationCode(ctx, &npool.DeleteInvitationCodeRequest{
+			Info: &mgrpb.InvitationCodeReq{
+				ID: &id,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*mgrpb.InvitationCode), nil
 }

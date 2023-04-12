@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/NpoolPlatform/inspire-middleware/api"
+	"context"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db"
-
-	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/action"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	registration "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	"github.com/NpoolPlatform/inspire-manager/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/api"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 
@@ -17,6 +17,8 @@ import (
 	cli "github.com/urfave/cli/v2"
 
 	"google.golang.org/grpc"
+
+	"github.com/NpoolPlatform/inspire-middleware/pkg/pubsub"
 )
 
 var runCmd = &cli.Command{
@@ -24,25 +26,42 @@ var runCmd = &cli.Command{
 	Aliases: []string{"s"},
 	Usage:   "Run the daemon",
 	Action: func(c *cli.Context) error {
-		if err := db.Init(); err != nil {
-			return err
-		}
-
-		if err := registration.CreateSubordinateProcedure(c.Context); err != nil {
-			return err
-		}
-		if err := registration.CreateSuperiorProcedure(c.Context); err != nil {
-			return err
-		}
-
-		go func() {
-			if err := grpc2.RunGRPC(rpcRegister); err != nil {
-				logger.Sugar().Errorf("fail to run grpc server: %v", err)
-			}
-		}()
-
-		return grpc2.RunGRPCGateWay(rpcGatewayRegister)
+		return action.Run(
+			c.Context,
+			run,
+			rpcRegister,
+			rpcGatewayRegister,
+			watch,
+		)
 	},
+}
+
+func run(ctx context.Context) error {
+	if err := db.Init(); err != nil {
+		return err
+	}
+	if err := registration.CreateSubordinateProcedure(ctx); err != nil {
+		return err
+	}
+	if err := registration.CreateSuperiorProcedure(ctx); err != nil {
+		return err
+	}
+	return pubsub.Subscribe(ctx)
+}
+
+func shutdown(ctx context.Context) {
+	<-ctx.Done()
+	logger.Sugar().Infow(
+		"Watch",
+		"State", "Done",
+		"Error", ctx.Err(),
+	)
+	_ = pubsub.Shutdown(ctx)
+}
+
+func watch(ctx context.Context, cancel context.CancelFunc) error {
+	go shutdown(ctx)
+	return nil
 }
 
 func rpcRegister(server grpc.ServiceRegistrar) error {

@@ -3,7 +3,7 @@ package detail
 import (
 	"context"
 
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/message/const"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	"go.opentelemetry.io/otel"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -21,7 +21,7 @@ import (
 func (s *Server) GetDetails(ctx context.Context, in *npool.GetDetailsRequest) (*npool.GetDetailsResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateOrder")
+	_, span := otel.Tracer(servicename.ServiceDomain).Start(ctx, "CreateOrder")
 	defer span.End()
 
 	defer func() {

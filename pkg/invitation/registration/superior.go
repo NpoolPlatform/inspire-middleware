@@ -25,9 +25,9 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 	}
 
 	const procedure = `
-	DROP PROCEDURE IF EXISTS get_superiores;
-	SET SESSION GROUP_CONCAT_MAX_LEN = 102400;
-	CREATE PROCEDURE get_superiores (IN invitees TEXT)
+		DROP PROCEDURE IF EXISTS get_superiores;
+		SET SESSION GROUP_CONCAT_MAX_LEN = 102400;
+		CREATE PROCEDURE get_superiores (IN invitees TEXT)
 		BEGIN
 		  DECLARE superiores TEXT;
 		  DECLARE my_invitees TEXT;
