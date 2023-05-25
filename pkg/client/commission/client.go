@@ -7,6 +7,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commissionmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
@@ -121,13 +122,14 @@ func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commissi
 	return info.(*npool.Commission), nil
 }
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, value string) error {
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, value string, settleType commissionmgrpb.SettleType) error {
 	_, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		_, err := cli.CloneCommissions(ctx, &npool.CloneCommissionsRequest{
 			AppID:      appID,
 			FromGoodID: fromGoodID,
 			ToGoodID:   toGoodID,
 			Value:      value,
+			SettleType: settleType,
 		})
 		if err != nil {
 			return nil, err
