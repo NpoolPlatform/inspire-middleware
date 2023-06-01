@@ -71,8 +71,7 @@ func CloneGoodOrderPercents(ctx context.Context, appID, fromGoodID, toGoodID, va
 					gop.
 						Percent.
 						Mul(val).
-						Div(decimal.NewFromInt(100)). //nolint
-						RoundUp(0),
+						Div(decimal.NewFromInt(100)), //nolint
 				).
 				SetStartAt(gop.StartAt).
 				SetEndAt(0).
