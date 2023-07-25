@@ -7,9 +7,11 @@ import (
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
@@ -29,6 +31,40 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 	if h.Name == nil {
 		return nil, fmt.Errorf("invalid name")
+	}
+
+	switch *h.CouponType {
+	case types.CouponType_FixAmount:
+		if h.Denomination.Cmp(*h.Circulation) > 0 {
+			return nil, fmt.Errorf("denomination > circulation")
+		}
+	case types.CouponType_Discount:
+		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 {
+			return nil, fmt.Errorf("100 discounat not allowed")
+		}
+	case types.CouponType_SpecialOffer:
+		if h.UserID == nil {
+			return nil, fmt.Errorf("userid is must")
+		}
+		if h.Denomination.Cmp(*h.Circulation) != 0 {
+			return nil, fmt.Errorf("denomination != circulation")
+		}
+	}
+
+	if h.CouponConstraint != nil {
+		switch *h.CouponConstraint {
+		case types.CouponConstraint_GoodThreshold:
+			fallthrough //nolint
+		case types.CouponConstraint_GoodOnly:
+			if h.GoodID == nil {
+				return nil, fmt.Errorf("goodid is must")
+			}
+			fallthrough //nolint
+		case types.CouponConstraint_PaymentThreshold:
+			if h.Threshold == nil {
+				return nil, fmt.Errorf("threshold is must")
+			}
+		}
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
