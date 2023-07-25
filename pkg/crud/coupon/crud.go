@@ -27,6 +27,7 @@ type Req struct {
 	CouponConstraint *types.CouponConstraint
 	Threshold        *decimal.Decimal
 	Allocated        *decimal.Decimal
+	Random           *bool
 	DeletedAt        *uint32
 }
 
@@ -75,6 +76,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	}
 	if req.Allocated != nil {
 		c.SetAllocated(*req.Allocated)
+	}
+	if req.Random != nil {
+		c.SetRandom(*req.Random)
 	}
 	return c
 }
