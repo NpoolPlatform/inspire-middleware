@@ -35,6 +35,19 @@ func (f ArchivementGeneralFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return f(ctx, mv)
 }
 
+// The CouponFunc type is an adapter to allow the use of ordinary
+// function as Coupon mutator.
+type CouponFunc func(context.Context, *ent.CouponMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CouponFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CouponMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CouponAllocatedFunc type is an adapter to allow the use of ordinary
 // function as CouponAllocated mutator.
 type CouponAllocatedFunc func(context.Context, *ent.CouponAllocatedMutation) (ent.Value, error)

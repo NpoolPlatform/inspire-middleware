@@ -480,12 +480,6 @@ func (adq *ArchivementDetailQuery) ForShare(opts ...sql.LockOption) *Archivement
 	return adq
 }
 
-// Modify adds a query modifier for attaching custom logic to queries.
-func (adq *ArchivementDetailQuery) Modify(modifiers ...func(s *sql.Selector)) *ArchivementDetailSelect {
-	adq.modifiers = append(adq.modifiers, modifiers...)
-	return adq.Select()
-}
-
 // ArchivementDetailGroupBy is the group-by builder for ArchivementDetail entities.
 type ArchivementDetailGroupBy struct {
 	config
@@ -576,10 +570,4 @@ func (ads *ArchivementDetailSelect) sqlScan(ctx context.Context, v interface{}) 
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (ads *ArchivementDetailSelect) Modify(modifiers ...func(s *sql.Selector)) *ArchivementDetailSelect {
-	ads.modifiers = append(ads.modifiers, modifiers...)
-	return ads
 }

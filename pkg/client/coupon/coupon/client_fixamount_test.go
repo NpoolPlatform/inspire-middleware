@@ -12,7 +12,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"bou.ke/monkey"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"

@@ -13,6 +13,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponfixamount"
@@ -37,6 +38,8 @@ type Client struct {
 	ArchivementDetail *ArchivementDetailClient
 	// ArchivementGeneral is the client for interacting with the ArchivementGeneral builders.
 	ArchivementGeneral *ArchivementGeneralClient
+	// Coupon is the client for interacting with the Coupon builders.
+	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
 	// CouponDiscount is the client for interacting with the CouponDiscount builders.
@@ -72,6 +75,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.ArchivementDetail = NewArchivementDetailClient(c.config)
 	c.ArchivementGeneral = NewArchivementGeneralClient(c.config)
+	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
 	c.CouponDiscount = NewCouponDiscountClient(c.config)
 	c.CouponFixAmount = NewCouponFixAmountClient(c.config)
@@ -117,6 +121,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:                cfg,
 		ArchivementDetail:     NewArchivementDetailClient(cfg),
 		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
 		CouponDiscount:        NewCouponDiscountClient(cfg),
 		CouponFixAmount:       NewCouponFixAmountClient(cfg),
@@ -148,6 +153,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:                cfg,
 		ArchivementDetail:     NewArchivementDetailClient(cfg),
 		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
 		CouponDiscount:        NewCouponDiscountClient(cfg),
 		CouponFixAmount:       NewCouponFixAmountClient(cfg),
@@ -189,6 +195,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.ArchivementDetail.Use(hooks...)
 	c.ArchivementGeneral.Use(hooks...)
+	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
 	c.CouponDiscount.Use(hooks...)
 	c.CouponFixAmount.Use(hooks...)
@@ -381,6 +388,97 @@ func (c *ArchivementGeneralClient) GetX(ctx context.Context, id uuid.UUID) *Arch
 func (c *ArchivementGeneralClient) Hooks() []Hook {
 	hooks := c.hooks.ArchivementGeneral
 	return append(hooks[:len(hooks):len(hooks)], archivementgeneral.Hooks[:]...)
+}
+
+// CouponClient is a client for the Coupon schema.
+type CouponClient struct {
+	config
+}
+
+// NewCouponClient returns a client for the Coupon from the given config.
+func NewCouponClient(c config) *CouponClient {
+	return &CouponClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coupon.Hooks(f(g(h())))`.
+func (c *CouponClient) Use(hooks ...Hook) {
+	c.hooks.Coupon = append(c.hooks.Coupon, hooks...)
+}
+
+// Create returns a builder for creating a Coupon entity.
+func (c *CouponClient) Create() *CouponCreate {
+	mutation := newCouponMutation(c.config, OpCreate)
+	return &CouponCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Coupon entities.
+func (c *CouponClient) CreateBulk(builders ...*CouponCreate) *CouponCreateBulk {
+	return &CouponCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Coupon.
+func (c *CouponClient) Update() *CouponUpdate {
+	mutation := newCouponMutation(c.config, OpUpdate)
+	return &CouponUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponClient) UpdateOne(co *Coupon) *CouponUpdateOne {
+	mutation := newCouponMutation(c.config, OpUpdateOne, withCoupon(co))
+	return &CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponClient) UpdateOneID(id uuid.UUID) *CouponUpdateOne {
+	mutation := newCouponMutation(c.config, OpUpdateOne, withCouponID(id))
+	return &CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Coupon.
+func (c *CouponClient) Delete() *CouponDelete {
+	mutation := newCouponMutation(c.config, OpDelete)
+	return &CouponDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponClient) DeleteOne(co *Coupon) *CouponDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CouponClient) DeleteOneID(id uuid.UUID) *CouponDeleteOne {
+	builder := c.Delete().Where(coupon.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponDeleteOne{builder}
+}
+
+// Query returns a query builder for Coupon.
+func (c *CouponClient) Query() *CouponQuery {
+	return &CouponQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Coupon entity by its id.
+func (c *CouponClient) Get(ctx context.Context, id uuid.UUID) (*Coupon, error) {
+	return c.Query().Where(coupon.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponClient) GetX(ctx context.Context, id uuid.UUID) *Coupon {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponClient) Hooks() []Hook {
+	hooks := c.hooks.Coupon
+	return append(hooks[:len(hooks):len(hooks)], coupon.Hooks[:]...)
 }
 
 // CouponAllocatedClient is a client for the CouponAllocated schema.

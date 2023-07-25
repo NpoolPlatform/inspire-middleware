@@ -480,12 +480,6 @@ func (csoq *CouponSpecialOfferQuery) ForShare(opts ...sql.LockOption) *CouponSpe
 	return csoq
 }
 
-// Modify adds a query modifier for attaching custom logic to queries.
-func (csoq *CouponSpecialOfferQuery) Modify(modifiers ...func(s *sql.Selector)) *CouponSpecialOfferSelect {
-	csoq.modifiers = append(csoq.modifiers, modifiers...)
-	return csoq.Select()
-}
-
 // CouponSpecialOfferGroupBy is the group-by builder for CouponSpecialOffer entities.
 type CouponSpecialOfferGroupBy struct {
 	config
@@ -576,10 +570,4 @@ func (csos *CouponSpecialOfferSelect) sqlScan(ctx context.Context, v interface{}
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (csos *CouponSpecialOfferSelect) Modify(modifiers ...func(s *sql.Selector)) *CouponSpecialOfferSelect {
-	csos.modifiers = append(csos.modifiers, modifiers...)
-	return csos
 }

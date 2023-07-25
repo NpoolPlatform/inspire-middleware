@@ -57,8 +57,8 @@ github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451 h1:P
 github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451/go.mod h1:NOvmcUqSDPfpCDRfspmNvLm2m12zPMWXFCPonARkNJA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
-github.com/NpoolPlatform/message v0.0.0-20230725030836-a8dcb0146aad h1:8JHasYKKUEgiy6aBafuqf8aRhRdP5N/47K0n0SlbPMM=
-github.com/NpoolPlatform/message v0.0.0-20230725030836-a8dcb0146aad/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
+github.com/NpoolPlatform/message v0.0.0-20230725034514-7e12812823f6 h1:qjjSX4iKA2UQ3pAXNkGC2HWN92+Td/WRCKsQg7fE0ks=
+github.com/NpoolPlatform/message v0.0.0-20230725034514-7e12812823f6/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shonminh/apollo-client v0.4.0 h1:AXGp4wOahrEKjheMXehgsG9B8dEfLQHttRLHeEefvus=

@@ -13,7 +13,7 @@ import (
 
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	coupon "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon/coupon"
 

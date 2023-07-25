@@ -480,12 +480,6 @@ func (icq *InvitationCodeQuery) ForShare(opts ...sql.LockOption) *InvitationCode
 	return icq
 }
 
-// Modify adds a query modifier for attaching custom logic to queries.
-func (icq *InvitationCodeQuery) Modify(modifiers ...func(s *sql.Selector)) *InvitationCodeSelect {
-	icq.modifiers = append(icq.modifiers, modifiers...)
-	return icq.Select()
-}
-
 // InvitationCodeGroupBy is the group-by builder for InvitationCode entities.
 type InvitationCodeGroupBy struct {
 	config
@@ -576,10 +570,4 @@ func (ics *InvitationCodeSelect) sqlScan(ctx context.Context, v interface{}) err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (ics *InvitationCodeSelect) Modify(modifiers ...func(s *sql.Selector)) *InvitationCodeSelect {
-	ics.modifiers = append(ics.modifiers, modifiers...)
-	return ics
 }

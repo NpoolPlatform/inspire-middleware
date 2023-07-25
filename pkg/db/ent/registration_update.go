@@ -18,9 +18,8 @@ import (
 // RegistrationUpdate is the builder for updating Registration entities.
 type RegistrationUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *RegistrationMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *RegistrationMutation
 }
 
 // Where appends a list predicates to the RegistrationUpdate builder.
@@ -176,12 +175,6 @@ func (ru *RegistrationUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ru *RegistrationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RegistrationUpdate {
-	ru.modifiers = append(ru.modifiers, modifiers...)
-	return ru
-}
-
 func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -263,7 +256,6 @@ func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: registration.FieldInviteeID,
 		})
 	}
-	_spec.Modifiers = ru.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{registration.Label}
@@ -278,10 +270,9 @@ func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // RegistrationUpdateOne is the builder for updating a single Registration entity.
 type RegistrationUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *RegistrationMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *RegistrationMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -444,12 +435,6 @@ func (ruo *RegistrationUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (ruo *RegistrationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RegistrationUpdateOne {
-	ruo.modifiers = append(ruo.modifiers, modifiers...)
-	return ruo
-}
-
 func (ruo *RegistrationUpdateOne) sqlSave(ctx context.Context) (_node *Registration, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -548,7 +533,6 @@ func (ruo *RegistrationUpdateOne) sqlSave(ctx context.Context) (_node *Registrat
 			Column: registration.FieldInviteeID,
 		})
 	}
-	_spec.Modifiers = ruo.modifiers
 	_node = &Registration{config: ruo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -19,9 +19,8 @@ import (
 // CouponFixAmountUpdate is the builder for updating CouponFixAmount entities.
 type CouponFixAmountUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *CouponFixAmountMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *CouponFixAmountMutation
 }
 
 // Where appends a list predicates to the CouponFixAmountUpdate builder.
@@ -332,12 +331,6 @@ func (cfau *CouponFixAmountUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cfau *CouponFixAmountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponFixAmountUpdate {
-	cfau.modifiers = append(cfau.modifiers, modifiers...)
-	return cfau
-}
-
 func (cfau *CouponFixAmountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -524,7 +517,6 @@ func (cfau *CouponFixAmountUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Column: couponfixamount.FieldAllocated,
 		})
 	}
-	_spec.Modifiers = cfau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cfau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{couponfixamount.Label}
@@ -539,10 +531,9 @@ func (cfau *CouponFixAmountUpdate) sqlSave(ctx context.Context) (n int, err erro
 // CouponFixAmountUpdateOne is the builder for updating a single CouponFixAmount entity.
 type CouponFixAmountUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *CouponFixAmountMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *CouponFixAmountMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -860,12 +851,6 @@ func (cfauo *CouponFixAmountUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cfauo *CouponFixAmountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponFixAmountUpdateOne {
-	cfauo.modifiers = append(cfauo.modifiers, modifiers...)
-	return cfauo
-}
-
 func (cfauo *CouponFixAmountUpdateOne) sqlSave(ctx context.Context) (_node *CouponFixAmount, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1069,7 +1054,6 @@ func (cfauo *CouponFixAmountUpdateOne) sqlSave(ctx context.Context) (_node *Coup
 			Column: couponfixamount.FieldAllocated,
 		})
 	}
-	_spec.Modifiers = cfauo.modifiers
 	_node = &CouponFixAmount{config: cfauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

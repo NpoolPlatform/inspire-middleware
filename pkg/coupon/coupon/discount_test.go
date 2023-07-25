@@ -9,7 +9,7 @@ import (
 	"time"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"

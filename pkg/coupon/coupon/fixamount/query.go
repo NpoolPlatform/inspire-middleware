@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	fixamountmgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/coupon/fixamount"
 	fixamountmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/fixamount"

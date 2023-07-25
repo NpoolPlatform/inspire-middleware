@@ -7,7 +7,7 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
 	allocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	mgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/event"

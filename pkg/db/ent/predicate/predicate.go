@@ -12,6 +12,9 @@ type ArchivementDetail func(*sql.Selector)
 // ArchivementGeneral is the predicate function for archivementgeneral builders.
 type ArchivementGeneral func(*sql.Selector)
 
+// Coupon is the predicate function for coupon builders.
+type Coupon func(*sql.Selector)
+
 // CouponAllocated is the predicate function for couponallocated builders.
 type CouponAllocated func(*sql.Selector)
 

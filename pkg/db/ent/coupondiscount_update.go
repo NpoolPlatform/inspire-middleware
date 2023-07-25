@@ -19,9 +19,8 @@ import (
 // CouponDiscountUpdate is the builder for updating CouponDiscount entities.
 type CouponDiscountUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *CouponDiscountMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *CouponDiscountMutation
 }
 
 // Where appends a list predicates to the CouponDiscountUpdate builder.
@@ -332,12 +331,6 @@ func (cdu *CouponDiscountUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cdu *CouponDiscountUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponDiscountUpdate {
-	cdu.modifiers = append(cdu.modifiers, modifiers...)
-	return cdu
-}
-
 func (cdu *CouponDiscountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -524,7 +517,6 @@ func (cdu *CouponDiscountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: coupondiscount.FieldAllocated,
 		})
 	}
-	_spec.Modifiers = cdu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cdu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{coupondiscount.Label}
@@ -539,10 +531,9 @@ func (cdu *CouponDiscountUpdate) sqlSave(ctx context.Context) (n int, err error)
 // CouponDiscountUpdateOne is the builder for updating a single CouponDiscount entity.
 type CouponDiscountUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *CouponDiscountMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *CouponDiscountMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -860,12 +851,6 @@ func (cduo *CouponDiscountUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cduo *CouponDiscountUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponDiscountUpdateOne {
-	cduo.modifiers = append(cduo.modifiers, modifiers...)
-	return cduo
-}
-
 func (cduo *CouponDiscountUpdateOne) sqlSave(ctx context.Context) (_node *CouponDiscount, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1069,7 +1054,6 @@ func (cduo *CouponDiscountUpdateOne) sqlSave(ctx context.Context) (_node *Coupon
 			Column: coupondiscount.FieldAllocated,
 		})
 	}
-	_spec.Modifiers = cduo.modifiers
 	_node = &CouponDiscount{config: cduo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

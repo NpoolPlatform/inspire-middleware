@@ -18,6 +18,8 @@ type Tx struct {
 	ArchivementDetail *ArchivementDetailClient
 	// ArchivementGeneral is the client for interacting with the ArchivementGeneral builders.
 	ArchivementGeneral *ArchivementGeneralClient
+	// Coupon is the client for interacting with the Coupon builders.
+	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
 	// CouponDiscount is the client for interacting with the CouponDiscount builders.
@@ -175,6 +177,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.ArchivementDetail = NewArchivementDetailClient(tx.config)
 	tx.ArchivementGeneral = NewArchivementGeneralClient(tx.config)
+	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
 	tx.CouponDiscount = NewCouponDiscountClient(tx.config)
 	tx.CouponFixAmount = NewCouponFixAmountClient(tx.config)

@@ -7,7 +7,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon"
 

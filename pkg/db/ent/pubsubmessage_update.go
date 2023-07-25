@@ -18,9 +18,8 @@ import (
 // PubsubMessageUpdate is the builder for updating PubsubMessage entities.
 type PubsubMessageUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *PubsubMessageMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *PubsubMessageMutation
 }
 
 // Where appends a list predicates to the PubsubMessageUpdate builder.
@@ -258,12 +257,6 @@ func (pmu *PubsubMessageUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (pmu *PubsubMessageUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PubsubMessageUpdate {
-	pmu.modifiers = append(pmu.modifiers, modifiers...)
-	return pmu
-}
-
 func (pmu *PubsubMessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -389,7 +382,6 @@ func (pmu *PubsubMessageUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: pubsubmessage.FieldArguments,
 		})
 	}
-	_spec.Modifiers = pmu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, pmu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{pubsubmessage.Label}
@@ -404,10 +396,9 @@ func (pmu *PubsubMessageUpdate) sqlSave(ctx context.Context) (n int, err error) 
 // PubsubMessageUpdateOne is the builder for updating a single PubsubMessage entity.
 type PubsubMessageUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *PubsubMessageMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *PubsubMessageMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -652,12 +643,6 @@ func (pmuo *PubsubMessageUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (pmuo *PubsubMessageUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PubsubMessageUpdateOne {
-	pmuo.modifiers = append(pmuo.modifiers, modifiers...)
-	return pmuo
-}
-
 func (pmuo *PubsubMessageUpdateOne) sqlSave(ctx context.Context) (_node *PubsubMessage, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -800,7 +785,6 @@ func (pmuo *PubsubMessageUpdateOne) sqlSave(ctx context.Context) (_node *PubsubM
 			Column: pubsubmessage.FieldArguments,
 		})
 	}
-	_spec.Modifiers = pmuo.modifiers
 	_node = &PubsubMessage{config: pmuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

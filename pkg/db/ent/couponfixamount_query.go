@@ -480,12 +480,6 @@ func (cfaq *CouponFixAmountQuery) ForShare(opts ...sql.LockOption) *CouponFixAmo
 	return cfaq
 }
 
-// Modify adds a query modifier for attaching custom logic to queries.
-func (cfaq *CouponFixAmountQuery) Modify(modifiers ...func(s *sql.Selector)) *CouponFixAmountSelect {
-	cfaq.modifiers = append(cfaq.modifiers, modifiers...)
-	return cfaq.Select()
-}
-
 // CouponFixAmountGroupBy is the group-by builder for CouponFixAmount entities.
 type CouponFixAmountGroupBy struct {
 	config
@@ -576,10 +570,4 @@ func (cfas *CouponFixAmountSelect) sqlScan(ctx context.Context, v interface{}) e
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
-}
-
-// Modify adds a query modifier for attaching custom logic to queries.
-func (cfas *CouponFixAmountSelect) Modify(modifiers ...func(s *sql.Selector)) *CouponFixAmountSelect {
-	cfas.modifiers = append(cfas.modifiers, modifiers...)
-	return cfas
 }

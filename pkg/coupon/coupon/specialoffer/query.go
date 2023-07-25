@@ -4,7 +4,7 @@ import (
 	"context"
 
 	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	specialoffermgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/coupon/specialoffer"
 	specialoffermgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/specialoffer"

@@ -19,9 +19,8 @@ import (
 // CouponAllocatedUpdate is the builder for updating CouponAllocated entities.
 type CouponAllocatedUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *CouponAllocatedMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *CouponAllocatedMutation
 }
 
 // Where appends a list predicates to the CouponAllocatedUpdate builder.
@@ -284,12 +283,6 @@ func (cau *CouponAllocatedUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cau *CouponAllocatedUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponAllocatedUpdate {
-	cau.modifiers = append(cau.modifiers, modifiers...)
-	return cau
-}
-
 func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -443,7 +436,6 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: couponallocated.FieldUsedByOrderID,
 		})
 	}
-	_spec.Modifiers = cau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{couponallocated.Label}
@@ -458,10 +450,9 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 // CouponAllocatedUpdateOne is the builder for updating a single CouponAllocated entity.
 type CouponAllocatedUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *CouponAllocatedMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *CouponAllocatedMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -731,12 +722,6 @@ func (cauo *CouponAllocatedUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cauo *CouponAllocatedUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponAllocatedUpdateOne {
-	cauo.modifiers = append(cauo.modifiers, modifiers...)
-	return cauo
-}
-
 func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *CouponAllocated, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -907,7 +892,6 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 			Column: couponallocated.FieldUsedByOrderID,
 		})
 	}
-	_spec.Modifiers = cauo.modifiers
 	_node = &CouponAllocated{config: cauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

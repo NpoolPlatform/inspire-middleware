@@ -19,9 +19,8 @@ import (
 // ArchivementGeneralUpdate is the builder for updating ArchivementGeneral entities.
 type ArchivementGeneralUpdate struct {
 	config
-	hooks     []Hook
-	mutation  *ArchivementGeneralMutation
-	modifiers []func(*sql.UpdateBuilder)
+	hooks    []Hook
+	mutation *ArchivementGeneralMutation
 }
 
 // Where appends a list predicates to the ArchivementGeneralUpdate builder.
@@ -413,12 +412,6 @@ func (agu *ArchivementGeneralUpdate) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (agu *ArchivementGeneralUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ArchivementGeneralUpdate {
-	agu.modifiers = append(agu.modifiers, modifiers...)
-	return agu
-}
-
 func (agu *ArchivementGeneralUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -649,7 +642,6 @@ func (agu *ArchivementGeneralUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: archivementgeneral.FieldSelfCommission,
 		})
 	}
-	_spec.Modifiers = agu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, agu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{archivementgeneral.Label}
@@ -664,10 +656,9 @@ func (agu *ArchivementGeneralUpdate) sqlSave(ctx context.Context) (n int, err er
 // ArchivementGeneralUpdateOne is the builder for updating a single ArchivementGeneral entity.
 type ArchivementGeneralUpdateOne struct {
 	config
-	fields    []string
-	hooks     []Hook
-	mutation  *ArchivementGeneralMutation
-	modifiers []func(*sql.UpdateBuilder)
+	fields   []string
+	hooks    []Hook
+	mutation *ArchivementGeneralMutation
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1066,12 +1057,6 @@ func (aguo *ArchivementGeneralUpdateOne) defaults() error {
 	return nil
 }
 
-// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (aguo *ArchivementGeneralUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ArchivementGeneralUpdateOne {
-	aguo.modifiers = append(aguo.modifiers, modifiers...)
-	return aguo
-}
-
 func (aguo *ArchivementGeneralUpdateOne) sqlSave(ctx context.Context) (_node *ArchivementGeneral, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1319,7 +1304,6 @@ func (aguo *ArchivementGeneralUpdateOne) sqlSave(ctx context.Context) (_node *Ar
 			Column: archivementgeneral.FieldSelfCommission,
 		})
 	}
-	_spec.Modifiers = aguo.modifiers
 	_node = &ArchivementGeneral{config: aguo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

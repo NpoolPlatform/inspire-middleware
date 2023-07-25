@@ -44,7 +44,7 @@ func (Coupon) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
-			Other("value", decimal.Decimal{}).
+			Other("denomination", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
