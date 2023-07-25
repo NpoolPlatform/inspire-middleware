@@ -1,34 +1,61 @@
-//nolint:dupl
 package coupon
 
 import (
 	"context"
 	"fmt"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
-	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/discount"
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
-	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
+	"github.com/google/uuid"
 )
 
-func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	switch in.GetCouponType() {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.CreateFixAmount(ctx, in)
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.CreateDiscount(ctx, in)
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.CreateSpecialOffer(ctx, in)
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, fmt.Errorf("unknown coupon type")
+func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+	id := uuid.New()
+	if h.ID == nil {
+		h.ID = &id
 	}
-	return nil, fmt.Errorf("not supported")
+
+	if h.CouponType == nil {
+		return nil, fmt.Errorf("invalid coupontype")
+	}
+	if h.Denomination == nil {
+		return nil, fmt.Errorf("invalid denomination")
+	}
+	if h.Circulation == nil {
+		return nil, fmt.Errorf("invalid circulation")
+	}
+	if h.Name == nil {
+		return nil, fmt.Errorf("invalid name")
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if _, err := couponcrud.CreateSet(
+			cli.Coupon.Create(),
+			&couponcrud.Req{
+				ID:               h.ID,
+				CouponType:       h.CouponType,
+				AppID:            h.AppID,
+				UserID:           h.UserID,
+				GoodID:           h.GoodID,
+				Denomination:     h.Denomination,
+				Circulation:      h.Circulation,
+				IssuedBy:         h.IssuedBy,
+				StartAt:          h.StartAt,
+				DurationDays:     h.DurationDays,
+				Message:          h.Message,
+				Name:             h.Name,
+				CouponConstraint: h.CouponConstraint,
+				Threshold:        h.Threshold,
+				Allocated:        h.Allocated,
+				Random:           h.Random,
+			},
+		).Save(_ctx); err != nil {
+			return err
+		}
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return h.GetCoupon(ctx)
 }

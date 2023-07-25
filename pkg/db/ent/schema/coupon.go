@@ -2,6 +2,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
@@ -72,11 +74,11 @@ func (Coupon) Fields() []ent.Field {
 		field.
 			Uint32("start_at").
 			Optional().
-			Default(0),
+			Default(uint32(time.Now().Unix())),
 		field.
 			Uint32("duration_days").
 			Optional().
-			Default(0),
+			Default(365),
 		field.
 			String("message").
 			Optional().
@@ -106,7 +108,7 @@ func (Coupon) Fields() []ent.Field {
 		field.
 			String("coupon_constraint").
 			Optional().
-			Default(types.CouponConstraint_DefaultCouponConstraint.String()),
+			Default(types.CouponConstraint_Normal.String()),
 	}
 }
 

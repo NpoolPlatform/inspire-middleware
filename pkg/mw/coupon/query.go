@@ -12,6 +12,12 @@ import (
 	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
 )
 
+func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
+	if h.ID == nil {
+		return nil, fmt.Errorf("invalid id")
+	}
+}
+
 func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponType) (*npool.Coupon, error) {
 	switch couponType {
 	case allocatedmgrpb.CouponType_FixAmount:
