@@ -104,6 +104,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldGoodID:           {Type: field.TypeUUID, Column: coupon.FieldGoodID},
 			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
 			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
+			coupon.FieldRandom:           {Type: field.TypeBool, Column: coupon.FieldRandom},
 			coupon.FieldIssuedBy:         {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
 			coupon.FieldStartAt:          {Type: field.TypeUint32, Column: coupon.FieldStartAt},
 			coupon.FieldDurationDays:     {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
@@ -131,7 +132,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldDeletedAt:     {Type: field.TypeUint32, Column: couponallocated.FieldDeletedAt},
 			couponallocated.FieldAppID:         {Type: field.TypeUUID, Column: couponallocated.FieldAppID},
 			couponallocated.FieldUserID:        {Type: field.TypeUUID, Column: couponallocated.FieldUserID},
-			couponallocated.FieldCouponType:    {Type: field.TypeString, Column: couponallocated.FieldCouponType},
 			couponallocated.FieldCouponID:      {Type: field.TypeUUID, Column: couponallocated.FieldCouponID},
 			couponallocated.FieldValue:         {Type: field.TypeOther, Column: couponallocated.FieldValue},
 			couponallocated.FieldUsed:          {Type: field.TypeBool, Column: couponallocated.FieldUsed},
@@ -674,6 +674,11 @@ func (f *CouponFilter) WhereCirculation(p entql.OtherP) {
 	f.Where(p.Field(coupon.FieldCirculation))
 }
 
+// WhereRandom applies the entql bool predicate on the random field.
+func (f *CouponFilter) WhereRandom(p entql.BoolP) {
+	f.Where(p.Field(coupon.FieldRandom))
+}
+
 // WhereIssuedBy applies the entql [16]byte predicate on the issued_by field.
 func (f *CouponFilter) WhereIssuedBy(p entql.ValueP) {
 	f.Where(p.Field(coupon.FieldIssuedBy))
@@ -782,11 +787,6 @@ func (f *CouponAllocatedFilter) WhereAppID(p entql.ValueP) {
 // WhereUserID applies the entql [16]byte predicate on the user_id field.
 func (f *CouponAllocatedFilter) WhereUserID(p entql.ValueP) {
 	f.Where(p.Field(couponallocated.FieldUserID))
-}
-
-// WhereCouponType applies the entql string predicate on the coupon_type field.
-func (f *CouponAllocatedFilter) WhereCouponType(p entql.StringP) {
-	f.Where(p.Field(couponallocated.FieldCouponType))
 }
 
 // WhereCouponID applies the entql [16]byte predicate on the coupon_id field.

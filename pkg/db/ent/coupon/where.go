@@ -136,6 +136,13 @@ func Circulation(v decimal.Decimal) predicate.Coupon {
 	})
 }
 
+// Random applies equality check predicate on the "random" field. It's identical to RandomEQ.
+func Random(v bool) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRandom), v))
+	})
+}
+
 // IssuedBy applies equality check predicate on the "issued_by" field. It's identical to IssuedByEQ.
 func IssuedBy(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
@@ -778,6 +785,34 @@ func CirculationIsNil() predicate.Coupon {
 func CirculationNotNil() predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCirculation)))
+	})
+}
+
+// RandomEQ applies the EQ predicate on the "random" field.
+func RandomEQ(v bool) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRandom), v))
+	})
+}
+
+// RandomNEQ applies the NEQ predicate on the "random" field.
+func RandomNEQ(v bool) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRandom), v))
+	})
+}
+
+// RandomIsNil applies the IsNil predicate on the "random" field.
+func RandomIsNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRandom)))
+	})
+}
+
+// RandomNotNil applies the NotNil predicate on the "random" field.
+func RandomNotNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRandom)))
 	})
 }
 

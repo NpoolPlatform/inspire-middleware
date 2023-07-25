@@ -78,20 +78,6 @@ func (cac *CouponAllocatedCreate) SetUserID(u uuid.UUID) *CouponAllocatedCreate 
 	return cac
 }
 
-// SetCouponType sets the "coupon_type" field.
-func (cac *CouponAllocatedCreate) SetCouponType(s string) *CouponAllocatedCreate {
-	cac.mutation.SetCouponType(s)
-	return cac
-}
-
-// SetNillableCouponType sets the "coupon_type" field if the given value is not nil.
-func (cac *CouponAllocatedCreate) SetNillableCouponType(s *string) *CouponAllocatedCreate {
-	if s != nil {
-		cac.SetCouponType(*s)
-	}
-	return cac
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (cac *CouponAllocatedCreate) SetCouponID(u uuid.UUID) *CouponAllocatedCreate {
 	cac.mutation.SetCouponID(u)
@@ -268,10 +254,6 @@ func (cac *CouponAllocatedCreate) defaults() error {
 		v := couponallocated.DefaultDeletedAt()
 		cac.mutation.SetDeletedAt(v)
 	}
-	if _, ok := cac.mutation.CouponType(); !ok {
-		v := couponallocated.DefaultCouponType
-		cac.mutation.SetCouponType(v)
-	}
 	if _, ok := cac.mutation.Value(); !ok {
 		v := couponallocated.DefaultValue
 		cac.mutation.SetValue(v)
@@ -397,14 +379,6 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldUserID,
 		})
 		_node.UserID = value
-	}
-	if value, ok := cac.mutation.CouponType(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: couponallocated.FieldCouponType,
-		})
-		_node.CouponType = value
 	}
 	if value, ok := cac.mutation.CouponID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -575,24 +549,6 @@ func (u *CouponAllocatedUpsert) SetUserID(v uuid.UUID) *CouponAllocatedUpsert {
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *CouponAllocatedUpsert) UpdateUserID() *CouponAllocatedUpsert {
 	u.SetExcluded(couponallocated.FieldUserID)
-	return u
-}
-
-// SetCouponType sets the "coupon_type" field.
-func (u *CouponAllocatedUpsert) SetCouponType(v string) *CouponAllocatedUpsert {
-	u.Set(couponallocated.FieldCouponType, v)
-	return u
-}
-
-// UpdateCouponType sets the "coupon_type" field to the value that was provided on create.
-func (u *CouponAllocatedUpsert) UpdateCouponType() *CouponAllocatedUpsert {
-	u.SetExcluded(couponallocated.FieldCouponType)
-	return u
-}
-
-// ClearCouponType clears the value of the "coupon_type" field.
-func (u *CouponAllocatedUpsert) ClearCouponType() *CouponAllocatedUpsert {
-	u.SetNull(couponallocated.FieldCouponType)
 	return u
 }
 
@@ -824,27 +780,6 @@ func (u *CouponAllocatedUpsertOne) SetUserID(v uuid.UUID) *CouponAllocatedUpsert
 func (u *CouponAllocatedUpsertOne) UpdateUserID() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.UpdateUserID()
-	})
-}
-
-// SetCouponType sets the "coupon_type" field.
-func (u *CouponAllocatedUpsertOne) SetCouponType(v string) *CouponAllocatedUpsertOne {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.SetCouponType(v)
-	})
-}
-
-// UpdateCouponType sets the "coupon_type" field to the value that was provided on create.
-func (u *CouponAllocatedUpsertOne) UpdateCouponType() *CouponAllocatedUpsertOne {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.UpdateCouponType()
-	})
-}
-
-// ClearCouponType clears the value of the "coupon_type" field.
-func (u *CouponAllocatedUpsertOne) ClearCouponType() *CouponAllocatedUpsertOne {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.ClearCouponType()
 	})
 }
 
@@ -1257,27 +1192,6 @@ func (u *CouponAllocatedUpsertBulk) SetUserID(v uuid.UUID) *CouponAllocatedUpser
 func (u *CouponAllocatedUpsertBulk) UpdateUserID() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.UpdateUserID()
-	})
-}
-
-// SetCouponType sets the "coupon_type" field.
-func (u *CouponAllocatedUpsertBulk) SetCouponType(v string) *CouponAllocatedUpsertBulk {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.SetCouponType(v)
-	})
-}
-
-// UpdateCouponType sets the "coupon_type" field to the value that was provided on create.
-func (u *CouponAllocatedUpsertBulk) UpdateCouponType() *CouponAllocatedUpsertBulk {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.UpdateCouponType()
-	})
-}
-
-// ClearCouponType clears the value of the "coupon_type" field.
-func (u *CouponAllocatedUpsertBulk) ClearCouponType() *CouponAllocatedUpsertBulk {
-	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.ClearCouponType()
 	})
 }
 

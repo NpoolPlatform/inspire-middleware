@@ -5,11 +5,8 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
-	"github.com/shopspring/decimal"
-
 	"github.com/google/uuid"
-
-	"github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	"github.com/shopspring/decimal"
 )
 
 // CouponAllocated holds the schema definition for the CouponAllocated entity.
@@ -34,10 +31,6 @@ func (CouponAllocated) Fields() []ent.Field {
 			UUID("app_id", uuid.UUID{}),
 		field.
 			UUID("user_id", uuid.UUID{}),
-		field.
-			String("coupon_type").
-			Optional().
-			Default(allocated.CouponType_DefaultCouponType.String()),
 		field.
 			UUID("coupon_id", uuid.UUID{}),
 		field.

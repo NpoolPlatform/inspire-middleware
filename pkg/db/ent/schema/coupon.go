@@ -64,6 +64,10 @@ func (Coupon) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
+			Bool("random").
+			Optional().
+			Default(false),
+		field.
 			UUID("issued_by", uuid.UUID{}),
 		field.
 			Uint32("start_at").

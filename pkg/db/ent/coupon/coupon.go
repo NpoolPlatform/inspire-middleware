@@ -29,6 +29,8 @@ const (
 	FieldDenomination = "denomination"
 	// FieldCirculation holds the string denoting the circulation field in the database.
 	FieldCirculation = "circulation"
+	// FieldRandom holds the string denoting the random field in the database.
+	FieldRandom = "random"
 	// FieldIssuedBy holds the string denoting the issued_by field in the database.
 	FieldIssuedBy = "issued_by"
 	// FieldStartAt holds the string denoting the start_at field in the database.
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldGoodID,
 	FieldDenomination,
 	FieldCirculation,
+	FieldRandom,
 	FieldIssuedBy,
 	FieldStartAt,
 	FieldDurationDays,
@@ -110,6 +113,8 @@ var (
 	DefaultDenomination decimal.Decimal
 	// DefaultCirculation holds the default value on creation for the "circulation" field.
 	DefaultCirculation decimal.Decimal
+	// DefaultRandom holds the default value on creation for the "random" field.
+	DefaultRandom bool
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
 	// DefaultDurationDays holds the default value on creation for the "duration_days" field.

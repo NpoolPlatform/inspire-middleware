@@ -136,6 +136,20 @@ func (cc *CouponCreate) SetNillableCirculation(d *decimal.Decimal) *CouponCreate
 	return cc
 }
 
+// SetRandom sets the "random" field.
+func (cc *CouponCreate) SetRandom(b bool) *CouponCreate {
+	cc.mutation.SetRandom(b)
+	return cc
+}
+
+// SetNillableRandom sets the "random" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableRandom(b *bool) *CouponCreate {
+	if b != nil {
+		cc.SetRandom(*b)
+	}
+	return cc
+}
+
 // SetIssuedBy sets the "issued_by" field.
 func (cc *CouponCreate) SetIssuedBy(u uuid.UUID) *CouponCreate {
 	cc.mutation.SetIssuedBy(u)
@@ -397,6 +411,10 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultCirculation
 		cc.mutation.SetCirculation(v)
 	}
+	if _, ok := cc.mutation.Random(); !ok {
+		v := coupon.DefaultRandom
+		cc.mutation.SetRandom(v)
+	}
 	if _, ok := cc.mutation.StartAt(); !ok {
 		v := coupon.DefaultStartAt
 		cc.mutation.SetStartAt(v)
@@ -553,6 +571,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldCirculation,
 		})
 		_node.Circulation = value
+	}
+	if value, ok := cc.mutation.Random(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: coupon.FieldRandom,
+		})
+		_node.Random = value
 	}
 	if value, ok := cc.mutation.IssuedBy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -821,6 +847,24 @@ func (u *CouponUpsert) UpdateCirculation() *CouponUpsert {
 // ClearCirculation clears the value of the "circulation" field.
 func (u *CouponUpsert) ClearCirculation() *CouponUpsert {
 	u.SetNull(coupon.FieldCirculation)
+	return u
+}
+
+// SetRandom sets the "random" field.
+func (u *CouponUpsert) SetRandom(v bool) *CouponUpsert {
+	u.Set(coupon.FieldRandom, v)
+	return u
+}
+
+// UpdateRandom sets the "random" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateRandom() *CouponUpsert {
+	u.SetExcluded(coupon.FieldRandom)
+	return u
+}
+
+// ClearRandom clears the value of the "random" field.
+func (u *CouponUpsert) ClearRandom() *CouponUpsert {
+	u.SetNull(coupon.FieldRandom)
 	return u
 }
 
@@ -1207,6 +1251,27 @@ func (u *CouponUpsertOne) UpdateCirculation() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearCirculation() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCirculation()
+	})
+}
+
+// SetRandom sets the "random" field.
+func (u *CouponUpsertOne) SetRandom(v bool) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetRandom(v)
+	})
+}
+
+// UpdateRandom sets the "random" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateRandom() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateRandom()
+	})
+}
+
+// ClearRandom clears the value of the "random" field.
+func (u *CouponUpsertOne) ClearRandom() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearRandom()
 	})
 }
 
@@ -1787,6 +1852,27 @@ func (u *CouponUpsertBulk) UpdateCirculation() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearCirculation() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCirculation()
+	})
+}
+
+// SetRandom sets the "random" field.
+func (u *CouponUpsertBulk) SetRandom(v bool) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetRandom(v)
+	})
+}
+
+// UpdateRandom sets the "random" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateRandom() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateRandom()
+	})
+}
+
+// ClearRandom clears the value of the "random" field.
+func (u *CouponUpsertBulk) ClearRandom() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearRandom()
 	})
 }
 

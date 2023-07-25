@@ -33,6 +33,8 @@ type Coupon struct {
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
 	Circulation decimal.Decimal `json:"circulation,omitempty"`
+	// Random holds the value of the "random" field.
+	Random bool `json:"random,omitempty"`
 	// IssuedBy holds the value of the "issued_by" field.
 	IssuedBy uuid.UUID `json:"issued_by,omitempty"`
 	// StartAt holds the value of the "start_at" field.
@@ -60,6 +62,8 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold:
 			values[i] = new(decimal.Decimal)
+		case coupon.FieldRandom:
+			values[i] = new(sql.NullBool)
 		case coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
 		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint:
@@ -134,6 +138,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field circulation", values[i])
 			} else if value != nil {
 				c.Circulation = *value
+			}
+		case coupon.FieldRandom:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field random", values[i])
+			} else if value.Valid {
+				c.Random = value.Bool
 			}
 		case coupon.FieldIssuedBy:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -240,6 +250,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("circulation=")
 	builder.WriteString(fmt.Sprintf("%v", c.Circulation))
+	builder.WriteString(", ")
+	builder.WriteString("random=")
+	builder.WriteString(fmt.Sprintf("%v", c.Random))
 	builder.WriteString(", ")
 	builder.WriteString("issued_by=")
 	builder.WriteString(fmt.Sprintf("%v", c.IssuedBy))

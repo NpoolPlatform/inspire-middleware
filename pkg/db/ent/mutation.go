@@ -3203,6 +3203,7 @@ type CouponMutation struct {
 	good_id           *uuid.UUID
 	denomination      *decimal.Decimal
 	circulation       *decimal.Decimal
+	random            *bool
 	issued_by         *uuid.UUID
 	start_at          *uint32
 	addstart_at       *int32
@@ -3737,6 +3738,55 @@ func (m *CouponMutation) ResetCirculation() {
 	delete(m.clearedFields, coupon.FieldCirculation)
 }
 
+// SetRandom sets the "random" field.
+func (m *CouponMutation) SetRandom(b bool) {
+	m.random = &b
+}
+
+// Random returns the value of the "random" field in the mutation.
+func (m *CouponMutation) Random() (r bool, exists bool) {
+	v := m.random
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRandom returns the old "random" field's value of the Coupon entity.
+// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponMutation) OldRandom(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRandom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRandom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRandom: %w", err)
+	}
+	return oldValue.Random, nil
+}
+
+// ClearRandom clears the value of the "random" field.
+func (m *CouponMutation) ClearRandom() {
+	m.random = nil
+	m.clearedFields[coupon.FieldRandom] = struct{}{}
+}
+
+// RandomCleared returns if the "random" field was cleared in this mutation.
+func (m *CouponMutation) RandomCleared() bool {
+	_, ok := m.clearedFields[coupon.FieldRandom]
+	return ok
+}
+
+// ResetRandom resets all changes to the "random" field.
+func (m *CouponMutation) ResetRandom() {
+	m.random = nil
+	delete(m.clearedFields, coupon.FieldRandom)
+}
+
 // SetIssuedBy sets the "issued_by" field.
 func (m *CouponMutation) SetIssuedBy(u uuid.UUID) {
 	m.issued_by = &u
@@ -4226,7 +4276,7 @@ func (m *CouponMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, coupon.FieldCreatedAt)
 	}
@@ -4250,6 +4300,9 @@ func (m *CouponMutation) Fields() []string {
 	}
 	if m.circulation != nil {
 		fields = append(fields, coupon.FieldCirculation)
+	}
+	if m.random != nil {
+		fields = append(fields, coupon.FieldRandom)
 	}
 	if m.issued_by != nil {
 		fields = append(fields, coupon.FieldIssuedBy)
@@ -4302,6 +4355,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.Denomination()
 	case coupon.FieldCirculation:
 		return m.Circulation()
+	case coupon.FieldRandom:
+		return m.Random()
 	case coupon.FieldIssuedBy:
 		return m.IssuedBy()
 	case coupon.FieldStartAt:
@@ -4345,6 +4400,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDenomination(ctx)
 	case coupon.FieldCirculation:
 		return m.OldCirculation(ctx)
+	case coupon.FieldRandom:
+		return m.OldRandom(ctx)
 	case coupon.FieldIssuedBy:
 		return m.OldIssuedBy(ctx)
 	case coupon.FieldStartAt:
@@ -4427,6 +4484,13 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCirculation(v)
+		return nil
+	case coupon.FieldRandom:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRandom(v)
 		return nil
 	case coupon.FieldIssuedBy:
 		v, ok := value.(uuid.UUID)
@@ -4599,6 +4663,9 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldCirculation) {
 		fields = append(fields, coupon.FieldCirculation)
 	}
+	if m.FieldCleared(coupon.FieldRandom) {
+		fields = append(fields, coupon.FieldRandom)
+	}
 	if m.FieldCleared(coupon.FieldStartAt) {
 		fields = append(fields, coupon.FieldStartAt)
 	}
@@ -4651,6 +4718,9 @@ func (m *CouponMutation) ClearField(name string) error {
 		return nil
 	case coupon.FieldCirculation:
 		m.ClearCirculation()
+		return nil
+	case coupon.FieldRandom:
+		m.ClearRandom()
 		return nil
 	case coupon.FieldStartAt:
 		m.ClearStartAt()
@@ -4707,6 +4777,9 @@ func (m *CouponMutation) ResetField(name string) error {
 		return nil
 	case coupon.FieldCirculation:
 		m.ResetCirculation()
+		return nil
+	case coupon.FieldRandom:
+		m.ResetRandom()
 		return nil
 	case coupon.FieldIssuedBy:
 		m.ResetIssuedBy()
@@ -4801,7 +4874,6 @@ type CouponAllocatedMutation struct {
 	adddeleted_at    *int32
 	app_id           *uuid.UUID
 	user_id          *uuid.UUID
-	coupon_type      *string
 	coupon_id        *uuid.UUID
 	value            *decimal.Decimal
 	used             *bool
@@ -5158,55 +5230,6 @@ func (m *CouponAllocatedMutation) ResetUserID() {
 	m.user_id = nil
 }
 
-// SetCouponType sets the "coupon_type" field.
-func (m *CouponAllocatedMutation) SetCouponType(s string) {
-	m.coupon_type = &s
-}
-
-// CouponType returns the value of the "coupon_type" field in the mutation.
-func (m *CouponAllocatedMutation) CouponType() (r string, exists bool) {
-	v := m.coupon_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCouponType returns the old "coupon_type" field's value of the CouponAllocated entity.
-// If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponAllocatedMutation) OldCouponType(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCouponType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCouponType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCouponType: %w", err)
-	}
-	return oldValue.CouponType, nil
-}
-
-// ClearCouponType clears the value of the "coupon_type" field.
-func (m *CouponAllocatedMutation) ClearCouponType() {
-	m.coupon_type = nil
-	m.clearedFields[couponallocated.FieldCouponType] = struct{}{}
-}
-
-// CouponTypeCleared returns if the "coupon_type" field was cleared in this mutation.
-func (m *CouponAllocatedMutation) CouponTypeCleared() bool {
-	_, ok := m.clearedFields[couponallocated.FieldCouponType]
-	return ok
-}
-
-// ResetCouponType resets all changes to the "coupon_type" field.
-func (m *CouponAllocatedMutation) ResetCouponType() {
-	m.coupon_type = nil
-	delete(m.clearedFields, couponallocated.FieldCouponType)
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (m *CouponAllocatedMutation) SetCouponID(u uuid.UUID) {
 	m.coupon_id = &u
@@ -5479,7 +5502,7 @@ func (m *CouponAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, couponallocated.FieldCreatedAt)
 	}
@@ -5494,9 +5517,6 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	}
 	if m.user_id != nil {
 		fields = append(fields, couponallocated.FieldUserID)
-	}
-	if m.coupon_type != nil {
-		fields = append(fields, couponallocated.FieldCouponType)
 	}
 	if m.coupon_id != nil {
 		fields = append(fields, couponallocated.FieldCouponID)
@@ -5531,8 +5551,6 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case couponallocated.FieldUserID:
 		return m.UserID()
-	case couponallocated.FieldCouponType:
-		return m.CouponType()
 	case couponallocated.FieldCouponID:
 		return m.CouponID()
 	case couponallocated.FieldValue:
@@ -5562,8 +5580,6 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldAppID(ctx)
 	case couponallocated.FieldUserID:
 		return m.OldUserID(ctx)
-	case couponallocated.FieldCouponType:
-		return m.OldCouponType(ctx)
 	case couponallocated.FieldCouponID:
 		return m.OldCouponID(ctx)
 	case couponallocated.FieldValue:
@@ -5617,13 +5633,6 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
-		return nil
-	case couponallocated.FieldCouponType:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCouponType(v)
 		return nil
 	case couponallocated.FieldCouponID:
 		v, ok := value.(uuid.UUID)
@@ -5741,9 +5750,6 @@ func (m *CouponAllocatedMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CouponAllocatedMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(couponallocated.FieldCouponType) {
-		fields = append(fields, couponallocated.FieldCouponType)
-	}
 	if m.FieldCleared(couponallocated.FieldValue) {
 		fields = append(fields, couponallocated.FieldValue)
 	}
@@ -5770,9 +5776,6 @@ func (m *CouponAllocatedMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CouponAllocatedMutation) ClearField(name string) error {
 	switch name {
-	case couponallocated.FieldCouponType:
-		m.ClearCouponType()
-		return nil
 	case couponallocated.FieldValue:
 		m.ClearValue()
 		return nil
@@ -5807,9 +5810,6 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 		return nil
 	case couponallocated.FieldUserID:
 		m.ResetUserID()
-		return nil
-	case couponallocated.FieldCouponType:
-		m.ResetCouponType()
 		return nil
 	case couponallocated.FieldCouponID:
 		m.ResetCouponID()

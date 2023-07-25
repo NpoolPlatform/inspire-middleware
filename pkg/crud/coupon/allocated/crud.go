@@ -40,9 +40,6 @@ func CreateSet(c *ent.CouponAllocatedCreate, in *npool.AllocatedReq) (*ent.Coupo
 	if in.UserID != nil {
 		c.SetUserID(uuid.MustParse(in.GetUserID()))
 	}
-	if in.CouponType != nil {
-		c.SetCouponType(in.GetCouponType().String())
-	}
 	if in.CouponID != nil {
 		c.SetCouponID(uuid.MustParse(in.GetCouponID()))
 	}

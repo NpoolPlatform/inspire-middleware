@@ -184,6 +184,26 @@ func (cu *CouponUpdate) ClearCirculation() *CouponUpdate {
 	return cu
 }
 
+// SetRandom sets the "random" field.
+func (cu *CouponUpdate) SetRandom(b bool) *CouponUpdate {
+	cu.mutation.SetRandom(b)
+	return cu
+}
+
+// SetNillableRandom sets the "random" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableRandom(b *bool) *CouponUpdate {
+	if b != nil {
+		cu.SetRandom(*b)
+	}
+	return cu
+}
+
+// ClearRandom clears the value of the "random" field.
+func (cu *CouponUpdate) ClearRandom() *CouponUpdate {
+	cu.mutation.ClearRandom()
+	return cu
+}
+
 // SetIssuedBy sets the "issued_by" field.
 func (cu *CouponUpdate) SetIssuedBy(u uuid.UUID) *CouponUpdate {
 	cu.mutation.SetIssuedBy(u)
@@ -563,6 +583,19 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCirculation,
 		})
 	}
+	if value, ok := cu.mutation.Random(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: coupon.FieldRandom,
+		})
+	}
+	if cu.mutation.RandomCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: coupon.FieldRandom,
+		})
+	}
 	if value, ok := cu.mutation.IssuedBy(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -859,6 +892,26 @@ func (cuo *CouponUpdateOne) SetNillableCirculation(d *decimal.Decimal) *CouponUp
 // ClearCirculation clears the value of the "circulation" field.
 func (cuo *CouponUpdateOne) ClearCirculation() *CouponUpdateOne {
 	cuo.mutation.ClearCirculation()
+	return cuo
+}
+
+// SetRandom sets the "random" field.
+func (cuo *CouponUpdateOne) SetRandom(b bool) *CouponUpdateOne {
+	cuo.mutation.SetRandom(b)
+	return cuo
+}
+
+// SetNillableRandom sets the "random" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableRandom(b *bool) *CouponUpdateOne {
+	if b != nil {
+		cuo.SetRandom(*b)
+	}
+	return cuo
+}
+
+// ClearRandom clears the value of the "random" field.
+func (cuo *CouponUpdateOne) ClearRandom() *CouponUpdateOne {
+	cuo.mutation.ClearRandom()
 	return cuo
 }
 
@@ -1269,6 +1322,19 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: coupon.FieldCirculation,
+		})
+	}
+	if value, ok := cuo.mutation.Random(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: coupon.FieldRandom,
+		})
+	}
+	if cuo.mutation.RandomCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: coupon.FieldRandom,
 		})
 	}
 	if value, ok := cuo.mutation.IssuedBy(); ok {

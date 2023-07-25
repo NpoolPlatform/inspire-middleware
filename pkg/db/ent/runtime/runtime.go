@@ -251,36 +251,40 @@ func init() {
 	couponDescCirculation := couponFields[5].Descriptor()
 	// coupon.DefaultCirculation holds the default value on creation for the circulation field.
 	coupon.DefaultCirculation = couponDescCirculation.Default.(decimal.Decimal)
+	// couponDescRandom is the schema descriptor for random field.
+	couponDescRandom := couponFields[6].Descriptor()
+	// coupon.DefaultRandom holds the default value on creation for the random field.
+	coupon.DefaultRandom = couponDescRandom.Default.(bool)
 	// couponDescStartAt is the schema descriptor for start_at field.
-	couponDescStartAt := couponFields[7].Descriptor()
+	couponDescStartAt := couponFields[8].Descriptor()
 	// coupon.DefaultStartAt holds the default value on creation for the start_at field.
 	coupon.DefaultStartAt = couponDescStartAt.Default.(uint32)
 	// couponDescDurationDays is the schema descriptor for duration_days field.
-	couponDescDurationDays := couponFields[8].Descriptor()
+	couponDescDurationDays := couponFields[9].Descriptor()
 	// coupon.DefaultDurationDays holds the default value on creation for the duration_days field.
 	coupon.DefaultDurationDays = couponDescDurationDays.Default.(uint32)
 	// couponDescMessage is the schema descriptor for message field.
-	couponDescMessage := couponFields[9].Descriptor()
+	couponDescMessage := couponFields[10].Descriptor()
 	// coupon.DefaultMessage holds the default value on creation for the message field.
 	coupon.DefaultMessage = couponDescMessage.Default.(string)
 	// couponDescName is the schema descriptor for name field.
-	couponDescName := couponFields[10].Descriptor()
+	couponDescName := couponFields[11].Descriptor()
 	// coupon.DefaultName holds the default value on creation for the name field.
 	coupon.DefaultName = couponDescName.Default.(string)
 	// couponDescAllocated is the schema descriptor for allocated field.
-	couponDescAllocated := couponFields[11].Descriptor()
+	couponDescAllocated := couponFields[12].Descriptor()
 	// coupon.DefaultAllocated holds the default value on creation for the allocated field.
 	coupon.DefaultAllocated = couponDescAllocated.Default.(decimal.Decimal)
 	// couponDescCouponType is the schema descriptor for coupon_type field.
-	couponDescCouponType := couponFields[12].Descriptor()
+	couponDescCouponType := couponFields[13].Descriptor()
 	// coupon.DefaultCouponType holds the default value on creation for the coupon_type field.
 	coupon.DefaultCouponType = couponDescCouponType.Default.(string)
 	// couponDescThreshold is the schema descriptor for threshold field.
-	couponDescThreshold := couponFields[13].Descriptor()
+	couponDescThreshold := couponFields[14].Descriptor()
 	// coupon.DefaultThreshold holds the default value on creation for the threshold field.
 	coupon.DefaultThreshold = couponDescThreshold.Default.(decimal.Decimal)
 	// couponDescCouponConstraint is the schema descriptor for coupon_constraint field.
-	couponDescCouponConstraint := couponFields[14].Descriptor()
+	couponDescCouponConstraint := couponFields[15].Descriptor()
 	// coupon.DefaultCouponConstraint holds the default value on creation for the coupon_constraint field.
 	coupon.DefaultCouponConstraint = couponDescCouponConstraint.Default.(string)
 	// couponDescID is the schema descriptor for id field.
@@ -315,24 +319,20 @@ func init() {
 	couponallocatedDescDeletedAt := couponallocatedMixinFields0[2].Descriptor()
 	// couponallocated.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	couponallocated.DefaultDeletedAt = couponallocatedDescDeletedAt.Default.(func() uint32)
-	// couponallocatedDescCouponType is the schema descriptor for coupon_type field.
-	couponallocatedDescCouponType := couponallocatedFields[3].Descriptor()
-	// couponallocated.DefaultCouponType holds the default value on creation for the coupon_type field.
-	couponallocated.DefaultCouponType = couponallocatedDescCouponType.Default.(string)
 	// couponallocatedDescValue is the schema descriptor for value field.
-	couponallocatedDescValue := couponallocatedFields[5].Descriptor()
+	couponallocatedDescValue := couponallocatedFields[4].Descriptor()
 	// couponallocated.DefaultValue holds the default value on creation for the value field.
 	couponallocated.DefaultValue = couponallocatedDescValue.Default.(decimal.Decimal)
 	// couponallocatedDescUsed is the schema descriptor for used field.
-	couponallocatedDescUsed := couponallocatedFields[6].Descriptor()
+	couponallocatedDescUsed := couponallocatedFields[5].Descriptor()
 	// couponallocated.DefaultUsed holds the default value on creation for the used field.
 	couponallocated.DefaultUsed = couponallocatedDescUsed.Default.(bool)
 	// couponallocatedDescUsedAt is the schema descriptor for used_at field.
-	couponallocatedDescUsedAt := couponallocatedFields[7].Descriptor()
+	couponallocatedDescUsedAt := couponallocatedFields[6].Descriptor()
 	// couponallocated.DefaultUsedAt holds the default value on creation for the used_at field.
 	couponallocated.DefaultUsedAt = couponallocatedDescUsedAt.Default.(uint32)
 	// couponallocatedDescUsedByOrderID is the schema descriptor for used_by_order_id field.
-	couponallocatedDescUsedByOrderID := couponallocatedFields[8].Descriptor()
+	couponallocatedDescUsedByOrderID := couponallocatedFields[7].Descriptor()
 	// couponallocated.DefaultUsedByOrderID holds the default value on creation for the used_by_order_id field.
 	couponallocated.DefaultUsedByOrderID = couponallocatedDescUsedByOrderID.Default.(func() uuid.UUID)
 	// couponallocatedDescID is the schema descriptor for id field.
