@@ -1,34 +1,59 @@
-//nolint:dupl
 package coupon
 
 import (
 	"context"
 	"fmt"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
-
-	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/discount"
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
-	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
 )
 
-func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	switch in.GetCouponType() {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.UpdateFixAmount(ctx, in)
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.UpdateDiscount(ctx, in)
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.UpdateSpecialOffer(ctx, in)
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, fmt.Errorf("unknown coupon type")
+func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
+	if h.ID == nil {
+		return nil, fmt.Errorf("invalid id")
 	}
-	return nil, fmt.Errorf("not supported")
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		info, err := cli.
+			Coupon.
+			Query().
+			Where(
+				entcoupon.ID(*h.ID),
+				entcoupon.DeletedAt(0),
+			).
+			ForUpdate().
+			Only(_ctx)
+		if err != nil {
+			return err
+		}
+
+		req := &couponcrud.Req{
+			Denomination: h.Denomination,
+			Circulation:  h.Circulation,
+			StartAt:      h.StartAt,
+			DurationDays: h.DurationDays,
+			Message:      h.Message,
+			Name:         h.Name,
+		}
+		if h.Allocated != nil {
+			allocated := info.Allocated.Add(*h.Allocated)
+			req.Allocated = &allocated
+		}
+
+		if _, err := couponcrud.UpdateSet(
+			info.Update(),
+			req,
+		).Save(_ctx); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return h.GetCoupon(ctx)
 }
