@@ -12,25 +12,25 @@ import (
 )
 
 type Req struct {
-	ID           *uuid.UUID
-	CouponType   *types.CouponType
-	AppID        *uuid.UUID
-	UserID       *uuid.UUID
-	GoodID       *string
-	Denomination *decimal.Decimal
-	Circulation  *decimal.Decimal
-	ReleasedBy   *uuid.UUID
-	StartAt      *uint32
-	DurationDays *uint32
-	Message      *string
-	Name         *string
-	Constraint   *types.CouponConstraint
-	Threshold    *decimal.Decimal
-	Allocated    *decimal.Decimal
-	DeletedAt    *uint32
+	ID               *uuid.UUID
+	CouponType       *types.CouponType
+	AppID            *uuid.UUID
+	UserID           *uuid.UUID
+	GoodID           *uuid.UUID
+	Denomination     *decimal.Decimal
+	Circulation      *decimal.Decimal
+	IssuedBy         *uuid.UUID
+	StartAt          *uint32
+	DurationDays     *uint32
+	Message          *string
+	Name             *string
+	CouponConstraint *types.CouponConstraint
+	Threshold        *decimal.Decimal
+	Allocated        *decimal.Decimal
+	DeletedAt        *uint32
 }
 
-func CreateSet(c *ent.AppRoleCreate, req *Req) *ent.AppRoleCreate {
+func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
 	}
@@ -52,8 +52,8 @@ func CreateSet(c *ent.AppRoleCreate, req *Req) *ent.AppRoleCreate {
 	if req.Circulation != nil {
 		c.SetCirculation(*req.Circulation)
 	}
-	if req.ReleasedBy != nil {
-		c.SetReleasedBy(*req.ReleasedBy)
+	if req.IssuedBy != nil {
+		c.SetIssuedBy(*req.IssuedBy)
 	}
 	if req.StartAt != nil {
 		c.SetStartAt(*req.StartAt)
@@ -67,21 +67,39 @@ func CreateSet(c *ent.AppRoleCreate, req *Req) *ent.AppRoleCreate {
 	if req.Name != nil {
 		c.SetName(*req.Message)
 	}
+	if req.Threshold != nil {
+		c.SetThreshold(*req.Threshold)
+	}
+	if req.CouponConstraint != nil {
+		c.SetCouponConstraint(req.CouponConstraint.String())
+	}
+	if req.Allocated != nil {
+		c.SetAllocated(*req.Allocated)
+	}
 	return c
 }
 
-func UpdateSet(u *ent.AppRoleUpdateOne, req *Req) *ent.AppRoleUpdateOne {
-	if req.Role != nil {
-		u.SetRole(*req.Role)
+func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
+	if req.Denomination != nil {
+		u.SetDenomination(*req.Denomination)
 	}
-	if req.Description != nil {
-		u.SetDescription(*req.Description)
+	if req.Circulation != nil {
+		u.SetCirculation(*req.Circulation)
 	}
-	if req.Default != nil {
-		u.SetDefault(*req.Default)
+	if req.StartAt != nil {
+		u.SetStartAt(*req.StartAt)
 	}
-	if req.Genesis != nil {
-		u.SetGenesis(*req.Genesis)
+	if req.DurationDays != nil {
+		u.SetDurationDays(*req.DurationDays)
+	}
+	if req.Message != nil {
+		u.SetMessage(*req.Message)
+	}
+	if req.Name != nil {
+		u.SetName(*req.Message)
+	}
+	if req.Allocated != nil {
+		u.SetAllocated(*req.Allocated)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -90,19 +108,17 @@ func UpdateSet(u *ent.AppRoleUpdateOne, req *Req) *ent.AppRoleUpdateOne {
 }
 
 type Conds struct {
-	ID        *cruder.Cond
-	IDs       *cruder.Cond
-	AppID     *cruder.Cond
-	AppIDs    *cruder.Cond
-	CreatedBy *cruder.Cond
-	Role      *cruder.Cond
-	Default   *cruder.Cond
-	Genesis   *cruder.Cond
-	Roles     *cruder.Cond
+	ID         *cruder.Cond
+	IDs        *cruder.Cond
+	CouponType *cruder.Cond
+	AppID      *cruder.Cond
+	UserID     *cruder.Cond
+	GoodID     *cruder.Cond
 }
 
 //nolint
-func SetQueryConds(q *ent.AppRoleQuery, conds *Conds) (*ent.AppRoleQuery, error) {
+func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
+	q.Where(entcoupon.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -113,9 +129,9 @@ func SetQueryConds(q *ent.AppRoleQuery, conds *Conds) (*ent.AppRoleQuery, error)
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
-			q.Where(entapprole.ID(id))
+			q.Where(entcoupon.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid approle field")
+			return nil, fmt.Errorf("invalid coupon field")
 		}
 	}
 	if conds.IDs != nil {
@@ -125,9 +141,21 @@ func SetQueryConds(q *ent.AppRoleQuery, conds *Conds) (*ent.AppRoleQuery, error)
 		}
 		switch conds.IDs.Op {
 		case cruder.IN:
-			q.Where(entapprole.IDIn(ids...))
+			q.Where(entcoupon.IDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid approle field")
+			return nil, fmt.Errorf("invalid coupon field")
+		}
+	}
+	if conds.CouponType != nil {
+		_type, ok := conds.CouponType.Val.(types.CouponType)
+		if !ok {
+			return nil, fmt.Errorf("invalid coupontype")
+		}
+		switch conds.CouponType.Op {
+		case cruder.EQ:
+			q.Where(entcoupon.CouponType(_type.String()))
+		default:
+			return nil, fmt.Errorf("invalid coupon field")
 		}
 	}
 	if conds.AppID != nil {
@@ -137,81 +165,33 @@ func SetQueryConds(q *ent.AppRoleQuery, conds *Conds) (*ent.AppRoleQuery, error)
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
-			q.Where(entapprole.AppID(id))
+			q.Where(entcoupon.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid approle field")
+			return nil, fmt.Errorf("invalid coupon field")
 		}
 	}
-	if conds.AppIDs != nil {
-		ids, ok := conds.AppIDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid appids")
-		}
-		switch conds.AppIDs.Op {
-		case cruder.IN:
-			q.Where(entapprole.AppIDIn(ids...))
-		default:
-			return nil, fmt.Errorf("invalid approle field")
-		}
-	}
-	if conds.CreatedBy != nil {
-		id, ok := conds.CreatedBy.Val.(uuid.UUID)
+	if conds.UserID != nil {
+		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
 			return nil, fmt.Errorf("invalid id")
 		}
-		switch conds.CreatedBy.Op {
+		switch conds.UserID.Op {
 		case cruder.EQ:
-			q.Where(entapprole.CreatedBy(id))
+			q.Where(entcoupon.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid approle field")
+			return nil, fmt.Errorf("invalid coupon field")
 		}
 	}
-	if conds.Role != nil {
-		role, ok := conds.Role.Val.(string)
+	if conds.GoodID != nil {
+		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid role")
+			return nil, fmt.Errorf("invalid id")
 		}
-		switch conds.Role.Op {
+		switch conds.GoodID.Op {
 		case cruder.EQ:
-			q.Where(entapprole.Role(role))
+			q.Where(entcoupon.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid approle field")
-		}
-	}
-	if conds.Default != nil {
-		defautl, ok := conds.Default.Val.(bool)
-		if !ok {
-			return nil, fmt.Errorf("invalid default")
-		}
-		switch conds.Default.Op {
-		case cruder.EQ:
-			q.Where(entapprole.Default(defautl))
-		default:
-			return nil, fmt.Errorf("invalid approle field")
-		}
-	}
-	if conds.Genesis != nil {
-		genesis, ok := conds.Genesis.Val.(bool)
-		if !ok {
-			return nil, fmt.Errorf("invalid default")
-		}
-		switch conds.Genesis.Op {
-		case cruder.EQ:
-			q.Where(entapprole.Genesis(genesis))
-		default:
-			return nil, fmt.Errorf("invalid approle field")
-		}
-	}
-	if conds.Roles != nil {
-		roles, ok := conds.Roles.Val.([]string)
-		if !ok {
-			return nil, fmt.Errorf("invalid roles")
-		}
-		switch conds.Roles.Op {
-		case cruder.IN:
-			q.Where(entapprole.RoleIn(roles...))
-		default:
-			return nil, fmt.Errorf("invalid approle field")
+			return nil, fmt.Errorf("invalid coupon field")
 		}
 	}
 	return q, nil

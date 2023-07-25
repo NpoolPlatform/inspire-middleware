@@ -124,6 +124,26 @@ func (cu *CouponUpdate) ClearUserID() *CouponUpdate {
 	return cu
 }
 
+// SetGoodID sets the "good_id" field.
+func (cu *CouponUpdate) SetGoodID(u uuid.UUID) *CouponUpdate {
+	cu.mutation.SetGoodID(u)
+	return cu
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableGoodID(u *uuid.UUID) *CouponUpdate {
+	if u != nil {
+		cu.SetGoodID(*u)
+	}
+	return cu
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (cu *CouponUpdate) ClearGoodID() *CouponUpdate {
+	cu.mutation.ClearGoodID()
+	return cu
+}
+
 // SetDenomination sets the "denomination" field.
 func (cu *CouponUpdate) SetDenomination(d decimal.Decimal) *CouponUpdate {
 	cu.mutation.SetDenomination(d)
@@ -304,6 +324,46 @@ func (cu *CouponUpdate) ClearCouponType() *CouponUpdate {
 	return cu
 }
 
+// SetThreshold sets the "threshold" field.
+func (cu *CouponUpdate) SetThreshold(d decimal.Decimal) *CouponUpdate {
+	cu.mutation.SetThreshold(d)
+	return cu
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableThreshold(d *decimal.Decimal) *CouponUpdate {
+	if d != nil {
+		cu.SetThreshold(*d)
+	}
+	return cu
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (cu *CouponUpdate) ClearThreshold() *CouponUpdate {
+	cu.mutation.ClearThreshold()
+	return cu
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (cu *CouponUpdate) SetCouponConstraint(s string) *CouponUpdate {
+	cu.mutation.SetCouponConstraint(s)
+	return cu
+}
+
+// SetNillableCouponConstraint sets the "coupon_constraint" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableCouponConstraint(s *string) *CouponUpdate {
+	if s != nil {
+		cu.SetCouponConstraint(*s)
+	}
+	return cu
+}
+
+// ClearCouponConstraint clears the value of the "coupon_constraint" field.
+func (cu *CouponUpdate) ClearCouponConstraint() *CouponUpdate {
+	cu.mutation.ClearCouponConstraint()
+	return cu
+}
+
 // Mutation returns the CouponMutation object of the builder.
 func (cu *CouponUpdate) Mutation() *CouponMutation {
 	return cu.mutation
@@ -464,6 +524,19 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldUserID,
 		})
 	}
+	if value, ok := cu.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldGoodID,
+		})
+	}
+	if cu.mutation.GoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: coupon.FieldGoodID,
+		})
+	}
 	if value, ok := cu.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -589,6 +662,32 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCouponType,
 		})
 	}
+	if value, ok := cu.mutation.Threshold(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldThreshold,
+		})
+	}
+	if cu.mutation.ThresholdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: coupon.FieldThreshold,
+		})
+	}
+	if value, ok := cu.mutation.CouponConstraint(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponConstraint,
+		})
+	}
+	if cu.mutation.CouponConstraintCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: coupon.FieldCouponConstraint,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{coupon.Label}
@@ -700,6 +799,26 @@ func (cuo *CouponUpdateOne) SetNillableUserID(u *uuid.UUID) *CouponUpdateOne {
 // ClearUserID clears the value of the "user_id" field.
 func (cuo *CouponUpdateOne) ClearUserID() *CouponUpdateOne {
 	cuo.mutation.ClearUserID()
+	return cuo
+}
+
+// SetGoodID sets the "good_id" field.
+func (cuo *CouponUpdateOne) SetGoodID(u uuid.UUID) *CouponUpdateOne {
+	cuo.mutation.SetGoodID(u)
+	return cuo
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableGoodID(u *uuid.UUID) *CouponUpdateOne {
+	if u != nil {
+		cuo.SetGoodID(*u)
+	}
+	return cuo
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (cuo *CouponUpdateOne) ClearGoodID() *CouponUpdateOne {
+	cuo.mutation.ClearGoodID()
 	return cuo
 }
 
@@ -880,6 +999,46 @@ func (cuo *CouponUpdateOne) SetNillableCouponType(s *string) *CouponUpdateOne {
 // ClearCouponType clears the value of the "coupon_type" field.
 func (cuo *CouponUpdateOne) ClearCouponType() *CouponUpdateOne {
 	cuo.mutation.ClearCouponType()
+	return cuo
+}
+
+// SetThreshold sets the "threshold" field.
+func (cuo *CouponUpdateOne) SetThreshold(d decimal.Decimal) *CouponUpdateOne {
+	cuo.mutation.SetThreshold(d)
+	return cuo
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableThreshold(d *decimal.Decimal) *CouponUpdateOne {
+	if d != nil {
+		cuo.SetThreshold(*d)
+	}
+	return cuo
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (cuo *CouponUpdateOne) ClearThreshold() *CouponUpdateOne {
+	cuo.mutation.ClearThreshold()
+	return cuo
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (cuo *CouponUpdateOne) SetCouponConstraint(s string) *CouponUpdateOne {
+	cuo.mutation.SetCouponConstraint(s)
+	return cuo
+}
+
+// SetNillableCouponConstraint sets the "coupon_constraint" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableCouponConstraint(s *string) *CouponUpdateOne {
+	if s != nil {
+		cuo.SetCouponConstraint(*s)
+	}
+	return cuo
+}
+
+// ClearCouponConstraint clears the value of the "coupon_constraint" field.
+func (cuo *CouponUpdateOne) ClearCouponConstraint() *CouponUpdateOne {
+	cuo.mutation.ClearCouponConstraint()
 	return cuo
 }
 
@@ -1073,6 +1232,19 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldUserID,
 		})
 	}
+	if value, ok := cuo.mutation.GoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldGoodID,
+		})
+	}
+	if cuo.mutation.GoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: coupon.FieldGoodID,
+		})
+	}
 	if value, ok := cuo.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1196,6 +1368,32 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: coupon.FieldCouponType,
+		})
+	}
+	if value, ok := cuo.mutation.Threshold(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldThreshold,
+		})
+	}
+	if cuo.mutation.ThresholdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: coupon.FieldThreshold,
+		})
+	}
+	if value, ok := cuo.mutation.CouponConstraint(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponConstraint,
+		})
+	}
+	if cuo.mutation.CouponConstraintCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: coupon.FieldCouponConstraint,
 		})
 	}
 	_node = &Coupon{config: cuo.config}

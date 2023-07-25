@@ -23,6 +23,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldGoodID holds the string denoting the good_id field in the database.
+	FieldGoodID = "good_id"
 	// FieldDenomination holds the string denoting the denomination field in the database.
 	FieldDenomination = "denomination"
 	// FieldCirculation holds the string denoting the circulation field in the database.
@@ -41,6 +43,10 @@ const (
 	FieldAllocated = "allocated"
 	// FieldCouponType holds the string denoting the coupon_type field in the database.
 	FieldCouponType = "coupon_type"
+	// FieldThreshold holds the string denoting the threshold field in the database.
+	FieldThreshold = "threshold"
+	// FieldCouponConstraint holds the string denoting the coupon_constraint field in the database.
+	FieldCouponConstraint = "coupon_constraint"
 	// Table holds the table name of the coupon in the database.
 	Table = "coupons"
 )
@@ -53,6 +59,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldAppID,
 	FieldUserID,
+	FieldGoodID,
 	FieldDenomination,
 	FieldCirculation,
 	FieldIssuedBy,
@@ -62,6 +69,8 @@ var Columns = []string{
 	FieldName,
 	FieldAllocated,
 	FieldCouponType,
+	FieldThreshold,
+	FieldCouponConstraint,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -95,6 +104,8 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID func() uuid.UUID
+	// DefaultGoodID holds the default value on creation for the "good_id" field.
+	DefaultGoodID func() uuid.UUID
 	// DefaultDenomination holds the default value on creation for the "denomination" field.
 	DefaultDenomination decimal.Decimal
 	// DefaultCirculation holds the default value on creation for the "circulation" field.
@@ -111,6 +122,10 @@ var (
 	DefaultAllocated decimal.Decimal
 	// DefaultCouponType holds the default value on creation for the "coupon_type" field.
 	DefaultCouponType string
+	// DefaultThreshold holds the default value on creation for the "threshold" field.
+	DefaultThreshold decimal.Decimal
+	// DefaultCouponConstraint holds the default value on creation for the "coupon_constraint" field.
+	DefaultCouponConstraint string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

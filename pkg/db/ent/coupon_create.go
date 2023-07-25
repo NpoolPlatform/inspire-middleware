@@ -94,6 +94,20 @@ func (cc *CouponCreate) SetNillableUserID(u *uuid.UUID) *CouponCreate {
 	return cc
 }
 
+// SetGoodID sets the "good_id" field.
+func (cc *CouponCreate) SetGoodID(u uuid.UUID) *CouponCreate {
+	cc.mutation.SetGoodID(u)
+	return cc
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableGoodID(u *uuid.UUID) *CouponCreate {
+	if u != nil {
+		cc.SetGoodID(*u)
+	}
+	return cc
+}
+
 // SetDenomination sets the "denomination" field.
 func (cc *CouponCreate) SetDenomination(d decimal.Decimal) *CouponCreate {
 	cc.mutation.SetDenomination(d)
@@ -208,6 +222,34 @@ func (cc *CouponCreate) SetCouponType(s string) *CouponCreate {
 func (cc *CouponCreate) SetNillableCouponType(s *string) *CouponCreate {
 	if s != nil {
 		cc.SetCouponType(*s)
+	}
+	return cc
+}
+
+// SetThreshold sets the "threshold" field.
+func (cc *CouponCreate) SetThreshold(d decimal.Decimal) *CouponCreate {
+	cc.mutation.SetThreshold(d)
+	return cc
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableThreshold(d *decimal.Decimal) *CouponCreate {
+	if d != nil {
+		cc.SetThreshold(*d)
+	}
+	return cc
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (cc *CouponCreate) SetCouponConstraint(s string) *CouponCreate {
+	cc.mutation.SetCouponConstraint(s)
+	return cc
+}
+
+// SetNillableCouponConstraint sets the "coupon_constraint" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableCouponConstraint(s *string) *CouponCreate {
+	if s != nil {
+		cc.SetCouponConstraint(*s)
 	}
 	return cc
 }
@@ -340,6 +382,13 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultUserID()
 		cc.mutation.SetUserID(v)
 	}
+	if _, ok := cc.mutation.GoodID(); !ok {
+		if coupon.DefaultGoodID == nil {
+			return fmt.Errorf("ent: uninitialized coupon.DefaultGoodID (forgotten import ent/runtime?)")
+		}
+		v := coupon.DefaultGoodID()
+		cc.mutation.SetGoodID(v)
+	}
 	if _, ok := cc.mutation.Denomination(); !ok {
 		v := coupon.DefaultDenomination
 		cc.mutation.SetDenomination(v)
@@ -371,6 +420,14 @@ func (cc *CouponCreate) defaults() error {
 	if _, ok := cc.mutation.CouponType(); !ok {
 		v := coupon.DefaultCouponType
 		cc.mutation.SetCouponType(v)
+	}
+	if _, ok := cc.mutation.Threshold(); !ok {
+		v := coupon.DefaultThreshold
+		cc.mutation.SetThreshold(v)
+	}
+	if _, ok := cc.mutation.CouponConstraint(); !ok {
+		v := coupon.DefaultCouponConstraint
+		cc.mutation.SetCouponConstraint(v)
 	}
 	if _, ok := cc.mutation.ID(); !ok {
 		if coupon.DefaultID == nil {
@@ -473,6 +530,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 		})
 		_node.UserID = value
 	}
+	if value, ok := cc.mutation.GoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldGoodID,
+		})
+		_node.GoodID = value
+	}
 	if value, ok := cc.mutation.Denomination(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -544,6 +609,22 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldCouponType,
 		})
 		_node.CouponType = value
+	}
+	if value, ok := cc.mutation.Threshold(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldThreshold,
+		})
+		_node.Threshold = value
+	}
+	if value, ok := cc.mutation.CouponConstraint(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponConstraint,
+		})
+		_node.CouponConstraint = value
 	}
 	return _node, _spec
 }
@@ -686,6 +767,24 @@ func (u *CouponUpsert) UpdateUserID() *CouponUpsert {
 // ClearUserID clears the value of the "user_id" field.
 func (u *CouponUpsert) ClearUserID() *CouponUpsert {
 	u.SetNull(coupon.FieldUserID)
+	return u
+}
+
+// SetGoodID sets the "good_id" field.
+func (u *CouponUpsert) SetGoodID(v uuid.UUID) *CouponUpsert {
+	u.Set(coupon.FieldGoodID, v)
+	return u
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateGoodID() *CouponUpsert {
+	u.SetExcluded(coupon.FieldGoodID)
+	return u
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponUpsert) ClearGoodID() *CouponUpsert {
+	u.SetNull(coupon.FieldGoodID)
 	return u
 }
 
@@ -857,6 +956,42 @@ func (u *CouponUpsert) ClearCouponType() *CouponUpsert {
 	return u
 }
 
+// SetThreshold sets the "threshold" field.
+func (u *CouponUpsert) SetThreshold(v decimal.Decimal) *CouponUpsert {
+	u.Set(coupon.FieldThreshold, v)
+	return u
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateThreshold() *CouponUpsert {
+	u.SetExcluded(coupon.FieldThreshold)
+	return u
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CouponUpsert) ClearThreshold() *CouponUpsert {
+	u.SetNull(coupon.FieldThreshold)
+	return u
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (u *CouponUpsert) SetCouponConstraint(v string) *CouponUpsert {
+	u.Set(coupon.FieldCouponConstraint, v)
+	return u
+}
+
+// UpdateCouponConstraint sets the "coupon_constraint" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateCouponConstraint() *CouponUpsert {
+	u.SetExcluded(coupon.FieldCouponConstraint)
+	return u
+}
+
+// ClearCouponConstraint clears the value of the "coupon_constraint" field.
+func (u *CouponUpsert) ClearCouponConstraint() *CouponUpsert {
+	u.SetNull(coupon.FieldCouponConstraint)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1009,6 +1144,27 @@ func (u *CouponUpsertOne) UpdateUserID() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearUserID() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearUserID()
+	})
+}
+
+// SetGoodID sets the "good_id" field.
+func (u *CouponUpsertOne) SetGoodID(v uuid.UUID) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetGoodID(v)
+	})
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateGoodID() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateGoodID()
+	})
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponUpsertOne) ClearGoodID() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearGoodID()
 	})
 }
 
@@ -1205,6 +1361,48 @@ func (u *CouponUpsertOne) UpdateCouponType() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearCouponType() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponType()
+	})
+}
+
+// SetThreshold sets the "threshold" field.
+func (u *CouponUpsertOne) SetThreshold(v decimal.Decimal) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetThreshold(v)
+	})
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateThreshold() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateThreshold()
+	})
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CouponUpsertOne) ClearThreshold() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearThreshold()
+	})
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (u *CouponUpsertOne) SetCouponConstraint(v string) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCouponConstraint(v)
+	})
+}
+
+// UpdateCouponConstraint sets the "coupon_constraint" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateCouponConstraint() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCouponConstraint()
+	})
+}
+
+// ClearCouponConstraint clears the value of the "coupon_constraint" field.
+func (u *CouponUpsertOne) ClearCouponConstraint() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCouponConstraint()
 	})
 }
 
@@ -1529,6 +1727,27 @@ func (u *CouponUpsertBulk) ClearUserID() *CouponUpsertBulk {
 	})
 }
 
+// SetGoodID sets the "good_id" field.
+func (u *CouponUpsertBulk) SetGoodID(v uuid.UUID) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetGoodID(v)
+	})
+}
+
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateGoodID() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateGoodID()
+	})
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponUpsertBulk) ClearGoodID() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearGoodID()
+	})
+}
+
 // SetDenomination sets the "denomination" field.
 func (u *CouponUpsertBulk) SetDenomination(v decimal.Decimal) *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
@@ -1722,6 +1941,48 @@ func (u *CouponUpsertBulk) UpdateCouponType() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearCouponType() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponType()
+	})
+}
+
+// SetThreshold sets the "threshold" field.
+func (u *CouponUpsertBulk) SetThreshold(v decimal.Decimal) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetThreshold(v)
+	})
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateThreshold() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateThreshold()
+	})
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CouponUpsertBulk) ClearThreshold() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearThreshold()
+	})
+}
+
+// SetCouponConstraint sets the "coupon_constraint" field.
+func (u *CouponUpsertBulk) SetCouponConstraint(v string) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCouponConstraint(v)
+	})
+}
+
+// UpdateCouponConstraint sets the "coupon_constraint" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateCouponConstraint() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCouponConstraint()
+	})
+}
+
+// ClearCouponConstraint clears the value of the "coupon_constraint" field.
+func (u *CouponUpsertBulk) ClearCouponConstraint() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCouponConstraint()
 	})
 }
 

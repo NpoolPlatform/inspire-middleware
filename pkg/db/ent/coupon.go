@@ -27,6 +27,8 @@ type Coupon struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
+	// GoodID holds the value of the "good_id" field.
+	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// Denomination holds the value of the "denomination" field.
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
@@ -45,6 +47,10 @@ type Coupon struct {
 	Allocated decimal.Decimal `json:"allocated,omitempty"`
 	// CouponType holds the value of the "coupon_type" field.
 	CouponType string `json:"coupon_type,omitempty"`
+	// Threshold holds the value of the "threshold" field.
+	Threshold decimal.Decimal `json:"threshold,omitempty"`
+	// CouponConstraint holds the value of the "coupon_constraint" field.
+	CouponConstraint string `json:"coupon_constraint,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,13 +58,13 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated:
+		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold:
 			values[i] = new(decimal.Decimal)
 		case coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
-		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType:
+		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint:
 			values[i] = new(sql.NullString)
-		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldIssuedBy:
+		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldGoodID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Coupon", columns[i])
@@ -110,6 +116,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
 				c.UserID = *value
+			}
+		case coupon.FieldGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field good_id", values[i])
+			} else if value != nil {
+				c.GoodID = *value
 			}
 		case coupon.FieldDenomination:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -165,6 +177,18 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.CouponType = value.String
 			}
+		case coupon.FieldThreshold:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field threshold", values[i])
+			} else if value != nil {
+				c.Threshold = *value
+			}
+		case coupon.FieldCouponConstraint:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field coupon_constraint", values[i])
+			} else if value.Valid {
+				c.CouponConstraint = value.String
+			}
 		}
 	}
 	return nil
@@ -208,6 +232,9 @@ func (c *Coupon) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.UserID))
 	builder.WriteString(", ")
+	builder.WriteString("good_id=")
+	builder.WriteString(fmt.Sprintf("%v", c.GoodID))
+	builder.WriteString(", ")
 	builder.WriteString("denomination=")
 	builder.WriteString(fmt.Sprintf("%v", c.Denomination))
 	builder.WriteString(", ")
@@ -234,6 +261,12 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coupon_type=")
 	builder.WriteString(c.CouponType)
+	builder.WriteString(", ")
+	builder.WriteString("threshold=")
+	builder.WriteString(fmt.Sprintf("%v", c.Threshold))
+	builder.WriteString(", ")
+	builder.WriteString("coupon_constraint=")
+	builder.WriteString(c.CouponConstraint)
 	builder.WriteByte(')')
 	return builder.String()
 }

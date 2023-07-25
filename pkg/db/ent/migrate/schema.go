@@ -69,6 +69,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "issued_by", Type: field.TypeUUID},
@@ -78,6 +79,8 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "allocated", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "coupon_type", Type: field.TypeString, Nullable: true, Default: "DefaultCouponType"},
+		{Name: "threshold", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "coupon_constraint", Type: field.TypeString, Nullable: true, Default: "DefaultCouponConstraint"},
 	}
 	// CouponsTable holds the schema information for the "coupons" table.
 	CouponsTable = &schema.Table{
@@ -201,7 +204,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690257238},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690258465},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// GoodOrderPercentsTable holds the schema information for the "good_order_percents" table.
@@ -220,7 +223,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690257238},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690258465},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// GoodOrderValuePercentsTable holds the schema information for the "good_order_value_percents" table.

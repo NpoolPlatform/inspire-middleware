@@ -44,6 +44,12 @@ func (Coupon) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			UUID("good_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
 			Other("denomination", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -86,6 +92,17 @@ func (Coupon) Fields() []ent.Field {
 			String("coupon_type").
 			Optional().
 			Default(types.CouponType_DefaultCouponType.String()),
+		field.
+			Other("threshold", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			String("coupon_constraint").
+			Optional().
+			Default(types.CouponConstraint_DefaultCouponConstraint.String()),
 	}
 }
 

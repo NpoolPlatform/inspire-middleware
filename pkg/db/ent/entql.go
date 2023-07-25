@@ -96,20 +96,23 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Coupon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			coupon.FieldCreatedAt:    {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
-			coupon.FieldUpdatedAt:    {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
-			coupon.FieldDeletedAt:    {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
-			coupon.FieldAppID:        {Type: field.TypeUUID, Column: coupon.FieldAppID},
-			coupon.FieldUserID:       {Type: field.TypeUUID, Column: coupon.FieldUserID},
-			coupon.FieldDenomination: {Type: field.TypeOther, Column: coupon.FieldDenomination},
-			coupon.FieldCirculation:  {Type: field.TypeOther, Column: coupon.FieldCirculation},
-			coupon.FieldIssuedBy:     {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
-			coupon.FieldStartAt:      {Type: field.TypeUint32, Column: coupon.FieldStartAt},
-			coupon.FieldDurationDays: {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
-			coupon.FieldMessage:      {Type: field.TypeString, Column: coupon.FieldMessage},
-			coupon.FieldName:         {Type: field.TypeString, Column: coupon.FieldName},
-			coupon.FieldAllocated:    {Type: field.TypeOther, Column: coupon.FieldAllocated},
-			coupon.FieldCouponType:   {Type: field.TypeString, Column: coupon.FieldCouponType},
+			coupon.FieldCreatedAt:        {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
+			coupon.FieldUpdatedAt:        {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
+			coupon.FieldDeletedAt:        {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
+			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
+			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
+			coupon.FieldGoodID:           {Type: field.TypeUUID, Column: coupon.FieldGoodID},
+			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
+			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
+			coupon.FieldIssuedBy:         {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
+			coupon.FieldStartAt:          {Type: field.TypeUint32, Column: coupon.FieldStartAt},
+			coupon.FieldDurationDays:     {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
+			coupon.FieldMessage:          {Type: field.TypeString, Column: coupon.FieldMessage},
+			coupon.FieldName:             {Type: field.TypeString, Column: coupon.FieldName},
+			coupon.FieldAllocated:        {Type: field.TypeOther, Column: coupon.FieldAllocated},
+			coupon.FieldCouponType:       {Type: field.TypeString, Column: coupon.FieldCouponType},
+			coupon.FieldThreshold:        {Type: field.TypeOther, Column: coupon.FieldThreshold},
+			coupon.FieldCouponConstraint: {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -656,6 +659,11 @@ func (f *CouponFilter) WhereUserID(p entql.ValueP) {
 	f.Where(p.Field(coupon.FieldUserID))
 }
 
+// WhereGoodID applies the entql [16]byte predicate on the good_id field.
+func (f *CouponFilter) WhereGoodID(p entql.ValueP) {
+	f.Where(p.Field(coupon.FieldGoodID))
+}
+
 // WhereDenomination applies the entql other predicate on the denomination field.
 func (f *CouponFilter) WhereDenomination(p entql.OtherP) {
 	f.Where(p.Field(coupon.FieldDenomination))
@@ -699,6 +707,16 @@ func (f *CouponFilter) WhereAllocated(p entql.OtherP) {
 // WhereCouponType applies the entql string predicate on the coupon_type field.
 func (f *CouponFilter) WhereCouponType(p entql.StringP) {
 	f.Where(p.Field(coupon.FieldCouponType))
+}
+
+// WhereThreshold applies the entql other predicate on the threshold field.
+func (f *CouponFilter) WhereThreshold(p entql.OtherP) {
+	f.Where(p.Field(coupon.FieldThreshold))
+}
+
+// WhereCouponConstraint applies the entql string predicate on the coupon_constraint field.
+func (f *CouponFilter) WhereCouponConstraint(p entql.StringP) {
+	f.Where(p.Field(coupon.FieldCouponConstraint))
 }
 
 // addPredicate implements the predicateAdder interface.
