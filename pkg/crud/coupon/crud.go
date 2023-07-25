@@ -66,7 +66,7 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 		c.SetMessage(*req.Message)
 	}
 	if req.Name != nil {
-		c.SetName(*req.Message)
+		c.SetName(*req.Name)
 	}
 	if req.Threshold != nil {
 		c.SetThreshold(*req.Threshold)

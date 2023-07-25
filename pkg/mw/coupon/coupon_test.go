@@ -30,16 +30,23 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:           uuid.NewString(),
-		CouponType:   types.CouponType_FixAmount,
-		AppID:        uuid.NewString(),
-		Denomination: decimal.RequireFromString("12.25").String(),
-		Circulation:  decimal.RequireFromString("12.25").String(),
-		IssuedBy:     uuid.NewString(),
-		StartAt:      uint32(time.Now().Unix()),
-		DurationDays: 234,
-		Message:      uuid.NewString(),
-		Name:         uuid.NewString(),
+		ID:                  uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		AppID:               uuid.NewString(),
+		Denomination:        decimal.RequireFromString("12.25").String(),
+		Circulation:         decimal.RequireFromString("12.25").String(),
+		IssuedBy:            uuid.NewString(),
+		StartAt:             uint32(time.Now().Unix()),
+		DurationDays:        234,
+		Message:             uuid.NewString(),
+		Name:                uuid.NewString(),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		Threshold:           nil,
+		UserID:              nil,
+		GoodID:              nil,
+		Allocated:           decimal.NewFromInt(0).String(),
 	}
 )
 

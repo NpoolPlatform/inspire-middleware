@@ -12,6 +12,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -46,10 +47,39 @@ func (h *queryHandler) formalize() {
 		if *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
+		amount, err := decimal.NewFromString(info.Denomination)
+		if err != nil {
+			info.Denomination = decimal.NewFromInt(0).String()
+		} else {
+			info.Denomination = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.Circulation)
+		if err != nil {
+			info.Circulation = decimal.NewFromInt(0).String()
+		} else {
+			info.Circulation = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.Allocated)
+		if err != nil {
+			info.Allocated = decimal.NewFromInt(0).String()
+		} else {
+			info.Allocated = amount.String()
+		}
 		switch info.CouponConstraint {
 		case types.CouponConstraint_PaymentThreshold:
 		case types.CouponConstraint_GoodThreshold:
+		default:
 			info.Threshold = nil
+		}
+		if info.Threshold != nil {
+			amount, err = decimal.NewFromString(*info.Threshold)
+			if err != nil {
+				_amount := decimal.NewFromInt(0).String()
+				info.Threshold = &_amount
+			} else {
+				_amount := amount.String()
+				info.Threshold = &_amount
+			}
 		}
 	}
 }
