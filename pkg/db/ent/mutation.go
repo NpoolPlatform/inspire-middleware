@@ -3189,32 +3189,32 @@ func (m *ArchivementGeneralMutation) ResetEdge(name string) error {
 // CouponMutation represents an operation that mutates the Coupon nodes in the graph.
 type CouponMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *uuid.UUID
-	created_at          *uint32
-	addcreated_at       *int32
-	updated_at          *uint32
-	addupdated_at       *int32
-	deleted_at          *uint32
-	adddeleted_at       *int32
-	app_id              *uuid.UUID
-	user_id             *uuid.UUID
-	denomination        *decimal.Decimal
-	circulation         *decimal.Decimal
-	released_by_user_id *uuid.UUID
-	start_at            *uint32
-	addstart_at         *int32
-	duration_days       *uint32
-	addduration_days    *int32
-	message             *string
-	name                *string
-	allocated           *decimal.Decimal
-	coupon_type         *string
-	clearedFields       map[string]struct{}
-	done                bool
-	oldValue            func(context.Context) (*Coupon, error)
-	predicates          []predicate.Coupon
+	op               Op
+	typ              string
+	id               *uuid.UUID
+	created_at       *uint32
+	addcreated_at    *int32
+	updated_at       *uint32
+	addupdated_at    *int32
+	deleted_at       *uint32
+	adddeleted_at    *int32
+	app_id           *uuid.UUID
+	user_id          *uuid.UUID
+	denomination     *decimal.Decimal
+	circulation      *decimal.Decimal
+	issued_by        *uuid.UUID
+	start_at         *uint32
+	addstart_at      *int32
+	duration_days    *uint32
+	addduration_days *int32
+	message          *string
+	name             *string
+	allocated        *decimal.Decimal
+	coupon_type      *string
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*Coupon, error)
+	predicates       []predicate.Coupon
 }
 
 var _ ent.Mutation = (*CouponMutation)(nil)
@@ -3685,40 +3685,40 @@ func (m *CouponMutation) ResetCirculation() {
 	delete(m.clearedFields, coupon.FieldCirculation)
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (m *CouponMutation) SetReleasedByUserID(u uuid.UUID) {
-	m.released_by_user_id = &u
+// SetIssuedBy sets the "issued_by" field.
+func (m *CouponMutation) SetIssuedBy(u uuid.UUID) {
+	m.issued_by = &u
 }
 
-// ReleasedByUserID returns the value of the "released_by_user_id" field in the mutation.
-func (m *CouponMutation) ReleasedByUserID() (r uuid.UUID, exists bool) {
-	v := m.released_by_user_id
+// IssuedBy returns the value of the "issued_by" field in the mutation.
+func (m *CouponMutation) IssuedBy() (r uuid.UUID, exists bool) {
+	v := m.issued_by
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldReleasedByUserID returns the old "released_by_user_id" field's value of the Coupon entity.
+// OldIssuedBy returns the old "issued_by" field's value of the Coupon entity.
 // If the Coupon object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponMutation) OldReleasedByUserID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *CouponMutation) OldIssuedBy(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldReleasedByUserID is only allowed on UpdateOne operations")
+		return v, errors.New("OldIssuedBy is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldReleasedByUserID requires an ID field in the mutation")
+		return v, errors.New("OldIssuedBy requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldReleasedByUserID: %w", err)
+		return v, fmt.Errorf("querying old value for OldIssuedBy: %w", err)
 	}
-	return oldValue.ReleasedByUserID, nil
+	return oldValue.IssuedBy, nil
 }
 
-// ResetReleasedByUserID resets all changes to the "released_by_user_id" field.
-func (m *CouponMutation) ResetReleasedByUserID() {
-	m.released_by_user_id = nil
+// ResetIssuedBy resets all changes to the "issued_by" field.
+func (m *CouponMutation) ResetIssuedBy() {
+	m.issued_by = nil
 }
 
 // SetStartAt sets the "start_at" field.
@@ -4098,8 +4098,8 @@ func (m *CouponMutation) Fields() []string {
 	if m.circulation != nil {
 		fields = append(fields, coupon.FieldCirculation)
 	}
-	if m.released_by_user_id != nil {
-		fields = append(fields, coupon.FieldReleasedByUserID)
+	if m.issued_by != nil {
+		fields = append(fields, coupon.FieldIssuedBy)
 	}
 	if m.start_at != nil {
 		fields = append(fields, coupon.FieldStartAt)
@@ -4141,8 +4141,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.Denomination()
 	case coupon.FieldCirculation:
 		return m.Circulation()
-	case coupon.FieldReleasedByUserID:
-		return m.ReleasedByUserID()
+	case coupon.FieldIssuedBy:
+		return m.IssuedBy()
 	case coupon.FieldStartAt:
 		return m.StartAt()
 	case coupon.FieldDurationDays:
@@ -4178,8 +4178,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDenomination(ctx)
 	case coupon.FieldCirculation:
 		return m.OldCirculation(ctx)
-	case coupon.FieldReleasedByUserID:
-		return m.OldReleasedByUserID(ctx)
+	case coupon.FieldIssuedBy:
+		return m.OldIssuedBy(ctx)
 	case coupon.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case coupon.FieldDurationDays:
@@ -4250,12 +4250,12 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCirculation(v)
 		return nil
-	case coupon.FieldReleasedByUserID:
+	case coupon.FieldIssuedBy:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetReleasedByUserID(v)
+		m.SetIssuedBy(v)
 		return nil
 	case coupon.FieldStartAt:
 		v, ok := value.(uint32)
@@ -4495,8 +4495,8 @@ func (m *CouponMutation) ResetField(name string) error {
 	case coupon.FieldCirculation:
 		m.ResetCirculation()
 		return nil
-	case coupon.FieldReleasedByUserID:
-		m.ResetReleasedByUserID()
+	case coupon.FieldIssuedBy:
+		m.ResetIssuedBy()
 		return nil
 	case coupon.FieldStartAt:
 		m.ResetStartAt()

@@ -129,10 +129,10 @@ func Circulation(v decimal.Decimal) predicate.Coupon {
 	})
 }
 
-// ReleasedByUserID applies equality check predicate on the "released_by_user_id" field. It's identical to ReleasedByUserIDEQ.
-func ReleasedByUserID(v uuid.UUID) predicate.Coupon {
+// IssuedBy applies equality check predicate on the "issued_by" field. It's identical to IssuedByEQ.
+func IssuedBy(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.EQ(s.C(FieldIssuedBy), v))
 	})
 }
 
@@ -682,67 +682,67 @@ func CirculationNotNil() predicate.Coupon {
 	})
 }
 
-// ReleasedByUserIDEQ applies the EQ predicate on the "released_by_user_id" field.
-func ReleasedByUserIDEQ(v uuid.UUID) predicate.Coupon {
+// IssuedByEQ applies the EQ predicate on the "issued_by" field.
+func IssuedByEQ(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.EQ(s.C(FieldIssuedBy), v))
 	})
 }
 
-// ReleasedByUserIDNEQ applies the NEQ predicate on the "released_by_user_id" field.
-func ReleasedByUserIDNEQ(v uuid.UUID) predicate.Coupon {
+// IssuedByNEQ applies the NEQ predicate on the "issued_by" field.
+func IssuedByNEQ(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.NEQ(s.C(FieldIssuedBy), v))
 	})
 }
 
-// ReleasedByUserIDIn applies the In predicate on the "released_by_user_id" field.
-func ReleasedByUserIDIn(vs ...uuid.UUID) predicate.Coupon {
+// IssuedByIn applies the In predicate on the "issued_by" field.
+func IssuedByIn(vs ...uuid.UUID) predicate.Coupon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldReleasedByUserID), v...))
+		s.Where(sql.In(s.C(FieldIssuedBy), v...))
 	})
 }
 
-// ReleasedByUserIDNotIn applies the NotIn predicate on the "released_by_user_id" field.
-func ReleasedByUserIDNotIn(vs ...uuid.UUID) predicate.Coupon {
+// IssuedByNotIn applies the NotIn predicate on the "issued_by" field.
+func IssuedByNotIn(vs ...uuid.UUID) predicate.Coupon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldReleasedByUserID), v...))
+		s.Where(sql.NotIn(s.C(FieldIssuedBy), v...))
 	})
 }
 
-// ReleasedByUserIDGT applies the GT predicate on the "released_by_user_id" field.
-func ReleasedByUserIDGT(v uuid.UUID) predicate.Coupon {
+// IssuedByGT applies the GT predicate on the "issued_by" field.
+func IssuedByGT(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.GT(s.C(FieldIssuedBy), v))
 	})
 }
 
-// ReleasedByUserIDGTE applies the GTE predicate on the "released_by_user_id" field.
-func ReleasedByUserIDGTE(v uuid.UUID) predicate.Coupon {
+// IssuedByGTE applies the GTE predicate on the "issued_by" field.
+func IssuedByGTE(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.GTE(s.C(FieldIssuedBy), v))
 	})
 }
 
-// ReleasedByUserIDLT applies the LT predicate on the "released_by_user_id" field.
-func ReleasedByUserIDLT(v uuid.UUID) predicate.Coupon {
+// IssuedByLT applies the LT predicate on the "issued_by" field.
+func IssuedByLT(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.LT(s.C(FieldIssuedBy), v))
 	})
 }
 
-// ReleasedByUserIDLTE applies the LTE predicate on the "released_by_user_id" field.
-func ReleasedByUserIDLTE(v uuid.UUID) predicate.Coupon {
+// IssuedByLTE applies the LTE predicate on the "issued_by" field.
+func IssuedByLTE(v uuid.UUID) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldReleasedByUserID), v))
+		s.Where(sql.LTE(s.C(FieldIssuedBy), v))
 	})
 }
 

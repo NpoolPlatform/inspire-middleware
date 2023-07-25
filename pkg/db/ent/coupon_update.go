@@ -164,9 +164,9 @@ func (cu *CouponUpdate) ClearCirculation() *CouponUpdate {
 	return cu
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (cu *CouponUpdate) SetReleasedByUserID(u uuid.UUID) *CouponUpdate {
-	cu.mutation.SetReleasedByUserID(u)
+// SetIssuedBy sets the "issued_by" field.
+func (cu *CouponUpdate) SetIssuedBy(u uuid.UUID) *CouponUpdate {
+	cu.mutation.SetIssuedBy(u)
 	return cu
 }
 
@@ -490,11 +490,11 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCirculation,
 		})
 	}
-	if value, ok := cu.mutation.ReleasedByUserID(); ok {
+	if value, ok := cu.mutation.IssuedBy(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coupon.FieldReleasedByUserID,
+			Column: coupon.FieldIssuedBy,
 		})
 	}
 	if value, ok := cu.mutation.StartAt(); ok {
@@ -743,9 +743,9 @@ func (cuo *CouponUpdateOne) ClearCirculation() *CouponUpdateOne {
 	return cuo
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (cuo *CouponUpdateOne) SetReleasedByUserID(u uuid.UUID) *CouponUpdateOne {
-	cuo.mutation.SetReleasedByUserID(u)
+// SetIssuedBy sets the "issued_by" field.
+func (cuo *CouponUpdateOne) SetIssuedBy(u uuid.UUID) *CouponUpdateOne {
+	cuo.mutation.SetIssuedBy(u)
 	return cuo
 }
 
@@ -1099,11 +1099,11 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldCirculation,
 		})
 	}
-	if value, ok := cuo.mutation.ReleasedByUserID(); ok {
+	if value, ok := cuo.mutation.IssuedBy(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coupon.FieldReleasedByUserID,
+			Column: coupon.FieldIssuedBy,
 		})
 	}
 	if value, ok := cuo.mutation.StartAt(); ok {

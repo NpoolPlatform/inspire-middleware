@@ -122,9 +122,9 @@ func (cc *CouponCreate) SetNillableCirculation(d *decimal.Decimal) *CouponCreate
 	return cc
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (cc *CouponCreate) SetReleasedByUserID(u uuid.UUID) *CouponCreate {
-	cc.mutation.SetReleasedByUserID(u)
+// SetIssuedBy sets the "issued_by" field.
+func (cc *CouponCreate) SetIssuedBy(u uuid.UUID) *CouponCreate {
+	cc.mutation.SetIssuedBy(u)
 	return cc
 }
 
@@ -393,8 +393,8 @@ func (cc *CouponCreate) check() error {
 	if _, ok := cc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Coupon.deleted_at"`)}
 	}
-	if _, ok := cc.mutation.ReleasedByUserID(); !ok {
-		return &ValidationError{Name: "released_by_user_id", err: errors.New(`ent: missing required field "Coupon.released_by_user_id"`)}
+	if _, ok := cc.mutation.IssuedBy(); !ok {
+		return &ValidationError{Name: "issued_by", err: errors.New(`ent: missing required field "Coupon.issued_by"`)}
 	}
 	return nil
 }
@@ -489,13 +489,13 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 		})
 		_node.Circulation = value
 	}
-	if value, ok := cc.mutation.ReleasedByUserID(); ok {
+	if value, ok := cc.mutation.IssuedBy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coupon.FieldReleasedByUserID,
+			Column: coupon.FieldIssuedBy,
 		})
-		_node.ReleasedByUserID = value
+		_node.IssuedBy = value
 	}
 	if value, ok := cc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -725,15 +725,15 @@ func (u *CouponUpsert) ClearCirculation() *CouponUpsert {
 	return u
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (u *CouponUpsert) SetReleasedByUserID(v uuid.UUID) *CouponUpsert {
-	u.Set(coupon.FieldReleasedByUserID, v)
+// SetIssuedBy sets the "issued_by" field.
+func (u *CouponUpsert) SetIssuedBy(v uuid.UUID) *CouponUpsert {
+	u.Set(coupon.FieldIssuedBy, v)
 	return u
 }
 
-// UpdateReleasedByUserID sets the "released_by_user_id" field to the value that was provided on create.
-func (u *CouponUpsert) UpdateReleasedByUserID() *CouponUpsert {
-	u.SetExcluded(coupon.FieldReleasedByUserID)
+// UpdateIssuedBy sets the "issued_by" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateIssuedBy() *CouponUpsert {
+	u.SetExcluded(coupon.FieldIssuedBy)
 	return u
 }
 
@@ -1054,17 +1054,17 @@ func (u *CouponUpsertOne) ClearCirculation() *CouponUpsertOne {
 	})
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (u *CouponUpsertOne) SetReleasedByUserID(v uuid.UUID) *CouponUpsertOne {
+// SetIssuedBy sets the "issued_by" field.
+func (u *CouponUpsertOne) SetIssuedBy(v uuid.UUID) *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
-		s.SetReleasedByUserID(v)
+		s.SetIssuedBy(v)
 	})
 }
 
-// UpdateReleasedByUserID sets the "released_by_user_id" field to the value that was provided on create.
-func (u *CouponUpsertOne) UpdateReleasedByUserID() *CouponUpsertOne {
+// UpdateIssuedBy sets the "issued_by" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateIssuedBy() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
-		s.UpdateReleasedByUserID()
+		s.UpdateIssuedBy()
 	})
 }
 
@@ -1571,17 +1571,17 @@ func (u *CouponUpsertBulk) ClearCirculation() *CouponUpsertBulk {
 	})
 }
 
-// SetReleasedByUserID sets the "released_by_user_id" field.
-func (u *CouponUpsertBulk) SetReleasedByUserID(v uuid.UUID) *CouponUpsertBulk {
+// SetIssuedBy sets the "issued_by" field.
+func (u *CouponUpsertBulk) SetIssuedBy(v uuid.UUID) *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
-		s.SetReleasedByUserID(v)
+		s.SetIssuedBy(v)
 	})
 }
 
-// UpdateReleasedByUserID sets the "released_by_user_id" field to the value that was provided on create.
-func (u *CouponUpsertBulk) UpdateReleasedByUserID() *CouponUpsertBulk {
+// UpdateIssuedBy sets the "issued_by" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateIssuedBy() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
-		s.UpdateReleasedByUserID()
+		s.UpdateIssuedBy()
 	})
 }
 

@@ -31,8 +31,8 @@ type Coupon struct {
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
 	Circulation decimal.Decimal `json:"circulation,omitempty"`
-	// ReleasedByUserID holds the value of the "released_by_user_id" field.
-	ReleasedByUserID uuid.UUID `json:"released_by_user_id,omitempty"`
+	// IssuedBy holds the value of the "issued_by" field.
+	IssuedBy uuid.UUID `json:"issued_by,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
 	// DurationDays holds the value of the "duration_days" field.
@@ -58,7 +58,7 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType:
 			values[i] = new(sql.NullString)
-		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldReleasedByUserID:
+		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Coupon", columns[i])
@@ -123,11 +123,11 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				c.Circulation = *value
 			}
-		case coupon.FieldReleasedByUserID:
+		case coupon.FieldIssuedBy:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field released_by_user_id", values[i])
+				return fmt.Errorf("unexpected type %T for field issued_by", values[i])
 			} else if value != nil {
-				c.ReleasedByUserID = *value
+				c.IssuedBy = *value
 			}
 		case coupon.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -214,8 +214,8 @@ func (c *Coupon) String() string {
 	builder.WriteString("circulation=")
 	builder.WriteString(fmt.Sprintf("%v", c.Circulation))
 	builder.WriteString(", ")
-	builder.WriteString("released_by_user_id=")
-	builder.WriteString(fmt.Sprintf("%v", c.ReleasedByUserID))
+	builder.WriteString("issued_by=")
+	builder.WriteString(fmt.Sprintf("%v", c.IssuedBy))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", c.StartAt))

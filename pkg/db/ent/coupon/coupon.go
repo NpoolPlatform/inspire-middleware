@@ -27,8 +27,8 @@ const (
 	FieldDenomination = "denomination"
 	// FieldCirculation holds the string denoting the circulation field in the database.
 	FieldCirculation = "circulation"
-	// FieldReleasedByUserID holds the string denoting the released_by_user_id field in the database.
-	FieldReleasedByUserID = "released_by_user_id"
+	// FieldIssuedBy holds the string denoting the issued_by field in the database.
+	FieldIssuedBy = "issued_by"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
 	// FieldDurationDays holds the string denoting the duration_days field in the database.
@@ -55,7 +55,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldDenomination,
 	FieldCirculation,
-	FieldReleasedByUserID,
+	FieldIssuedBy,
 	FieldStartAt,
 	FieldDurationDays,
 	FieldMessage,

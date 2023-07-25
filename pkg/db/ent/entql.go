@@ -96,20 +96,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Coupon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			coupon.FieldCreatedAt:        {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
-			coupon.FieldUpdatedAt:        {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
-			coupon.FieldDeletedAt:        {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
-			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
-			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
-			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
-			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
-			coupon.FieldReleasedByUserID: {Type: field.TypeUUID, Column: coupon.FieldReleasedByUserID},
-			coupon.FieldStartAt:          {Type: field.TypeUint32, Column: coupon.FieldStartAt},
-			coupon.FieldDurationDays:     {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
-			coupon.FieldMessage:          {Type: field.TypeString, Column: coupon.FieldMessage},
-			coupon.FieldName:             {Type: field.TypeString, Column: coupon.FieldName},
-			coupon.FieldAllocated:        {Type: field.TypeOther, Column: coupon.FieldAllocated},
-			coupon.FieldCouponType:       {Type: field.TypeString, Column: coupon.FieldCouponType},
+			coupon.FieldCreatedAt:    {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
+			coupon.FieldUpdatedAt:    {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
+			coupon.FieldDeletedAt:    {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
+			coupon.FieldAppID:        {Type: field.TypeUUID, Column: coupon.FieldAppID},
+			coupon.FieldUserID:       {Type: field.TypeUUID, Column: coupon.FieldUserID},
+			coupon.FieldDenomination: {Type: field.TypeOther, Column: coupon.FieldDenomination},
+			coupon.FieldCirculation:  {Type: field.TypeOther, Column: coupon.FieldCirculation},
+			coupon.FieldIssuedBy:     {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
+			coupon.FieldStartAt:      {Type: field.TypeUint32, Column: coupon.FieldStartAt},
+			coupon.FieldDurationDays: {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
+			coupon.FieldMessage:      {Type: field.TypeString, Column: coupon.FieldMessage},
+			coupon.FieldName:         {Type: field.TypeString, Column: coupon.FieldName},
+			coupon.FieldAllocated:    {Type: field.TypeOther, Column: coupon.FieldAllocated},
+			coupon.FieldCouponType:   {Type: field.TypeString, Column: coupon.FieldCouponType},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -666,9 +666,9 @@ func (f *CouponFilter) WhereCirculation(p entql.OtherP) {
 	f.Where(p.Field(coupon.FieldCirculation))
 }
 
-// WhereReleasedByUserID applies the entql [16]byte predicate on the released_by_user_id field.
-func (f *CouponFilter) WhereReleasedByUserID(p entql.ValueP) {
-	f.Where(p.Field(coupon.FieldReleasedByUserID))
+// WhereIssuedBy applies the entql [16]byte predicate on the issued_by field.
+func (f *CouponFilter) WhereIssuedBy(p entql.ValueP) {
+	f.Where(p.Field(coupon.FieldIssuedBy))
 }
 
 // WhereStartAt applies the entql uint32 predicate on the start_at field.
