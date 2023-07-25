@@ -100,7 +100,7 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 		u.SetMessage(*req.Message)
 	}
 	if req.Name != nil {
-		u.SetName(*req.Message)
+		u.SetName(*req.Name)
 	}
 	if req.Allocated != nil {
 		u.SetAllocated(*req.Allocated)

@@ -78,21 +78,22 @@ func creatCoupon(t *testing.T) {
 	}
 }
 
-/*
 func updateCoupon(t *testing.T) {
-	ret.Coupon = uuid.NewString()
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID),
-		WithCoupon(&ret.Coupon),
-		WithDescription(&ret.Description),
-		WithDefault(&ret.Default),
-		WithGenesis(&ret.Genesis),
+		WithDenomination(&ret.Denomination),
+		WithCirculation(&ret.Circulation),
+		WithStartAt(&ret.StartAt),
+		WithDurationDays(&ret.DurationDays),
+		WithMessage(&ret.Message),
+		WithName(&ret.Name),
 	)
 	assert.Nil(t, err)
 
 	info, err := handler.UpdateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, info, &ret)
 	}
 }
@@ -110,6 +111,7 @@ func getCoupon(t *testing.T) {
 	}
 }
 
+/*
 func getCoupons(t *testing.T) {
 	conds := &npool.Conds{
 		AppID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
@@ -128,6 +130,7 @@ func getCoupons(t *testing.T) {
 		assert.NotEqual(t, len(infos), 0)
 	}
 }
+*/
 
 func deleteCoupon(t *testing.T) {
 	handler, err := NewHandler(
@@ -145,7 +148,6 @@ func deleteCoupon(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
-*/
 
 func TestCoupon(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
@@ -156,8 +158,8 @@ func TestCoupon(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("creatCoupon", creatCoupon)
-	// t.Run("updateCoupon", updateCoupon)
-	// t.Run("getCoupon", getCoupon)
+	t.Run("updateCoupon", updateCoupon)
+	t.Run("getCoupon", getCoupon)
 	// t.Run("getCoupons", getCoupons)
-	// t.Run("deleteCoupon", deleteCoupon)
+	t.Run("deleteCoupon", deleteCoupon)
 }
