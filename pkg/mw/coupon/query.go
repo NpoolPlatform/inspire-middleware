@@ -4,56 +4,80 @@ import (
 	"context"
 	"fmt"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	// couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
-	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/discount"
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/fixamount"
-	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon/specialoffer"
+	"github.com/google/uuid"
 )
+
+type queryHandler struct {
+	*Handler
+	stmSelect *ent.CouponSelect
+	infos     []*npool.Coupon
+	total     uint32
+}
+
+func (h *queryHandler) queryCoupon(cli *ent.Client) {
+	h.stmSelect = cli.
+		Coupon.
+		Query().
+		Where(
+			entcoupon.ID(*h.ID),
+			entcoupon.DeletedAt(0),
+		).
+		Select()
+}
+
+func (h *queryHandler) scan(ctx context.Context) error {
+	return h.stmSelect.Scan(ctx, &h.infos)
+}
+
+func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
+		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
+		if *info.UserID == uuid.Nil.String() {
+			info.UserID = nil
+		}
+		if *info.GoodID == uuid.Nil.String() {
+			info.GoodID = nil
+		}
+		switch info.CouponConstraint {
+		case types.CouponConstraint_PaymentThreshold:
+		case types.CouponConstraint_GoodThreshold:
+			info.Threshold = nil
+		}
+	}
+}
 
 func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
 	}
-}
 
-func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponType) (*npool.Coupon, error) {
-	switch couponType {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.GetFixAmount(ctx, id)
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.GetDiscount(ctx, id)
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.GetSpecialOffer(ctx, id)
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, fmt.Errorf("unknown coupon type")
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Coupon{},
 	}
-	return nil, fmt.Errorf("not supported")
-}
 
-func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
-	switch allocatedmgrpb.CouponType(conds.GetCouponType().GetValue()) {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.GetFixAmounts(ctx, conds, offset, limit)
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.GetDiscounts(ctx, conds, offset, limit)
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.GetSpecialOffers(ctx, conds, offset, limit)
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, 0, fmt.Errorf("unknown coupon type")
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.queryCoupon(cli)
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, err
 	}
-	return nil, 0, fmt.Errorf("not supported")
+	if len(handler.infos) == 0 {
+		return nil, nil
+	}
+	if len(handler.infos) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+
+	handler.formalize()
+	return handler.infos[0], nil
 }

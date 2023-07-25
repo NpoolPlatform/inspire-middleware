@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"github.com/google/uuid"
@@ -52,6 +55,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		).Save(_ctx); err != nil {
 			return err
 		}
+		return nil
 	})
 	if err != nil {
 		return nil, err
