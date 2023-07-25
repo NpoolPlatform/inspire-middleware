@@ -273,7 +273,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.CouponType != nil {
 			h.Conds.CouponType = &cruder.Cond{
 				Op:  conds.GetCouponType().GetOp(),
-				Val: conds.GetCouponType().GetValue(),
+				Val: types.CouponType(conds.GetCouponType().GetValue()),
 			}
 		}
 		if conds.AppID != nil {

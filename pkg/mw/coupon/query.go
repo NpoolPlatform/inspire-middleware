@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	// couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
+	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
@@ -31,6 +31,20 @@ func (h *queryHandler) queryCoupon(cli *ent.Client) {
 			entcoupon.DeletedAt(0),
 		).
 		Select()
+}
+
+func (h *queryHandler) queryCoupons(ctx context.Context, cli *ent.Client) error {
+	stm, err := couponcrud.SetQueryConds(cli.Coupon.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+	h.stmSelect = stm.Select()
+	return nil
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -110,4 +124,27 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	handler.formalize()
 	return handler.infos[0], nil
+}
+
+func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Coupon{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryCoupons(_ctx, cli); err != nil {
+			return err
+		}
+		handler.stmSelect.
+			Offset(int(h.Offset)).
+			Limit(int(h.Limit))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	handler.formalize()
+	return handler.infos, handler.total, nil
 }
