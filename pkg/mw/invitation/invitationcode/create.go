@@ -17,7 +17,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) CreateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
+func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
 	if h.AppID == nil {
 		return nil, fmt.Errorf("invalid appid")
 	}

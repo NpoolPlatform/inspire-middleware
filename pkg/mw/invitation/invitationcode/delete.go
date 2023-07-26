@@ -11,7 +11,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 )
 
-func (h *Handler) DeleteInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
+func (h *Handler) DeleteInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
 	}
