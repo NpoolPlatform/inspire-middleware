@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
@@ -10,6 +11,9 @@ import (
 	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -51,6 +55,22 @@ func (h *queryHandler) scan(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EventType = basetypes.UsedFor(basetypes.UsedFor_value[info.EventTypeStr])
+		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
+		if *info.GoodID == uuid.Nil.String() {
+			info.GoodID = nil
+		}
+		amount, err := decimal.NewFromString(info.Credits)
+		if err != nil {
+			info.Credits = decimal.NewFromInt(0).String()
+		} else {
+			info.Credits = amount.String()
+		}
+		amount, err = decimal.NewFromString(info.CreditsPerUSD)
+		if err != nil {
+			info.CreditsPerUSD = decimal.NewFromInt(0).String()
+		} else {
+			info.CreditsPerUSD = amount.String()
+		}
 	}
 }
 

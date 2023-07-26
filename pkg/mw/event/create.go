@@ -39,7 +39,7 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !exist {
+	if exist {
 		return nil, fmt.Errorf("already exist")
 	}
 
