@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entinvitationcode "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -26,6 +27,20 @@ func (h *queryHandler) queryInvitationCode(cli *ent.Client) {
 			entinvitationcode.DeletedAt(0),
 		).
 		Select()
+}
+
+func (h *queryHandler) queryInvitationCodes(ctx context.Context, cli *ent.Client) error {
+	stm, err := invitationcodecrud.SetQueryConds(cli.InvitationCode.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+	h.stmSelect = stm.Select()
+	return nil
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -60,5 +75,23 @@ func (h *Handler) GetInvitationCode(ctx context.Context) (*npool.InvitationCode,
 }
 
 func (h *Handler) GetInvitationCodes(ctx context.Context) ([]*npool.InvitationCode, uint32, error) {
-	return nil, 0, nil
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.InvitationCode{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryInvitationCodes(_ctx, cli); err != nil {
+			return err
+		}
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return handler.infos, handler.total, nil
 }
