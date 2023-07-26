@@ -12,42 +12,40 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest) (*npool.UpdateCouponResponse, error) {
+func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest) (*npool.DeleteCouponResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(
-			"UpdateCoupon",
+			"DeleteCoupon",
 			"In", in,
 		)
-		return &npool.UpdateCouponResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.DeleteCouponResponse{}, status.Error(codes.InvalidArgument, "invalid info")
 	}
 
 	handler, err := allocated1.NewHandler(
 		ctx,
 		allocated1.WithID(req.ID),
-		allocated1.WithUsed(req.Used),
-		allocated1.WithUsedByOrderID(req.UsedByOrderID),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"UpdateCoupon",
+			"DeleteCoupon",
 			"In", in,
 			"Err", err,
 		)
-		return &npool.UpdateCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateCoupon(ctx)
+	info, err := handler.DeleteCoupon(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"UpdateCoupon",
+			"DeleteCoupon",
 			"In", in,
 			"Err", err,
 		)
-		return &npool.UpdateCouponResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateCouponResponse{
+	return &npool.DeleteCouponResponse{
 		Info: info,
 	}, nil
 }

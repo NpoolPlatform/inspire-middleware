@@ -3,26 +3,36 @@ package allocated
 import (
 	"context"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
+	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-
-	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated"
-
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
-
-	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (s *Server) GetCoupon(ctx context.Context, in *npool.GetCouponRequest) (*npool.GetCouponResponse, error) {
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	handler, err := allocated1.NewHandler(
+		ctx,
+		allocated1.WithID(&in.ID),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCoupon",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := allocated1.GetCoupon(ctx, in.GetID())
+	info, err := handler.GetCoupon(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCoupon",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCouponResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
@@ -31,95 +41,34 @@ func (s *Server) GetCoupon(ctx context.Context, in *npool.GetCouponRequest) (*np
 	}, nil
 }
 
-func (s *Server) GetManyCoupons(ctx context.Context, in *npool.GetManyCouponsRequest) (*npool.GetManyCouponsResponse, error) {
-	for _, id := range in.GetIDs() {
-		if _, err := uuid.Parse(id); err != nil {
-			return &npool.GetManyCouponsResponse{}, status.Error(codes.InvalidArgument, err.Error())
-		}
-	}
-
-	infos, err := allocated1.GetManyCoupons(ctx, in.GetIDs())
-	if err != nil {
-		return &npool.GetManyCouponsResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.GetManyCouponsResponse{
-		Infos: infos,
-	}, nil
-}
-
-func ValidateConds(conds *allocatedmgrpb.Conds) error {
-	if conds.ID != nil {
-		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.AppID != nil {
-		if _, err := uuid.Parse(conds.GetAppID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.UserID != nil {
-		if _, err := uuid.Parse(conds.GetUserID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.CouponID != nil {
-		if _, err := uuid.Parse(conds.GetCouponID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.UsedByOrderID != nil {
-		if _, err := uuid.Parse(conds.GetUsedByOrderID().GetValue()); err != nil {
-			return err
-		}
-	}
-	for _, id := range conds.GetIDs().GetValue() {
-		if _, err := uuid.Parse(id); err != nil {
-			return err
-		}
-	}
-	for _, id := range conds.GetUsedByOrderIDs().GetValue() {
-		if _, err := uuid.Parse(id); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (s *Server) GetCoupons(ctx context.Context, in *npool.GetCouponsRequest) (*npool.GetCouponsResponse, error) {
-	if err := ValidateConds(in.GetConds()); err != nil {
+	handler, err := allocated1.NewHandler(
+		ctx,
+		allocated1.WithConds(in.GetConds()),
+		allocated1.WithOffset(in.GetOffset()),
+		allocated1.WithLimit(in.GetLimit()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCoupons",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCouponsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	limit := constant.DefaultRowLimit
-	if in.GetLimit() > 0 {
-		limit = in.GetLimit()
-	}
-
-	infos, total, err := allocated1.GetCoupons(ctx, in.GetConds(), in.GetOffset(), limit)
+	infos, total, err := handler.GetCoupons(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCoupons",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCouponsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetCouponsResponse{
 		Infos: infos,
 		Total: total,
-	}, nil
-}
-
-func (s *Server) GetCouponOnly(ctx context.Context, in *npool.GetCouponOnlyRequest) (*npool.GetCouponOnlyResponse, error) {
-	if err := ValidateConds(in.GetConds()); err != nil {
-		return &npool.GetCouponOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	info, err := allocated1.GetCouponOnly(ctx, in.GetConds())
-	if err != nil {
-		return &npool.GetCouponOnlyResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.GetCouponOnlyResponse{
-		Info: info,
 	}, nil
 }
