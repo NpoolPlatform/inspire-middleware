@@ -11,11 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-
-	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 )
 
 // EventCreate is the builder for creating a Event entity.
@@ -88,9 +86,9 @@ func (ec *EventCreate) SetNillableEventType(s *string) *EventCreate {
 	return ec
 }
 
-// SetCoupons sets the "coupons" field.
-func (ec *EventCreate) SetCoupons(e []event.Coupon) *EventCreate {
-	ec.mutation.SetCoupons(e)
+// SetCouponIds sets the "coupon_ids" field.
+func (ec *EventCreate) SetCouponIds(u []uuid.UUID) *EventCreate {
+	ec.mutation.SetCouponIds(u)
 	return ec
 }
 
@@ -258,62 +256,62 @@ func (ec *EventCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (ec *EventCreate) defaults() error {
 	if _, ok := ec.mutation.CreatedAt(); !ok {
-		if entevent.DefaultCreatedAt == nil {
-			return fmt.Errorf("ent: uninitialized entevent.DefaultCreatedAt (forgotten import ent/runtime?)")
+		if event.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultCreatedAt (forgotten import ent/runtime?)")
 		}
-		v := entevent.DefaultCreatedAt()
+		v := event.DefaultCreatedAt()
 		ec.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ec.mutation.UpdatedAt(); !ok {
-		if entevent.DefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized entevent.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		if event.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := entevent.DefaultUpdatedAt()
+		v := event.DefaultUpdatedAt()
 		ec.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ec.mutation.DeletedAt(); !ok {
-		if entevent.DefaultDeletedAt == nil {
-			return fmt.Errorf("ent: uninitialized entevent.DefaultDeletedAt (forgotten import ent/runtime?)")
+		if event.DefaultDeletedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultDeletedAt (forgotten import ent/runtime?)")
 		}
-		v := entevent.DefaultDeletedAt()
+		v := event.DefaultDeletedAt()
 		ec.mutation.SetDeletedAt(v)
 	}
 	if _, ok := ec.mutation.EventType(); !ok {
-		v := entevent.DefaultEventType
+		v := event.DefaultEventType
 		ec.mutation.SetEventType(v)
 	}
-	if _, ok := ec.mutation.Coupons(); !ok {
-		v := entevent.DefaultCoupons
-		ec.mutation.SetCoupons(v)
+	if _, ok := ec.mutation.CouponIds(); !ok {
+		v := event.DefaultCouponIds
+		ec.mutation.SetCouponIds(v)
 	}
 	if _, ok := ec.mutation.Credits(); !ok {
-		v := entevent.DefaultCredits
+		v := event.DefaultCredits
 		ec.mutation.SetCredits(v)
 	}
 	if _, ok := ec.mutation.CreditsPerUsd(); !ok {
-		v := entevent.DefaultCreditsPerUsd
+		v := event.DefaultCreditsPerUsd
 		ec.mutation.SetCreditsPerUsd(v)
 	}
 	if _, ok := ec.mutation.MaxConsecutive(); !ok {
-		v := entevent.DefaultMaxConsecutive
+		v := event.DefaultMaxConsecutive
 		ec.mutation.SetMaxConsecutive(v)
 	}
 	if _, ok := ec.mutation.GoodID(); !ok {
-		if entevent.DefaultGoodID == nil {
-			return fmt.Errorf("ent: uninitialized entevent.DefaultGoodID (forgotten import ent/runtime?)")
+		if event.DefaultGoodID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultGoodID (forgotten import ent/runtime?)")
 		}
-		v := entevent.DefaultGoodID()
+		v := event.DefaultGoodID()
 		ec.mutation.SetGoodID(v)
 	}
 	if _, ok := ec.mutation.InviterLayers(); !ok {
-		v := entevent.DefaultInviterLayers
+		v := event.DefaultInviterLayers
 		ec.mutation.SetInviterLayers(v)
 	}
 	if _, ok := ec.mutation.ID(); !ok {
-		if entevent.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized entevent.DefaultID (forgotten import ent/runtime?)")
+		if event.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultID (forgotten import ent/runtime?)")
 		}
-		v := entevent.DefaultID()
+		v := event.DefaultID()
 		ec.mutation.SetID(v)
 	}
 	return nil
@@ -358,10 +356,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Event{config: ec.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: entevent.Table,
+			Table: event.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUUID,
-				Column: entevent.FieldID,
+				Column: event.FieldID,
 			},
 		}
 	)
@@ -374,7 +372,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldCreatedAt,
+			Column: event.FieldCreatedAt,
 		})
 		_node.CreatedAt = value
 	}
@@ -382,7 +380,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldUpdatedAt,
+			Column: event.FieldUpdatedAt,
 		})
 		_node.UpdatedAt = value
 	}
@@ -390,7 +388,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldDeletedAt,
+			Column: event.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
 	}
@@ -398,7 +396,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldAppID,
+			Column: event.FieldAppID,
 		})
 		_node.AppID = value
 	}
@@ -406,23 +404,23 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: entevent.FieldEventType,
+			Column: event.FieldEventType,
 		})
 		_node.EventType = value
 	}
-	if value, ok := ec.mutation.Coupons(); ok {
+	if value, ok := ec.mutation.CouponIds(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: entevent.FieldCoupons,
+			Column: event.FieldCouponIds,
 		})
-		_node.Coupons = value
+		_node.CouponIds = value
 	}
 	if value, ok := ec.mutation.Credits(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCredits,
+			Column: event.FieldCredits,
 		})
 		_node.Credits = value
 	}
@@ -430,7 +428,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCreditsPerUsd,
+			Column: event.FieldCreditsPerUsd,
 		})
 		_node.CreditsPerUsd = value
 	}
@@ -438,7 +436,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 		_node.MaxConsecutive = value
 	}
@@ -446,7 +444,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldGoodID,
+			Column: event.FieldGoodID,
 		})
 		_node.GoodID = value
 	}
@@ -454,7 +452,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 		_node.InviterLayers = value
 	}
@@ -514,205 +512,205 @@ type (
 
 // SetCreatedAt sets the "created_at" field.
 func (u *EventUpsert) SetCreatedAt(v uint32) *EventUpsert {
-	u.Set(entevent.FieldCreatedAt, v)
+	u.Set(event.FieldCreatedAt, v)
 	return u
 }
 
 // UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
 func (u *EventUpsert) UpdateCreatedAt() *EventUpsert {
-	u.SetExcluded(entevent.FieldCreatedAt)
+	u.SetExcluded(event.FieldCreatedAt)
 	return u
 }
 
 // AddCreatedAt adds v to the "created_at" field.
 func (u *EventUpsert) AddCreatedAt(v uint32) *EventUpsert {
-	u.Add(entevent.FieldCreatedAt, v)
+	u.Add(event.FieldCreatedAt, v)
 	return u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
 func (u *EventUpsert) SetUpdatedAt(v uint32) *EventUpsert {
-	u.Set(entevent.FieldUpdatedAt, v)
+	u.Set(event.FieldUpdatedAt, v)
 	return u
 }
 
 // UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
 func (u *EventUpsert) UpdateUpdatedAt() *EventUpsert {
-	u.SetExcluded(entevent.FieldUpdatedAt)
+	u.SetExcluded(event.FieldUpdatedAt)
 	return u
 }
 
 // AddUpdatedAt adds v to the "updated_at" field.
 func (u *EventUpsert) AddUpdatedAt(v uint32) *EventUpsert {
-	u.Add(entevent.FieldUpdatedAt, v)
+	u.Add(event.FieldUpdatedAt, v)
 	return u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
 func (u *EventUpsert) SetDeletedAt(v uint32) *EventUpsert {
-	u.Set(entevent.FieldDeletedAt, v)
+	u.Set(event.FieldDeletedAt, v)
 	return u
 }
 
 // UpdateDeletedAt sets the "deleted_at" field to the value that was provided on create.
 func (u *EventUpsert) UpdateDeletedAt() *EventUpsert {
-	u.SetExcluded(entevent.FieldDeletedAt)
+	u.SetExcluded(event.FieldDeletedAt)
 	return u
 }
 
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *EventUpsert) AddDeletedAt(v uint32) *EventUpsert {
-	u.Add(entevent.FieldDeletedAt, v)
+	u.Add(event.FieldDeletedAt, v)
 	return u
 }
 
 // SetAppID sets the "app_id" field.
 func (u *EventUpsert) SetAppID(v uuid.UUID) *EventUpsert {
-	u.Set(entevent.FieldAppID, v)
+	u.Set(event.FieldAppID, v)
 	return u
 }
 
 // UpdateAppID sets the "app_id" field to the value that was provided on create.
 func (u *EventUpsert) UpdateAppID() *EventUpsert {
-	u.SetExcluded(entevent.FieldAppID)
+	u.SetExcluded(event.FieldAppID)
 	return u
 }
 
 // SetEventType sets the "event_type" field.
 func (u *EventUpsert) SetEventType(v string) *EventUpsert {
-	u.Set(entevent.FieldEventType, v)
+	u.Set(event.FieldEventType, v)
 	return u
 }
 
 // UpdateEventType sets the "event_type" field to the value that was provided on create.
 func (u *EventUpsert) UpdateEventType() *EventUpsert {
-	u.SetExcluded(entevent.FieldEventType)
+	u.SetExcluded(event.FieldEventType)
 	return u
 }
 
 // ClearEventType clears the value of the "event_type" field.
 func (u *EventUpsert) ClearEventType() *EventUpsert {
-	u.SetNull(entevent.FieldEventType)
+	u.SetNull(event.FieldEventType)
 	return u
 }
 
-// SetCoupons sets the "coupons" field.
-func (u *EventUpsert) SetCoupons(v []event.Coupon) *EventUpsert {
-	u.Set(entevent.FieldCoupons, v)
+// SetCouponIds sets the "coupon_ids" field.
+func (u *EventUpsert) SetCouponIds(v []uuid.UUID) *EventUpsert {
+	u.Set(event.FieldCouponIds, v)
 	return u
 }
 
-// UpdateCoupons sets the "coupons" field to the value that was provided on create.
-func (u *EventUpsert) UpdateCoupons() *EventUpsert {
-	u.SetExcluded(entevent.FieldCoupons)
+// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
+func (u *EventUpsert) UpdateCouponIds() *EventUpsert {
+	u.SetExcluded(event.FieldCouponIds)
 	return u
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (u *EventUpsert) ClearCoupons() *EventUpsert {
-	u.SetNull(entevent.FieldCoupons)
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (u *EventUpsert) ClearCouponIds() *EventUpsert {
+	u.SetNull(event.FieldCouponIds)
 	return u
 }
 
 // SetCredits sets the "credits" field.
 func (u *EventUpsert) SetCredits(v decimal.Decimal) *EventUpsert {
-	u.Set(entevent.FieldCredits, v)
+	u.Set(event.FieldCredits, v)
 	return u
 }
 
 // UpdateCredits sets the "credits" field to the value that was provided on create.
 func (u *EventUpsert) UpdateCredits() *EventUpsert {
-	u.SetExcluded(entevent.FieldCredits)
+	u.SetExcluded(event.FieldCredits)
 	return u
 }
 
 // ClearCredits clears the value of the "credits" field.
 func (u *EventUpsert) ClearCredits() *EventUpsert {
-	u.SetNull(entevent.FieldCredits)
+	u.SetNull(event.FieldCredits)
 	return u
 }
 
 // SetCreditsPerUsd sets the "credits_per_usd" field.
 func (u *EventUpsert) SetCreditsPerUsd(v decimal.Decimal) *EventUpsert {
-	u.Set(entevent.FieldCreditsPerUsd, v)
+	u.Set(event.FieldCreditsPerUsd, v)
 	return u
 }
 
 // UpdateCreditsPerUsd sets the "credits_per_usd" field to the value that was provided on create.
 func (u *EventUpsert) UpdateCreditsPerUsd() *EventUpsert {
-	u.SetExcluded(entevent.FieldCreditsPerUsd)
+	u.SetExcluded(event.FieldCreditsPerUsd)
 	return u
 }
 
 // ClearCreditsPerUsd clears the value of the "credits_per_usd" field.
 func (u *EventUpsert) ClearCreditsPerUsd() *EventUpsert {
-	u.SetNull(entevent.FieldCreditsPerUsd)
+	u.SetNull(event.FieldCreditsPerUsd)
 	return u
 }
 
 // SetMaxConsecutive sets the "max_consecutive" field.
 func (u *EventUpsert) SetMaxConsecutive(v uint32) *EventUpsert {
-	u.Set(entevent.FieldMaxConsecutive, v)
+	u.Set(event.FieldMaxConsecutive, v)
 	return u
 }
 
 // UpdateMaxConsecutive sets the "max_consecutive" field to the value that was provided on create.
 func (u *EventUpsert) UpdateMaxConsecutive() *EventUpsert {
-	u.SetExcluded(entevent.FieldMaxConsecutive)
+	u.SetExcluded(event.FieldMaxConsecutive)
 	return u
 }
 
 // AddMaxConsecutive adds v to the "max_consecutive" field.
 func (u *EventUpsert) AddMaxConsecutive(v uint32) *EventUpsert {
-	u.Add(entevent.FieldMaxConsecutive, v)
+	u.Add(event.FieldMaxConsecutive, v)
 	return u
 }
 
 // ClearMaxConsecutive clears the value of the "max_consecutive" field.
 func (u *EventUpsert) ClearMaxConsecutive() *EventUpsert {
-	u.SetNull(entevent.FieldMaxConsecutive)
+	u.SetNull(event.FieldMaxConsecutive)
 	return u
 }
 
 // SetGoodID sets the "good_id" field.
 func (u *EventUpsert) SetGoodID(v uuid.UUID) *EventUpsert {
-	u.Set(entevent.FieldGoodID, v)
+	u.Set(event.FieldGoodID, v)
 	return u
 }
 
 // UpdateGoodID sets the "good_id" field to the value that was provided on create.
 func (u *EventUpsert) UpdateGoodID() *EventUpsert {
-	u.SetExcluded(entevent.FieldGoodID)
+	u.SetExcluded(event.FieldGoodID)
 	return u
 }
 
 // ClearGoodID clears the value of the "good_id" field.
 func (u *EventUpsert) ClearGoodID() *EventUpsert {
-	u.SetNull(entevent.FieldGoodID)
+	u.SetNull(event.FieldGoodID)
 	return u
 }
 
 // SetInviterLayers sets the "inviter_layers" field.
 func (u *EventUpsert) SetInviterLayers(v uint32) *EventUpsert {
-	u.Set(entevent.FieldInviterLayers, v)
+	u.Set(event.FieldInviterLayers, v)
 	return u
 }
 
 // UpdateInviterLayers sets the "inviter_layers" field to the value that was provided on create.
 func (u *EventUpsert) UpdateInviterLayers() *EventUpsert {
-	u.SetExcluded(entevent.FieldInviterLayers)
+	u.SetExcluded(event.FieldInviterLayers)
 	return u
 }
 
 // AddInviterLayers adds v to the "inviter_layers" field.
 func (u *EventUpsert) AddInviterLayers(v uint32) *EventUpsert {
-	u.Add(entevent.FieldInviterLayers, v)
+	u.Add(event.FieldInviterLayers, v)
 	return u
 }
 
 // ClearInviterLayers clears the value of the "inviter_layers" field.
 func (u *EventUpsert) ClearInviterLayers() *EventUpsert {
-	u.SetNull(entevent.FieldInviterLayers)
+	u.SetNull(event.FieldInviterLayers)
 	return u
 }
 
@@ -723,7 +721,7 @@ func (u *EventUpsert) ClearInviterLayers() *EventUpsert {
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(entevent.FieldID)
+//				u.SetIgnore(event.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
@@ -732,7 +730,7 @@ func (u *EventUpsertOne) UpdateNewValues() *EventUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
-			s.SetIgnore(entevent.FieldID)
+			s.SetIgnore(event.FieldID)
 		}
 	}))
 	return u
@@ -864,24 +862,24 @@ func (u *EventUpsertOne) ClearEventType() *EventUpsertOne {
 	})
 }
 
-// SetCoupons sets the "coupons" field.
-func (u *EventUpsertOne) SetCoupons(v []event.Coupon) *EventUpsertOne {
+// SetCouponIds sets the "coupon_ids" field.
+func (u *EventUpsertOne) SetCouponIds(v []uuid.UUID) *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
-		s.SetCoupons(v)
+		s.SetCouponIds(v)
 	})
 }
 
-// UpdateCoupons sets the "coupons" field to the value that was provided on create.
-func (u *EventUpsertOne) UpdateCoupons() *EventUpsertOne {
+// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateCouponIds() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
-		s.UpdateCoupons()
+		s.UpdateCouponIds()
 	})
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (u *EventUpsertOne) ClearCoupons() *EventUpsertOne {
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (u *EventUpsertOne) ClearCouponIds() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
-		s.ClearCoupons()
+		s.ClearCouponIds()
 	})
 }
 
@@ -1174,7 +1172,7 @@ type EventUpsertBulk struct {
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //			sql.ResolveWith(func(u *sql.UpdateSet) {
-//				u.SetIgnore(entevent.FieldID)
+//				u.SetIgnore(event.FieldID)
 //			}),
 //		).
 //		Exec(ctx)
@@ -1184,7 +1182,7 @@ func (u *EventUpsertBulk) UpdateNewValues() *EventUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.ID(); exists {
-				s.SetIgnore(entevent.FieldID)
+				s.SetIgnore(event.FieldID)
 				return
 			}
 		}
@@ -1318,24 +1316,24 @@ func (u *EventUpsertBulk) ClearEventType() *EventUpsertBulk {
 	})
 }
 
-// SetCoupons sets the "coupons" field.
-func (u *EventUpsertBulk) SetCoupons(v []event.Coupon) *EventUpsertBulk {
+// SetCouponIds sets the "coupon_ids" field.
+func (u *EventUpsertBulk) SetCouponIds(v []uuid.UUID) *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
-		s.SetCoupons(v)
+		s.SetCouponIds(v)
 	})
 }
 
-// UpdateCoupons sets the "coupons" field to the value that was provided on create.
-func (u *EventUpsertBulk) UpdateCoupons() *EventUpsertBulk {
+// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateCouponIds() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
-		s.UpdateCoupons()
+		s.UpdateCouponIds()
 	})
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (u *EventUpsertBulk) ClearCoupons() *EventUpsertBulk {
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (u *EventUpsertBulk) ClearCouponIds() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
-		s.ClearCoupons()
+		s.ClearCouponIds()
 	})
 }
 

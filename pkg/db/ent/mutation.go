@@ -15,14 +15,13 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponfixamount"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponspecialoffer"
-	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodorderpercent"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodordervaluepercent"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
-	"github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -9553,7 +9552,7 @@ type EventMutation struct {
 	adddeleted_at      *int32
 	app_id             *uuid.UUID
 	event_type         *string
-	coupons            *[]event.Coupon
+	coupon_ids         *[]uuid.UUID
 	credits            *decimal.Decimal
 	credits_per_usd    *decimal.Decimal
 	max_consecutive    *uint32
@@ -9909,68 +9908,68 @@ func (m *EventMutation) OldEventType(ctx context.Context) (v string, err error) 
 // ClearEventType clears the value of the "event_type" field.
 func (m *EventMutation) ClearEventType() {
 	m.event_type = nil
-	m.clearedFields[entevent.FieldEventType] = struct{}{}
+	m.clearedFields[event.FieldEventType] = struct{}{}
 }
 
 // EventTypeCleared returns if the "event_type" field was cleared in this mutation.
 func (m *EventMutation) EventTypeCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldEventType]
+	_, ok := m.clearedFields[event.FieldEventType]
 	return ok
 }
 
 // ResetEventType resets all changes to the "event_type" field.
 func (m *EventMutation) ResetEventType() {
 	m.event_type = nil
-	delete(m.clearedFields, entevent.FieldEventType)
+	delete(m.clearedFields, event.FieldEventType)
 }
 
-// SetCoupons sets the "coupons" field.
-func (m *EventMutation) SetCoupons(e []event.Coupon) {
-	m.coupons = &e
+// SetCouponIds sets the "coupon_ids" field.
+func (m *EventMutation) SetCouponIds(u []uuid.UUID) {
+	m.coupon_ids = &u
 }
 
-// Coupons returns the value of the "coupons" field in the mutation.
-func (m *EventMutation) Coupons() (r []event.Coupon, exists bool) {
-	v := m.coupons
+// CouponIds returns the value of the "coupon_ids" field in the mutation.
+func (m *EventMutation) CouponIds() (r []uuid.UUID, exists bool) {
+	v := m.coupon_ids
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCoupons returns the old "coupons" field's value of the Event entity.
+// OldCouponIds returns the old "coupon_ids" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldCoupons(ctx context.Context) (v []event.Coupon, err error) {
+func (m *EventMutation) OldCouponIds(ctx context.Context) (v []uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCoupons is only allowed on UpdateOne operations")
+		return v, errors.New("OldCouponIds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCoupons requires an ID field in the mutation")
+		return v, errors.New("OldCouponIds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCoupons: %w", err)
+		return v, fmt.Errorf("querying old value for OldCouponIds: %w", err)
 	}
-	return oldValue.Coupons, nil
+	return oldValue.CouponIds, nil
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (m *EventMutation) ClearCoupons() {
-	m.coupons = nil
-	m.clearedFields[entevent.FieldCoupons] = struct{}{}
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (m *EventMutation) ClearCouponIds() {
+	m.coupon_ids = nil
+	m.clearedFields[event.FieldCouponIds] = struct{}{}
 }
 
-// CouponsCleared returns if the "coupons" field was cleared in this mutation.
-func (m *EventMutation) CouponsCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldCoupons]
+// CouponIdsCleared returns if the "coupon_ids" field was cleared in this mutation.
+func (m *EventMutation) CouponIdsCleared() bool {
+	_, ok := m.clearedFields[event.FieldCouponIds]
 	return ok
 }
 
-// ResetCoupons resets all changes to the "coupons" field.
-func (m *EventMutation) ResetCoupons() {
-	m.coupons = nil
-	delete(m.clearedFields, entevent.FieldCoupons)
+// ResetCouponIds resets all changes to the "coupon_ids" field.
+func (m *EventMutation) ResetCouponIds() {
+	m.coupon_ids = nil
+	delete(m.clearedFields, event.FieldCouponIds)
 }
 
 // SetCredits sets the "credits" field.
@@ -10007,19 +10006,19 @@ func (m *EventMutation) OldCredits(ctx context.Context) (v decimal.Decimal, err 
 // ClearCredits clears the value of the "credits" field.
 func (m *EventMutation) ClearCredits() {
 	m.credits = nil
-	m.clearedFields[entevent.FieldCredits] = struct{}{}
+	m.clearedFields[event.FieldCredits] = struct{}{}
 }
 
 // CreditsCleared returns if the "credits" field was cleared in this mutation.
 func (m *EventMutation) CreditsCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldCredits]
+	_, ok := m.clearedFields[event.FieldCredits]
 	return ok
 }
 
 // ResetCredits resets all changes to the "credits" field.
 func (m *EventMutation) ResetCredits() {
 	m.credits = nil
-	delete(m.clearedFields, entevent.FieldCredits)
+	delete(m.clearedFields, event.FieldCredits)
 }
 
 // SetCreditsPerUsd sets the "credits_per_usd" field.
@@ -10056,19 +10055,19 @@ func (m *EventMutation) OldCreditsPerUsd(ctx context.Context) (v decimal.Decimal
 // ClearCreditsPerUsd clears the value of the "credits_per_usd" field.
 func (m *EventMutation) ClearCreditsPerUsd() {
 	m.credits_per_usd = nil
-	m.clearedFields[entevent.FieldCreditsPerUsd] = struct{}{}
+	m.clearedFields[event.FieldCreditsPerUsd] = struct{}{}
 }
 
 // CreditsPerUsdCleared returns if the "credits_per_usd" field was cleared in this mutation.
 func (m *EventMutation) CreditsPerUsdCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldCreditsPerUsd]
+	_, ok := m.clearedFields[event.FieldCreditsPerUsd]
 	return ok
 }
 
 // ResetCreditsPerUsd resets all changes to the "credits_per_usd" field.
 func (m *EventMutation) ResetCreditsPerUsd() {
 	m.credits_per_usd = nil
-	delete(m.clearedFields, entevent.FieldCreditsPerUsd)
+	delete(m.clearedFields, event.FieldCreditsPerUsd)
 }
 
 // SetMaxConsecutive sets the "max_consecutive" field.
@@ -10125,12 +10124,12 @@ func (m *EventMutation) AddedMaxConsecutive() (r int32, exists bool) {
 func (m *EventMutation) ClearMaxConsecutive() {
 	m.max_consecutive = nil
 	m.addmax_consecutive = nil
-	m.clearedFields[entevent.FieldMaxConsecutive] = struct{}{}
+	m.clearedFields[event.FieldMaxConsecutive] = struct{}{}
 }
 
 // MaxConsecutiveCleared returns if the "max_consecutive" field was cleared in this mutation.
 func (m *EventMutation) MaxConsecutiveCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldMaxConsecutive]
+	_, ok := m.clearedFields[event.FieldMaxConsecutive]
 	return ok
 }
 
@@ -10138,7 +10137,7 @@ func (m *EventMutation) MaxConsecutiveCleared() bool {
 func (m *EventMutation) ResetMaxConsecutive() {
 	m.max_consecutive = nil
 	m.addmax_consecutive = nil
-	delete(m.clearedFields, entevent.FieldMaxConsecutive)
+	delete(m.clearedFields, event.FieldMaxConsecutive)
 }
 
 // SetGoodID sets the "good_id" field.
@@ -10175,19 +10174,19 @@ func (m *EventMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) 
 // ClearGoodID clears the value of the "good_id" field.
 func (m *EventMutation) ClearGoodID() {
 	m.good_id = nil
-	m.clearedFields[entevent.FieldGoodID] = struct{}{}
+	m.clearedFields[event.FieldGoodID] = struct{}{}
 }
 
 // GoodIDCleared returns if the "good_id" field was cleared in this mutation.
 func (m *EventMutation) GoodIDCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldGoodID]
+	_, ok := m.clearedFields[event.FieldGoodID]
 	return ok
 }
 
 // ResetGoodID resets all changes to the "good_id" field.
 func (m *EventMutation) ResetGoodID() {
 	m.good_id = nil
-	delete(m.clearedFields, entevent.FieldGoodID)
+	delete(m.clearedFields, event.FieldGoodID)
 }
 
 // SetInviterLayers sets the "inviter_layers" field.
@@ -10244,12 +10243,12 @@ func (m *EventMutation) AddedInviterLayers() (r int32, exists bool) {
 func (m *EventMutation) ClearInviterLayers() {
 	m.inviter_layers = nil
 	m.addinviter_layers = nil
-	m.clearedFields[entevent.FieldInviterLayers] = struct{}{}
+	m.clearedFields[event.FieldInviterLayers] = struct{}{}
 }
 
 // InviterLayersCleared returns if the "inviter_layers" field was cleared in this mutation.
 func (m *EventMutation) InviterLayersCleared() bool {
-	_, ok := m.clearedFields[entevent.FieldInviterLayers]
+	_, ok := m.clearedFields[event.FieldInviterLayers]
 	return ok
 }
 
@@ -10257,7 +10256,7 @@ func (m *EventMutation) InviterLayersCleared() bool {
 func (m *EventMutation) ResetInviterLayers() {
 	m.inviter_layers = nil
 	m.addinviter_layers = nil
-	delete(m.clearedFields, entevent.FieldInviterLayers)
+	delete(m.clearedFields, event.FieldInviterLayers)
 }
 
 // Where appends a list predicates to the EventMutation builder.
@@ -10281,37 +10280,37 @@ func (m *EventMutation) Type() string {
 func (m *EventMutation) Fields() []string {
 	fields := make([]string, 0, 11)
 	if m.created_at != nil {
-		fields = append(fields, entevent.FieldCreatedAt)
+		fields = append(fields, event.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, entevent.FieldUpdatedAt)
+		fields = append(fields, event.FieldUpdatedAt)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, entevent.FieldDeletedAt)
+		fields = append(fields, event.FieldDeletedAt)
 	}
 	if m.app_id != nil {
-		fields = append(fields, entevent.FieldAppID)
+		fields = append(fields, event.FieldAppID)
 	}
 	if m.event_type != nil {
-		fields = append(fields, entevent.FieldEventType)
+		fields = append(fields, event.FieldEventType)
 	}
-	if m.coupons != nil {
-		fields = append(fields, entevent.FieldCoupons)
+	if m.coupon_ids != nil {
+		fields = append(fields, event.FieldCouponIds)
 	}
 	if m.credits != nil {
-		fields = append(fields, entevent.FieldCredits)
+		fields = append(fields, event.FieldCredits)
 	}
 	if m.credits_per_usd != nil {
-		fields = append(fields, entevent.FieldCreditsPerUsd)
+		fields = append(fields, event.FieldCreditsPerUsd)
 	}
 	if m.max_consecutive != nil {
-		fields = append(fields, entevent.FieldMaxConsecutive)
+		fields = append(fields, event.FieldMaxConsecutive)
 	}
 	if m.good_id != nil {
-		fields = append(fields, entevent.FieldGoodID)
+		fields = append(fields, event.FieldGoodID)
 	}
 	if m.inviter_layers != nil {
-		fields = append(fields, entevent.FieldInviterLayers)
+		fields = append(fields, event.FieldInviterLayers)
 	}
 	return fields
 }
@@ -10321,27 +10320,27 @@ func (m *EventMutation) Fields() []string {
 // schema.
 func (m *EventMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		return m.CreatedAt()
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		return m.DeletedAt()
-	case entevent.FieldAppID:
+	case event.FieldAppID:
 		return m.AppID()
-	case entevent.FieldEventType:
+	case event.FieldEventType:
 		return m.EventType()
-	case entevent.FieldCoupons:
-		return m.Coupons()
-	case entevent.FieldCredits:
+	case event.FieldCouponIds:
+		return m.CouponIds()
+	case event.FieldCredits:
 		return m.Credits()
-	case entevent.FieldCreditsPerUsd:
+	case event.FieldCreditsPerUsd:
 		return m.CreditsPerUsd()
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		return m.MaxConsecutive()
-	case entevent.FieldGoodID:
+	case event.FieldGoodID:
 		return m.GoodID()
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		return m.InviterLayers()
 	}
 	return nil, false
@@ -10352,27 +10351,27 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case entevent.FieldAppID:
+	case event.FieldAppID:
 		return m.OldAppID(ctx)
-	case entevent.FieldEventType:
+	case event.FieldEventType:
 		return m.OldEventType(ctx)
-	case entevent.FieldCoupons:
-		return m.OldCoupons(ctx)
-	case entevent.FieldCredits:
+	case event.FieldCouponIds:
+		return m.OldCouponIds(ctx)
+	case event.FieldCredits:
 		return m.OldCredits(ctx)
-	case entevent.FieldCreditsPerUsd:
+	case event.FieldCreditsPerUsd:
 		return m.OldCreditsPerUsd(ctx)
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		return m.OldMaxConsecutive(ctx)
-	case entevent.FieldGoodID:
+	case event.FieldGoodID:
 		return m.OldGoodID(ctx)
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		return m.OldInviterLayers(ctx)
 	}
 	return nil, fmt.Errorf("unknown Event field %s", name)
@@ -10383,77 +10382,77 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *EventMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case entevent.FieldAppID:
+	case event.FieldAppID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
 		return nil
-	case entevent.FieldEventType:
+	case event.FieldEventType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEventType(v)
 		return nil
-	case entevent.FieldCoupons:
-		v, ok := value.([]event.Coupon)
+	case event.FieldCouponIds:
+		v, ok := value.([]uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCoupons(v)
+		m.SetCouponIds(v)
 		return nil
-	case entevent.FieldCredits:
+	case event.FieldCredits:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCredits(v)
 		return nil
-	case entevent.FieldCreditsPerUsd:
+	case event.FieldCreditsPerUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreditsPerUsd(v)
 		return nil
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMaxConsecutive(v)
 		return nil
-	case entevent.FieldGoodID:
+	case event.FieldGoodID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
 		return nil
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -10469,19 +10468,19 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 func (m *EventMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_at != nil {
-		fields = append(fields, entevent.FieldCreatedAt)
+		fields = append(fields, event.FieldCreatedAt)
 	}
 	if m.addupdated_at != nil {
-		fields = append(fields, entevent.FieldUpdatedAt)
+		fields = append(fields, event.FieldUpdatedAt)
 	}
 	if m.adddeleted_at != nil {
-		fields = append(fields, entevent.FieldDeletedAt)
+		fields = append(fields, event.FieldDeletedAt)
 	}
 	if m.addmax_consecutive != nil {
-		fields = append(fields, entevent.FieldMaxConsecutive)
+		fields = append(fields, event.FieldMaxConsecutive)
 	}
 	if m.addinviter_layers != nil {
-		fields = append(fields, entevent.FieldInviterLayers)
+		fields = append(fields, event.FieldInviterLayers)
 	}
 	return fields
 }
@@ -10491,15 +10490,15 @@ func (m *EventMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *EventMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		return m.AddedCreatedAt()
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		return m.AddedUpdatedAt()
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		return m.AddedMaxConsecutive()
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		return m.AddedInviterLayers()
 	}
 	return nil, false
@@ -10510,35 +10509,35 @@ func (m *EventMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *EventMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreatedAt(v)
 		return nil
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedAt(v)
 		return nil
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddMaxConsecutive(v)
 		return nil
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -10553,26 +10552,26 @@ func (m *EventMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *EventMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(entevent.FieldEventType) {
-		fields = append(fields, entevent.FieldEventType)
+	if m.FieldCleared(event.FieldEventType) {
+		fields = append(fields, event.FieldEventType)
 	}
-	if m.FieldCleared(entevent.FieldCoupons) {
-		fields = append(fields, entevent.FieldCoupons)
+	if m.FieldCleared(event.FieldCouponIds) {
+		fields = append(fields, event.FieldCouponIds)
 	}
-	if m.FieldCleared(entevent.FieldCredits) {
-		fields = append(fields, entevent.FieldCredits)
+	if m.FieldCleared(event.FieldCredits) {
+		fields = append(fields, event.FieldCredits)
 	}
-	if m.FieldCleared(entevent.FieldCreditsPerUsd) {
-		fields = append(fields, entevent.FieldCreditsPerUsd)
+	if m.FieldCleared(event.FieldCreditsPerUsd) {
+		fields = append(fields, event.FieldCreditsPerUsd)
 	}
-	if m.FieldCleared(entevent.FieldMaxConsecutive) {
-		fields = append(fields, entevent.FieldMaxConsecutive)
+	if m.FieldCleared(event.FieldMaxConsecutive) {
+		fields = append(fields, event.FieldMaxConsecutive)
 	}
-	if m.FieldCleared(entevent.FieldGoodID) {
-		fields = append(fields, entevent.FieldGoodID)
+	if m.FieldCleared(event.FieldGoodID) {
+		fields = append(fields, event.FieldGoodID)
 	}
-	if m.FieldCleared(entevent.FieldInviterLayers) {
-		fields = append(fields, entevent.FieldInviterLayers)
+	if m.FieldCleared(event.FieldInviterLayers) {
+		fields = append(fields, event.FieldInviterLayers)
 	}
 	return fields
 }
@@ -10588,25 +10587,25 @@ func (m *EventMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *EventMutation) ClearField(name string) error {
 	switch name {
-	case entevent.FieldEventType:
+	case event.FieldEventType:
 		m.ClearEventType()
 		return nil
-	case entevent.FieldCoupons:
-		m.ClearCoupons()
+	case event.FieldCouponIds:
+		m.ClearCouponIds()
 		return nil
-	case entevent.FieldCredits:
+	case event.FieldCredits:
 		m.ClearCredits()
 		return nil
-	case entevent.FieldCreditsPerUsd:
+	case event.FieldCreditsPerUsd:
 		m.ClearCreditsPerUsd()
 		return nil
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		m.ClearMaxConsecutive()
 		return nil
-	case entevent.FieldGoodID:
+	case event.FieldGoodID:
 		m.ClearGoodID()
 		return nil
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		m.ClearInviterLayers()
 		return nil
 	}
@@ -10617,37 +10616,37 @@ func (m *EventMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *EventMutation) ResetField(name string) error {
 	switch name {
-	case entevent.FieldCreatedAt:
+	case event.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case entevent.FieldUpdatedAt:
+	case event.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case entevent.FieldDeletedAt:
+	case event.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case entevent.FieldAppID:
+	case event.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case entevent.FieldEventType:
+	case event.FieldEventType:
 		m.ResetEventType()
 		return nil
-	case entevent.FieldCoupons:
-		m.ResetCoupons()
+	case event.FieldCouponIds:
+		m.ResetCouponIds()
 		return nil
-	case entevent.FieldCredits:
+	case event.FieldCredits:
 		m.ResetCredits()
 		return nil
-	case entevent.FieldCreditsPerUsd:
+	case event.FieldCreditsPerUsd:
 		m.ResetCreditsPerUsd()
 		return nil
-	case entevent.FieldMaxConsecutive:
+	case event.FieldMaxConsecutive:
 		m.ResetMaxConsecutive()
 		return nil
-	case entevent.FieldGoodID:
+	case event.FieldGoodID:
 		m.ResetGoodID()
 		return nil
-	case entevent.FieldInviterLayers:
+	case event.FieldInviterLayers:
 		m.ResetInviterLayers()
 		return nil
 	}

@@ -74,7 +74,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690341827},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690358396},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
@@ -102,7 +102,7 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690341827},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690358396},
 	}
 	// CouponAllocatedsTable holds the schema information for the "coupon_allocateds" table.
 	CouponAllocatedsTable = &schema.Table{
@@ -182,7 +182,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "app_id", Type: field.TypeUUID},
 		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultUsedFor"},
-		{Name: "coupons", Type: field.TypeJSON, Nullable: true},
+		{Name: "coupon_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "credits", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "credits_per_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "max_consecutive", Type: field.TypeUint32, Nullable: true, Default: 1},
@@ -205,7 +205,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690341827},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690358396},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// GoodOrderPercentsTable holds the schema information for the "good_order_percents" table.
@@ -224,7 +224,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690341827},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1690358396},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// GoodOrderValuePercentsTable holds the schema information for the "good_order_value_percents" table.

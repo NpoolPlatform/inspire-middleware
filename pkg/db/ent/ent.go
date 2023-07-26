@@ -17,7 +17,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponfixamount"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponspecialoffer"
-	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodorderpercent"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodordervaluepercent"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -50,7 +50,7 @@ func columnChecker(table string) func(string) error {
 		coupondiscount.Table:        coupondiscount.ValidColumn,
 		couponfixamount.Table:       couponfixamount.ValidColumn,
 		couponspecialoffer.Table:    couponspecialoffer.ValidColumn,
-		entevent.Table:              entevent.ValidColumn,
+		event.Table:                 event.ValidColumn,
 		goodorderpercent.Table:      goodorderpercent.ValidColumn,
 		goodordervaluepercent.Table: goodordervaluepercent.ValidColumn,
 		invitationcode.Table:        invitationcode.ValidColumn,

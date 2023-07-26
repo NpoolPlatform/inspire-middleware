@@ -10,12 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-
-	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 )
 
 // EventUpdate is the builder for updating Event entities.
@@ -113,15 +111,15 @@ func (eu *EventUpdate) ClearEventType() *EventUpdate {
 	return eu
 }
 
-// SetCoupons sets the "coupons" field.
-func (eu *EventUpdate) SetCoupons(e []event.Coupon) *EventUpdate {
-	eu.mutation.SetCoupons(e)
+// SetCouponIds sets the "coupon_ids" field.
+func (eu *EventUpdate) SetCouponIds(u []uuid.UUID) *EventUpdate {
+	eu.mutation.SetCouponIds(u)
 	return eu
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (eu *EventUpdate) ClearCoupons() *EventUpdate {
-	eu.mutation.ClearCoupons()
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (eu *EventUpdate) ClearCouponIds() *EventUpdate {
+	eu.mutation.ClearCouponIds()
 	return eu
 }
 
@@ -304,10 +302,10 @@ func (eu *EventUpdate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (eu *EventUpdate) defaults() error {
 	if _, ok := eu.mutation.UpdatedAt(); !ok {
-		if entevent.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized entevent.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if event.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := entevent.UpdateDefaultUpdatedAt()
+		v := event.UpdateDefaultUpdatedAt()
 		eu.mutation.SetUpdatedAt(v)
 	}
 	return nil
@@ -322,11 +320,11 @@ func (eu *EventUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *EventUpd
 func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   entevent.Table,
-			Columns: entevent.Columns,
+			Table:   event.Table,
+			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUUID,
-				Column: entevent.FieldID,
+				Column: event.FieldID,
 			},
 		},
 	}
@@ -341,160 +339,160 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldCreatedAt,
+			Column: event.FieldCreatedAt,
 		})
 	}
 	if value, ok := eu.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldCreatedAt,
+			Column: event.FieldCreatedAt,
 		})
 	}
 	if value, ok := eu.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldUpdatedAt,
+			Column: event.FieldUpdatedAt,
 		})
 	}
 	if value, ok := eu.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldUpdatedAt,
+			Column: event.FieldUpdatedAt,
 		})
 	}
 	if value, ok := eu.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldDeletedAt,
+			Column: event.FieldDeletedAt,
 		})
 	}
 	if value, ok := eu.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldDeletedAt,
+			Column: event.FieldDeletedAt,
 		})
 	}
 	if value, ok := eu.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldAppID,
+			Column: event.FieldAppID,
 		})
 	}
 	if value, ok := eu.mutation.EventType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: entevent.FieldEventType,
+			Column: event.FieldEventType,
 		})
 	}
 	if eu.mutation.EventTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: entevent.FieldEventType,
+			Column: event.FieldEventType,
 		})
 	}
-	if value, ok := eu.mutation.Coupons(); ok {
+	if value, ok := eu.mutation.CouponIds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: entevent.FieldCoupons,
+			Column: event.FieldCouponIds,
 		})
 	}
-	if eu.mutation.CouponsCleared() {
+	if eu.mutation.CouponIdsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
-			Column: entevent.FieldCoupons,
+			Column: event.FieldCouponIds,
 		})
 	}
 	if value, ok := eu.mutation.Credits(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCredits,
+			Column: event.FieldCredits,
 		})
 	}
 	if eu.mutation.CreditsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: entevent.FieldCredits,
+			Column: event.FieldCredits,
 		})
 	}
 	if value, ok := eu.mutation.CreditsPerUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCreditsPerUsd,
+			Column: event.FieldCreditsPerUsd,
 		})
 	}
 	if eu.mutation.CreditsPerUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: entevent.FieldCreditsPerUsd,
+			Column: event.FieldCreditsPerUsd,
 		})
 	}
 	if value, ok := eu.mutation.MaxConsecutive(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if value, ok := eu.mutation.AddedMaxConsecutive(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if eu.mutation.MaxConsecutiveCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if value, ok := eu.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldGoodID,
+			Column: event.FieldGoodID,
 		})
 	}
 	if eu.mutation.GoodIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: entevent.FieldGoodID,
+			Column: event.FieldGoodID,
 		})
 	}
 	if value, ok := eu.mutation.InviterLayers(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	if value, ok := eu.mutation.AddedInviterLayers(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	if eu.mutation.InviterLayersCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	_spec.Modifiers = eu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{entevent.Label}
+			err = &NotFoundError{event.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -593,15 +591,15 @@ func (euo *EventUpdateOne) ClearEventType() *EventUpdateOne {
 	return euo
 }
 
-// SetCoupons sets the "coupons" field.
-func (euo *EventUpdateOne) SetCoupons(e []event.Coupon) *EventUpdateOne {
-	euo.mutation.SetCoupons(e)
+// SetCouponIds sets the "coupon_ids" field.
+func (euo *EventUpdateOne) SetCouponIds(u []uuid.UUID) *EventUpdateOne {
+	euo.mutation.SetCouponIds(u)
 	return euo
 }
 
-// ClearCoupons clears the value of the "coupons" field.
-func (euo *EventUpdateOne) ClearCoupons() *EventUpdateOne {
-	euo.mutation.ClearCoupons()
+// ClearCouponIds clears the value of the "coupon_ids" field.
+func (euo *EventUpdateOne) ClearCouponIds() *EventUpdateOne {
+	euo.mutation.ClearCouponIds()
 	return euo
 }
 
@@ -797,10 +795,10 @@ func (euo *EventUpdateOne) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (euo *EventUpdateOne) defaults() error {
 	if _, ok := euo.mutation.UpdatedAt(); !ok {
-		if entevent.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized entevent.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if event.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := entevent.UpdateDefaultUpdatedAt()
+		v := event.UpdateDefaultUpdatedAt()
 		euo.mutation.SetUpdatedAt(v)
 	}
 	return nil
@@ -815,11 +813,11 @@ func (euo *EventUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Even
 func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   entevent.Table,
-			Columns: entevent.Columns,
+			Table:   event.Table,
+			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUUID,
-				Column: entevent.FieldID,
+				Column: event.FieldID,
 			},
 		},
 	}
@@ -830,12 +828,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	_spec.Node.ID.Value = id
 	if fields := euo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, entevent.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, event.FieldID)
 		for _, f := range fields {
-			if !entevent.ValidColumn(f) {
+			if !event.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != entevent.FieldID {
+			if f != event.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -851,154 +849,154 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldCreatedAt,
+			Column: event.FieldCreatedAt,
 		})
 	}
 	if value, ok := euo.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldCreatedAt,
+			Column: event.FieldCreatedAt,
 		})
 	}
 	if value, ok := euo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldUpdatedAt,
+			Column: event.FieldUpdatedAt,
 		})
 	}
 	if value, ok := euo.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldUpdatedAt,
+			Column: event.FieldUpdatedAt,
 		})
 	}
 	if value, ok := euo.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldDeletedAt,
+			Column: event.FieldDeletedAt,
 		})
 	}
 	if value, ok := euo.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldDeletedAt,
+			Column: event.FieldDeletedAt,
 		})
 	}
 	if value, ok := euo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldAppID,
+			Column: event.FieldAppID,
 		})
 	}
 	if value, ok := euo.mutation.EventType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: entevent.FieldEventType,
+			Column: event.FieldEventType,
 		})
 	}
 	if euo.mutation.EventTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: entevent.FieldEventType,
+			Column: event.FieldEventType,
 		})
 	}
-	if value, ok := euo.mutation.Coupons(); ok {
+	if value, ok := euo.mutation.CouponIds(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
 			Value:  value,
-			Column: entevent.FieldCoupons,
+			Column: event.FieldCouponIds,
 		})
 	}
-	if euo.mutation.CouponsCleared() {
+	if euo.mutation.CouponIdsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeJSON,
-			Column: entevent.FieldCoupons,
+			Column: event.FieldCouponIds,
 		})
 	}
 	if value, ok := euo.mutation.Credits(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCredits,
+			Column: event.FieldCredits,
 		})
 	}
 	if euo.mutation.CreditsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: entevent.FieldCredits,
+			Column: event.FieldCredits,
 		})
 	}
 	if value, ok := euo.mutation.CreditsPerUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: entevent.FieldCreditsPerUsd,
+			Column: event.FieldCreditsPerUsd,
 		})
 	}
 	if euo.mutation.CreditsPerUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: entevent.FieldCreditsPerUsd,
+			Column: event.FieldCreditsPerUsd,
 		})
 	}
 	if value, ok := euo.mutation.MaxConsecutive(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if value, ok := euo.mutation.AddedMaxConsecutive(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if euo.mutation.MaxConsecutiveCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: entevent.FieldMaxConsecutive,
+			Column: event.FieldMaxConsecutive,
 		})
 	}
 	if value, ok := euo.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: entevent.FieldGoodID,
+			Column: event.FieldGoodID,
 		})
 	}
 	if euo.mutation.GoodIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: entevent.FieldGoodID,
+			Column: event.FieldGoodID,
 		})
 	}
 	if value, ok := euo.mutation.InviterLayers(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	if value, ok := euo.mutation.AddedInviterLayers(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	if euo.mutation.InviterLayersCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: entevent.FieldInviterLayers,
+			Column: event.FieldInviterLayers,
 		})
 	}
 	_spec.Modifiers = euo.modifiers
@@ -1007,7 +1005,7 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, euo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{entevent.Label}
+			err = &NotFoundError{event.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
