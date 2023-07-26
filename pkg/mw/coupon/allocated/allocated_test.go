@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
@@ -18,7 +18,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
-	// basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
 func init() {
@@ -126,13 +126,15 @@ func getCoupon(t *testing.T) {
 	}
 }
 
-/*
 func getCoupons(t *testing.T) {
 	conds := &npool.Conds{
-		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		IDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
-		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
-		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		ID:            &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		IDs:           &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		CouponType:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
+		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
+		CouponID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
+		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: *ret.UsedByOrderID},
 	}
 
 	handler, err := NewHandler(
@@ -149,7 +151,6 @@ func getCoupons(t *testing.T) {
 		assert.Equal(t, infos[0], &ret)
 	}
 }
-*/
 
 func deleteCoupon(t *testing.T) {
 	handler, err := NewHandler(
@@ -179,6 +180,6 @@ func TestCoupon(t *testing.T) {
 	t.Run("creatCoupon", creatCoupon)
 	t.Run("updateCoupon", updateCoupon)
 	t.Run("getCoupon", getCoupon)
-	// t.Run("getCoupons", getCoupons)
+	t.Run("getCoupons", getCoupons)
 	t.Run("deleteCoupon", deleteCoupon)
 }

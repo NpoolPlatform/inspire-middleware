@@ -6,13 +6,13 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 
+	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	entcouponallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-	// cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -20,6 +20,7 @@ import (
 
 type queryHandler struct {
 	*Handler
+	stmCount  *ent.CouponAllocatedSelect
 	stmSelect *ent.CouponAllocatedSelect
 	infos     []*npool.Coupon
 	total     uint32
@@ -40,6 +41,14 @@ func (h *queryHandler) queryCoupon(cli *ent.Client) {
 			entcouponallocated.DeletedAt(0),
 		)
 	h.stmSelect = h.selectCoupon(stm)
+}
+
+func (h *queryHandler) queryCoupons(cli *ent.Client) (*ent.CouponAllocatedSelect, error) {
+	stm, err := allocatedcrud.SetQueryConds(cli.CouponAllocated.Query(), h.Conds)
+	if err != nil {
+		return nil, err
+	}
+	return h.selectCoupon(stm), nil
 }
 
 func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
@@ -63,32 +72,55 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		)
 }
 
-func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
+func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 	t := sql.Table(entcoupon.Table)
 	s.LeftJoin(t).
 		On(
 			s.C(entcouponallocated.FieldCouponID),
 			t.C(entcoupon.FieldID),
-		).
-		AppendSelect(
-			sql.As(t.C(entcoupon.FieldName), "coupon_name"),
-			sql.As(t.C(entcoupon.FieldCirculation), "circulation"),
-			sql.As(t.C(entcoupon.FieldDurationDays), "duration_days"),
-			sql.As(t.C(entcoupon.FieldMessage), "coupon_message"),
-			sql.As(t.C(entcoupon.FieldGoodID), "good_id"),
-			sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
-			sql.As(t.C(entcoupon.FieldAllocated), "allocated"),
-			sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
-			sql.As(t.C(entcoupon.FieldRandom), "random"),
-			sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
 		)
+
+	if h.Conds != nil && h.Conds.CouponType != nil {
+		couponType, ok := h.Conds.CouponType.Val.(types.CouponType)
+		if !ok {
+			return fmt.Errorf("invalid coupontype")
+		}
+		s.Where(
+			sql.EQ(t.C(entcoupon.FieldCouponType), couponType.String()),
+		)
+	}
+
+	s.AppendSelect(
+		sql.As(t.C(entcoupon.FieldName), "coupon_name"),
+		sql.As(t.C(entcoupon.FieldCirculation), "circulation"),
+		sql.As(t.C(entcoupon.FieldDurationDays), "duration_days"),
+		sql.As(t.C(entcoupon.FieldMessage), "coupon_message"),
+		sql.As(t.C(entcoupon.FieldGoodID), "good_id"),
+		sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
+		sql.As(t.C(entcoupon.FieldAllocated), "allocated"),
+		sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
+		sql.As(t.C(entcoupon.FieldRandom), "random"),
+		sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
+	)
+	return nil
 }
 
-func (h *queryHandler) queryJoin() {
+func (h *queryHandler) queryJoin() error {
+	var err error
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinCoupon(s)
+		err = h.queryJoinCoupon(s)
 	})
+	if err != nil {
+		return err
+	}
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {
+		err = h.queryJoinCoupon(s)
+	})
+	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -154,7 +186,9 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.queryCoupon(cli)
-		handler.queryJoin()
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -170,4 +204,42 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	handler.formalize()
 
 	return handler.infos[0], nil
+}
+
+func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Coupon{},
+	}
+
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryCoupons(cli)
+		if err != nil {
+			return err
+		}
+		handler.stmCount, err = handler.queryCoupons(cli)
+		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		handler.total = uint32(_total)
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	handler.formalize()
+
+	return handler.infos, handler.total, nil
 }
