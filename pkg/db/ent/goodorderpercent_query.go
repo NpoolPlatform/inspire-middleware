@@ -480,6 +480,12 @@ func (gopq *GoodOrderPercentQuery) ForShare(opts ...sql.LockOption) *GoodOrderPe
 	return gopq
 }
 
+// Modify adds a query modifier for attaching custom logic to queries.
+func (gopq *GoodOrderPercentQuery) Modify(modifiers ...func(s *sql.Selector)) *GoodOrderPercentSelect {
+	gopq.modifiers = append(gopq.modifiers, modifiers...)
+	return gopq.Select()
+}
+
 // GoodOrderPercentGroupBy is the group-by builder for GoodOrderPercent entities.
 type GoodOrderPercentGroupBy struct {
 	config
@@ -570,4 +576,10 @@ func (gops *GoodOrderPercentSelect) sqlScan(ctx context.Context, v interface{}) 
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (gops *GoodOrderPercentSelect) Modify(modifiers ...func(s *sql.Selector)) *GoodOrderPercentSelect {
+	gops.modifiers = append(gops.modifiers, modifiers...)
+	return gops
 }

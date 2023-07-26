@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
@@ -34,7 +36,7 @@ func (CouponAllocated) Fields() []ent.Field {
 		field.
 			UUID("coupon_id", uuid.UUID{}),
 		field.
-			Other("value", decimal.Decimal{}).
+			Other("denomination", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
@@ -54,6 +56,10 @@ func (CouponAllocated) Fields() []ent.Field {
 			Default(func() uuid.UUID {
 				return uuid.UUID{}
 			}),
+		field.
+			Uint32("start_at").
+			Optional().
+			Default(uint32(time.Now().Unix())),
 	}
 }
 

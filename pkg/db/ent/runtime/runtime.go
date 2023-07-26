@@ -319,10 +319,10 @@ func init() {
 	couponallocatedDescDeletedAt := couponallocatedMixinFields0[2].Descriptor()
 	// couponallocated.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	couponallocated.DefaultDeletedAt = couponallocatedDescDeletedAt.Default.(func() uint32)
-	// couponallocatedDescValue is the schema descriptor for value field.
-	couponallocatedDescValue := couponallocatedFields[4].Descriptor()
-	// couponallocated.DefaultValue holds the default value on creation for the value field.
-	couponallocated.DefaultValue = couponallocatedDescValue.Default.(decimal.Decimal)
+	// couponallocatedDescDenomination is the schema descriptor for denomination field.
+	couponallocatedDescDenomination := couponallocatedFields[4].Descriptor()
+	// couponallocated.DefaultDenomination holds the default value on creation for the denomination field.
+	couponallocated.DefaultDenomination = couponallocatedDescDenomination.Default.(decimal.Decimal)
 	// couponallocatedDescUsed is the schema descriptor for used field.
 	couponallocatedDescUsed := couponallocatedFields[5].Descriptor()
 	// couponallocated.DefaultUsed holds the default value on creation for the used field.
@@ -335,6 +335,10 @@ func init() {
 	couponallocatedDescUsedByOrderID := couponallocatedFields[7].Descriptor()
 	// couponallocated.DefaultUsedByOrderID holds the default value on creation for the used_by_order_id field.
 	couponallocated.DefaultUsedByOrderID = couponallocatedDescUsedByOrderID.Default.(func() uuid.UUID)
+	// couponallocatedDescStartAt is the schema descriptor for start_at field.
+	couponallocatedDescStartAt := couponallocatedFields[8].Descriptor()
+	// couponallocated.DefaultStartAt holds the default value on creation for the start_at field.
+	couponallocated.DefaultStartAt = couponallocatedDescStartAt.Default.(uint32)
 	// couponallocatedDescID is the schema descriptor for id field.
 	couponallocatedDescID := couponallocatedFields[0].Descriptor()
 	// couponallocated.DefaultID holds the default value on creation for the id field.

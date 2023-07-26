@@ -480,6 +480,12 @@ func (agq *ArchivementGeneralQuery) ForShare(opts ...sql.LockOption) *Archivemen
 	return agq
 }
 
+// Modify adds a query modifier for attaching custom logic to queries.
+func (agq *ArchivementGeneralQuery) Modify(modifiers ...func(s *sql.Selector)) *ArchivementGeneralSelect {
+	agq.modifiers = append(agq.modifiers, modifiers...)
+	return agq.Select()
+}
+
 // ArchivementGeneralGroupBy is the group-by builder for ArchivementGeneral entities.
 type ArchivementGeneralGroupBy struct {
 	config
@@ -570,4 +576,10 @@ func (ags *ArchivementGeneralSelect) sqlScan(ctx context.Context, v interface{})
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ags *ArchivementGeneralSelect) Modify(modifiers ...func(s *sql.Selector)) *ArchivementGeneralSelect {
+	ags.modifiers = append(ags.modifiers, modifiers...)
+	return ags
 }

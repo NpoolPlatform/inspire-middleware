@@ -19,8 +19,9 @@ import (
 // CouponUpdate is the builder for updating Coupon entities.
 type CouponUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CouponMutation
+	hooks     []Hook
+	mutation  *CouponMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CouponUpdate builder.
@@ -458,6 +459,12 @@ func (cu *CouponUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cu *CouponUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponUpdate {
+	cu.modifiers = append(cu.modifiers, modifiers...)
+	return cu
+}
+
 func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -721,6 +728,7 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCouponConstraint,
 		})
 	}
+	_spec.Modifiers = cu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{coupon.Label}
@@ -735,9 +743,10 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // CouponUpdateOne is the builder for updating a single Coupon entity.
 type CouponUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CouponMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CouponMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1182,6 +1191,12 @@ func (cuo *CouponUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cuo *CouponUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponUpdateOne {
+	cuo.modifiers = append(cuo.modifiers, modifiers...)
+	return cuo
+}
+
 func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1462,6 +1477,7 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldCouponConstraint,
 		})
 	}
+	_spec.Modifiers = cuo.modifiers
 	_node = &Coupon{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

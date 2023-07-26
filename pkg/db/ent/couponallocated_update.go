@@ -19,8 +19,9 @@ import (
 // CouponAllocatedUpdate is the builder for updating CouponAllocated entities.
 type CouponAllocatedUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CouponAllocatedMutation
+	hooks     []Hook
+	mutation  *CouponAllocatedMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CouponAllocatedUpdate builder.
@@ -102,23 +103,23 @@ func (cau *CouponAllocatedUpdate) SetCouponID(u uuid.UUID) *CouponAllocatedUpdat
 	return cau
 }
 
-// SetValue sets the "value" field.
-func (cau *CouponAllocatedUpdate) SetValue(d decimal.Decimal) *CouponAllocatedUpdate {
-	cau.mutation.SetValue(d)
+// SetDenomination sets the "denomination" field.
+func (cau *CouponAllocatedUpdate) SetDenomination(d decimal.Decimal) *CouponAllocatedUpdate {
+	cau.mutation.SetDenomination(d)
 	return cau
 }
 
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (cau *CouponAllocatedUpdate) SetNillableValue(d *decimal.Decimal) *CouponAllocatedUpdate {
+// SetNillableDenomination sets the "denomination" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableDenomination(d *decimal.Decimal) *CouponAllocatedUpdate {
 	if d != nil {
-		cau.SetValue(*d)
+		cau.SetDenomination(*d)
 	}
 	return cau
 }
 
-// ClearValue clears the value of the "value" field.
-func (cau *CouponAllocatedUpdate) ClearValue() *CouponAllocatedUpdate {
-	cau.mutation.ClearValue()
+// ClearDenomination clears the value of the "denomination" field.
+func (cau *CouponAllocatedUpdate) ClearDenomination() *CouponAllocatedUpdate {
+	cau.mutation.ClearDenomination()
 	return cau
 }
 
@@ -186,6 +187,33 @@ func (cau *CouponAllocatedUpdate) SetNillableUsedByOrderID(u *uuid.UUID) *Coupon
 // ClearUsedByOrderID clears the value of the "used_by_order_id" field.
 func (cau *CouponAllocatedUpdate) ClearUsedByOrderID() *CouponAllocatedUpdate {
 	cau.mutation.ClearUsedByOrderID()
+	return cau
+}
+
+// SetStartAt sets the "start_at" field.
+func (cau *CouponAllocatedUpdate) SetStartAt(u uint32) *CouponAllocatedUpdate {
+	cau.mutation.ResetStartAt()
+	cau.mutation.SetStartAt(u)
+	return cau
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableStartAt(u *uint32) *CouponAllocatedUpdate {
+	if u != nil {
+		cau.SetStartAt(*u)
+	}
+	return cau
+}
+
+// AddStartAt adds u to the "start_at" field.
+func (cau *CouponAllocatedUpdate) AddStartAt(u int32) *CouponAllocatedUpdate {
+	cau.mutation.AddStartAt(u)
+	return cau
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (cau *CouponAllocatedUpdate) ClearStartAt() *CouponAllocatedUpdate {
+	cau.mutation.ClearStartAt()
 	return cau
 }
 
@@ -261,6 +289,12 @@ func (cau *CouponAllocatedUpdate) defaults() error {
 		cau.mutation.SetUpdatedAt(v)
 	}
 	return nil
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cau *CouponAllocatedUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponAllocatedUpdate {
+	cau.modifiers = append(cau.modifiers, modifiers...)
+	return cau
 }
 
 func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -344,17 +378,17 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: couponallocated.FieldCouponID,
 		})
 	}
-	if value, ok := cau.mutation.Value(); ok {
+	if value, ok := cau.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: couponallocated.FieldValue,
+			Column: couponallocated.FieldDenomination,
 		})
 	}
-	if cau.mutation.ValueCleared() {
+	if cau.mutation.DenominationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: couponallocated.FieldValue,
+			Column: couponallocated.FieldDenomination,
 		})
 	}
 	if value, ok := cau.mutation.Used(); ok {
@@ -403,6 +437,27 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: couponallocated.FieldUsedByOrderID,
 		})
 	}
+	if value, ok := cau.mutation.StartAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if value, ok := cau.mutation.AddedStartAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if cau.mutation.StartAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	_spec.Modifiers = cau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{couponallocated.Label}
@@ -417,9 +472,10 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 // CouponAllocatedUpdateOne is the builder for updating a single CouponAllocated entity.
 type CouponAllocatedUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CouponAllocatedMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CouponAllocatedMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -495,23 +551,23 @@ func (cauo *CouponAllocatedUpdateOne) SetCouponID(u uuid.UUID) *CouponAllocatedU
 	return cauo
 }
 
-// SetValue sets the "value" field.
-func (cauo *CouponAllocatedUpdateOne) SetValue(d decimal.Decimal) *CouponAllocatedUpdateOne {
-	cauo.mutation.SetValue(d)
+// SetDenomination sets the "denomination" field.
+func (cauo *CouponAllocatedUpdateOne) SetDenomination(d decimal.Decimal) *CouponAllocatedUpdateOne {
+	cauo.mutation.SetDenomination(d)
 	return cauo
 }
 
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (cauo *CouponAllocatedUpdateOne) SetNillableValue(d *decimal.Decimal) *CouponAllocatedUpdateOne {
+// SetNillableDenomination sets the "denomination" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableDenomination(d *decimal.Decimal) *CouponAllocatedUpdateOne {
 	if d != nil {
-		cauo.SetValue(*d)
+		cauo.SetDenomination(*d)
 	}
 	return cauo
 }
 
-// ClearValue clears the value of the "value" field.
-func (cauo *CouponAllocatedUpdateOne) ClearValue() *CouponAllocatedUpdateOne {
-	cauo.mutation.ClearValue()
+// ClearDenomination clears the value of the "denomination" field.
+func (cauo *CouponAllocatedUpdateOne) ClearDenomination() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearDenomination()
 	return cauo
 }
 
@@ -579,6 +635,33 @@ func (cauo *CouponAllocatedUpdateOne) SetNillableUsedByOrderID(u *uuid.UUID) *Co
 // ClearUsedByOrderID clears the value of the "used_by_order_id" field.
 func (cauo *CouponAllocatedUpdateOne) ClearUsedByOrderID() *CouponAllocatedUpdateOne {
 	cauo.mutation.ClearUsedByOrderID()
+	return cauo
+}
+
+// SetStartAt sets the "start_at" field.
+func (cauo *CouponAllocatedUpdateOne) SetStartAt(u uint32) *CouponAllocatedUpdateOne {
+	cauo.mutation.ResetStartAt()
+	cauo.mutation.SetStartAt(u)
+	return cauo
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableStartAt(u *uint32) *CouponAllocatedUpdateOne {
+	if u != nil {
+		cauo.SetStartAt(*u)
+	}
+	return cauo
+}
+
+// AddStartAt adds u to the "start_at" field.
+func (cauo *CouponAllocatedUpdateOne) AddStartAt(u int32) *CouponAllocatedUpdateOne {
+	cauo.mutation.AddStartAt(u)
+	return cauo
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (cauo *CouponAllocatedUpdateOne) ClearStartAt() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearStartAt()
 	return cauo
 }
 
@@ -667,6 +750,12 @@ func (cauo *CouponAllocatedUpdateOne) defaults() error {
 		cauo.mutation.SetUpdatedAt(v)
 	}
 	return nil
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cauo *CouponAllocatedUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CouponAllocatedUpdateOne {
+	cauo.modifiers = append(cauo.modifiers, modifiers...)
+	return cauo
 }
 
 func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *CouponAllocated, err error) {
@@ -767,17 +856,17 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 			Column: couponallocated.FieldCouponID,
 		})
 	}
-	if value, ok := cauo.mutation.Value(); ok {
+	if value, ok := cauo.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: couponallocated.FieldValue,
+			Column: couponallocated.FieldDenomination,
 		})
 	}
-	if cauo.mutation.ValueCleared() {
+	if cauo.mutation.DenominationCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: couponallocated.FieldValue,
+			Column: couponallocated.FieldDenomination,
 		})
 	}
 	if value, ok := cauo.mutation.Used(); ok {
@@ -826,6 +915,27 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 			Column: couponallocated.FieldUsedByOrderID,
 		})
 	}
+	if value, ok := cauo.mutation.StartAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if value, ok := cauo.mutation.AddedStartAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if cauo.mutation.StartAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: couponallocated.FieldStartAt,
+		})
+	}
+	_spec.Modifiers = cauo.modifiers
 	_node = &CouponAllocated{config: cauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

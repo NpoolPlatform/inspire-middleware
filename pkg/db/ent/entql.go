@@ -133,10 +133,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldAppID:         {Type: field.TypeUUID, Column: couponallocated.FieldAppID},
 			couponallocated.FieldUserID:        {Type: field.TypeUUID, Column: couponallocated.FieldUserID},
 			couponallocated.FieldCouponID:      {Type: field.TypeUUID, Column: couponallocated.FieldCouponID},
-			couponallocated.FieldValue:         {Type: field.TypeOther, Column: couponallocated.FieldValue},
+			couponallocated.FieldDenomination:  {Type: field.TypeOther, Column: couponallocated.FieldDenomination},
 			couponallocated.FieldUsed:          {Type: field.TypeBool, Column: couponallocated.FieldUsed},
 			couponallocated.FieldUsedAt:        {Type: field.TypeUint32, Column: couponallocated.FieldUsedAt},
 			couponallocated.FieldUsedByOrderID: {Type: field.TypeUUID, Column: couponallocated.FieldUsedByOrderID},
+			couponallocated.FieldStartAt:       {Type: field.TypeUint32, Column: couponallocated.FieldStartAt},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -794,9 +795,9 @@ func (f *CouponAllocatedFilter) WhereCouponID(p entql.ValueP) {
 	f.Where(p.Field(couponallocated.FieldCouponID))
 }
 
-// WhereValue applies the entql other predicate on the value field.
-func (f *CouponAllocatedFilter) WhereValue(p entql.OtherP) {
-	f.Where(p.Field(couponallocated.FieldValue))
+// WhereDenomination applies the entql other predicate on the denomination field.
+func (f *CouponAllocatedFilter) WhereDenomination(p entql.OtherP) {
+	f.Where(p.Field(couponallocated.FieldDenomination))
 }
 
 // WhereUsed applies the entql bool predicate on the used field.
@@ -812,6 +813,11 @@ func (f *CouponAllocatedFilter) WhereUsedAt(p entql.Uint32P) {
 // WhereUsedByOrderID applies the entql [16]byte predicate on the used_by_order_id field.
 func (f *CouponAllocatedFilter) WhereUsedByOrderID(p entql.ValueP) {
 	f.Where(p.Field(couponallocated.FieldUsedByOrderID))
+}
+
+// WhereStartAt applies the entql uint32 predicate on the start_at field.
+func (f *CouponAllocatedFilter) WhereStartAt(p entql.Uint32P) {
+	f.Where(p.Field(couponallocated.FieldStartAt))
 }
 
 // addPredicate implements the predicateAdder interface.

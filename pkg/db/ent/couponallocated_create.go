@@ -84,16 +84,16 @@ func (cac *CouponAllocatedCreate) SetCouponID(u uuid.UUID) *CouponAllocatedCreat
 	return cac
 }
 
-// SetValue sets the "value" field.
-func (cac *CouponAllocatedCreate) SetValue(d decimal.Decimal) *CouponAllocatedCreate {
-	cac.mutation.SetValue(d)
+// SetDenomination sets the "denomination" field.
+func (cac *CouponAllocatedCreate) SetDenomination(d decimal.Decimal) *CouponAllocatedCreate {
+	cac.mutation.SetDenomination(d)
 	return cac
 }
 
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (cac *CouponAllocatedCreate) SetNillableValue(d *decimal.Decimal) *CouponAllocatedCreate {
+// SetNillableDenomination sets the "denomination" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableDenomination(d *decimal.Decimal) *CouponAllocatedCreate {
 	if d != nil {
-		cac.SetValue(*d)
+		cac.SetDenomination(*d)
 	}
 	return cac
 }
@@ -136,6 +136,20 @@ func (cac *CouponAllocatedCreate) SetUsedByOrderID(u uuid.UUID) *CouponAllocated
 func (cac *CouponAllocatedCreate) SetNillableUsedByOrderID(u *uuid.UUID) *CouponAllocatedCreate {
 	if u != nil {
 		cac.SetUsedByOrderID(*u)
+	}
+	return cac
+}
+
+// SetStartAt sets the "start_at" field.
+func (cac *CouponAllocatedCreate) SetStartAt(u uint32) *CouponAllocatedCreate {
+	cac.mutation.SetStartAt(u)
+	return cac
+}
+
+// SetNillableStartAt sets the "start_at" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableStartAt(u *uint32) *CouponAllocatedCreate {
+	if u != nil {
+		cac.SetStartAt(*u)
 	}
 	return cac
 }
@@ -254,9 +268,9 @@ func (cac *CouponAllocatedCreate) defaults() error {
 		v := couponallocated.DefaultDeletedAt()
 		cac.mutation.SetDeletedAt(v)
 	}
-	if _, ok := cac.mutation.Value(); !ok {
-		v := couponallocated.DefaultValue
-		cac.mutation.SetValue(v)
+	if _, ok := cac.mutation.Denomination(); !ok {
+		v := couponallocated.DefaultDenomination
+		cac.mutation.SetDenomination(v)
 	}
 	if _, ok := cac.mutation.Used(); !ok {
 		v := couponallocated.DefaultUsed
@@ -272,6 +286,10 @@ func (cac *CouponAllocatedCreate) defaults() error {
 		}
 		v := couponallocated.DefaultUsedByOrderID()
 		cac.mutation.SetUsedByOrderID(v)
+	}
+	if _, ok := cac.mutation.StartAt(); !ok {
+		v := couponallocated.DefaultStartAt
+		cac.mutation.SetStartAt(v)
 	}
 	if _, ok := cac.mutation.ID(); !ok {
 		if couponallocated.DefaultID == nil {
@@ -388,13 +406,13 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 		})
 		_node.CouponID = value
 	}
-	if value, ok := cac.mutation.Value(); ok {
+	if value, ok := cac.mutation.Denomination(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: couponallocated.FieldValue,
+			Column: couponallocated.FieldDenomination,
 		})
-		_node.Value = value
+		_node.Denomination = value
 	}
 	if value, ok := cac.mutation.Used(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -419,6 +437,14 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldUsedByOrderID,
 		})
 		_node.UsedByOrderID = value
+	}
+	if value, ok := cac.mutation.StartAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: couponallocated.FieldStartAt,
+		})
+		_node.StartAt = value
 	}
 	return _node, _spec
 }
@@ -564,21 +590,21 @@ func (u *CouponAllocatedUpsert) UpdateCouponID() *CouponAllocatedUpsert {
 	return u
 }
 
-// SetValue sets the "value" field.
-func (u *CouponAllocatedUpsert) SetValue(v decimal.Decimal) *CouponAllocatedUpsert {
-	u.Set(couponallocated.FieldValue, v)
+// SetDenomination sets the "denomination" field.
+func (u *CouponAllocatedUpsert) SetDenomination(v decimal.Decimal) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldDenomination, v)
 	return u
 }
 
-// UpdateValue sets the "value" field to the value that was provided on create.
-func (u *CouponAllocatedUpsert) UpdateValue() *CouponAllocatedUpsert {
-	u.SetExcluded(couponallocated.FieldValue)
+// UpdateDenomination sets the "denomination" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateDenomination() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldDenomination)
 	return u
 }
 
-// ClearValue clears the value of the "value" field.
-func (u *CouponAllocatedUpsert) ClearValue() *CouponAllocatedUpsert {
-	u.SetNull(couponallocated.FieldValue)
+// ClearDenomination clears the value of the "denomination" field.
+func (u *CouponAllocatedUpsert) ClearDenomination() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldDenomination)
 	return u
 }
 
@@ -639,6 +665,30 @@ func (u *CouponAllocatedUpsert) UpdateUsedByOrderID() *CouponAllocatedUpsert {
 // ClearUsedByOrderID clears the value of the "used_by_order_id" field.
 func (u *CouponAllocatedUpsert) ClearUsedByOrderID() *CouponAllocatedUpsert {
 	u.SetNull(couponallocated.FieldUsedByOrderID)
+	return u
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *CouponAllocatedUpsert) SetStartAt(v uint32) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldStartAt, v)
+	return u
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateStartAt() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldStartAt)
+	return u
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *CouponAllocatedUpsert) AddStartAt(v uint32) *CouponAllocatedUpsert {
+	u.Add(couponallocated.FieldStartAt, v)
+	return u
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *CouponAllocatedUpsert) ClearStartAt() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldStartAt)
 	return u
 }
 
@@ -797,24 +847,24 @@ func (u *CouponAllocatedUpsertOne) UpdateCouponID() *CouponAllocatedUpsertOne {
 	})
 }
 
-// SetValue sets the "value" field.
-func (u *CouponAllocatedUpsertOne) SetValue(v decimal.Decimal) *CouponAllocatedUpsertOne {
+// SetDenomination sets the "denomination" field.
+func (u *CouponAllocatedUpsertOne) SetDenomination(v decimal.Decimal) *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.SetValue(v)
+		s.SetDenomination(v)
 	})
 }
 
-// UpdateValue sets the "value" field to the value that was provided on create.
-func (u *CouponAllocatedUpsertOne) UpdateValue() *CouponAllocatedUpsertOne {
+// UpdateDenomination sets the "denomination" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateDenomination() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.UpdateValue()
+		s.UpdateDenomination()
 	})
 }
 
-// ClearValue clears the value of the "value" field.
-func (u *CouponAllocatedUpsertOne) ClearValue() *CouponAllocatedUpsertOne {
+// ClearDenomination clears the value of the "denomination" field.
+func (u *CouponAllocatedUpsertOne) ClearDenomination() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.ClearValue()
+		s.ClearDenomination()
 	})
 }
 
@@ -885,6 +935,34 @@ func (u *CouponAllocatedUpsertOne) UpdateUsedByOrderID() *CouponAllocatedUpsertO
 func (u *CouponAllocatedUpsertOne) ClearUsedByOrderID() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearUsedByOrderID()
+	})
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *CouponAllocatedUpsertOne) SetStartAt(v uint32) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetStartAt(v)
+	})
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *CouponAllocatedUpsertOne) AddStartAt(v uint32) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.AddStartAt(v)
+	})
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateStartAt() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateStartAt()
+	})
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *CouponAllocatedUpsertOne) ClearStartAt() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearStartAt()
 	})
 }
 
@@ -1209,24 +1287,24 @@ func (u *CouponAllocatedUpsertBulk) UpdateCouponID() *CouponAllocatedUpsertBulk 
 	})
 }
 
-// SetValue sets the "value" field.
-func (u *CouponAllocatedUpsertBulk) SetValue(v decimal.Decimal) *CouponAllocatedUpsertBulk {
+// SetDenomination sets the "denomination" field.
+func (u *CouponAllocatedUpsertBulk) SetDenomination(v decimal.Decimal) *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.SetValue(v)
+		s.SetDenomination(v)
 	})
 }
 
-// UpdateValue sets the "value" field to the value that was provided on create.
-func (u *CouponAllocatedUpsertBulk) UpdateValue() *CouponAllocatedUpsertBulk {
+// UpdateDenomination sets the "denomination" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateDenomination() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.UpdateValue()
+		s.UpdateDenomination()
 	})
 }
 
-// ClearValue clears the value of the "value" field.
-func (u *CouponAllocatedUpsertBulk) ClearValue() *CouponAllocatedUpsertBulk {
+// ClearDenomination clears the value of the "denomination" field.
+func (u *CouponAllocatedUpsertBulk) ClearDenomination() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
-		s.ClearValue()
+		s.ClearDenomination()
 	})
 }
 
@@ -1297,6 +1375,34 @@ func (u *CouponAllocatedUpsertBulk) UpdateUsedByOrderID() *CouponAllocatedUpsert
 func (u *CouponAllocatedUpsertBulk) ClearUsedByOrderID() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearUsedByOrderID()
+	})
+}
+
+// SetStartAt sets the "start_at" field.
+func (u *CouponAllocatedUpsertBulk) SetStartAt(v uint32) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetStartAt(v)
+	})
+}
+
+// AddStartAt adds v to the "start_at" field.
+func (u *CouponAllocatedUpsertBulk) AddStartAt(v uint32) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.AddStartAt(v)
+	})
+}
+
+// UpdateStartAt sets the "start_at" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateStartAt() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateStartAt()
+	})
+}
+
+// ClearStartAt clears the value of the "start_at" field.
+func (u *CouponAllocatedUpsertBulk) ClearStartAt() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearStartAt()
 	})
 }
 

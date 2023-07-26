@@ -481,6 +481,12 @@ func (eq *EventQuery) ForShare(opts ...sql.LockOption) *EventQuery {
 	return eq
 }
 
+// Modify adds a query modifier for attaching custom logic to queries.
+func (eq *EventQuery) Modify(modifiers ...func(s *sql.Selector)) *EventSelect {
+	eq.modifiers = append(eq.modifiers, modifiers...)
+	return eq.Select()
+}
+
 // EventGroupBy is the group-by builder for Event entities.
 type EventGroupBy struct {
 	config
@@ -571,4 +577,10 @@ func (es *EventSelect) sqlScan(ctx context.Context, v interface{}) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (es *EventSelect) Modify(modifiers ...func(s *sql.Selector)) *EventSelect {
+	es.modifiers = append(es.modifiers, modifiers...)
+	return es
 }

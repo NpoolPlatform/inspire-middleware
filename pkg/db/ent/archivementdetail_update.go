@@ -19,8 +19,9 @@ import (
 // ArchivementDetailUpdate is the builder for updating ArchivementDetail entities.
 type ArchivementDetailUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ArchivementDetailMutation
+	hooks     []Hook
+	mutation  *ArchivementDetailMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ArchivementDetailUpdate builder.
@@ -465,6 +466,12 @@ func (adu *ArchivementDetailUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (adu *ArchivementDetailUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ArchivementDetailUpdate {
+	adu.modifiers = append(adu.modifiers, modifiers...)
+	return adu
+}
+
 func (adu *ArchivementDetailUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -727,6 +734,7 @@ func (adu *ArchivementDetailUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: archivementdetail.FieldCommission,
 		})
 	}
+	_spec.Modifiers = adu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, adu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{archivementdetail.Label}
@@ -741,9 +749,10 @@ func (adu *ArchivementDetailUpdate) sqlSave(ctx context.Context) (n int, err err
 // ArchivementDetailUpdateOne is the builder for updating a single ArchivementDetail entity.
 type ArchivementDetailUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ArchivementDetailMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ArchivementDetailMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1195,6 +1204,12 @@ func (aduo *ArchivementDetailUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (aduo *ArchivementDetailUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ArchivementDetailUpdateOne {
+	aduo.modifiers = append(aduo.modifiers, modifiers...)
+	return aduo
+}
+
 func (aduo *ArchivementDetailUpdateOne) sqlSave(ctx context.Context) (_node *ArchivementDetail, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1474,6 +1489,7 @@ func (aduo *ArchivementDetailUpdateOne) sqlSave(ctx context.Context) (_node *Arc
 			Column: archivementdetail.FieldCommission,
 		})
 	}
+	_spec.Modifiers = aduo.modifiers
 	_node = &ArchivementDetail{config: aduo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

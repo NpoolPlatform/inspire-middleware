@@ -19,8 +19,9 @@ import (
 // GoodOrderValuePercentUpdate is the builder for updating GoodOrderValuePercent entities.
 type GoodOrderValuePercentUpdate struct {
 	config
-	hooks    []Hook
-	mutation *GoodOrderValuePercentMutation
+	hooks     []Hook
+	mutation  *GoodOrderValuePercentMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the GoodOrderValuePercentUpdate builder.
@@ -292,6 +293,12 @@ func (govpu *GoodOrderValuePercentUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (govpu *GoodOrderValuePercentUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GoodOrderValuePercentUpdate {
+	govpu.modifiers = append(govpu.modifiers, modifiers...)
+	return govpu
+}
+
 func (govpu *GoodOrderValuePercentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -444,6 +451,7 @@ func (govpu *GoodOrderValuePercentUpdate) sqlSave(ctx context.Context) (n int, e
 			Column: goodordervaluepercent.FieldEndAt,
 		})
 	}
+	_spec.Modifiers = govpu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, govpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{goodordervaluepercent.Label}
@@ -458,9 +466,10 @@ func (govpu *GoodOrderValuePercentUpdate) sqlSave(ctx context.Context) (n int, e
 // GoodOrderValuePercentUpdateOne is the builder for updating a single GoodOrderValuePercent entity.
 type GoodOrderValuePercentUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *GoodOrderValuePercentMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *GoodOrderValuePercentMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -739,6 +748,12 @@ func (govpuo *GoodOrderValuePercentUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (govpuo *GoodOrderValuePercentUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GoodOrderValuePercentUpdateOne {
+	govpuo.modifiers = append(govpuo.modifiers, modifiers...)
+	return govpuo
+}
+
 func (govpuo *GoodOrderValuePercentUpdateOne) sqlSave(ctx context.Context) (_node *GoodOrderValuePercent, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -908,6 +923,7 @@ func (govpuo *GoodOrderValuePercentUpdateOne) sqlSave(ctx context.Context) (_nod
 			Column: goodordervaluepercent.FieldEndAt,
 		})
 	}
+	_spec.Modifiers = govpuo.modifiers
 	_node = &GoodOrderValuePercent{config: govpuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

@@ -65,10 +65,11 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := allocatedcrud.CreateSet(
 			tx.CouponAllocated.Create(),
 			&allocatedcrud.Req{
-				ID:       h.ID,
-				AppID:    h.AppID,
-				CouponID: h.CouponID,
-				UserID:   h.UserID,
+				ID:           h.ID,
+				AppID:        h.AppID,
+				CouponID:     h.CouponID,
+				UserID:       h.UserID,
+				Denomination: &coup.Denomination,
 			},
 		).Save(_ctx); err != nil {
 			return err

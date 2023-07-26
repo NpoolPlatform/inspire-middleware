@@ -18,8 +18,9 @@ import (
 // InvitationCodeUpdate is the builder for updating InvitationCode entities.
 type InvitationCodeUpdate struct {
 	config
-	hooks    []Hook
-	mutation *InvitationCodeMutation
+	hooks     []Hook
+	mutation  *InvitationCodeMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the InvitationCodeUpdate builder.
@@ -209,6 +210,12 @@ func (icu *InvitationCodeUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (icu *InvitationCodeUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InvitationCodeUpdate {
+	icu.modifiers = append(icu.modifiers, modifiers...)
+	return icu
+}
+
 func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -309,6 +316,7 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: invitationcode.FieldDisabled,
 		})
 	}
+	_spec.Modifiers = icu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, icu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{invitationcode.Label}
@@ -323,9 +331,10 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 // InvitationCodeUpdateOne is the builder for updating a single InvitationCode entity.
 type InvitationCodeUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *InvitationCodeMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *InvitationCodeMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -522,6 +531,12 @@ func (icuo *InvitationCodeUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (icuo *InvitationCodeUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InvitationCodeUpdateOne {
+	icuo.modifiers = append(icuo.modifiers, modifiers...)
+	return icuo
+}
+
 func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *InvitationCode, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -639,6 +654,7 @@ func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 			Column: invitationcode.FieldDisabled,
 		})
 	}
+	_spec.Modifiers = icuo.modifiers
 	_node = &InvitationCode{config: icuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

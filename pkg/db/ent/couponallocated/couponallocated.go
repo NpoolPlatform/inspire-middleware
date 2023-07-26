@@ -25,14 +25,16 @@ const (
 	FieldUserID = "user_id"
 	// FieldCouponID holds the string denoting the coupon_id field in the database.
 	FieldCouponID = "coupon_id"
-	// FieldValue holds the string denoting the value field in the database.
-	FieldValue = "value"
+	// FieldDenomination holds the string denoting the denomination field in the database.
+	FieldDenomination = "denomination"
 	// FieldUsed holds the string denoting the used field in the database.
 	FieldUsed = "used"
 	// FieldUsedAt holds the string denoting the used_at field in the database.
 	FieldUsedAt = "used_at"
 	// FieldUsedByOrderID holds the string denoting the used_by_order_id field in the database.
 	FieldUsedByOrderID = "used_by_order_id"
+	// FieldStartAt holds the string denoting the start_at field in the database.
+	FieldStartAt = "start_at"
 	// Table holds the table name of the couponallocated in the database.
 	Table = "coupon_allocateds"
 )
@@ -46,10 +48,11 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldCouponID,
-	FieldValue,
+	FieldDenomination,
 	FieldUsed,
 	FieldUsedAt,
 	FieldUsedByOrderID,
+	FieldStartAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -79,14 +82,16 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
-	// DefaultValue holds the default value on creation for the "value" field.
-	DefaultValue decimal.Decimal
+	// DefaultDenomination holds the default value on creation for the "denomination" field.
+	DefaultDenomination decimal.Decimal
 	// DefaultUsed holds the default value on creation for the "used" field.
 	DefaultUsed bool
 	// DefaultUsedAt holds the default value on creation for the "used_at" field.
 	DefaultUsedAt uint32
 	// DefaultUsedByOrderID holds the default value on creation for the "used_by_order_id" field.
 	DefaultUsedByOrderID func() uuid.UUID
+	// DefaultStartAt holds the default value on creation for the "start_at" field.
+	DefaultStartAt uint32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -19,8 +19,9 @@ import (
 // GoodOrderPercentUpdate is the builder for updating GoodOrderPercent entities.
 type GoodOrderPercentUpdate struct {
 	config
-	hooks    []Hook
-	mutation *GoodOrderPercentMutation
+	hooks     []Hook
+	mutation  *GoodOrderPercentMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the GoodOrderPercentUpdate builder.
@@ -292,6 +293,12 @@ func (gopu *GoodOrderPercentUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (gopu *GoodOrderPercentUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GoodOrderPercentUpdate {
+	gopu.modifiers = append(gopu.modifiers, modifiers...)
+	return gopu
+}
+
 func (gopu *GoodOrderPercentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -444,6 +451,7 @@ func (gopu *GoodOrderPercentUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: goodorderpercent.FieldEndAt,
 		})
 	}
+	_spec.Modifiers = gopu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, gopu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{goodorderpercent.Label}
@@ -458,9 +466,10 @@ func (gopu *GoodOrderPercentUpdate) sqlSave(ctx context.Context) (n int, err err
 // GoodOrderPercentUpdateOne is the builder for updating a single GoodOrderPercent entity.
 type GoodOrderPercentUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *GoodOrderPercentMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *GoodOrderPercentMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -739,6 +748,12 @@ func (gopuo *GoodOrderPercentUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (gopuo *GoodOrderPercentUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *GoodOrderPercentUpdateOne {
+	gopuo.modifiers = append(gopuo.modifiers, modifiers...)
+	return gopuo
+}
+
 func (gopuo *GoodOrderPercentUpdateOne) sqlSave(ctx context.Context) (_node *GoodOrderPercent, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -908,6 +923,7 @@ func (gopuo *GoodOrderPercentUpdateOne) sqlSave(ctx context.Context) (_node *Goo
 			Column: goodorderpercent.FieldEndAt,
 		})
 	}
+	_spec.Modifiers = gopuo.modifiers
 	_node = &GoodOrderPercent{config: gopuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

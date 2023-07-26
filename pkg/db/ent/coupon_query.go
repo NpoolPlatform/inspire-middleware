@@ -480,6 +480,12 @@ func (cq *CouponQuery) ForShare(opts ...sql.LockOption) *CouponQuery {
 	return cq
 }
 
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cq *CouponQuery) Modify(modifiers ...func(s *sql.Selector)) *CouponSelect {
+	cq.modifiers = append(cq.modifiers, modifiers...)
+	return cq.Select()
+}
+
 // CouponGroupBy is the group-by builder for Coupon entities.
 type CouponGroupBy struct {
 	config
@@ -570,4 +576,10 @@ func (cs *CouponSelect) sqlScan(ctx context.Context, v interface{}) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (cs *CouponSelect) Modify(modifiers ...func(s *sql.Selector)) *CouponSelect {
+	cs.modifiers = append(cs.modifiers, modifiers...)
+	return cs
 }

@@ -122,10 +122,10 @@ func CouponID(v uuid.UUID) predicate.CouponAllocated {
 	})
 }
 
-// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
-func Value(v decimal.Decimal) predicate.CouponAllocated {
+// Denomination applies equality check predicate on the "denomination" field. It's identical to DenominationEQ.
+func Denomination(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldValue), v))
+		s.Where(sql.EQ(s.C(FieldDenomination), v))
 	})
 }
 
@@ -147,6 +147,13 @@ func UsedAt(v uint32) predicate.CouponAllocated {
 func UsedByOrderID(v uuid.UUID) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUsedByOrderID), v))
+	})
+}
+
+// StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
+func StartAt(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
 	})
 }
 
@@ -534,81 +541,81 @@ func CouponIDLTE(v uuid.UUID) predicate.CouponAllocated {
 	})
 }
 
-// ValueEQ applies the EQ predicate on the "value" field.
-func ValueEQ(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationEQ applies the EQ predicate on the "denomination" field.
+func DenominationEQ(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldValue), v))
+		s.Where(sql.EQ(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueNEQ applies the NEQ predicate on the "value" field.
-func ValueNEQ(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationNEQ applies the NEQ predicate on the "denomination" field.
+func DenominationNEQ(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldValue), v))
+		s.Where(sql.NEQ(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueIn applies the In predicate on the "value" field.
-func ValueIn(vs ...decimal.Decimal) predicate.CouponAllocated {
+// DenominationIn applies the In predicate on the "denomination" field.
+func DenominationIn(vs ...decimal.Decimal) predicate.CouponAllocated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldValue), v...))
+		s.Where(sql.In(s.C(FieldDenomination), v...))
 	})
 }
 
-// ValueNotIn applies the NotIn predicate on the "value" field.
-func ValueNotIn(vs ...decimal.Decimal) predicate.CouponAllocated {
+// DenominationNotIn applies the NotIn predicate on the "denomination" field.
+func DenominationNotIn(vs ...decimal.Decimal) predicate.CouponAllocated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldValue), v...))
+		s.Where(sql.NotIn(s.C(FieldDenomination), v...))
 	})
 }
 
-// ValueGT applies the GT predicate on the "value" field.
-func ValueGT(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationGT applies the GT predicate on the "denomination" field.
+func DenominationGT(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldValue), v))
+		s.Where(sql.GT(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueGTE applies the GTE predicate on the "value" field.
-func ValueGTE(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationGTE applies the GTE predicate on the "denomination" field.
+func DenominationGTE(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldValue), v))
+		s.Where(sql.GTE(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueLT applies the LT predicate on the "value" field.
-func ValueLT(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationLT applies the LT predicate on the "denomination" field.
+func DenominationLT(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldValue), v))
+		s.Where(sql.LT(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueLTE applies the LTE predicate on the "value" field.
-func ValueLTE(v decimal.Decimal) predicate.CouponAllocated {
+// DenominationLTE applies the LTE predicate on the "denomination" field.
+func DenominationLTE(v decimal.Decimal) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldValue), v))
+		s.Where(sql.LTE(s.C(FieldDenomination), v))
 	})
 }
 
-// ValueIsNil applies the IsNil predicate on the "value" field.
-func ValueIsNil() predicate.CouponAllocated {
+// DenominationIsNil applies the IsNil predicate on the "denomination" field.
+func DenominationIsNil() predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldValue)))
+		s.Where(sql.IsNull(s.C(FieldDenomination)))
 	})
 }
 
-// ValueNotNil applies the NotNil predicate on the "value" field.
-func ValueNotNil() predicate.CouponAllocated {
+// DenominationNotNil applies the NotNil predicate on the "denomination" field.
+func DenominationNotNil() predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldValue)))
+		s.Where(sql.NotNull(s.C(FieldDenomination)))
 	})
 }
 
@@ -793,6 +800,84 @@ func UsedByOrderIDIsNil() predicate.CouponAllocated {
 func UsedByOrderIDNotNil() predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUsedByOrderID)))
+	})
+}
+
+// StartAtEQ applies the EQ predicate on the "start_at" field.
+func StartAtEQ(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtNEQ applies the NEQ predicate on the "start_at" field.
+func StartAtNEQ(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtIn applies the In predicate on the "start_at" field.
+func StartAtIn(vs ...uint32) predicate.CouponAllocated {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldStartAt), v...))
+	})
+}
+
+// StartAtNotIn applies the NotIn predicate on the "start_at" field.
+func StartAtNotIn(vs ...uint32) predicate.CouponAllocated {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldStartAt), v...))
+	})
+}
+
+// StartAtGT applies the GT predicate on the "start_at" field.
+func StartAtGT(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtGTE applies the GTE predicate on the "start_at" field.
+func StartAtGTE(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtLT applies the LT predicate on the "start_at" field.
+func StartAtLT(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtLTE applies the LTE predicate on the "start_at" field.
+func StartAtLTE(v uint32) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldStartAt), v))
+	})
+}
+
+// StartAtIsNil applies the IsNil predicate on the "start_at" field.
+func StartAtIsNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartAt)))
+	})
+}
+
+// StartAtNotNil applies the NotNil predicate on the "start_at" field.
+func StartAtNotNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartAt)))
 	})
 }
 

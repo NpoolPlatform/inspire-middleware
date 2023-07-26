@@ -480,6 +480,12 @@ func (rq *RegistrationQuery) ForShare(opts ...sql.LockOption) *RegistrationQuery
 	return rq
 }
 
+// Modify adds a query modifier for attaching custom logic to queries.
+func (rq *RegistrationQuery) Modify(modifiers ...func(s *sql.Selector)) *RegistrationSelect {
+	rq.modifiers = append(rq.modifiers, modifiers...)
+	return rq.Select()
+}
+
 // RegistrationGroupBy is the group-by builder for Registration entities.
 type RegistrationGroupBy struct {
 	config
@@ -570,4 +576,10 @@ func (rs *RegistrationSelect) sqlScan(ctx context.Context, v interface{}) error 
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (rs *RegistrationSelect) Modify(modifiers ...func(s *sql.Selector)) *RegistrationSelect {
+	rs.modifiers = append(rs.modifiers, modifiers...)
+	return rs
 }

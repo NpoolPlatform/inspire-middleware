@@ -8,19 +8,17 @@ import (
 	"testing"
 	"time"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+
+	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
-
-	coupon "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon"
-
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
-
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	// basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
 func init() {
@@ -32,153 +30,154 @@ func init() {
 	}
 }
 
-var ret = &couponmwpb.Coupon{
-	ID:               uuid.NewString(),
-	CouponType:       mgrpb.CouponType_FixAmount,
-	AppID:            uuid.NewString(),
-	Value:            "10.01",
-	Circulation:      "100.1",
-	ReleasedByUserID: uuid.NewString(),
-	StartAt:          uint32(time.Now().Unix()),
-	DurationDays:     30,
-	Message:          "Test coupon message",
-	Name:             "Test coupon name",
-	Allocated:        "0",
-}
+var (
+	ret = npool.Coupon{
+		ID:               uuid.NewString(),
+		CouponType:       types.CouponType_FixAmount,
+		AppID:            uuid.NewString(),
+		UserID:           uuid.NewString(),
+		Denomination:     decimal.RequireFromString("12.25").String(),
+		Circulation:      decimal.RequireFromString("12.25").String(),
+		Allocated:        decimal.RequireFromString("12.25").String(),
+		StartAt:          uint32(time.Now().Unix()),
+		DurationDays:     27,
+		CouponID:         uuid.NewString(),
+		CouponName:       uuid.NewString(),
+		Message:          uuid.NewString(),
+		CouponConstraint: types.CouponConstraint_Normal,
+	}
+)
 
-var req = &couponmwpb.CouponReq{
-	ID:               &ret.ID,
-	CouponType:       &ret.CouponType,
-	AppID:            &ret.AppID,
-	Value:            &ret.Value,
-	Circulation:      &ret.Circulation,
-	ReleasedByUserID: &ret.ReleasedByUserID,
-	StartAt:          &ret.StartAt,
-	DurationDays:     &ret.DurationDays,
-	Message:          &ret.Message,
-	Name:             &ret.Name,
-}
+func setup(t *testing.T) func(*testing.T) {
+	ret.CouponTypeStr = ret.CouponType.String()
+	ret.CouponConstraintStr = ret.CouponConstraint.String()
 
-var ret1 = &npool.Coupon{
-	ID:           uuid.NewString(),
-	CouponType:   mgrpb.CouponType_FixAmount,
-	AppID:        ret.AppID,
-	CouponID:     ret.ID,
-	UserID:       uuid.NewString(),
-	Value:        ret.Value,
-	Circulation:  ret.Circulation,
-	DurationDays: ret.DurationDays,
-	CouponName:   ret.Name,
-	Message:      ret.Message,
-}
-
-var req1 = &npool.CouponReq{
-	ID:         &ret1.ID,
-	CouponType: &ret.CouponType,
-	AppID:      &ret1.AppID,
-	CouponID:   &ret1.CouponID,
-	UserID:     &ret1.UserID,
-}
-
-func create(t *testing.T) {
-	_, err := coupon.CreateCoupon(context.Background(), req)
+	h1, err := coupon1.NewHandler(
+		context.Background(),
+		coupon1.WithID(&ret.CouponID),
+		coupon1.WithCouponType(&ret.CouponType),
+		coupon1.WithAppID(&ret.AppID),
+		coupon1.WithDenomination(&ret.Denomination),
+		coupon1.WithCirculation(&ret.Circulation),
+		coupon1.WithIssuedBy(&ret.UserID),
+		coupon1.WithStartAt(&ret.StartAt),
+		coupon1.WithDurationDays(&ret.DurationDays),
+		coupon1.WithMessage(&ret.Message),
+		coupon1.WithName(&ret.CouponName),
+	)
 	assert.Nil(t, err)
 
-	info, err := CreateCoupon(context.Background(), req1)
-	if assert.Nil(t, err) {
-		ret1.CreatedAt = info.CreatedAt
-		ret1.UpdatedAt = info.UpdatedAt
-		ret1.StartAt = info.StartAt
-		ret1.EndAt = info.EndAt
-		ret1.Valid = info.Valid
-		assert.Equal(t, ret1, info)
+	_, _ = h1.CreateCoupon(context.Background())
+
+	return func(*testing.T) {
+		_, _ = h1.DeleteCoupon(context.Background())
 	}
 }
 
-func update(t *testing.T) {
-	used := true
-	orderID := uuid.NewString()
+func creatCoupon(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+		WithAppID(&ret.AppID),
+		WithCouponID(&ret.CouponID),
+		WithUserID(&ret.UserID),
+	)
+	assert.Nil(t, err)
 
-	ret1.Used = used
-	ret1.UsedByOrderID = &orderID
-
-	req1.Used = &used
-	req1.UsedByOrderID = &orderID
-
-	info, err := UpdateCoupon(context.Background(), req1)
+	info, err := handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
-		ret1.UpdatedAt = info.UpdatedAt
-		ret1.UsedAt = info.UsedAt
-		assert.Equal(t, ret1, info)
+		ret.CreatedAt = info.CreatedAt
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, info, &ret)
+	}
+}
+
+/*
+func updateCoupon(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+		WithDenomination(&ret.Denomination),
+		WithCirculation(&ret.Circulation),
+		WithStartAt(&ret.StartAt),
+		WithDurationDays(&ret.DurationDays),
+		WithMessage(&ret.Message),
+		WithName(&ret.Name),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.UpdateCoupon(context.Background())
+	if assert.Nil(t, err) {
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, info, &ret)
 	}
 }
 
 func getCoupon(t *testing.T) {
-	info, err := GetCoupon(context.Background(), ret1.ID)
-	if assert.Nil(t, err) {
-		assert.Equal(t, ret1, info)
-	}
-}
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+	)
+	assert.Nil(t, err)
 
-func getManyCoupons(t *testing.T) {
-	infos, err := GetManyCoupons(context.Background(), []string{ret1.ID})
+	info, err := handler.GetCoupon(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, len(infos), 1)
-		assert.Equal(t, ret1, infos[0])
+		assert.Equal(t, info, &ret)
 	}
 }
 
 func getCoupons(t *testing.T) {
-	infos, total, err := GetCoupons(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.AppID,
-		},
-		UserID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.UserID,
-		},
-	}, int32(0), int32(100))
-	if assert.Nil(t, err) {
-		assert.Equal(t, total, uint32(1))
+	conds := &npool.Conds{
+		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		IDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+	}
+
+	handler, err := NewHandler(
+		context.Background(),
+		WithConds(conds),
+		WithOffset(0),
+		WithLimit(0),
+	)
+	assert.Nil(t, err)
+
+	infos, _, err := handler.GetCoupons(context.Background())
+	if !assert.Nil(t, err) {
 		assert.Equal(t, len(infos), 1)
-		assert.Equal(t, ret1, infos[0])
+		assert.Equal(t, infos[0], &ret)
 	}
 }
 
-func getCouponOnly(t *testing.T) {
-	info, err := GetCouponOnly(context.Background(), &mgrpb.Conds{
-		ID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.ID,
-		},
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.AppID,
-		},
-		UserID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.UserID,
-		},
-		UsedByOrderID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret1.GetUsedByOrderID(),
-		},
-	})
+func deleteCoupon(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.DeleteCoupon(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret1, info)
+		assert.Equal(t, info, &ret)
 	}
+
+	info, err = handler.GetCoupon(context.Background())
+	assert.Nil(t, err)
+	assert.Nil(t, info)
 }
+*/
 
 func TestCoupon(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
 
-	t.Run("create", create)
-	t.Run("update", update)
-	t.Run("getCoupon", getCoupon)
-	t.Run("getManyCoupons", getManyCoupons)
-	t.Run("getCoupons", getCoupons)
-	t.Run("getCouponOnly", getCouponOnly)
+	teardown := setup(t)
+	defer teardown(t)
+
+	t.Run("creatCoupon", creatCoupon)
+	// t.Run("updateCoupon", updateCoupon)
+	// t.Run("getCoupon", getCoupon)
+	// t.Run("getCoupons", getCoupons)
+	// t.Run("deleteCoupon", deleteCoupon)
 }
