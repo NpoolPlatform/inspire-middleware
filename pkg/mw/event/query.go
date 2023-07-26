@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	// eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
@@ -28,6 +28,20 @@ func (h *queryHandler) queryEvent(cli *ent.Client) {
 			entevent.DeletedAt(0),
 		).
 		Select()
+}
+
+func (h *queryHandler) queryEvents(ctx context.Context, cli *ent.Client) error {
+	stm, err := eventcrud.SetQueryConds(cli.Event.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+	h.stmSelect = stm.Select()
+	return nil
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -67,4 +81,42 @@ func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
 	handler.formalize()
 
 	return handler.infos[0], nil
+}
+
+func (h *Handler) GetEvents(ctx context.Context) ([]*npool.Event, uint32, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Event{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryEvents(ctx, cli); err != nil {
+			return err
+		}
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	handler.formalize()
+
+	return handler.infos, handler.total, nil
+}
+
+func (h *Handler) GetEventOnly(ctx context.Context) (*npool.Event, error) {
+	infos, _, err := h.GetEvents(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(infos) == 0 {
+		return nil, nil
+	}
+	if len(infos) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos[0], nil
 }

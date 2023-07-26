@@ -5,16 +5,13 @@ import (
 	"fmt"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
-	allocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
-	mgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/event"
-
-	allocated "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated"
-	coupon "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/coupon"
+	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	registration "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
+	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -25,31 +22,31 @@ type rewardHandler struct {
 	*Handler
 }
 
-func (h *rewardHandler) condGood(conds *mgrpb.Conds) {
-	switch h.EventType {
+func (h *rewardHandler) condGood() {
+	switch *h.EventType {
 	case basetypes.UsedFor_Purchase:
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
-		conds.GoodID = &basetypes.StringVal{Op: cruder.EQ, Value: *h.GoodID}
+		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
 	}
 }
 
-func (h *rewardHandler) getEvent(ctx context.Context) (*mgrpb.Event, error) {
-	conds := &mgrpb.Conds{
-		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID},
-		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.EventType)},
+func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
+	h.Conds = &eventcrud.Conds{
+		AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+		EventType: &cruder.Cond{Op: cruder.EQ, Val: uint32(*h.EventType)},
 	}
 	if h.GoodID != nil {
-		h.condGood(conds)
+		h.condGood()
 	}
-	info, err := mgrcli.GetEventOnly(ctx, conds)
+	info, err := h.GetEventOnly(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return info, nil
 }
 
-func (h *rewardHandler) calculateCredits(ev *mgrpb.Event) (decimal.Decimal, error) {
+func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
 		return decimal.NewFromInt(0), err
@@ -60,19 +57,21 @@ func (h *rewardHandler) calculateCredits(ev *mgrpb.Event) (decimal.Decimal, erro
 		return decimal.NewFromInt(0), err
 	}
 
-	amount, err := decimal.NewFromString(h.Amount)
-	if err != nil {
-		return decimal.NewFromInt(0), err
-	}
-
-	credits = credits.Add(_credits.Mul(amount))
+	credits = credits.Add(_credits.Mul(*h.Amount))
 	return credits, nil
 }
 
-func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *mgrpb.Event) error {
+func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) error {
 	coups := []*couponmwpb.Coupon{}
-	for _, coup := range ev.Coupons {
-		_coupon, err := coupon.GetCoupon(ctx, coup.ID, coup.CouponType)
+	for _, id := range ev.CouponIDs {
+		handler, err := coupon1.NewHandler(
+			ctx,
+			coupon1.WithID(&id),
+		)
+		if err != nil {
+			return err
+		}
+		_coupon, err := handler.GetCoupon(ctx)
 		if err != nil {
 			return err
 		}
@@ -84,15 +83,20 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *mgrpb.Event) er
 	}
 
 	for _, coup := range coups {
-		if _, err := allocated.CreateCoupon(
+		userID := h.UserID.String()
+
+		handler, err := allocated1.NewHandler(
 			ctx,
-			&allocatedmwpb.CouponReq{
-				AppID:      &h.AppID,
-				UserID:     &h.UserID,
-				CouponID:   &coup.ID,
-				CouponType: &coup.CouponType,
-			},
-		); err != nil {
+			allocated1.WithAppID(&coup.AppID),
+			allocated1.WithUserID(&userID),
+			allocated1.WithCouponID(&coup.ID),
+			allocated1.WithCouponType(&coup.CouponType),
+		)
+		if err != nil {
+			return err
+		}
+
+		if _, err := handler.CreateCoupon(ctx); err != nil {
 			return err
 		}
 	}
@@ -109,7 +113,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 		return nil, nil
 	}
 
-	if h.Consecutive > ev.MaxConsecutive {
+	if *h.Consecutive > ev.MaxConsecutive {
 		return nil, nil
 	}
 
@@ -125,8 +129,8 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 	_credits := []*npool.Credit{}
 	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
 		_credits = append(_credits, &npool.Credit{
-			AppID:   h.AppID,
-			UserID:  h.UserID,
+			AppID:   h.AppID.String(),
+			UserID:  h.UserID.String(),
 			Credits: credits.String(),
 		})
 	}
@@ -135,7 +139,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 }
 
 func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, error) {
-	_, inviterIDs, err := registration.GetInviters(ctx, h.AppID, h.UserID)
+	_, inviterIDs, err := registration.GetInviters(ctx, h.AppID.String(), h.UserID.String())
 	if err != nil {
 		return nil, err
 	}
@@ -160,15 +164,19 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 	const inviterIgnore = 2
 	j := len(inviterIDs) - inviterIgnore
 
+	appID := h.AppID.String()
+	goodID := h.GoodID.String()
+	amount := h.Amount.String()
+
 	for ; i < ev.InviterLayers && j >= 0; i++ {
 		handler, err := NewHandler(
 			ctx,
-			WithAppID(h.AppID),
-			WithUserID(inviterIDs[j]),
+			WithAppID(&appID),
+			WithUserID(&inviterIDs[j]),
 			WithEventType(h.EventType),
-			WithGoodID(h.GoodID),
+			WithGoodID(&goodID),
 			WithConsecutive(h.Consecutive),
-			WithAmount(h.Amount),
+			WithAmount(&amount),
 		)
 		if err != nil {
 			return nil, err
@@ -195,11 +203,27 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 }
 
 func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
+	if h.AppID == nil {
+		return nil, fmt.Errorf("invalid appid")
+	}
+	if h.UserID == nil {
+		return nil, fmt.Errorf("invalid userid")
+	}
+	if h.EventType == nil {
+		return nil, fmt.Errorf("invalid eventtype")
+	}
+	if h.Consecutive == nil {
+		return nil, fmt.Errorf("invalid consecutive")
+	}
+	if h.Amount == nil {
+		return nil, fmt.Errorf("invalid amount")
+	}
+
 	handler := &rewardHandler{
 		Handler: h,
 	}
 
-	switch h.EventType {
+	switch *h.EventType {
 	case basetypes.UsedFor_Signup:
 		fallthrough //nolint
 	case basetypes.UsedFor_Purchase:
