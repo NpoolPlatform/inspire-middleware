@@ -78,6 +78,7 @@ func UpdateSet(u *ent.EventUpdateOne, req *Req) (*ent.EventUpdateOne, error) {
 
 type Conds struct {
 	ID        *cruder.Cond
+	IDs       *cruder.Cond
 	AppID     *cruder.Cond
 	EventType *cruder.Cond
 	GoodID    *cruder.Cond
@@ -96,6 +97,18 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 		switch conds.ID.Op {
 		case cruder.EQ:
 			q.Where(entevent.ID(id))
+		default:
+			return nil, fmt.Errorf("invalid event field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.ID.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		switch conds.ID.Op {
+		case cruder.IN:
+			q.Where(entevent.IDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid event field")
 		}

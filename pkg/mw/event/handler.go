@@ -4,7 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
+	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -68,15 +72,15 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 
 func WithCouponIDs(ids []string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		ids := []uuid.UUID{}
+		_ids := []uuid.UUID{}
 		for _, id := range ids {
 			_id, err := uuid.Parse(id)
 			if err != nil {
 				return err
 			}
-			ids = append(ids, _id)
+			_ids = append(_ids, _id)
 		}
-		h.CouponIDs = ids
+		h.CouponIDs = _ids
 		return nil
 	}
 }
@@ -203,7 +207,7 @@ func WithGoodID(goodID *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithConsecutive(consecutive uint32) func(context.Context, *Handler) error {
+func WithConsecutive(consecutive *uint32) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Consecutive = consecutive
 		return nil
@@ -220,6 +224,83 @@ func WithAmount(amount *string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.Amount = &_amount
+		return nil
+	}
+}
+
+func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Conds = &eventcrud.Conds{}
+		if conds == nil {
+			return nil
+		}
+		if conds.ID != nil {
+			id, err := uuid.Parse(conds.GetID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.ID = &cruder.Cond{
+				Op:  conds.GetID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppID != nil {
+			id, err := uuid.Parse(conds.GetAppID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppID = &cruder.Cond{
+				Op:  conds.GetAppID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.EventType != nil {
+			h.Conds.EventType = &cruder.Cond{
+				Op:  conds.GetEventType().GetOp(),
+				Val: basetypes.UsedFor(conds.GetEventType().GetValue()),
+			}
+		}
+		if conds.GoodID != nil {
+			id, err := uuid.Parse(conds.GetGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.GoodID = &cruder.Cond{
+				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.IDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.IDs = &cruder.Cond{
+				Op:  conds.GetIDs().GetOp(),
+				Val: ids,
+			}
+		}
+		return nil
+	}
+}
+
+func WithOffset(value int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Offset = value
+		return nil
+	}
+}
+
+func WithLimit(value int32) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == 0 {
+			value = constant.DefaultRowLimit
+		}
+		h.Limit = value
 		return nil
 	}
 }
