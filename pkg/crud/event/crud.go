@@ -105,11 +105,11 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 		}
 	}
 	if conds.IDs != nil {
-		ids, ok := conds.ID.Val.([]uuid.UUID)
+		ids, ok := conds.IDs.Val.([]uuid.UUID)
 		if !ok {
 			return nil, fmt.Errorf("invalid ids")
 		}
-		switch conds.ID.Op {
+		switch conds.IDs.Op {
 		case cruder.IN:
 			q.Where(entevent.IDIn(ids...))
 		default:

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
@@ -48,6 +48,8 @@ func setup(t *testing.T) func(*testing.T) {
 	ret.EventTypeStr = ret.EventType.String()
 	b, _ := json.Marshal(ret.CouponIDs)
 	ret.CouponIDsStr = string(b)
+	goodID := uuid.NewString()
+	ret.GoodID = &goodID
 
 	couponType := types.CouponType_FixAmount
 	denomination := decimal.RequireFromString("12.25").String()
@@ -99,24 +101,21 @@ func createEvent(t *testing.T) {
 	}
 }
 
-/*
 func updateEvent(t *testing.T) {
-	orderID := uuid.NewString()
-	ret.UsedByOrderID = &orderID
-	ret.Used = true
-
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID),
-		WithUsed(&ret.Used),
-		WithUsedByOrderID(ret.UsedByOrderID),
+		WithCouponIDs(ret.CouponIDs),
+		WithCredits(&ret.Credits),
+		WithCreditsPerUSD(&ret.CreditsPerUSD),
+		WithMaxConsecutive(&ret.MaxConsecutive),
+		WithInviterLayers(&ret.InviterLayers),
 	)
 	assert.Nil(t, err)
 
 	info, err := handler.UpdateEvent(context.Background())
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
-		ret.UsedAt = info.UsedAt
 		assert.Equal(t, info, &ret)
 	}
 }
@@ -136,13 +135,11 @@ func getEvent(t *testing.T) {
 
 func getEvents(t *testing.T) {
 	conds := &npool.Conds{
-		ID:            &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		IDs:           &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
-		CouponType:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
-		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
-		CouponID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: *ret.UsedByOrderID},
+		ID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		IDs:       &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.EventType)},
+		GoodID:    &basetypes.StringVal{Op: cruder.EQ, Value: *ret.GoodID},
 	}
 
 	handler, err := NewHandler(
@@ -176,7 +173,6 @@ func deleteEvent(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
-*/
 
 func TestEvent(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
@@ -187,8 +183,8 @@ func TestEvent(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createEvent", createEvent)
-	// t.Run("updateEvent", updateEvent)
-	// t.Run("getEvent", getEvent)
-	// t.Run("getEvents", getEvents)
-	// t.Run("deleteEvent", deleteEvent)
+	t.Run("updateEvent", updateEvent)
+	t.Run("getEvent", getEvent)
+	t.Run("getEvents", getEvents)
+	t.Run("deleteEvent", deleteEvent)
 }
