@@ -3,6 +3,7 @@ package allocated
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -11,21 +12,25 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 )
 
-func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
+func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
 	}
 
-	if h.Used != nil && *h.Used && h.UsedByOrderID == nil {
-		return nil, fmt.Errorf("invalid usedbyorderid")
+	info, err := h.GetCoupon(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if info == nil {
+		return nil, nil
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	now := uint32(time.Now().Unix())
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := allocatedcrud.UpdateSet(
 			cli.CouponAllocated.UpdateOneID(*h.ID),
 			&allocatedcrud.Req{
-				Used:          h.Used,
-				UsedByOrderID: h.UsedByOrderID,
+				DeletedAt: &now,
 			},
 		).Save(_ctx); err != nil {
 			return err
@@ -36,5 +41,5 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		return nil, err
 	}
 
-	return h.GetCoupon(ctx)
+	return info, nil
 }

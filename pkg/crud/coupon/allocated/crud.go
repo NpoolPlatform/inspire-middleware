@@ -17,6 +17,7 @@ type Req struct {
 	CouponID      *uuid.UUID
 	Used          *bool
 	UsedByOrderID *uuid.UUID
+	DeletedAt     *uint32
 }
 
 func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreate {
@@ -42,6 +43,9 @@ func UpdateSet(u *ent.CouponAllocatedUpdateOne, req *Req) *ent.CouponAllocatedUp
 		u.SetUsed(*req.Used)
 		u.SetUsedAt(uint32(time.Now().Unix()))
 		u.SetUsedByOrderID(*req.UsedByOrderID)
+	}
+	if req.DeletedAt != nil {
+		u.SetDeletedAt(*req.DeletedAt)
 	}
 	return u
 }
