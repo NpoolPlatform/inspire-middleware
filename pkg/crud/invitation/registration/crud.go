@@ -3,8 +3,8 @@ package registration
 import (
 	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
-	entregistration "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/registration"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entregistration "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"

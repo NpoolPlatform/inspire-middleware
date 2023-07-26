@@ -44,6 +44,8 @@ cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3f
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 entgo.io/ent v0.11.2 h1:UM2/BUhF2FfsxPHRxLjQbhqJNaDdVlOwNIAMLs2jyto=
 entgo.io/ent v0.11.2/go.mod h1:YGHEQnmmIUgtD5b1ICD5vg74dS3npkNnmC5K+0J+IHU=
+github.com/AmirSoleimani/VoucherCodeGenerator/vcgen v0.0.0-20220706103434-bcb25b5bff9c h1:D6IsNwzhyrCX23DOMj21rSWSLPXAHCg4EN09kGWThKM=
+github.com/AmirSoleimani/VoucherCodeGenerator/vcgen v0.0.0-20220706103434-bcb25b5bff9c/go.mod h1:C1kHOPhIz2FRwwJEIxVg7shHEPpYy83Ud6JZzXIKKCk=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.1.0 h1:ksErzDEI1khOiGPgpwuI7x2ebx/uXQNw7xJpn9Eq1+I=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
@@ -57,8 +59,6 @@ github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451 h1:P
 github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451/go.mod h1:NOvmcUqSDPfpCDRfspmNvLm2m12zPMWXFCPonARkNJA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
-github.com/NpoolPlatform/message v0.0.0-20230726103348-f864ff1fb1c9 h1:kh2lqCO3bhSTd8qKFJ89cr7N3nAT+NfO2r9FfiMF49g=
-github.com/NpoolPlatform/message v0.0.0-20230726103348-f864ff1fb1c9/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
 github.com/NpoolPlatform/message v0.0.0-20230726112702-167d731dab30 h1:8Vy5AchQdoYINCloeAVdWdJM4rxgWulXRkDHoRb0Ehw=
 github.com/NpoolPlatform/message v0.0.0-20230726112702-167d731dab30/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=

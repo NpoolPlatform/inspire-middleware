@@ -3,8 +3,8 @@ package invitationcode
 import (
 	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
-	entinvitationcode "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/invitationcode"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entinvitationcode "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
