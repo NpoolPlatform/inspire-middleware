@@ -23,6 +23,7 @@ type Req struct {
 	MaxConsecutive *uint32
 	GoodID         *uuid.UUID
 	InviterLayers  *uint32
+	DeletedAt      *uint32
 }
 
 func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
@@ -56,7 +57,7 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 	return c
 }
 
-func UpdateSet(u *ent.EventUpdateOne, req *Req) (*ent.EventUpdateOne, error) {
+func UpdateSet(u *ent.EventUpdateOne, req *Req) *ent.EventUpdateOne {
 	if len(req.CouponIDs) > 0 {
 		u.SetCouponIds(req.CouponIDs)
 	}
@@ -72,8 +73,10 @@ func UpdateSet(u *ent.EventUpdateOne, req *Req) (*ent.EventUpdateOne, error) {
 	if req.InviterLayers != nil {
 		u.SetInviterLayers(*req.InviterLayers)
 	}
-
-	return u, nil
+	if req.DeletedAt != nil {
+		u.SetDeletedAt(*req.DeletedAt)
+	}
+	return u
 }
 
 type Conds struct {
