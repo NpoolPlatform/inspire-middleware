@@ -1,4 +1,4 @@
-package pubsub
+package event
 
 import (
 	"context"
@@ -6,11 +6,12 @@ import (
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
-	event "github.com/NpoolPlatform/inspire-middleware/pkg/event"
+	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
+	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event"
 	eventmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 )
 
-func prepareRewardEvent(body string) (interface{}, error) {
+func Prepare(body string) (interface{}, error) {
 	req := eventmwpb.RewardEventRequest{}
 	if err := json.Unmarshal([]byte(body), &req); err != nil {
 		return nil, err
@@ -18,17 +19,17 @@ func prepareRewardEvent(body string) (interface{}, error) {
 	return &req, nil
 }
 
-func handleRewardEvent(ctx context.Context, req interface{}) error {
+func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) error {
 	_req := req.(*eventmwpb.RewardEventRequest)
 
-	handler, err := event.NewHandler(
+	handler, err := event1.NewHandler(
 		ctx,
-		event.WithAppID(_req.GetAppID()),
-		event.WithUserID(_req.GetUserID()),
-		event.WithEventType(_req.GetEventType()),
-		event.WithGoodID(_req.GoodID),
-		event.WithConsecutive(_req.GetConsecutive()),
-		event.WithAmount(_req.GetAmount()),
+		event1.WithAppID(&_req.AppID),
+		event1.WithUserID(&_req.UserID),
+		event1.WithEventType(&_req.EventType),
+		event1.WithGoodID(_req.GoodID),
+		event1.WithConsecutive(&_req.Consecutive),
+		event1.WithAmount(&_req.Amount),
 	)
 	if err != nil {
 		return err

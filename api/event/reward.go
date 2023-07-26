@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/event"
+	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	"google.golang.org/grpc/codes"
@@ -14,12 +14,12 @@ import (
 func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) (*npool.RewardEventResponse, error) {
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithAppID(in.GetAppID()),
-		event1.WithUserID(in.GetUserID()),
-		event1.WithEventType(in.GetEventType()),
+		event1.WithAppID(&in.AppID),
+		event1.WithUserID(&in.UserID),
+		event1.WithEventType(&in.EventType),
 		event1.WithGoodID(in.GoodID),
-		event1.WithConsecutive(in.GetConsecutive()),
-		event1.WithAmount(in.GetAmount()),
+		event1.WithConsecutive(&in.Consecutive),
+		event1.WithAmount(&in.Amount),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

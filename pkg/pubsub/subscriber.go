@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db"
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
-	entpubsubmsg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/pubsubmessage"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entpubsubmsg "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+
+	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/event"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
@@ -47,7 +49,7 @@ func finish(ctx context.Context, msg *pubsub.Msg, err error) error {
 func prepare(mid, body string) (req interface{}, err error) {
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
-		req, err = prepareRewardEvent(body)
+		req, err = event1.Prepare(body)
 	default:
 		return nil, nil
 	}
@@ -139,12 +141,12 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
-		err = handleRewardEvent(ctx, req)
-		if err != nil {
-			return err
-		}
+		err = event1.Apply(ctx, req, publisher)
 	default:
 		return nil
+	}
+	if err != nil {
+		return err
 	}
 
 	return nil
