@@ -1,214 +1,67 @@
-//nolint:dupl
 package allocated
 
 import (
 	"context"
 	"fmt"
 
-	allocatedmgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/coupon/allocated"
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcouponallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
-
-	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/discount"
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/fixamount"
-	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/specialoffer"
-
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	// cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
-func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
-	info, err := allocatedmgrcli.GetAllocated(ctx, id)
+type queryHandler struct {
+	*Handler
+	stmSelect *ent.CouponAllocatedSelect
+	infos     []*npool.Coupon
+	total     uint32
+}
+
+func (h *queryHandler) selectCoupon(stm *ent.CouponAllocatedQuery) *ent.CouponAllocatedSelect {
+	return stm.Select(
+		entcouponallocated.FieldID,
+	)
+}
+
+func (h *queryHandler) queryCoupon(cli *ent.Client) {
+	stm := cli.
+		CouponAllocated.
+		Query().
+		Where(
+			entcouponallocated.ID(*h.ID),
+			entcouponallocated.DeletedAt(0),
+		)
+	h.stmSelect = h.selectCoupon(stm)
+}
+
+func (h *queryHandler) scan(ctx context.Context) error {
+	return h.stmSelect.Scan(ctx, &h.infos)
+}
+
+func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
+	if h.ID == nil {
+		return nil, fmt.Errorf("invalid id")
+	}
+
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Coupon{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.queryCoupon(cli)
+		return handler.scan(_ctx)
+	})
 	if err != nil {
 		return nil, err
 	}
-	switch info.CouponType {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.GetFixAmount(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.GetDiscount(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.GetSpecialOffer(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, fmt.Errorf("unknown coupon type")
-	}
-	return nil, fmt.Errorf("not supported")
-}
-
-func getTypeCouponIDs(
-	infos []*allocatedmgrpb.Allocated,
-	couponType allocatedmgrpb.CouponType,
-) []string {
-	ids := []string{}
-	for _, info := range infos {
-		if info.CouponType == couponType {
-			ids = append(ids, info.CouponID)
-		}
-	}
-	return ids
-}
-
-func getTypeAllocateds(
-	infos []*allocatedmgrpb.Allocated,
-	couponType allocatedmgrpb.CouponType,
-) []*allocatedmgrpb.Allocated {
-	_infos := []*allocatedmgrpb.Allocated{}
-	for _, info := range infos {
-		if info.CouponType == couponType {
-			_infos = append(_infos, info)
-		}
-	}
-	return _infos
-}
-
-func expandManyCoupons(ctx context.Context, infos []*allocatedmgrpb.Allocated) ([]*npool.Coupon, error) {
-	var coups []*npool.Coupon
-
-	fmIDs := getTypeCouponIDs(infos, allocatedmgrpb.CouponType_FixAmount)
-	if len(fmIDs) > 0 {
-		_coups, err := fixamount.GetManyFixAmounts(
-			ctx,
-			fmIDs,
-			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
-				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_FixAmount), nil
-			})
-		if err != nil {
-			return nil, err
-		}
-
-		coups = append(coups, _coups...)
-	}
-
-	fmIDs = getTypeCouponIDs(infos, allocatedmgrpb.CouponType_Discount)
-	if len(fmIDs) > 0 {
-		_coups, err := discount.GetManyDiscounts(
-			ctx,
-			fmIDs,
-			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
-				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_Discount), nil
-			})
-		if err != nil {
-			return nil, err
-		}
-
-		coups = append(coups, _coups...)
-	}
-
-	fmIDs = getTypeCouponIDs(infos, allocatedmgrpb.CouponType_SpecialOffer)
-	if len(fmIDs) > 0 {
-		_coups, err := specialoffer.GetManySpecialOffers(
-			ctx,
-			fmIDs,
-			func(_ctx context.Context) ([]*allocatedmgrpb.Allocated, error) {
-				return getTypeAllocateds(infos, allocatedmgrpb.CouponType_SpecialOffer), nil
-			})
-		if err != nil {
-			return nil, err
-		}
-
-		coups = append(coups, _coups...)
-	}
-
-	// allocatedmgrpb.CouponType_Discount:
-	// allocatedmgrpb.CouponType_SpecialOffer:
-	// allocatedmgrpb.CouponType_ThresholdFixAmount:
-	// allocatedmgrpb.CouponType_ThresholdDiscount:
-	// allocatedmgrpb.CouponType_GoodFixAmount:
-	// allocatedmgrpb.CouponType_GoodDiscount:
-	// allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	// allocatedmgrpb.CouponType_GoodThresholdDiscount:
-
-	return coups, nil
-}
-
-func GetManyCoupons(ctx context.Context, ids []string) ([]*npool.Coupon, error) {
-	infos, _, err := allocatedmgrcli.GetAllocateds(ctx, &allocatedmgrpb.Conds{
-		IDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: ids,
-		},
-	}, int32(0), int32(len(ids)))
-	if err != nil {
-		return nil, err
-	}
-
-	return expandManyCoupons(ctx, infos)
-}
-
-func GetCoupons(ctx context.Context, conds *allocatedmgrpb.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
-	infos, total, err := allocatedmgrcli.GetAllocateds(ctx, conds, offset, limit)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	coups, err := expandManyCoupons(ctx, infos)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return coups, total, nil
-}
-
-func GetCouponOnly(ctx context.Context, conds *allocatedmgrpb.Conds) (*npool.Coupon, error) {
-	info, err := allocatedmgrcli.GetAllocatedOnly(ctx, conds)
-	if err != nil {
-		return nil, err
-	}
-	if info == nil {
+	if len(handler.infos) == 0 {
 		return nil, nil
 	}
-
-	switch info.CouponType {
-	case allocatedmgrpb.CouponType_FixAmount:
-		return fixamount.GetFixAmount(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_Discount:
-		return discount.GetDiscount(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_SpecialOffer:
-		return specialoffer.GetSpecialOffer(
-			ctx,
-			info.CouponID,
-			func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-				return info, nil
-			})
-	case allocatedmgrpb.CouponType_ThresholdFixAmount:
-	case allocatedmgrpb.CouponType_ThresholdDiscount:
-	case allocatedmgrpb.CouponType_GoodFixAmount:
-	case allocatedmgrpb.CouponType_GoodDiscount:
-	case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-	case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-	default:
-		return nil, fmt.Errorf("unknown coupon type")
+	if len(handler.infos) > 1 {
+		return nil, fmt.Errorf("too many records")
 	}
-	return nil, fmt.Errorf("not supported")
+
+	return handler.infos[0], nil
 }

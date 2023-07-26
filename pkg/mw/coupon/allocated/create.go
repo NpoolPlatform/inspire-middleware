@@ -2,83 +2,50 @@ package allocated
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db"
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
-	converter "github.com/NpoolPlatform/inspire-manager/pkg/converter/coupon/allocated"
-	crud "github.com/NpoolPlatform/inspire-manager/pkg/crud/coupon/allocated"
-
-	discount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/discount"
-	fixamount "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/fixamount"
-	specialoffer "github.com/NpoolPlatform/inspire-middleware/pkg/coupon/allocated/specialoffer"
+	"github.com/google/uuid"
 )
 
-func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	var id string
+func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+	id1 := uuid.New()
+	if h.ID == nil {
+		h.ID = &id1
+	}
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		stm, err := crud.CreateSet(tx.CouponAllocated.Create(), &allocatedmgrpb.AllocatedReq{
-			ID:         in.ID,
-			CouponType: in.CouponType,
-			AppID:      in.AppID,
-			UserID:     in.UserID,
-			CouponID:   in.CouponID,
-		})
-		if err != nil {
+	if h.AppID == nil {
+		return nil, fmt.Errorf("invalid appid")
+	}
+	if h.CouponID == nil {
+		return nil, fmt.Errorf("invalid couponid")
+	}
+	if h.UserID == nil {
+		return nil, fmt.Errorf("invalid userid")
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if _, err := allocatedcrud.CreateSet(
+			cli.CouponAllocated.Create(),
+			&allocatedcrud.Req{
+				ID:       h.ID,
+				AppID:    h.AppID,
+				CouponID: h.CouponID,
+				UserID:   h.UserID,
+			},
+		).Save(_ctx); err != nil {
 			return err
 		}
-
-		_info, err := stm.Save(_ctx)
-		if err != nil {
-			return err
-		}
-
-		id = _info.ID.String()
-		info := converter.Ent2Grpc(_info)
-
-		switch in.GetCouponType() {
-		case allocatedmgrpb.CouponType_FixAmount:
-			_, err = fixamount.CreateFixAmount(
-				ctx,
-				in.GetCouponID(),
-				tx,
-				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-					return info, nil
-				})
-		case allocatedmgrpb.CouponType_Discount:
-			_, err = discount.CreateDiscount(
-				ctx,
-				in.GetCouponID(),
-				tx,
-				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-					return info, nil
-				})
-		case allocatedmgrpb.CouponType_SpecialOffer:
-			_, err = specialoffer.CreateSpecialOffer(
-				ctx,
-				in.GetCouponID(),
-				tx,
-				func(_ctx context.Context) (*allocatedmgrpb.Allocated, error) {
-					return info, nil
-				})
-		case allocatedmgrpb.CouponType_ThresholdFixAmount:
-		case allocatedmgrpb.CouponType_ThresholdDiscount:
-		case allocatedmgrpb.CouponType_GoodFixAmount:
-		case allocatedmgrpb.CouponType_GoodDiscount:
-		case allocatedmgrpb.CouponType_GoodThresholdFixAmount:
-		case allocatedmgrpb.CouponType_GoodThresholdDiscount:
-		default:
-		}
-
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return GetCoupon(ctx, id)
+	return h.GetCoupon(ctx)
 }

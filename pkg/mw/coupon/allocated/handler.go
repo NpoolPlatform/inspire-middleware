@@ -6,6 +6,7 @@ import (
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
+	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
@@ -86,11 +87,21 @@ func WithCouponID(id *string) func(context.Context, *Handler) error {
 		if id == nil {
 			return nil
 		}
-		// TODO: check coupon exist
-		_id, err := uuid.Parse(*id)
+		handler, err := coupon1.NewHandler(
+			ctx,
+			coupon1.WithID(id),
+		)
 		if err != nil {
 			return err
 		}
+		exist, err := handler.ExistCoupon(ctx)
+		if err != nil {
+			return err
+		}
+		if !exist {
+			return fmt.Errorf("invalid couponid")
+		}
+		_id := uuid.MustParse(*id)
 		h.CouponID = &_id
 		return nil
 	}
