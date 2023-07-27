@@ -2,103 +2,73 @@ package commission
 
 import (
 	"context"
-	"fmt"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
-
-	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
-
-	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func ValidateConds(conds *npool.Conds) error {
-	if conds.ID != nil {
-		if _, err := uuid.Parse(conds.GetID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.AppID != nil {
-		if _, err := uuid.Parse(conds.GetAppID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.UserID != nil {
-		if _, err := uuid.Parse(conds.GetUserID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.GoodID != nil {
-		if _, err := uuid.Parse(conds.GetGoodID().GetValue()); err != nil {
-			return err
-		}
+func (s *Server) GetCommission(ctx context.Context, in *npool.GetCommissionRequest) (*npool.GetCommissionResponse, error) {
+	handler, err := commission1.NewHandler(
+		ctx,
+		commission1.WithID(&in.ID),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCommission",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.GetCommissionResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	switch mgrpb.SettleType(conds.GetSettleType().GetValue()) {
-	case mgrpb.SettleType_GoodOrderPercent:
-	case mgrpb.SettleType_GoodOrderValuePercent:
-	case mgrpb.SettleType_LimitedOrderPercent:
-		fallthrough //nolint
-	case mgrpb.SettleType_AmountThreshold:
-		return fmt.Errorf("not implemented")
-	default:
-		return fmt.Errorf("invalid settle type")
+	info, err := handler.GetCommission(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCommission",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.GetCommissionResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return nil
+	return &npool.GetCommissionResponse{
+		Info: info,
+	}, nil
 }
 
 func (s *Server) GetCommissions(ctx context.Context, in *npool.GetCommissionsRequest) (*npool.GetCommissionsResponse, error) {
-	if err := ValidateConds(in.GetConds()); err != nil {
+	handler, err := commission1.NewHandler(
+		ctx,
+		commission1.WithConds(in.GetConds()),
+		commission1.WithOffset(in.GetOffset()),
+		commission1.WithLimit(in.GetLimit()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCommissions",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCommissionsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	limit := constant.DefaultRowLimit
-	if in.GetLimit() > 0 {
-		limit = in.GetLimit()
-	}
-
-	infos, total, err := commission1.GetCommissions(ctx, in.GetConds(), in.GetOffset(), limit)
+	infos, total, err := handler.GetCommissions(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetCommissions",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetCommissionsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetCommissionsResponse{
 		Infos: infos,
 		Total: total,
-	}, nil
-}
-
-func (s *Server) GetCommissionOnly(ctx context.Context, in *npool.GetCommissionOnlyRequest) (*npool.GetCommissionOnlyResponse, error) {
-	if err := ValidateConds(in.GetConds()); err != nil {
-		return &npool.GetCommissionOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	info, err := commission1.GetCommissionOnly(ctx, in.GetConds())
-	if err != nil {
-		return &npool.GetCommissionOnlyResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.GetCommissionOnlyResponse{
-		Info: info,
-	}, nil
-}
-
-func (s *Server) GetCommission(ctx context.Context, in *npool.GetCommissionRequest) (*npool.GetCommissionResponse, error) {
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		return &npool.GetCommissionResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	info, err := commission1.GetCommission(ctx, in.GetID(), in.GetSettleType())
-	if err != nil {
-		return &npool.GetCommissionResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.GetCommissionResponse{
-		Info: info,
 	}, nil
 }

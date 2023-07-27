@@ -64,7 +64,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 				Create().
 				SetAppID(info.AppID).
 				SetUserID(info.UserID).
-				SetGoodID(info.GoodID).
+				SetGoodID(*h.ToGoodID).
 				SetSettleType(info.SettleType).
 				SetSettleMode(info.SettleMode).
 				SetSettleInterval(info.SettleInterval).
