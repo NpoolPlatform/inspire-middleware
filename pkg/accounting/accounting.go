@@ -6,18 +6,19 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	commmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	archivement1 "github.com/NpoolPlatform/inspire-middleware/pkg/archivement"
 	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
 
-	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
 //nolint
@@ -27,7 +28,7 @@ func Accounting(
 	paymentID, coinTypeID, paymentCoinTypeID string,
 	paymentCoinUSDCurrency decimal.Decimal,
 	units string,
-	settleType commmgrpb.SettleType,
+	settleType types.SettleType,
 	paymentAmount decimal.Decimal,
 	goodValue decimal.Decimal,
 	hasCommission bool,
@@ -50,14 +51,24 @@ func Accounting(
 		return nil, err
 	}
 
-	comms, _, err := commission1.GetCommissions(ctx, &commmwpb.Conds{
-		AppID:      &commonpb.StringVal{Op: cruder.EQ, Value: appID},
-		UserIDs:    &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
-		GoodID:     &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
-		SettleType: &commonpb.Int32Val{Op: cruder.EQ, Value: int32(settleType)},
-		EndAt:      &commonpb.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-		StartAt:    &commonpb.Uint32Val{Op: cruder.LT, Value: orderCreatedAt},
-	}, int32(0), int32(len(inviterIDs)))
+	h1, err := commission1.NewHandler(
+		ctx,
+		commission1.WithConds(&commmwpb.Conds{
+			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: appID},
+			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
+			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: goodID},
+			SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(settleType)},
+			EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+			StartAt:    &basetypes.Uint32Val{Op: cruder.LT, Value: orderCreatedAt},
+		}),
+		commission1.WithOffset(0),
+		commission1.WithLimit(int32(len(inviterIDs))),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	comms, _, err := h1.GetCommissions(ctx)
 	if err != nil {
 		return nil, err
 	}
