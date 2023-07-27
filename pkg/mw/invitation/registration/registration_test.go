@@ -7,15 +7,15 @@ import (
 	"strconv"
 	"testing"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
-
-	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
-
+	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 )
 
 func init() {
@@ -25,201 +25,122 @@ func init() {
 	if err := testinit.Init(); err != nil {
 		fmt.Printf("cannot init test stub: %v\n", err)
 	}
+}
 
-	if err := CreateSubordinateProcedure(context.Background()); err != nil {
-		return
+var (
+	ret = npool.Registration{
+		ID:        uuid.NewString(),
+		AppID:     uuid.NewString(),
+		InviterID: uuid.NewString(),
+		InviteeID: uuid.NewString(),
 	}
-	if err := CreateSuperiorProcedure(context.Background()); err != nil {
-		return
+)
+
+func setup(t *testing.T) func(*testing.T) {
+	h, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(&ret.AppID),
+		invitationcode1.WithUserID(&ret.InviterID),
+	)
+	assert.Nil(t, err)
+
+	info, err := h.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info)
+
+	return func(*testing.T) {
+		_, _ = h.DeleteInvitationCode(context.Background())
 	}
 }
 
-var ret = &mgrpb.Registration{
-	ID:        uuid.NewString(),
-	AppID:     uuid.NewString(),
-	InviterID: uuid.NewString(),
-	InviteeID: uuid.NewString(),
-}
+func createRegistration(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+		WithAppID(&ret.AppID),
+		WithInviterID(&ret.InviterID),
+		WithInviteeID(&ret.InviteeID),
+	)
+	assert.Nil(t, err)
 
-var req = &mgrpb.RegistrationReq{
-	ID:        &ret.ID,
-	AppID:     &ret.AppID,
-	InviterID: &ret.InviterID,
-	InviteeID: &ret.InviteeID,
-}
-
-var ret1 = &mgrpb.Registration{
-	ID:        uuid.NewString(),
-	AppID:     ret.AppID,
-	InviterID: ret.InviterID,
-	InviteeID: uuid.NewString(),
-}
-
-var req1 = &mgrpb.RegistrationReq{
-	ID:        &ret1.ID,
-	AppID:     &ret.AppID,
-	InviterID: &ret.InviterID,
-	InviteeID: &ret1.InviteeID,
-}
-
-var ret2 = &mgrpb.Registration{
-	ID:        uuid.NewString(),
-	AppID:     ret.AppID,
-	InviterID: ret.InviteeID,
-	InviteeID: uuid.NewString(),
-}
-
-var req2 = &mgrpb.RegistrationReq{
-	ID:        &ret2.ID,
-	AppID:     &ret.AppID,
-	InviterID: &ret.InviteeID,
-	InviteeID: &ret2.InviteeID,
-}
-
-func create(t *testing.T) {
-	info, err := CreateRegistration(context.Background(), req1)
-	if assert.Nil(t, err) {
-		ret1.CreatedAt = info.CreatedAt
-		ret1.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret1, info)
-	}
-
-	info, err = CreateRegistration(context.Background(), req2)
-	if assert.Nil(t, err) {
-		ret2.CreatedAt = info.CreatedAt
-		ret2.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret2, info)
-	}
-
-	info, err = CreateRegistration(context.Background(), req)
+	info, err := handler.CreateRegistration(context.Background())
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		assert.Equal(t, info, &ret)
 	}
 }
 
-func update(t *testing.T) {
-	inviterID := uuid.NewString()
+func updateRegistration(t *testing.T) {
+	ret.InviterID = uuid.NewString()
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+		WithInviterID(&ret.InviterID),
+	)
+	assert.Nil(t, err)
 
-	req.InviterID = &inviterID
-	ret.InviterID = inviterID
-
-	info, err := UpdateRegistration(context.Background(), req)
+	info, err := handler.UpdateRegistration(context.Background())
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		assert.Equal(t, info, &ret)
+	}
+}
+
+func getRegistration(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.GetRegistration(context.Background())
+	if assert.Nil(t, err) {
+		assert.Equal(t, info, &ret)
 	}
 }
 
 func getRegistrations(t *testing.T) {
-	infos, total, err := GetRegistrations(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviterID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.InviterID,
-		},
-	}, int32(0), int32(2))
-	if assert.Nil(t, err) {
-		assert.Equal(t, total, uint32(2))
-		assert.Equal(t, len(infos), 2)
+	conds := &npool.Conds{
+		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		InviterID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.InviterID},
+		InviteeID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.InviteeID},
+		InviterIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.InviterID}},
+		InviteeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.InviteeID}},
+	}
+
+	handler, err := NewHandler(
+		context.Background(),
+		WithConds(conds),
+		WithOffset(0),
+		WithLimit(0),
+	)
+	assert.Nil(t, err)
+
+	infos, _, err := handler.GetRegistrations(context.Background())
+	if !assert.Nil(t, err) {
+		assert.Equal(t, len(infos), 1)
+		assert.Equal(t, infos[0], &ret)
 	}
 }
 
-func getRegistrationOnly(t *testing.T) {
-	info, err := GetRegistrationOnly(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviteeID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.InviteeID,
-		},
-	})
+func deleteRegistration(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID),
+	)
+	assert.Nil(t, err)
+
+	info, err := handler.DeleteRegistration(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, ret, info)
+		ret.DeletedAt = info.DeletedAt
+		assert.Equal(t, info, &ret)
 	}
-}
 
-func getSubordinates(t *testing.T) {
-	infos, total, err := GetSubordinates(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviterIDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: []string{ret.InviterID},
-		},
-	}, int32(0), int32(100))
-	if assert.Nil(t, err) {
-		assert.Equal(t, total, uint32(3))
-
-		found := false
-		for _, info := range infos {
-			if info.ID == ret.ID {
-				found = true
-				break
-			}
-		}
-		assert.Equal(t, found, true)
-
-		found = false
-		for _, info := range infos {
-			if info.ID == ret1.ID {
-				found = true
-				break
-			}
-		}
-		assert.Equal(t, found, true)
-
-		found = false
-		for _, info := range infos {
-			if info.ID == ret2.ID {
-				found = true
-				break
-			}
-		}
-		assert.Equal(t, found, true)
-	}
-}
-
-func getSuperiores(t *testing.T) {
-	infos, total, err := GetSuperiores(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviteeIDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: []string{ret2.InviteeID},
-		},
-	}, int32(0), int32(100))
-	if assert.Nil(t, err) {
-		assert.Equal(t, total, uint32(2))
-
-		found := false
-		for _, info := range infos {
-			if info.ID == ret.ID {
-				found = true
-				break
-			}
-		}
-		assert.Equal(t, found, true)
-
-		found = false
-		for _, info := range infos {
-			if info.ID == ret2.ID {
-				found = true
-				break
-			}
-		}
-		assert.Equal(t, found, true)
-	}
+	info, err = handler.GetRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.Nil(t, info)
 }
 
 func TestRegistration(t *testing.T) {
@@ -227,10 +148,12 @@ func TestRegistration(t *testing.T) {
 		return
 	}
 
-	t.Run("create", create)
-	t.Run("GetSubordinates", getSubordinates)
-	t.Run("GetSuperiores", getSuperiores)
+	teardown := setup(t)
+	defer teardown(t)
+
+	t.Run("createRegistration", createRegistration)
+	t.Run("updateRegistration", updateRegistration)
+	t.Run("getRegistration", getRegistration)
 	t.Run("getRegistrations", getRegistrations)
-	t.Run("getRegistrationOnly", getRegistrationOnly)
-	t.Run("update", update)
+	t.Run("deleteRegistration", deleteRegistration)
 }

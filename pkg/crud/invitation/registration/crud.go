@@ -15,6 +15,7 @@ type Req struct {
 	AppID     *uuid.UUID
 	InviterID *uuid.UUID
 	InviteeID *uuid.UUID
+	DeletedAt *uint32
 }
 
 func CreateSet(c *ent.RegistrationCreate, req *Req) *ent.RegistrationCreate {
@@ -37,6 +38,9 @@ func CreateSet(c *ent.RegistrationCreate, req *Req) *ent.RegistrationCreate {
 func UpdateSet(u *ent.RegistrationUpdateOne, req *Req) *ent.RegistrationUpdateOne {
 	if req.InviterID != nil {
 		u = u.SetInviterID(*req.InviterID)
+	}
+	if req.DeletedAt != nil {
+		u = u.SetDeletedAt(*req.DeletedAt)
 	}
 	return u
 }

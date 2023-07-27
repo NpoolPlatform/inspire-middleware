@@ -35,7 +35,7 @@ func (h *Handler) ExistRegistration(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	return false, nil
+	return exist, nil
 }
 
 func (h *Handler) ExistRegistrationConds(ctx context.Context) (bool, error) {

@@ -18,7 +18,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) CreateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.Registration, error) {
+func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, error) {
 	if h.AppID == nil {
 		return nil, fmt.Errorf("invalid appid")
 	}
