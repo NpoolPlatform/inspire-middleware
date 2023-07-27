@@ -171,6 +171,13 @@ func Threshold(v decimal.Decimal) predicate.Commission {
 	})
 }
 
+// OrderLimit applies equality check predicate on the "order_limit" field. It's identical to OrderLimitEQ.
+func OrderLimit(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOrderLimit), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
@@ -1245,6 +1252,84 @@ func ThresholdIsNil() predicate.Commission {
 func ThresholdNotNil() predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldThreshold)))
+	})
+}
+
+// OrderLimitEQ applies the EQ predicate on the "order_limit" field.
+func OrderLimitEQ(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitNEQ applies the NEQ predicate on the "order_limit" field.
+func OrderLimitNEQ(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitIn applies the In predicate on the "order_limit" field.
+func OrderLimitIn(vs ...uint32) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldOrderLimit), v...))
+	})
+}
+
+// OrderLimitNotIn applies the NotIn predicate on the "order_limit" field.
+func OrderLimitNotIn(vs ...uint32) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldOrderLimit), v...))
+	})
+}
+
+// OrderLimitGT applies the GT predicate on the "order_limit" field.
+func OrderLimitGT(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitGTE applies the GTE predicate on the "order_limit" field.
+func OrderLimitGTE(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitLT applies the LT predicate on the "order_limit" field.
+func OrderLimitLT(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitLTE applies the LTE predicate on the "order_limit" field.
+func OrderLimitLTE(v uint32) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldOrderLimit), v))
+	})
+}
+
+// OrderLimitIsNil applies the IsNil predicate on the "order_limit" field.
+func OrderLimitIsNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldOrderLimit)))
+	})
+}
+
+// OrderLimitNotNil applies the NotNil predicate on the "order_limit" field.
+func OrderLimitNotNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldOrderLimit)))
 	})
 }
 

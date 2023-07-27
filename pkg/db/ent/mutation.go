@@ -3211,6 +3211,8 @@ type CommissionMutation struct {
 	settle_mode       *string
 	settle_interval   *string
 	threshold         *decimal.Decimal
+	order_limit       *uint32
+	addorder_limit    *int32
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*Commission, error)
@@ -4021,6 +4023,76 @@ func (m *CommissionMutation) ResetThreshold() {
 	delete(m.clearedFields, commission.FieldThreshold)
 }
 
+// SetOrderLimit sets the "order_limit" field.
+func (m *CommissionMutation) SetOrderLimit(u uint32) {
+	m.order_limit = &u
+	m.addorder_limit = nil
+}
+
+// OrderLimit returns the value of the "order_limit" field in the mutation.
+func (m *CommissionMutation) OrderLimit() (r uint32, exists bool) {
+	v := m.order_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrderLimit returns the old "order_limit" field's value of the Commission entity.
+// If the Commission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommissionMutation) OldOrderLimit(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrderLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrderLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrderLimit: %w", err)
+	}
+	return oldValue.OrderLimit, nil
+}
+
+// AddOrderLimit adds u to the "order_limit" field.
+func (m *CommissionMutation) AddOrderLimit(u int32) {
+	if m.addorder_limit != nil {
+		*m.addorder_limit += u
+	} else {
+		m.addorder_limit = &u
+	}
+}
+
+// AddedOrderLimit returns the value that was added to the "order_limit" field in this mutation.
+func (m *CommissionMutation) AddedOrderLimit() (r int32, exists bool) {
+	v := m.addorder_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (m *CommissionMutation) ClearOrderLimit() {
+	m.order_limit = nil
+	m.addorder_limit = nil
+	m.clearedFields[commission.FieldOrderLimit] = struct{}{}
+}
+
+// OrderLimitCleared returns if the "order_limit" field was cleared in this mutation.
+func (m *CommissionMutation) OrderLimitCleared() bool {
+	_, ok := m.clearedFields[commission.FieldOrderLimit]
+	return ok
+}
+
+// ResetOrderLimit resets all changes to the "order_limit" field.
+func (m *CommissionMutation) ResetOrderLimit() {
+	m.order_limit = nil
+	m.addorder_limit = nil
+	delete(m.clearedFields, commission.FieldOrderLimit)
+}
+
 // Where appends a list predicates to the CommissionMutation builder.
 func (m *CommissionMutation) Where(ps ...predicate.Commission) {
 	m.predicates = append(m.predicates, ps...)
@@ -4040,7 +4112,7 @@ func (m *CommissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommissionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, commission.FieldCreatedAt)
 	}
@@ -4080,6 +4152,9 @@ func (m *CommissionMutation) Fields() []string {
 	if m.threshold != nil {
 		fields = append(fields, commission.FieldThreshold)
 	}
+	if m.order_limit != nil {
+		fields = append(fields, commission.FieldOrderLimit)
+	}
 	return fields
 }
 
@@ -4114,6 +4189,8 @@ func (m *CommissionMutation) Field(name string) (ent.Value, bool) {
 		return m.SettleInterval()
 	case commission.FieldThreshold:
 		return m.Threshold()
+	case commission.FieldOrderLimit:
+		return m.OrderLimit()
 	}
 	return nil, false
 }
@@ -4149,6 +4226,8 @@ func (m *CommissionMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldSettleInterval(ctx)
 	case commission.FieldThreshold:
 		return m.OldThreshold(ctx)
+	case commission.FieldOrderLimit:
+		return m.OldOrderLimit(ctx)
 	}
 	return nil, fmt.Errorf("unknown Commission field %s", name)
 }
@@ -4249,6 +4328,13 @@ func (m *CommissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetThreshold(v)
 		return nil
+	case commission.FieldOrderLimit:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrderLimit(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Commission field %s", name)
 }
@@ -4272,6 +4358,9 @@ func (m *CommissionMutation) AddedFields() []string {
 	if m.addend_at != nil {
 		fields = append(fields, commission.FieldEndAt)
 	}
+	if m.addorder_limit != nil {
+		fields = append(fields, commission.FieldOrderLimit)
+	}
 	return fields
 }
 
@@ -4290,6 +4379,8 @@ func (m *CommissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedStartAt()
 	case commission.FieldEndAt:
 		return m.AddedEndAt()
+	case commission.FieldOrderLimit:
+		return m.AddedOrderLimit()
 	}
 	return nil, false
 }
@@ -4334,6 +4425,13 @@ func (m *CommissionMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddEndAt(v)
 		return nil
+	case commission.FieldOrderLimit:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddOrderLimit(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Commission numeric field %s", name)
 }
@@ -4371,6 +4469,9 @@ func (m *CommissionMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(commission.FieldThreshold) {
 		fields = append(fields, commission.FieldThreshold)
+	}
+	if m.FieldCleared(commission.FieldOrderLimit) {
+		fields = append(fields, commission.FieldOrderLimit)
 	}
 	return fields
 }
@@ -4415,6 +4516,9 @@ func (m *CommissionMutation) ClearField(name string) error {
 		return nil
 	case commission.FieldThreshold:
 		m.ClearThreshold()
+		return nil
+	case commission.FieldOrderLimit:
+		m.ClearOrderLimit()
 		return nil
 	}
 	return fmt.Errorf("unknown Commission nullable field %s", name)
@@ -4462,6 +4566,9 @@ func (m *CommissionMutation) ResetField(name string) error {
 		return nil
 	case commission.FieldThreshold:
 		m.ResetThreshold()
+		return nil
+	case commission.FieldOrderLimit:
+		m.ResetOrderLimit()
 		return nil
 	}
 	return fmt.Errorf("unknown Commission field %s", name)

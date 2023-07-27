@@ -299,6 +299,33 @@ func (cu *CommissionUpdate) ClearThreshold() *CommissionUpdate {
 	return cu
 }
 
+// SetOrderLimit sets the "order_limit" field.
+func (cu *CommissionUpdate) SetOrderLimit(u uint32) *CommissionUpdate {
+	cu.mutation.ResetOrderLimit()
+	cu.mutation.SetOrderLimit(u)
+	return cu
+}
+
+// SetNillableOrderLimit sets the "order_limit" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableOrderLimit(u *uint32) *CommissionUpdate {
+	if u != nil {
+		cu.SetOrderLimit(*u)
+	}
+	return cu
+}
+
+// AddOrderLimit adds u to the "order_limit" field.
+func (cu *CommissionUpdate) AddOrderLimit(u int32) *CommissionUpdate {
+	cu.mutation.AddOrderLimit(u)
+	return cu
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (cu *CommissionUpdate) ClearOrderLimit() *CommissionUpdate {
+	cu.mutation.ClearOrderLimit()
+	return cu
+}
+
 // Mutation returns the CommissionMutation object of the builder.
 func (cu *CommissionUpdate) Mutation() *CommissionMutation {
 	return cu.mutation
@@ -581,6 +608,26 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: commission.FieldThreshold,
+		})
+	}
+	if value, ok := cu.mutation.OrderLimit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: commission.FieldOrderLimit,
+		})
+	}
+	if value, ok := cu.mutation.AddedOrderLimit(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: commission.FieldOrderLimit,
+		})
+	}
+	if cu.mutation.OrderLimitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: commission.FieldOrderLimit,
 		})
 	}
 	_spec.Modifiers = cu.modifiers
@@ -870,6 +917,33 @@ func (cuo *CommissionUpdateOne) SetNillableThreshold(d *decimal.Decimal) *Commis
 // ClearThreshold clears the value of the "threshold" field.
 func (cuo *CommissionUpdateOne) ClearThreshold() *CommissionUpdateOne {
 	cuo.mutation.ClearThreshold()
+	return cuo
+}
+
+// SetOrderLimit sets the "order_limit" field.
+func (cuo *CommissionUpdateOne) SetOrderLimit(u uint32) *CommissionUpdateOne {
+	cuo.mutation.ResetOrderLimit()
+	cuo.mutation.SetOrderLimit(u)
+	return cuo
+}
+
+// SetNillableOrderLimit sets the "order_limit" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableOrderLimit(u *uint32) *CommissionUpdateOne {
+	if u != nil {
+		cuo.SetOrderLimit(*u)
+	}
+	return cuo
+}
+
+// AddOrderLimit adds u to the "order_limit" field.
+func (cuo *CommissionUpdateOne) AddOrderLimit(u int32) *CommissionUpdateOne {
+	cuo.mutation.AddOrderLimit(u)
+	return cuo
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (cuo *CommissionUpdateOne) ClearOrderLimit() *CommissionUpdateOne {
+	cuo.mutation.ClearOrderLimit()
 	return cuo
 }
 
@@ -1185,6 +1259,26 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: commission.FieldThreshold,
+		})
+	}
+	if value, ok := cuo.mutation.OrderLimit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: commission.FieldOrderLimit,
+		})
+	}
+	if value, ok := cuo.mutation.AddedOrderLimit(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: commission.FieldOrderLimit,
+		})
+	}
+	if cuo.mutation.OrderLimitCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: commission.FieldOrderLimit,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers

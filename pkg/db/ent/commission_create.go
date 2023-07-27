@@ -206,6 +206,20 @@ func (cc *CommissionCreate) SetNillableThreshold(d *decimal.Decimal) *Commission
 	return cc
 }
 
+// SetOrderLimit sets the "order_limit" field.
+func (cc *CommissionCreate) SetOrderLimit(u uint32) *CommissionCreate {
+	cc.mutation.SetOrderLimit(u)
+	return cc
+}
+
+// SetNillableOrderLimit sets the "order_limit" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableOrderLimit(u *uint32) *CommissionCreate {
+	if u != nil {
+		cc.SetOrderLimit(*u)
+	}
+	return cc
+}
+
 // SetID sets the "id" field.
 func (cc *CommissionCreate) SetID(u uuid.UUID) *CommissionCreate {
 	cc.mutation.SetID(u)
@@ -369,6 +383,10 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultThreshold
 		cc.mutation.SetThreshold(v)
 	}
+	if _, ok := cc.mutation.OrderLimit(); !ok {
+		v := commission.DefaultOrderLimit
+		cc.mutation.SetOrderLimit(v)
+	}
 	if _, ok := cc.mutation.ID(); !ok {
 		if commission.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized commission.DefaultID (forgotten import ent/runtime?)")
@@ -530,6 +548,14 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 			Column: commission.FieldThreshold,
 		})
 		_node.Threshold = value
+	}
+	if value, ok := cc.mutation.OrderLimit(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: commission.FieldOrderLimit,
+		})
+		_node.OrderLimit = value
 	}
 	return _node, _spec
 }
@@ -828,6 +854,30 @@ func (u *CommissionUpsert) UpdateThreshold() *CommissionUpsert {
 // ClearThreshold clears the value of the "threshold" field.
 func (u *CommissionUpsert) ClearThreshold() *CommissionUpsert {
 	u.SetNull(commission.FieldThreshold)
+	return u
+}
+
+// SetOrderLimit sets the "order_limit" field.
+func (u *CommissionUpsert) SetOrderLimit(v uint32) *CommissionUpsert {
+	u.Set(commission.FieldOrderLimit, v)
+	return u
+}
+
+// UpdateOrderLimit sets the "order_limit" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateOrderLimit() *CommissionUpsert {
+	u.SetExcluded(commission.FieldOrderLimit)
+	return u
+}
+
+// AddOrderLimit adds v to the "order_limit" field.
+func (u *CommissionUpsert) AddOrderLimit(v uint32) *CommissionUpsert {
+	u.Add(commission.FieldOrderLimit, v)
+	return u
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (u *CommissionUpsert) ClearOrderLimit() *CommissionUpsert {
+	u.SetNull(commission.FieldOrderLimit)
 	return u
 }
 
@@ -1165,6 +1215,34 @@ func (u *CommissionUpsertOne) UpdateThreshold() *CommissionUpsertOne {
 func (u *CommissionUpsertOne) ClearThreshold() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearThreshold()
+	})
+}
+
+// SetOrderLimit sets the "order_limit" field.
+func (u *CommissionUpsertOne) SetOrderLimit(v uint32) *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetOrderLimit(v)
+	})
+}
+
+// AddOrderLimit adds v to the "order_limit" field.
+func (u *CommissionUpsertOne) AddOrderLimit(v uint32) *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.AddOrderLimit(v)
+	})
+}
+
+// UpdateOrderLimit sets the "order_limit" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateOrderLimit() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateOrderLimit()
+	})
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (u *CommissionUpsertOne) ClearOrderLimit() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearOrderLimit()
 	})
 }
 
@@ -1668,6 +1746,34 @@ func (u *CommissionUpsertBulk) UpdateThreshold() *CommissionUpsertBulk {
 func (u *CommissionUpsertBulk) ClearThreshold() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearThreshold()
+	})
+}
+
+// SetOrderLimit sets the "order_limit" field.
+func (u *CommissionUpsertBulk) SetOrderLimit(v uint32) *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetOrderLimit(v)
+	})
+}
+
+// AddOrderLimit adds v to the "order_limit" field.
+func (u *CommissionUpsertBulk) AddOrderLimit(v uint32) *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.AddOrderLimit(v)
+	})
+}
+
+// UpdateOrderLimit sets the "order_limit" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateOrderLimit() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateOrderLimit()
+	})
+}
+
+// ClearOrderLimit clears the value of the "order_limit" field.
+func (u *CommissionUpsertBulk) ClearOrderLimit() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearOrderLimit()
 	})
 }
 

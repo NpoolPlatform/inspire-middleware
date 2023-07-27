@@ -39,6 +39,8 @@ const (
 	FieldSettleInterval = "settle_interval"
 	// FieldThreshold holds the string denoting the threshold field in the database.
 	FieldThreshold = "threshold"
+	// FieldOrderLimit holds the string denoting the order_limit field in the database.
+	FieldOrderLimit = "order_limit"
 	// Table holds the table name of the commission in the database.
 	Table = "commissions"
 )
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldSettleMode,
 	FieldSettleInterval,
 	FieldThreshold,
+	FieldOrderLimit,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -108,6 +111,8 @@ var (
 	DefaultSettleInterval string
 	// DefaultThreshold holds the default value on creation for the "threshold" field.
 	DefaultThreshold decimal.Decimal
+	// DefaultOrderLimit holds the default value on creation for the "order_limit" field.
+	DefaultOrderLimit uint32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

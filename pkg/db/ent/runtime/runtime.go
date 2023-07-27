@@ -271,6 +271,10 @@ func init() {
 	commissionDescThreshold := commissionFields[10].Descriptor()
 	// commission.DefaultThreshold holds the default value on creation for the threshold field.
 	commission.DefaultThreshold = commissionDescThreshold.Default.(decimal.Decimal)
+	// commissionDescOrderLimit is the schema descriptor for order_limit field.
+	commissionDescOrderLimit := commissionFields[11].Descriptor()
+	// commission.DefaultOrderLimit holds the default value on creation for the order_limit field.
+	commission.DefaultOrderLimit = commissionDescOrderLimit.Default.(uint32)
 	// commissionDescID is the schema descriptor for id field.
 	commissionDescID := commissionFields[0].Descriptor()
 	// commission.DefaultID holds the default value on creation for the id field.

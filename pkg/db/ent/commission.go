@@ -43,6 +43,8 @@ type Commission struct {
 	SettleInterval string `json:"settle_interval,omitempty"`
 	// Threshold holds the value of the "threshold" field.
 	Threshold decimal.Decimal `json:"threshold,omitempty"`
+	// OrderLimit holds the value of the "order_limit" field.
+	OrderLimit uint32 `json:"order_limit,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*Commission) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case commission.FieldAmountOrPercent, commission.FieldThreshold:
 			values[i] = new(decimal.Decimal)
-		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt:
+		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt, commission.FieldOrderLimit:
 			values[i] = new(sql.NullInt64)
 		case commission.FieldSettleType, commission.FieldSettleMode, commission.FieldSettleInterval:
 			values[i] = new(sql.NullString)
@@ -157,6 +159,12 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				c.Threshold = *value
 			}
+		case commission.FieldOrderLimit:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field order_limit", values[i])
+			} else if value.Valid {
+				c.OrderLimit = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -223,6 +231,9 @@ func (c *Commission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("threshold=")
 	builder.WriteString(fmt.Sprintf("%v", c.Threshold))
+	builder.WriteString(", ")
+	builder.WriteString("order_limit=")
+	builder.WriteString(fmt.Sprintf("%v", c.OrderLimit))
 	builder.WriteByte(')')
 	return builder.String()
 }

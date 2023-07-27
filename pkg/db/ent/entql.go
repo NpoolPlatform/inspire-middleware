@@ -110,6 +110,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldSettleMode:      {Type: field.TypeString, Column: commission.FieldSettleMode},
 			commission.FieldSettleInterval:  {Type: field.TypeString, Column: commission.FieldSettleInterval},
 			commission.FieldThreshold:       {Type: field.TypeOther, Column: commission.FieldThreshold},
+			commission.FieldOrderLimit:      {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -725,6 +726,11 @@ func (f *CommissionFilter) WhereSettleInterval(p entql.StringP) {
 // WhereThreshold applies the entql other predicate on the threshold field.
 func (f *CommissionFilter) WhereThreshold(p entql.OtherP) {
 	f.Where(p.Field(commission.FieldThreshold))
+}
+
+// WhereOrderLimit applies the entql uint32 predicate on the order_limit field.
+func (f *CommissionFilter) WhereOrderLimit(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldOrderLimit))
 }
 
 // addPredicate implements the predicateAdder interface.

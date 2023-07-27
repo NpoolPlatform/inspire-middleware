@@ -61,7 +61,7 @@ func (Commission) Fields() []ent.Field {
 		field.
 			String("settle_type").
 			Optional().
-			Default(types.SettleType_DefaultSettleType.String()),
+			Default(types.SettleType_NoCommission.String()),
 		field.
 			String("settle_mode").
 			Optional().
@@ -77,6 +77,10 @@ func (Commission) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			Uint32("order_limit").
+			Optional().
+			Default(0),
 	}
 }
 
