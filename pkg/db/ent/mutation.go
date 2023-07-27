@@ -3190,31 +3190,31 @@ func (m *ArchivementGeneralMutation) ResetEdge(name string) error {
 // CommissionMutation represents an operation that mutates the Commission nodes in the graph.
 type CommissionMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uuid.UUID
-	created_at      *uint32
-	addcreated_at   *int32
-	updated_at      *uint32
-	addupdated_at   *int32
-	deleted_at      *uint32
-	adddeleted_at   *int32
-	app_id          *uuid.UUID
-	user_id         *uuid.UUID
-	good_id         *uuid.UUID
-	percent         *decimal.Decimal
-	start_at        *uint32
-	addstart_at     *int32
-	end_at          *uint32
-	addend_at       *int32
-	settle_type     *string
-	settle_mode     *string
-	settle_interval *string
-	threshold       *decimal.Decimal
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*Commission, error)
-	predicates      []predicate.Commission
+	op                Op
+	typ               string
+	id                *uuid.UUID
+	created_at        *uint32
+	addcreated_at     *int32
+	updated_at        *uint32
+	addupdated_at     *int32
+	deleted_at        *uint32
+	adddeleted_at     *int32
+	app_id            *uuid.UUID
+	user_id           *uuid.UUID
+	good_id           *uuid.UUID
+	amount_or_percent *decimal.Decimal
+	start_at          *uint32
+	addstart_at       *int32
+	end_at            *uint32
+	addend_at         *int32
+	settle_type       *string
+	settle_mode       *string
+	settle_interval   *string
+	threshold         *decimal.Decimal
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*Commission, error)
+	predicates        []predicate.Commission
 }
 
 var _ ent.Mutation = (*CommissionMutation)(nil)
@@ -3636,53 +3636,53 @@ func (m *CommissionMutation) ResetGoodID() {
 	delete(m.clearedFields, commission.FieldGoodID)
 }
 
-// SetPercent sets the "percent" field.
-func (m *CommissionMutation) SetPercent(d decimal.Decimal) {
-	m.percent = &d
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (m *CommissionMutation) SetAmountOrPercent(d decimal.Decimal) {
+	m.amount_or_percent = &d
 }
 
-// Percent returns the value of the "percent" field in the mutation.
-func (m *CommissionMutation) Percent() (r decimal.Decimal, exists bool) {
-	v := m.percent
+// AmountOrPercent returns the value of the "amount_or_percent" field in the mutation.
+func (m *CommissionMutation) AmountOrPercent() (r decimal.Decimal, exists bool) {
+	v := m.amount_or_percent
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPercent returns the old "percent" field's value of the Commission entity.
+// OldAmountOrPercent returns the old "amount_or_percent" field's value of the Commission entity.
 // If the Commission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommissionMutation) OldPercent(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *CommissionMutation) OldAmountOrPercent(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPercent is only allowed on UpdateOne operations")
+		return v, errors.New("OldAmountOrPercent is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPercent requires an ID field in the mutation")
+		return v, errors.New("OldAmountOrPercent requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPercent: %w", err)
+		return v, fmt.Errorf("querying old value for OldAmountOrPercent: %w", err)
 	}
-	return oldValue.Percent, nil
+	return oldValue.AmountOrPercent, nil
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (m *CommissionMutation) ClearPercent() {
-	m.percent = nil
-	m.clearedFields[commission.FieldPercent] = struct{}{}
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (m *CommissionMutation) ClearAmountOrPercent() {
+	m.amount_or_percent = nil
+	m.clearedFields[commission.FieldAmountOrPercent] = struct{}{}
 }
 
-// PercentCleared returns if the "percent" field was cleared in this mutation.
-func (m *CommissionMutation) PercentCleared() bool {
-	_, ok := m.clearedFields[commission.FieldPercent]
+// AmountOrPercentCleared returns if the "amount_or_percent" field was cleared in this mutation.
+func (m *CommissionMutation) AmountOrPercentCleared() bool {
+	_, ok := m.clearedFields[commission.FieldAmountOrPercent]
 	return ok
 }
 
-// ResetPercent resets all changes to the "percent" field.
-func (m *CommissionMutation) ResetPercent() {
-	m.percent = nil
-	delete(m.clearedFields, commission.FieldPercent)
+// ResetAmountOrPercent resets all changes to the "amount_or_percent" field.
+func (m *CommissionMutation) ResetAmountOrPercent() {
+	m.amount_or_percent = nil
+	delete(m.clearedFields, commission.FieldAmountOrPercent)
 }
 
 // SetStartAt sets the "start_at" field.
@@ -4059,8 +4059,8 @@ func (m *CommissionMutation) Fields() []string {
 	if m.good_id != nil {
 		fields = append(fields, commission.FieldGoodID)
 	}
-	if m.percent != nil {
-		fields = append(fields, commission.FieldPercent)
+	if m.amount_or_percent != nil {
+		fields = append(fields, commission.FieldAmountOrPercent)
 	}
 	if m.start_at != nil {
 		fields = append(fields, commission.FieldStartAt)
@@ -4100,8 +4100,8 @@ func (m *CommissionMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case commission.FieldGoodID:
 		return m.GoodID()
-	case commission.FieldPercent:
-		return m.Percent()
+	case commission.FieldAmountOrPercent:
+		return m.AmountOrPercent()
 	case commission.FieldStartAt:
 		return m.StartAt()
 	case commission.FieldEndAt:
@@ -4135,8 +4135,8 @@ func (m *CommissionMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUserID(ctx)
 	case commission.FieldGoodID:
 		return m.OldGoodID(ctx)
-	case commission.FieldPercent:
-		return m.OldPercent(ctx)
+	case commission.FieldAmountOrPercent:
+		return m.OldAmountOrPercent(ctx)
 	case commission.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case commission.FieldEndAt:
@@ -4200,12 +4200,12 @@ func (m *CommissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGoodID(v)
 		return nil
-	case commission.FieldPercent:
+	case commission.FieldAmountOrPercent:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPercent(v)
+		m.SetAmountOrPercent(v)
 		return nil
 	case commission.FieldStartAt:
 		v, ok := value.(uint32)
@@ -4351,8 +4351,8 @@ func (m *CommissionMutation) ClearedFields() []string {
 	if m.FieldCleared(commission.FieldGoodID) {
 		fields = append(fields, commission.FieldGoodID)
 	}
-	if m.FieldCleared(commission.FieldPercent) {
-		fields = append(fields, commission.FieldPercent)
+	if m.FieldCleared(commission.FieldAmountOrPercent) {
+		fields = append(fields, commission.FieldAmountOrPercent)
 	}
 	if m.FieldCleared(commission.FieldStartAt) {
 		fields = append(fields, commission.FieldStartAt)
@@ -4395,8 +4395,8 @@ func (m *CommissionMutation) ClearField(name string) error {
 	case commission.FieldGoodID:
 		m.ClearGoodID()
 		return nil
-	case commission.FieldPercent:
-		m.ClearPercent()
+	case commission.FieldAmountOrPercent:
+		m.ClearAmountOrPercent()
 		return nil
 	case commission.FieldStartAt:
 		m.ClearStartAt()
@@ -4442,8 +4442,8 @@ func (m *CommissionMutation) ResetField(name string) error {
 	case commission.FieldGoodID:
 		m.ResetGoodID()
 		return nil
-	case commission.FieldPercent:
-		m.ResetPercent()
+	case commission.FieldAmountOrPercent:
+		m.ResetAmountOrPercent()
 		return nil
 	case commission.FieldStartAt:
 		m.ResetStartAt()

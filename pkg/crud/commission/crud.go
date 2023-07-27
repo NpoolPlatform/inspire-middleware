@@ -13,18 +13,18 @@ import (
 )
 
 type Req struct {
-	ID             *uuid.UUID
-	AppID          *uuid.UUID
-	UserID         *uuid.UUID
-	GoodID         *uuid.UUID
-	Percent        *decimal.Decimal
-	EndAt          *uint32
-	StartAt        *uint32
-	SettleType     *types.SettleType
-	SettleMode     *types.SettleMode
-	SettleInterval *types.SettleInterval
-	Threshold      *decimal.Decimal
-	DeletedAt      *uint32
+	ID              *uuid.UUID
+	AppID           *uuid.UUID
+	UserID          *uuid.UUID
+	GoodID          *uuid.UUID
+	AmountOrPercent *decimal.Decimal
+	EndAt           *uint32
+	StartAt         *uint32
+	SettleType      *types.SettleType
+	SettleMode      *types.SettleMode
+	SettleInterval  *types.SettleInterval
+	Threshold       *decimal.Decimal
+	DeletedAt       *uint32
 }
 
 func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
@@ -40,8 +40,8 @@ func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
 	}
-	if req.Percent != nil {
-		c.SetPercent(*req.Percent)
+	if req.AmountOrPercent != nil {
+		c.SetAmountOrPercent(*req.AmountOrPercent)
 	}
 	if req.StartAt != nil {
 		c.SetStartAt(*req.StartAt)
@@ -63,8 +63,8 @@ func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
 }
 
 func UpdateSet(u *ent.CommissionUpdateOne, req *Req) *ent.CommissionUpdateOne {
-	if req.Percent != nil {
-		u = u.SetPercent(*req.Percent)
+	if req.AmountOrPercent != nil {
+		u = u.SetAmountOrPercent(*req.AmountOrPercent)
 	}
 	if req.StartAt != nil {
 		u = u.SetStartAt(*req.StartAt)

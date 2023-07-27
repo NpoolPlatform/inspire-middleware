@@ -145,23 +145,23 @@ func (cu *CommissionUpdate) ClearGoodID() *CommissionUpdate {
 	return cu
 }
 
-// SetPercent sets the "percent" field.
-func (cu *CommissionUpdate) SetPercent(d decimal.Decimal) *CommissionUpdate {
-	cu.mutation.SetPercent(d)
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (cu *CommissionUpdate) SetAmountOrPercent(d decimal.Decimal) *CommissionUpdate {
+	cu.mutation.SetAmountOrPercent(d)
 	return cu
 }
 
-// SetNillablePercent sets the "percent" field if the given value is not nil.
-func (cu *CommissionUpdate) SetNillablePercent(d *decimal.Decimal) *CommissionUpdate {
+// SetNillableAmountOrPercent sets the "amount_or_percent" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableAmountOrPercent(d *decimal.Decimal) *CommissionUpdate {
 	if d != nil {
-		cu.SetPercent(*d)
+		cu.SetAmountOrPercent(*d)
 	}
 	return cu
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (cu *CommissionUpdate) ClearPercent() *CommissionUpdate {
-	cu.mutation.ClearPercent()
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (cu *CommissionUpdate) ClearAmountOrPercent() *CommissionUpdate {
+	cu.mutation.ClearAmountOrPercent()
 	return cu
 }
 
@@ -478,17 +478,17 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commission.FieldGoodID,
 		})
 	}
-	if value, ok := cu.mutation.Percent(); ok {
+	if value, ok := cu.mutation.AmountOrPercent(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: commission.FieldPercent,
+			Column: commission.FieldAmountOrPercent,
 		})
 	}
-	if cu.mutation.PercentCleared() {
+	if cu.mutation.AmountOrPercentCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: commission.FieldPercent,
+			Column: commission.FieldAmountOrPercent,
 		})
 	}
 	if value, ok := cu.mutation.StartAt(); ok {
@@ -719,23 +719,23 @@ func (cuo *CommissionUpdateOne) ClearGoodID() *CommissionUpdateOne {
 	return cuo
 }
 
-// SetPercent sets the "percent" field.
-func (cuo *CommissionUpdateOne) SetPercent(d decimal.Decimal) *CommissionUpdateOne {
-	cuo.mutation.SetPercent(d)
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (cuo *CommissionUpdateOne) SetAmountOrPercent(d decimal.Decimal) *CommissionUpdateOne {
+	cuo.mutation.SetAmountOrPercent(d)
 	return cuo
 }
 
-// SetNillablePercent sets the "percent" field if the given value is not nil.
-func (cuo *CommissionUpdateOne) SetNillablePercent(d *decimal.Decimal) *CommissionUpdateOne {
+// SetNillableAmountOrPercent sets the "amount_or_percent" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableAmountOrPercent(d *decimal.Decimal) *CommissionUpdateOne {
 	if d != nil {
-		cuo.SetPercent(*d)
+		cuo.SetAmountOrPercent(*d)
 	}
 	return cuo
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (cuo *CommissionUpdateOne) ClearPercent() *CommissionUpdateOne {
-	cuo.mutation.ClearPercent()
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (cuo *CommissionUpdateOne) ClearAmountOrPercent() *CommissionUpdateOne {
+	cuo.mutation.ClearAmountOrPercent()
 	return cuo
 }
 
@@ -1082,17 +1082,17 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 			Column: commission.FieldGoodID,
 		})
 	}
-	if value, ok := cuo.mutation.Percent(); ok {
+	if value, ok := cuo.mutation.AmountOrPercent(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: commission.FieldPercent,
+			Column: commission.FieldAmountOrPercent,
 		})
 	}
-	if cuo.mutation.PercentCleared() {
+	if cuo.mutation.AmountOrPercentCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: commission.FieldPercent,
+			Column: commission.FieldAmountOrPercent,
 		})
 	}
 	if value, ok := cuo.mutation.StartAt(); ok {

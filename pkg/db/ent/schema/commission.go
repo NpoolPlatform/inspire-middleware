@@ -44,7 +44,7 @@ func (Commission) Fields() []ent.Field {
 			Optional().
 			Default(uuid.New),
 		field.
-			Other("percent", decimal.Decimal{}).
+			Other("amount_or_percent", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

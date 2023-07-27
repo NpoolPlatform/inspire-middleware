@@ -122,10 +122,10 @@ func GoodID(v uuid.UUID) predicate.Commission {
 	})
 }
 
-// Percent applies equality check predicate on the "percent" field. It's identical to PercentEQ.
-func Percent(v decimal.Decimal) predicate.Commission {
+// AmountOrPercent applies equality check predicate on the "amount_or_percent" field. It's identical to AmountOrPercentEQ.
+func AmountOrPercent(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPercent), v))
+		s.Where(sql.EQ(s.C(FieldAmountOrPercent), v))
 	})
 }
 
@@ -597,81 +597,81 @@ func GoodIDNotNil() predicate.Commission {
 	})
 }
 
-// PercentEQ applies the EQ predicate on the "percent" field.
-func PercentEQ(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentEQ applies the EQ predicate on the "amount_or_percent" field.
+func AmountOrPercentEQ(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldPercent), v))
+		s.Where(sql.EQ(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentNEQ applies the NEQ predicate on the "percent" field.
-func PercentNEQ(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentNEQ applies the NEQ predicate on the "amount_or_percent" field.
+func AmountOrPercentNEQ(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldPercent), v))
+		s.Where(sql.NEQ(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentIn applies the In predicate on the "percent" field.
-func PercentIn(vs ...decimal.Decimal) predicate.Commission {
+// AmountOrPercentIn applies the In predicate on the "amount_or_percent" field.
+func AmountOrPercentIn(vs ...decimal.Decimal) predicate.Commission {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldPercent), v...))
+		s.Where(sql.In(s.C(FieldAmountOrPercent), v...))
 	})
 }
 
-// PercentNotIn applies the NotIn predicate on the "percent" field.
-func PercentNotIn(vs ...decimal.Decimal) predicate.Commission {
+// AmountOrPercentNotIn applies the NotIn predicate on the "amount_or_percent" field.
+func AmountOrPercentNotIn(vs ...decimal.Decimal) predicate.Commission {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldPercent), v...))
+		s.Where(sql.NotIn(s.C(FieldAmountOrPercent), v...))
 	})
 }
 
-// PercentGT applies the GT predicate on the "percent" field.
-func PercentGT(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentGT applies the GT predicate on the "amount_or_percent" field.
+func AmountOrPercentGT(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldPercent), v))
+		s.Where(sql.GT(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentGTE applies the GTE predicate on the "percent" field.
-func PercentGTE(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentGTE applies the GTE predicate on the "amount_or_percent" field.
+func AmountOrPercentGTE(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldPercent), v))
+		s.Where(sql.GTE(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentLT applies the LT predicate on the "percent" field.
-func PercentLT(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentLT applies the LT predicate on the "amount_or_percent" field.
+func AmountOrPercentLT(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldPercent), v))
+		s.Where(sql.LT(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentLTE applies the LTE predicate on the "percent" field.
-func PercentLTE(v decimal.Decimal) predicate.Commission {
+// AmountOrPercentLTE applies the LTE predicate on the "amount_or_percent" field.
+func AmountOrPercentLTE(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldPercent), v))
+		s.Where(sql.LTE(s.C(FieldAmountOrPercent), v))
 	})
 }
 
-// PercentIsNil applies the IsNil predicate on the "percent" field.
-func PercentIsNil() predicate.Commission {
+// AmountOrPercentIsNil applies the IsNil predicate on the "amount_or_percent" field.
+func AmountOrPercentIsNil() predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPercent)))
+		s.Where(sql.IsNull(s.C(FieldAmountOrPercent)))
 	})
 }
 
-// PercentNotNil applies the NotNil predicate on the "percent" field.
-func PercentNotNil() predicate.Commission {
+// AmountOrPercentNotNil applies the NotNil predicate on the "amount_or_percent" field.
+func AmountOrPercentNotNil() predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPercent)))
+		s.Where(sql.NotNull(s.C(FieldAmountOrPercent)))
 	})
 }
 

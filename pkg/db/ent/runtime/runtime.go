@@ -243,10 +243,10 @@ func init() {
 	commissionDescGoodID := commissionFields[3].Descriptor()
 	// commission.DefaultGoodID holds the default value on creation for the good_id field.
 	commission.DefaultGoodID = commissionDescGoodID.Default.(func() uuid.UUID)
-	// commissionDescPercent is the schema descriptor for percent field.
-	commissionDescPercent := commissionFields[4].Descriptor()
-	// commission.DefaultPercent holds the default value on creation for the percent field.
-	commission.DefaultPercent = commissionDescPercent.Default.(decimal.Decimal)
+	// commissionDescAmountOrPercent is the schema descriptor for amount_or_percent field.
+	commissionDescAmountOrPercent := commissionFields[4].Descriptor()
+	// commission.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
+	commission.DefaultAmountOrPercent = commissionDescAmountOrPercent.Default.(decimal.Decimal)
 	// commissionDescStartAt is the schema descriptor for start_at field.
 	commissionDescStartAt := commissionFields[5].Descriptor()
 	// commission.DefaultStartAt holds the default value on creation for the start_at field.

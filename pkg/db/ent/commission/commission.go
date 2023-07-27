@@ -25,8 +25,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldGoodID holds the string denoting the good_id field in the database.
 	FieldGoodID = "good_id"
-	// FieldPercent holds the string denoting the percent field in the database.
-	FieldPercent = "percent"
+	// FieldAmountOrPercent holds the string denoting the amount_or_percent field in the database.
+	FieldAmountOrPercent = "amount_or_percent"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
@@ -52,7 +52,7 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldGoodID,
-	FieldPercent,
+	FieldAmountOrPercent,
 	FieldStartAt,
 	FieldEndAt,
 	FieldSettleType,
@@ -94,8 +94,8 @@ var (
 	DefaultUserID func() uuid.UUID
 	// DefaultGoodID holds the default value on creation for the "good_id" field.
 	DefaultGoodID func() uuid.UUID
-	// DefaultPercent holds the default value on creation for the "percent" field.
-	DefaultPercent decimal.Decimal
+	// DefaultAmountOrPercent holds the default value on creation for the "amount_or_percent" field.
+	DefaultAmountOrPercent decimal.Decimal
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
 	// DefaultEndAt holds the default value on creation for the "end_at" field.

@@ -29,8 +29,8 @@ type Commission struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// GoodID holds the value of the "good_id" field.
 	GoodID uuid.UUID `json:"good_id,omitempty"`
-	// Percent holds the value of the "percent" field.
-	Percent decimal.Decimal `json:"percent,omitempty"`
+	// AmountOrPercent holds the value of the "amount_or_percent" field.
+	AmountOrPercent decimal.Decimal `json:"amount_or_percent,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
 	// EndAt holds the value of the "end_at" field.
@@ -50,7 +50,7 @@ func (*Commission) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case commission.FieldPercent, commission.FieldThreshold:
+		case commission.FieldAmountOrPercent, commission.FieldThreshold:
 			values[i] = new(decimal.Decimal)
 		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt:
 			values[i] = new(sql.NullInt64)
@@ -115,11 +115,11 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				c.GoodID = *value
 			}
-		case commission.FieldPercent:
+		case commission.FieldAmountOrPercent:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field percent", values[i])
+				return fmt.Errorf("unexpected type %T for field amount_or_percent", values[i])
 			} else if value != nil {
-				c.Percent = *value
+				c.AmountOrPercent = *value
 			}
 		case commission.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -203,8 +203,8 @@ func (c *Commission) String() string {
 	builder.WriteString("good_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.GoodID))
 	builder.WriteString(", ")
-	builder.WriteString("percent=")
-	builder.WriteString(fmt.Sprintf("%v", c.Percent))
+	builder.WriteString("amount_or_percent=")
+	builder.WriteString(fmt.Sprintf("%v", c.AmountOrPercent))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", c.StartAt))

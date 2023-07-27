@@ -108,16 +108,16 @@ func (cc *CommissionCreate) SetNillableGoodID(u *uuid.UUID) *CommissionCreate {
 	return cc
 }
 
-// SetPercent sets the "percent" field.
-func (cc *CommissionCreate) SetPercent(d decimal.Decimal) *CommissionCreate {
-	cc.mutation.SetPercent(d)
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (cc *CommissionCreate) SetAmountOrPercent(d decimal.Decimal) *CommissionCreate {
+	cc.mutation.SetAmountOrPercent(d)
 	return cc
 }
 
-// SetNillablePercent sets the "percent" field if the given value is not nil.
-func (cc *CommissionCreate) SetNillablePercent(d *decimal.Decimal) *CommissionCreate {
+// SetNillableAmountOrPercent sets the "amount_or_percent" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableAmountOrPercent(d *decimal.Decimal) *CommissionCreate {
 	if d != nil {
-		cc.SetPercent(*d)
+		cc.SetAmountOrPercent(*d)
 	}
 	return cc
 }
@@ -341,9 +341,9 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultGoodID()
 		cc.mutation.SetGoodID(v)
 	}
-	if _, ok := cc.mutation.Percent(); !ok {
-		v := commission.DefaultPercent
-		cc.mutation.SetPercent(v)
+	if _, ok := cc.mutation.AmountOrPercent(); !ok {
+		v := commission.DefaultAmountOrPercent
+		cc.mutation.SetAmountOrPercent(v)
 	}
 	if _, ok := cc.mutation.StartAt(); !ok {
 		v := commission.DefaultStartAt
@@ -475,13 +475,13 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 		})
 		_node.GoodID = value
 	}
-	if value, ok := cc.mutation.Percent(); ok {
+	if value, ok := cc.mutation.AmountOrPercent(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: commission.FieldPercent,
+			Column: commission.FieldAmountOrPercent,
 		})
-		_node.Percent = value
+		_node.AmountOrPercent = value
 	}
 	if value, ok := cc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -693,21 +693,21 @@ func (u *CommissionUpsert) ClearGoodID() *CommissionUpsert {
 	return u
 }
 
-// SetPercent sets the "percent" field.
-func (u *CommissionUpsert) SetPercent(v decimal.Decimal) *CommissionUpsert {
-	u.Set(commission.FieldPercent, v)
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (u *CommissionUpsert) SetAmountOrPercent(v decimal.Decimal) *CommissionUpsert {
+	u.Set(commission.FieldAmountOrPercent, v)
 	return u
 }
 
-// UpdatePercent sets the "percent" field to the value that was provided on create.
-func (u *CommissionUpsert) UpdatePercent() *CommissionUpsert {
-	u.SetExcluded(commission.FieldPercent)
+// UpdateAmountOrPercent sets the "amount_or_percent" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateAmountOrPercent() *CommissionUpsert {
+	u.SetExcluded(commission.FieldAmountOrPercent)
 	return u
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (u *CommissionUpsert) ClearPercent() *CommissionUpsert {
-	u.SetNull(commission.FieldPercent)
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (u *CommissionUpsert) ClearAmountOrPercent() *CommissionUpsert {
+	u.SetNull(commission.FieldAmountOrPercent)
 	return u
 }
 
@@ -1007,24 +1007,24 @@ func (u *CommissionUpsertOne) ClearGoodID() *CommissionUpsertOne {
 	})
 }
 
-// SetPercent sets the "percent" field.
-func (u *CommissionUpsertOne) SetPercent(v decimal.Decimal) *CommissionUpsertOne {
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (u *CommissionUpsertOne) SetAmountOrPercent(v decimal.Decimal) *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.SetPercent(v)
+		s.SetAmountOrPercent(v)
 	})
 }
 
-// UpdatePercent sets the "percent" field to the value that was provided on create.
-func (u *CommissionUpsertOne) UpdatePercent() *CommissionUpsertOne {
+// UpdateAmountOrPercent sets the "amount_or_percent" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateAmountOrPercent() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.UpdatePercent()
+		s.UpdateAmountOrPercent()
 	})
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (u *CommissionUpsertOne) ClearPercent() *CommissionUpsertOne {
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (u *CommissionUpsertOne) ClearAmountOrPercent() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.ClearPercent()
+		s.ClearAmountOrPercent()
 	})
 }
 
@@ -1510,24 +1510,24 @@ func (u *CommissionUpsertBulk) ClearGoodID() *CommissionUpsertBulk {
 	})
 }
 
-// SetPercent sets the "percent" field.
-func (u *CommissionUpsertBulk) SetPercent(v decimal.Decimal) *CommissionUpsertBulk {
+// SetAmountOrPercent sets the "amount_or_percent" field.
+func (u *CommissionUpsertBulk) SetAmountOrPercent(v decimal.Decimal) *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.SetPercent(v)
+		s.SetAmountOrPercent(v)
 	})
 }
 
-// UpdatePercent sets the "percent" field to the value that was provided on create.
-func (u *CommissionUpsertBulk) UpdatePercent() *CommissionUpsertBulk {
+// UpdateAmountOrPercent sets the "amount_or_percent" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateAmountOrPercent() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.UpdatePercent()
+		s.UpdateAmountOrPercent()
 	})
 }
 
-// ClearPercent clears the value of the "percent" field.
-func (u *CommissionUpsertBulk) ClearPercent() *CommissionUpsertBulk {
+// ClearAmountOrPercent clears the value of the "amount_or_percent" field.
+func (u *CommissionUpsertBulk) ClearAmountOrPercent() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.ClearPercent()
+		s.ClearAmountOrPercent()
 	})
 }
 
