@@ -9,9 +9,9 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
-	registration "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -139,7 +139,14 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 }
 
 func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, error) {
-	_, inviterIDs, err := registration.GetInviters(ctx, h.AppID.String(), h.UserID.String())
+	handler, err := registration1.NewHandler(ctx)
+	if err != nil {
+		return nil, err
+	}
+	handler.AppID = h.AppID
+	handler.InviteeID = h.UserID
+
+	_, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
 		return nil, err
 	}

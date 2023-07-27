@@ -5,17 +5,14 @@ import (
 	"fmt"
 	"strings"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
-
-	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db"
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
-	entreg "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/registration"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
-	crud "github.com/NpoolPlatform/inspire-manager/pkg/crud/invitation/registration"
+	"github.com/google/uuid"
 )
 
 func CreateSuperiorProcedure(ctx context.Context) error {
@@ -52,62 +49,78 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 	return nil
 }
 
-func GetSuperiores(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.Registration, uint32, error) {
-	var infos []*mgrpb.Registration
-	var total uint32
-
-	rawClient, err := db.Client()
-	if err != nil {
-		return nil, 0, err
+func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
+	if h.Conds.InviteeIDs == nil {
+		return fmt.Errorf("invalid inviteeids")
 	}
 
-	inviteeIDs := strings.Join(conds.GetInviteeIDs().GetValue(), ",")
-	rows, err := rawClient.QueryContext(ctx, fmt.Sprintf("CALL get_superiores(\"%v\")", inviteeIDs))
-	if err != nil {
-		return nil, 0, err
+	inviteeIDs, ok := h.Conds.InviteeIDs.Val.([]uuid.UUID)
+	if !ok {
+		return fmt.Errorf("invalid inviteeids")
 	}
-	defer rows.Close()
-
-	superiores := ""
-	for rows.Next() {
-		if err := rows.Scan(&superiores); err != nil {
-			return nil, 0, err
+	_inviteeIDs := ""
+	for _, id := range inviteeIDs {
+		if _inviteeIDs != "" {
+			_inviteeIDs = fmt.Sprintf("%v,", _inviteeIDs)
 		}
+		_inviteeIDs = fmt.Sprintf("%v%v", _inviteeIDs, id)
 	}
 
-	_inviteeIDs := strings.Split(superiores, ",")
-	conds.InviteeIDs.Value = _inviteeIDs
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := crud.SetQueryConds(conds, cli)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		rows, err := cli.QueryContext(
+			ctx,
+			fmt.Sprintf("CALL get_superiores(\"%v\")", _inviteeIDs),
+		)
 		if err != nil {
 			return err
 		}
+		defer rows.Close()
 
-		_total, err := stm.Count(ctx)
-		if err != nil {
+		subordinates := ""
+		for rows.Next() {
+			if err := rows.Scan(&subordinates); err != nil {
+				return err
+			}
+		}
+
+		__inviteeIDs := strings.Split(subordinates, ",")
+		for _, id := range __inviteeIDs {
+			_id, err := uuid.Parse(id)
+			if err != nil {
+				return err
+			}
+			inviteeIDs = append(inviteeIDs, _id)
+		}
+		return nil
+	})
+
+	h.Conds.InviteeIDs.Val = inviteeIDs
+
+	return nil
+}
+
+func (h *Handler) GetSuperiores(ctx context.Context) ([]*npool.Registration, uint32, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Registration{},
+	}
+
+	if err := handler.getInviteeIDs(ctx); err != nil {
+		return nil, 0, err
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryRegistrations(_ctx, cli); err != nil {
 			return err
 		}
-		total = uint32(_total)
-
-		return stm.
-			Offset(int(offset)).
-			Limit(int(limit)).
-			Select(
-				entreg.FieldID,
-				entreg.FieldAppID,
-				entreg.FieldInviterID,
-				entreg.FieldInviteeID,
-				entreg.FieldCreatedAt,
-				entreg.FieldUpdatedAt,
-			).
-			Modify(func(s *sql.Selector) {
-			}).
-			Scan(ctx, &infos)
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
+		return handler.scan(_ctx)
 	})
 	if err != nil {
 		return nil, 0, err
 	}
 
-	return infos, total, nil
+	return handler.infos, handler.total, nil
 }

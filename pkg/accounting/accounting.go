@@ -14,7 +14,7 @@ import (
 	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
 
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
-	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	commonpb "github.com/NpoolPlatform/message/npool"
@@ -36,7 +36,16 @@ func Accounting(
 	[]*npool.Commission,
 	error,
 ) {
-	inviters, inviterIDs, err := registration1.GetInviters(ctx, appID, userID)
+	handler, err := registration1.NewHandler(
+		ctx,
+		registration1.WithAppID(&appID),
+		registration1.WithInviteeID(&userID),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	inviters, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
 		return nil, err
 	}

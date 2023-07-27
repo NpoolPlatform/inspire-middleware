@@ -8,7 +8,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-manager/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/api"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
 

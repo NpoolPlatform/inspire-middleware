@@ -13,7 +13,7 @@ import (
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
-	registra1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 	"github.com/shopspring/decimal"
@@ -209,15 +209,15 @@ var _comm6 = commmwpb.CommissionReq{
 
 //nolint
 func accounting(t *testing.T) {
-	_, err := registra1.CreateRegistration(context.Background(), &_reg1)
+	_, err := registration1.CreateRegistration(context.Background(), &_reg1)
 	assert.Nil(t, err)
-	_, err = registra1.CreateRegistration(context.Background(), &_reg2)
+	_, err = registration1.CreateRegistration(context.Background(), &_reg2)
 	assert.Nil(t, err)
-	_, err = registra1.CreateRegistration(context.Background(), &_reg3)
+	_, err = registration1.CreateRegistration(context.Background(), &_reg3)
 	assert.Nil(t, err)
-	_, err = registra1.CreateRegistration(context.Background(), &_reg4)
+	_, err = registration1.CreateRegistration(context.Background(), &_reg4)
 	assert.Nil(t, err)
-	_, err = registra1.CreateRegistration(context.Background(), &_reg5)
+	_, err = registration1.CreateRegistration(context.Background(), &_reg5)
 	assert.Nil(t, err)
 
 	_, err = commission1.CreateCommission(context.Background(), &_comm1)

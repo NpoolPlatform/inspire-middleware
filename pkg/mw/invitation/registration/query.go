@@ -8,8 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entregistration "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 
-	// registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
-	// "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 )
 
@@ -29,6 +28,20 @@ func (h *queryHandler) queryRegistration(cli *ent.Client) {
 			entregistration.DeletedAt(0),
 		).
 		Select()
+}
+
+func (h *queryHandler) queryRegistrations(ctx context.Context, cli *ent.Client) error {
+	stm, err := registrationcrud.SetQueryConds(cli.Registration.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+	h.stmSelect = stm.Select()
+	return nil
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -63,5 +76,23 @@ func (h *Handler) GetRegistration(ctx context.Context) (*npool.Registration, err
 }
 
 func (h *Handler) GetRegistrations(ctx context.Context) ([]*npool.Registration, uint32, error) {
-	return nil, 0, nil
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Registration{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryRegistrations(ctx, cli); err != nil {
+			return err
+		}
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return handler.infos, handler.total, nil
 }

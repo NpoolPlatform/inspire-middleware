@@ -19,7 +19,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 			"CreateCoupon",
 			"In", in,
 		)
-		return &npool.CreateCouponResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.CreateCouponResponse{}, status.Error(codes.Aborted, "invalid info")
 	}
 	handler, err := coupon1.NewHandler(
 		ctx,
@@ -45,7 +45,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.CreateCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.CreateCoupon(ctx)
@@ -55,7 +55,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.CreateCouponResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.CreateCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.CreateCouponResponse{

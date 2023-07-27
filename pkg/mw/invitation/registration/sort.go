@@ -4,33 +4,40 @@ import (
 	"context"
 	"fmt"
 
-	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
-
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
+	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
-	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
+	"github.com/google/uuid"
 )
 
-func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registration, []string, error) { //nolint
-	offset := int32(0)
-	const limit = int32(100)
+func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration, []string, error) { //nolint
+	if h.AppID == nil {
+		return nil, nil, fmt.Errorf("invalid appid")
+	}
+	if h.InviteeID == nil {
+		return nil, nil, fmt.Errorf("invalid inviteeid")
+	}
 
-	inviters := []*regmgrpb.Registration{}
+	h.Limit = constant.DefaultRowLimit
+	h.Offset = 0
+	h.Conds = &registrationcrud.Conds{
+		AppID:      &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+		InviteeIDs: &cruder.Cond{Op: cruder.IN, Val: []uuid.UUID{*h.InviteeID}},
+	}
+
+	inviters := []*npool.Registration{}
 	for {
-		_inviters, _, err := GetSuperiores(ctx, &regmgrpb.Conds{
-			AppID:      &commonpb.StringVal{Op: cruder.EQ, Value: appID},
-			InviteeIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: []string{userID}},
-		}, offset, limit)
+		_inviters, _, err := h.GetSuperiores(ctx)
 		if err != nil {
 			return nil, nil, err
 		}
 		if len(_inviters) == 0 {
 			break
 		}
-
 		inviters = append(inviters, _inviters...)
-		offset += limit
+		h.Offset += h.Limit
 	}
 
 	inviteeMap := map[string]struct{}{}
@@ -39,7 +46,7 @@ func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registr
 	}
 
 	inviterCount := len(inviters)
-	_inviters := []*regmgrpb.Registration{}
+	_inviters := []*npool.Registration{}
 
 	for i, inviter := range inviters {
 		_, ok := inviteeMap[inviter.InviterID]
@@ -51,10 +58,10 @@ func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registr
 	}
 
 	if inviterCount == 0 {
-		_inviters = append(_inviters, &regmgrpb.Registration{
-			AppID:     appID,
-			InviterID: uuid1.InvalidUUIDStr,
-			InviteeID: userID,
+		_inviters = append(_inviters, &npool.Registration{
+			AppID:     h.AppID.String(),
+			InviterID: uuid.Nil.String(),
+			InviteeID: h.InviteeID.String(),
 		})
 	}
 
@@ -84,7 +91,7 @@ func GetInviters(ctx context.Context, appID, userID string) ([]*regmgrpb.Registr
 		}
 	}
 
-	inviterIDs := []string{userID}
+	inviterIDs := []string{h.InviteeID.String()}
 	if inviterCount > 0 {
 		inviterIDs = []string{_inviters[0].InviterID}
 		for _, inviter := range _inviters {

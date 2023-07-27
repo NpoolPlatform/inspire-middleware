@@ -3,28 +3,44 @@ package registration
 import (
 	"context"
 
-	mgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/invitation/registration"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	"github.com/google/uuid"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) DeleteRegistration(
-	ctx context.Context,
-	in *npool.DeleteRegistrationRequest,
-) (
-	*npool.DeleteRegistrationResponse,
-	error,
-) {
-	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
+func (s *Server) DeleteRegistration(ctx context.Context, in *npool.DeleteRegistrationRequest) (*npool.DeleteRegistrationResponse, error) {
+	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteRegistration",
+			"In", in,
+		)
+		return &npool.DeleteRegistrationResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+	}
+	handler, err := registration1.NewHandler(
+		ctx,
+		registration1.WithID(req.ID),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteRegistration",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.DeleteRegistrationResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := mgrcli.DeleteRegistration(ctx, in.GetInfo().GetID())
+	info, err := handler.DeleteRegistration(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteRegistration",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.DeleteRegistrationResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

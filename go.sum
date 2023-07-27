@@ -59,12 +59,6 @@ github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451 h1:P
 github.com/NpoolPlatform/inspire-manager v0.0.0-20230412114817-b7ac837bf451/go.mod h1:NOvmcUqSDPfpCDRfspmNvLm2m12zPMWXFCPonARkNJA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb h1:IAQOJ0xQWdJS1BnimNdM6GZMLgTL/FnIa8C8K4xffUA=
 github.com/NpoolPlatform/libent-cruder v0.0.0-20221109023947-366125b690fb/go.mod h1:zvvqlRwbOdTUauPQ9dFDhDuxa91ILV0CQfVdPBZj+eA=
-github.com/NpoolPlatform/message v0.0.0-20230726112702-167d731dab30 h1:8Vy5AchQdoYINCloeAVdWdJM4rxgWulXRkDHoRb0Ehw=
-github.com/NpoolPlatform/message v0.0.0-20230726112702-167d731dab30/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
-github.com/NpoolPlatform/message v0.0.0-20230726122811-39b21aeb713e h1:a70Fx2Z5utklrIjPewRtW2RPByvuR7H8nh0i8wwvjw8=
-github.com/NpoolPlatform/message v0.0.0-20230726122811-39b21aeb713e/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
-github.com/NpoolPlatform/message v0.0.0-20230726131708-31adebb9b480 h1:nhgiC+EQacVqHRy9o4M30myRi+mJszEmxu+pt8STXos=
-github.com/NpoolPlatform/message v0.0.0-20230726131708-31adebb9b480/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
 github.com/NpoolPlatform/message v0.0.0-20230727020943-5ff18a105cfb h1:9qKICBc9Pan0vSBScFxnBPD8RZ0B5lEDpDI7DiaVIvU=
 github.com/NpoolPlatform/message v0.0.0-20230727020943-5ff18a105cfb/go.mod h1:PxJpF0vSSOke+NJskbRBRQ2fK2K3SRe8zaEja+GxSHk=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=

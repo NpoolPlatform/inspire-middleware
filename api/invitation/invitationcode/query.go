@@ -2,57 +2,38 @@ package invitationcode
 
 import (
 	"context"
-	"fmt"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
+	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
-
-	ivcode "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/invitationcode"
-
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
-
-	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func ValidateConds(conds *mgrpb.Conds) error {
-	if conds.AppID != nil {
-		if _, err := uuid.Parse(conds.GetAppID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.UserID != nil {
-		if _, err := uuid.Parse(conds.GetUserID().GetValue()); err != nil {
-			return err
-		}
-	}
-	if conds.InvitationCode != nil && conds.GetInvitationCode().GetValue() == "" {
-		return fmt.Errorf("invalid invitation code")
-	}
-	for _, id := range conds.GetUserIDs().GetValue() {
-		if _, err := uuid.Parse(id); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *Server) GetInvitationCode(
-	ctx context.Context,
-	in *npool.GetInvitationCodeRequest,
-) (
-	*npool.GetInvitationCodeResponse,
-	error,
-) {
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		return &npool.GetInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	info, err := ivcode.GetInvitationCode(ctx, in.GetID())
+func (s *Server) GetInvitationCode(ctx context.Context, in *npool.GetInvitationCodeRequest) (*npool.GetInvitationCodeResponse, error) {
+	handler, err := invitationcode1.NewHandler(
+		ctx,
+		invitationcode1.WithID(&in.ID),
+	)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetInvitationCode",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	info, err := handler.GetInvitationCode(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetInvitationCode",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.GetInvitationCodeResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetInvitationCodeResponse{
@@ -60,50 +41,34 @@ func (s *Server) GetInvitationCode(
 	}, nil
 }
 
-func (s *Server) GetInvitationCodes(
-	ctx context.Context,
-	in *npool.GetInvitationCodesRequest,
-) (
-	*npool.GetInvitationCodesResponse,
-	error,
-) {
-	if err := ValidateConds(in.GetConds()); err != nil {
-		return &npool.GetInvitationCodesResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	limit := constant.DefaultRowLimit
-	if in.GetLimit() > 0 {
-		limit = in.GetLimit()
-	}
-
-	infos, total, err := ivcode.GetInvitationCodes(ctx, in.GetConds(), in.GetOffset(), limit)
+func (s *Server) GetInvitationCodes(ctx context.Context, in *npool.GetInvitationCodesRequest) (*npool.GetInvitationCodesResponse, error) {
+	handler, err := invitationcode1.NewHandler(
+		ctx,
+		invitationcode1.WithConds(in.GetConds()),
+		invitationcode1.WithOffset(in.GetOffset()),
+		invitationcode1.WithLimit(in.GetLimit()),
+	)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetInvitationCodes",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetInvitationCodesResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, total, err := handler.GetInvitationCodes(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetInvitationCodes",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.GetInvitationCodesResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetInvitationCodesResponse{
 		Infos: infos,
 		Total: total,
-	}, nil
-}
-
-func (s *Server) GetInvitationCodeOnly(
-	ctx context.Context,
-	in *npool.GetInvitationCodeOnlyRequest,
-) (
-	*npool.GetInvitationCodeOnlyResponse,
-	error,
-) {
-	if err := ValidateConds(in.GetConds()); err != nil {
-		return &npool.GetInvitationCodeOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	info, err := ivcode.GetInvitationCodeOnly(ctx, in.GetConds())
-	if err != nil {
-		return &npool.GetInvitationCodeOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	return &npool.GetInvitationCodeOnlyResponse{
-		Info: info,
 	}, nil
 }
