@@ -42,7 +42,9 @@ func (Commission) Fields() []ent.Field {
 		field.
 			UUID("good_id", uuid.UUID{}).
 			Optional().
-			Default(uuid.New),
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
 			Other("amount_or_percent", decimal.Decimal{}).
 			SchemaType(map[string]string{

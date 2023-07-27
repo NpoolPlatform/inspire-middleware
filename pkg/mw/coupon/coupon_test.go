@@ -55,7 +55,7 @@ func setup(t *testing.T) func(*testing.T) {
 	return func(*testing.T) {}
 }
 
-func creatCoupon(t *testing.T) {
+func createCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID),
@@ -160,7 +160,7 @@ func TestCoupon(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
-	t.Run("creatCoupon", creatCoupon)
+	t.Run("createCoupon", createCoupon)
 	t.Run("updateCoupon", updateCoupon)
 	t.Run("getCoupon", getCoupon)
 	t.Run("getCoupons", getCoupons)
