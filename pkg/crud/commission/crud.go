@@ -69,9 +69,6 @@ func UpdateSet(u *ent.CommissionUpdateOne, req *Req) *ent.CommissionUpdateOne {
 	if req.StartAt != nil {
 		u = u.SetStartAt(*req.StartAt)
 	}
-	if req.EndAt != nil {
-		u = u.SetEndAt(*req.EndAt)
-	}
 	if req.DeletedAt != nil {
 		u = u.SetDeletedAt(*req.DeletedAt)
 	}
