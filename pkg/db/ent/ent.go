@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
@@ -45,6 +46,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		archivementdetail.Table:     archivementdetail.ValidColumn,
 		archivementgeneral.Table:    archivementgeneral.ValidColumn,
+		commission.Table:            commission.ValidColumn,
 		coupon.Table:                coupon.ValidColumn,
 		couponallocated.Table:       couponallocated.ValidColumn,
 		coupondiscount.Table:        coupondiscount.ValidColumn,

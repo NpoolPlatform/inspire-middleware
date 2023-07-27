@@ -5,6 +5,7 @@ package ent
 import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
@@ -25,7 +26,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 13)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 14)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   archivementdetail.Table,
@@ -87,6 +88,31 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   commission.Table,
+			Columns: commission.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: commission.FieldID,
+			},
+		},
+		Type: "Commission",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			commission.FieldCreatedAt:      {Type: field.TypeUint32, Column: commission.FieldCreatedAt},
+			commission.FieldUpdatedAt:      {Type: field.TypeUint32, Column: commission.FieldUpdatedAt},
+			commission.FieldDeletedAt:      {Type: field.TypeUint32, Column: commission.FieldDeletedAt},
+			commission.FieldAppID:          {Type: field.TypeUUID, Column: commission.FieldAppID},
+			commission.FieldUserID:         {Type: field.TypeUUID, Column: commission.FieldUserID},
+			commission.FieldGoodID:         {Type: field.TypeUUID, Column: commission.FieldGoodID},
+			commission.FieldPercent:        {Type: field.TypeOther, Column: commission.FieldPercent},
+			commission.FieldStartAt:        {Type: field.TypeUint32, Column: commission.FieldStartAt},
+			commission.FieldEndAt:          {Type: field.TypeUint32, Column: commission.FieldEndAt},
+			commission.FieldSettleType:     {Type: field.TypeString, Column: commission.FieldSettleType},
+			commission.FieldSettleMode:     {Type: field.TypeString, Column: commission.FieldSettleMode},
+			commission.FieldSettleInterval: {Type: field.TypeString, Column: commission.FieldSettleInterval},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -116,7 +142,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldCouponConstraint: {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponallocated.Table,
 			Columns: couponallocated.Columns,
@@ -140,7 +166,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldStartAt:       {Type: field.TypeUint32, Column: couponallocated.FieldStartAt},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   coupondiscount.Table,
 			Columns: coupondiscount.Columns,
@@ -165,7 +191,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupondiscount.FieldAllocated:        {Type: field.TypeUint32, Column: coupondiscount.FieldAllocated},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponfixamount.Table,
 			Columns: couponfixamount.Columns,
@@ -190,7 +216,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponfixamount.FieldAllocated:        {Type: field.TypeUint32, Column: couponfixamount.FieldAllocated},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponspecialoffer.Table,
 			Columns: couponspecialoffer.Columns,
@@ -213,7 +239,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponspecialoffer.FieldMessage:          {Type: field.TypeString, Column: couponspecialoffer.FieldMessage},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   event.Table,
 			Columns: event.Columns,
@@ -237,7 +263,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldInviterLayers:  {Type: field.TypeUint32, Column: event.FieldInviterLayers},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   goodorderpercent.Table,
 			Columns: goodorderpercent.Columns,
@@ -259,7 +285,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			goodorderpercent.FieldEndAt:     {Type: field.TypeUint32, Column: goodorderpercent.FieldEndAt},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   goodordervaluepercent.Table,
 			Columns: goodordervaluepercent.Columns,
@@ -281,7 +307,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			goodordervaluepercent.FieldEndAt:     {Type: field.TypeUint32, Column: goodordervaluepercent.FieldEndAt},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
@@ -301,7 +327,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -322,7 +348,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[12] = &sqlgraph.Node{
+	graph.Nodes[13] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -596,6 +622,106 @@ func (f *ArchivementGeneralFilter) WhereSelfCommission(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (cq *CommissionQuery) addPredicate(pred func(s *sql.Selector)) {
+	cq.predicates = append(cq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CommissionQuery builder.
+func (cq *CommissionQuery) Filter() *CommissionFilter {
+	return &CommissionFilter{config: cq.config, predicateAdder: cq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CommissionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CommissionMutation builder.
+func (m *CommissionMutation) Filter() *CommissionFilter {
+	return &CommissionFilter{config: m.config, predicateAdder: m}
+}
+
+// CommissionFilter provides a generic filtering capability at runtime for CommissionQuery.
+type CommissionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CommissionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *CommissionFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(commission.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CommissionFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CommissionFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CommissionFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldDeletedAt))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CommissionFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(commission.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *CommissionFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(commission.FieldUserID))
+}
+
+// WhereGoodID applies the entql [16]byte predicate on the good_id field.
+func (f *CommissionFilter) WhereGoodID(p entql.ValueP) {
+	f.Where(p.Field(commission.FieldGoodID))
+}
+
+// WherePercent applies the entql other predicate on the percent field.
+func (f *CommissionFilter) WherePercent(p entql.OtherP) {
+	f.Where(p.Field(commission.FieldPercent))
+}
+
+// WhereStartAt applies the entql uint32 predicate on the start_at field.
+func (f *CommissionFilter) WhereStartAt(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldStartAt))
+}
+
+// WhereEndAt applies the entql uint32 predicate on the end_at field.
+func (f *CommissionFilter) WhereEndAt(p entql.Uint32P) {
+	f.Where(p.Field(commission.FieldEndAt))
+}
+
+// WhereSettleType applies the entql string predicate on the settle_type field.
+func (f *CommissionFilter) WhereSettleType(p entql.StringP) {
+	f.Where(p.Field(commission.FieldSettleType))
+}
+
+// WhereSettleMode applies the entql string predicate on the settle_mode field.
+func (f *CommissionFilter) WhereSettleMode(p entql.StringP) {
+	f.Where(p.Field(commission.FieldSettleMode))
+}
+
+// WhereSettleInterval applies the entql string predicate on the settle_interval field.
+func (f *CommissionFilter) WhereSettleInterval(p entql.StringP) {
+	f.Where(p.Field(commission.FieldSettleInterval))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (cq *CouponQuery) addPredicate(pred func(s *sql.Selector)) {
 	cq.predicates = append(cq.predicates, pred)
 }
@@ -624,7 +750,7 @@ type CouponFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -754,7 +880,7 @@ type CouponAllocatedFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponAllocatedFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -849,7 +975,7 @@ type CouponDiscountFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponDiscountFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -949,7 +1075,7 @@ type CouponFixAmountFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponFixAmountFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1049,7 +1175,7 @@ type CouponSpecialOfferFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponSpecialOfferFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1139,7 +1265,7 @@ type EventFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EventFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1234,7 +1360,7 @@ type GoodOrderPercentFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GoodOrderPercentFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1319,7 +1445,7 @@ type GoodOrderValuePercentFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GoodOrderValuePercentFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1404,7 +1530,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1479,7 +1605,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1559,7 +1685,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

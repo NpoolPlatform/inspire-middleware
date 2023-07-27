@@ -30,6 +30,7 @@ type config struct {
 type hooks struct {
 	ArchivementDetail     []ent.Hook
 	ArchivementGeneral    []ent.Hook
+	Commission            []ent.Hook
 	Coupon                []ent.Hook
 	CouponAllocated       []ent.Hook
 	CouponDiscount        []ent.Hook

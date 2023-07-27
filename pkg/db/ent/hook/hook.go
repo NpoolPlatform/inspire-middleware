@@ -35,6 +35,19 @@ func (f ArchivementGeneralFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return f(ctx, mv)
 }
 
+// The CommissionFunc type is an adapter to allow the use of ordinary
+// function as Commission mutator.
+type CommissionFunc func(context.Context, *ent.CommissionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CommissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CommissionMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommissionMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CouponFunc type is an adapter to allow the use of ordinary
 // function as Coupon mutator.
 type CouponFunc func(context.Context, *ent.CouponMutation) (ent.Value, error)

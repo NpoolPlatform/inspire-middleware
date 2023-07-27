@@ -13,6 +13,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
@@ -38,6 +39,8 @@ type Client struct {
 	ArchivementDetail *ArchivementDetailClient
 	// ArchivementGeneral is the client for interacting with the ArchivementGeneral builders.
 	ArchivementGeneral *ArchivementGeneralClient
+	// Commission is the client for interacting with the Commission builders.
+	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
 	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
@@ -75,6 +78,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.ArchivementDetail = NewArchivementDetailClient(c.config)
 	c.ArchivementGeneral = NewArchivementGeneralClient(c.config)
+	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
 	c.CouponDiscount = NewCouponDiscountClient(c.config)
@@ -121,6 +125,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:                cfg,
 		ArchivementDetail:     NewArchivementDetailClient(cfg),
 		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
 		CouponDiscount:        NewCouponDiscountClient(cfg),
@@ -153,6 +158,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:                cfg,
 		ArchivementDetail:     NewArchivementDetailClient(cfg),
 		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
 		CouponDiscount:        NewCouponDiscountClient(cfg),
@@ -195,6 +201,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.ArchivementDetail.Use(hooks...)
 	c.ArchivementGeneral.Use(hooks...)
+	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
 	c.CouponDiscount.Use(hooks...)
@@ -388,6 +395,97 @@ func (c *ArchivementGeneralClient) GetX(ctx context.Context, id uuid.UUID) *Arch
 func (c *ArchivementGeneralClient) Hooks() []Hook {
 	hooks := c.hooks.ArchivementGeneral
 	return append(hooks[:len(hooks):len(hooks)], archivementgeneral.Hooks[:]...)
+}
+
+// CommissionClient is a client for the Commission schema.
+type CommissionClient struct {
+	config
+}
+
+// NewCommissionClient returns a client for the Commission from the given config.
+func NewCommissionClient(c config) *CommissionClient {
+	return &CommissionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `commission.Hooks(f(g(h())))`.
+func (c *CommissionClient) Use(hooks ...Hook) {
+	c.hooks.Commission = append(c.hooks.Commission, hooks...)
+}
+
+// Create returns a builder for creating a Commission entity.
+func (c *CommissionClient) Create() *CommissionCreate {
+	mutation := newCommissionMutation(c.config, OpCreate)
+	return &CommissionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Commission entities.
+func (c *CommissionClient) CreateBulk(builders ...*CommissionCreate) *CommissionCreateBulk {
+	return &CommissionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Commission.
+func (c *CommissionClient) Update() *CommissionUpdate {
+	mutation := newCommissionMutation(c.config, OpUpdate)
+	return &CommissionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CommissionClient) UpdateOne(co *Commission) *CommissionUpdateOne {
+	mutation := newCommissionMutation(c.config, OpUpdateOne, withCommission(co))
+	return &CommissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CommissionClient) UpdateOneID(id uuid.UUID) *CommissionUpdateOne {
+	mutation := newCommissionMutation(c.config, OpUpdateOne, withCommissionID(id))
+	return &CommissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Commission.
+func (c *CommissionClient) Delete() *CommissionDelete {
+	mutation := newCommissionMutation(c.config, OpDelete)
+	return &CommissionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CommissionClient) DeleteOne(co *Commission) *CommissionDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CommissionClient) DeleteOneID(id uuid.UUID) *CommissionDeleteOne {
+	builder := c.Delete().Where(commission.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CommissionDeleteOne{builder}
+}
+
+// Query returns a query builder for Commission.
+func (c *CommissionClient) Query() *CommissionQuery {
+	return &CommissionQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Commission entity by its id.
+func (c *CommissionClient) Get(ctx context.Context, id uuid.UUID) (*Commission, error) {
+	return c.Query().Where(commission.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CommissionClient) GetX(ctx context.Context, id uuid.UUID) *Commission {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CommissionClient) Hooks() []Hook {
+	hooks := c.hooks.Commission
+	return append(hooks[:len(hooks):len(hooks)], commission.Hooks[:]...)
 }
 
 // CouponClient is a client for the Coupon schema.

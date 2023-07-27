@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
@@ -202,6 +203,74 @@ func init() {
 	archivementgeneralDescID := archivementgeneralFields[0].Descriptor()
 	// archivementgeneral.DefaultID holds the default value on creation for the id field.
 	archivementgeneral.DefaultID = archivementgeneralDescID.Default.(func() uuid.UUID)
+	commissionMixin := schema.Commission{}.Mixin()
+	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
+	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := commission.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	commissionMixinFields0 := commissionMixin[0].Fields()
+	_ = commissionMixinFields0
+	commissionFields := schema.Commission{}.Fields()
+	_ = commissionFields
+	// commissionDescCreatedAt is the schema descriptor for created_at field.
+	commissionDescCreatedAt := commissionMixinFields0[0].Descriptor()
+	// commission.DefaultCreatedAt holds the default value on creation for the created_at field.
+	commission.DefaultCreatedAt = commissionDescCreatedAt.Default.(func() uint32)
+	// commissionDescUpdatedAt is the schema descriptor for updated_at field.
+	commissionDescUpdatedAt := commissionMixinFields0[1].Descriptor()
+	// commission.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	commission.DefaultUpdatedAt = commissionDescUpdatedAt.Default.(func() uint32)
+	// commission.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	commission.UpdateDefaultUpdatedAt = commissionDescUpdatedAt.UpdateDefault.(func() uint32)
+	// commissionDescDeletedAt is the schema descriptor for deleted_at field.
+	commissionDescDeletedAt := commissionMixinFields0[2].Descriptor()
+	// commission.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	commission.DefaultDeletedAt = commissionDescDeletedAt.Default.(func() uint32)
+	// commissionDescAppID is the schema descriptor for app_id field.
+	commissionDescAppID := commissionFields[1].Descriptor()
+	// commission.DefaultAppID holds the default value on creation for the app_id field.
+	commission.DefaultAppID = commissionDescAppID.Default.(func() uuid.UUID)
+	// commissionDescUserID is the schema descriptor for user_id field.
+	commissionDescUserID := commissionFields[2].Descriptor()
+	// commission.DefaultUserID holds the default value on creation for the user_id field.
+	commission.DefaultUserID = commissionDescUserID.Default.(func() uuid.UUID)
+	// commissionDescGoodID is the schema descriptor for good_id field.
+	commissionDescGoodID := commissionFields[3].Descriptor()
+	// commission.DefaultGoodID holds the default value on creation for the good_id field.
+	commission.DefaultGoodID = commissionDescGoodID.Default.(func() uuid.UUID)
+	// commissionDescPercent is the schema descriptor for percent field.
+	commissionDescPercent := commissionFields[4].Descriptor()
+	// commission.DefaultPercent holds the default value on creation for the percent field.
+	commission.DefaultPercent = commissionDescPercent.Default.(decimal.Decimal)
+	// commissionDescStartAt is the schema descriptor for start_at field.
+	commissionDescStartAt := commissionFields[5].Descriptor()
+	// commission.DefaultStartAt holds the default value on creation for the start_at field.
+	commission.DefaultStartAt = commissionDescStartAt.Default.(uint32)
+	// commissionDescEndAt is the schema descriptor for end_at field.
+	commissionDescEndAt := commissionFields[6].Descriptor()
+	// commission.DefaultEndAt holds the default value on creation for the end_at field.
+	commission.DefaultEndAt = commissionDescEndAt.Default.(uint32)
+	// commissionDescSettleType is the schema descriptor for settle_type field.
+	commissionDescSettleType := commissionFields[7].Descriptor()
+	// commission.DefaultSettleType holds the default value on creation for the settle_type field.
+	commission.DefaultSettleType = commissionDescSettleType.Default.(string)
+	// commissionDescSettleMode is the schema descriptor for settle_mode field.
+	commissionDescSettleMode := commissionFields[8].Descriptor()
+	// commission.DefaultSettleMode holds the default value on creation for the settle_mode field.
+	commission.DefaultSettleMode = commissionDescSettleMode.Default.(string)
+	// commissionDescSettleInterval is the schema descriptor for settle_interval field.
+	commissionDescSettleInterval := commissionFields[9].Descriptor()
+	// commission.DefaultSettleInterval holds the default value on creation for the settle_interval field.
+	commission.DefaultSettleInterval = commissionDescSettleInterval.Default.(string)
+	// commissionDescID is the schema descriptor for id field.
+	commissionDescID := commissionFields[0].Descriptor()
+	// commission.DefaultID holds the default value on creation for the id field.
+	commission.DefaultID = commissionDescID.Default.(func() uuid.UUID)
 	couponMixin := schema.Coupon{}.Mixin()
 	coupon.Policy = privacy.NewPolicies(couponMixin[0], schema.Coupon{})
 	coupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
