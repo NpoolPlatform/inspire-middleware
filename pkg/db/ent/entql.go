@@ -109,6 +109,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldSettleType:     {Type: field.TypeString, Column: commission.FieldSettleType},
 			commission.FieldSettleMode:     {Type: field.TypeString, Column: commission.FieldSettleMode},
 			commission.FieldSettleInterval: {Type: field.TypeString, Column: commission.FieldSettleInterval},
+			commission.FieldThreshold:      {Type: field.TypeOther, Column: commission.FieldThreshold},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -719,6 +720,11 @@ func (f *CommissionFilter) WhereSettleMode(p entql.StringP) {
 // WhereSettleInterval applies the entql string predicate on the settle_interval field.
 func (f *CommissionFilter) WhereSettleInterval(p entql.StringP) {
 	f.Where(p.Field(commission.FieldSettleInterval))
+}
+
+// WhereThreshold applies the entql other predicate on the threshold field.
+func (f *CommissionFilter) WhereThreshold(p entql.OtherP) {
+	f.Where(p.Field(commission.FieldThreshold))
 }
 
 // addPredicate implements the predicateAdder interface.

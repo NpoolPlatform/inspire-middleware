@@ -192,6 +192,20 @@ func (cc *CommissionCreate) SetNillableSettleInterval(s *string) *CommissionCrea
 	return cc
 }
 
+// SetThreshold sets the "threshold" field.
+func (cc *CommissionCreate) SetThreshold(d decimal.Decimal) *CommissionCreate {
+	cc.mutation.SetThreshold(d)
+	return cc
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableThreshold(d *decimal.Decimal) *CommissionCreate {
+	if d != nil {
+		cc.SetThreshold(*d)
+	}
+	return cc
+}
+
 // SetID sets the "id" field.
 func (cc *CommissionCreate) SetID(u uuid.UUID) *CommissionCreate {
 	cc.mutation.SetID(u)
@@ -351,6 +365,10 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultSettleInterval
 		cc.mutation.SetSettleInterval(v)
 	}
+	if _, ok := cc.mutation.Threshold(); !ok {
+		v := commission.DefaultThreshold
+		cc.mutation.SetThreshold(v)
+	}
 	if _, ok := cc.mutation.ID(); !ok {
 		if commission.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized commission.DefaultID (forgotten import ent/runtime?)")
@@ -504,6 +522,14 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 			Column: commission.FieldSettleInterval,
 		})
 		_node.SettleInterval = value
+	}
+	if value, ok := cc.mutation.Threshold(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: commission.FieldThreshold,
+		})
+		_node.Threshold = value
 	}
 	return _node, _spec
 }
@@ -784,6 +810,24 @@ func (u *CommissionUpsert) UpdateSettleInterval() *CommissionUpsert {
 // ClearSettleInterval clears the value of the "settle_interval" field.
 func (u *CommissionUpsert) ClearSettleInterval() *CommissionUpsert {
 	u.SetNull(commission.FieldSettleInterval)
+	return u
+}
+
+// SetThreshold sets the "threshold" field.
+func (u *CommissionUpsert) SetThreshold(v decimal.Decimal) *CommissionUpsert {
+	u.Set(commission.FieldThreshold, v)
+	return u
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateThreshold() *CommissionUpsert {
+	u.SetExcluded(commission.FieldThreshold)
+	return u
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CommissionUpsert) ClearThreshold() *CommissionUpsert {
+	u.SetNull(commission.FieldThreshold)
 	return u
 }
 
@@ -1100,6 +1144,27 @@ func (u *CommissionUpsertOne) UpdateSettleInterval() *CommissionUpsertOne {
 func (u *CommissionUpsertOne) ClearSettleInterval() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearSettleInterval()
+	})
+}
+
+// SetThreshold sets the "threshold" field.
+func (u *CommissionUpsertOne) SetThreshold(v decimal.Decimal) *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetThreshold(v)
+	})
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateThreshold() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateThreshold()
+	})
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CommissionUpsertOne) ClearThreshold() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearThreshold()
 	})
 }
 
@@ -1582,6 +1647,27 @@ func (u *CommissionUpsertBulk) UpdateSettleInterval() *CommissionUpsertBulk {
 func (u *CommissionUpsertBulk) ClearSettleInterval() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearSettleInterval()
+	})
+}
+
+// SetThreshold sets the "threshold" field.
+func (u *CommissionUpsertBulk) SetThreshold(v decimal.Decimal) *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetThreshold(v)
+	})
+}
+
+// UpdateThreshold sets the "threshold" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateThreshold() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateThreshold()
+	})
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (u *CommissionUpsertBulk) ClearThreshold() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearThreshold()
 	})
 }
 

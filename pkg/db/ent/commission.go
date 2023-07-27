@@ -41,6 +41,8 @@ type Commission struct {
 	SettleMode string `json:"settle_mode,omitempty"`
 	// SettleInterval holds the value of the "settle_interval" field.
 	SettleInterval string `json:"settle_interval,omitempty"`
+	// Threshold holds the value of the "threshold" field.
+	Threshold decimal.Decimal `json:"threshold,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -48,7 +50,7 @@ func (*Commission) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case commission.FieldPercent:
+		case commission.FieldPercent, commission.FieldThreshold:
 			values[i] = new(decimal.Decimal)
 		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt:
 			values[i] = new(sql.NullInt64)
@@ -149,6 +151,12 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				c.SettleInterval = value.String
 			}
+		case commission.FieldThreshold:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field threshold", values[i])
+			} else if value != nil {
+				c.Threshold = *value
+			}
 		}
 	}
 	return nil
@@ -212,6 +220,9 @@ func (c *Commission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("settle_interval=")
 	builder.WriteString(c.SettleInterval)
+	builder.WriteString(", ")
+	builder.WriteString("threshold=")
+	builder.WriteString(fmt.Sprintf("%v", c.Threshold))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -37,6 +37,8 @@ const (
 	FieldSettleMode = "settle_mode"
 	// FieldSettleInterval holds the string denoting the settle_interval field in the database.
 	FieldSettleInterval = "settle_interval"
+	// FieldThreshold holds the string denoting the threshold field in the database.
+	FieldThreshold = "threshold"
 	// Table holds the table name of the commission in the database.
 	Table = "commissions"
 )
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldSettleType,
 	FieldSettleMode,
 	FieldSettleInterval,
+	FieldThreshold,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -103,6 +106,8 @@ var (
 	DefaultSettleMode string
 	// DefaultSettleInterval holds the default value on creation for the "settle_interval" field.
 	DefaultSettleInterval string
+	// DefaultThreshold holds the default value on creation for the "threshold" field.
+	DefaultThreshold decimal.Decimal
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

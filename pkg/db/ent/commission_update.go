@@ -279,6 +279,26 @@ func (cu *CommissionUpdate) ClearSettleInterval() *CommissionUpdate {
 	return cu
 }
 
+// SetThreshold sets the "threshold" field.
+func (cu *CommissionUpdate) SetThreshold(d decimal.Decimal) *CommissionUpdate {
+	cu.mutation.SetThreshold(d)
+	return cu
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableThreshold(d *decimal.Decimal) *CommissionUpdate {
+	if d != nil {
+		cu.SetThreshold(*d)
+	}
+	return cu
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (cu *CommissionUpdate) ClearThreshold() *CommissionUpdate {
+	cu.mutation.ClearThreshold()
+	return cu
+}
+
 // Mutation returns the CommissionMutation object of the builder.
 func (cu *CommissionUpdate) Mutation() *CommissionMutation {
 	return cu.mutation
@@ -550,6 +570,19 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commission.FieldSettleInterval,
 		})
 	}
+	if value, ok := cu.mutation.Threshold(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: commission.FieldThreshold,
+		})
+	}
+	if cu.mutation.ThresholdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: commission.FieldThreshold,
+		})
+	}
 	_spec.Modifiers = cu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -817,6 +850,26 @@ func (cuo *CommissionUpdateOne) SetNillableSettleInterval(s *string) *Commission
 // ClearSettleInterval clears the value of the "settle_interval" field.
 func (cuo *CommissionUpdateOne) ClearSettleInterval() *CommissionUpdateOne {
 	cuo.mutation.ClearSettleInterval()
+	return cuo
+}
+
+// SetThreshold sets the "threshold" field.
+func (cuo *CommissionUpdateOne) SetThreshold(d decimal.Decimal) *CommissionUpdateOne {
+	cuo.mutation.SetThreshold(d)
+	return cuo
+}
+
+// SetNillableThreshold sets the "threshold" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableThreshold(d *decimal.Decimal) *CommissionUpdateOne {
+	if d != nil {
+		cuo.SetThreshold(*d)
+	}
+	return cuo
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (cuo *CommissionUpdateOne) ClearThreshold() *CommissionUpdateOne {
+	cuo.mutation.ClearThreshold()
 	return cuo
 }
 
@@ -1119,6 +1172,19 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: commission.FieldSettleInterval,
+		})
+	}
+	if value, ok := cuo.mutation.Threshold(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: commission.FieldThreshold,
+		})
+	}
+	if cuo.mutation.ThresholdCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: commission.FieldThreshold,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers

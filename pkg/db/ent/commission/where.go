@@ -164,6 +164,13 @@ func SettleInterval(v string) predicate.Commission {
 	})
 }
 
+// Threshold applies equality check predicate on the "threshold" field. It's identical to ThresholdEQ.
+func Threshold(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldThreshold), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
@@ -1160,6 +1167,84 @@ func SettleIntervalEqualFold(v string) predicate.Commission {
 func SettleIntervalContainsFold(v string) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldSettleInterval), v))
+	})
+}
+
+// ThresholdEQ applies the EQ predicate on the "threshold" field.
+func ThresholdEQ(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdNEQ applies the NEQ predicate on the "threshold" field.
+func ThresholdNEQ(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdIn applies the In predicate on the "threshold" field.
+func ThresholdIn(vs ...decimal.Decimal) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldThreshold), v...))
+	})
+}
+
+// ThresholdNotIn applies the NotIn predicate on the "threshold" field.
+func ThresholdNotIn(vs ...decimal.Decimal) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldThreshold), v...))
+	})
+}
+
+// ThresholdGT applies the GT predicate on the "threshold" field.
+func ThresholdGT(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdGTE applies the GTE predicate on the "threshold" field.
+func ThresholdGTE(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdLT applies the LT predicate on the "threshold" field.
+func ThresholdLT(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdLTE applies the LTE predicate on the "threshold" field.
+func ThresholdLTE(v decimal.Decimal) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldThreshold), v))
+	})
+}
+
+// ThresholdIsNil applies the IsNil predicate on the "threshold" field.
+func ThresholdIsNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldThreshold)))
+	})
+}
+
+// ThresholdNotNil applies the NotNil predicate on the "threshold" field.
+func ThresholdNotNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldThreshold)))
 	})
 }
 

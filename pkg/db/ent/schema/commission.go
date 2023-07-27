@@ -70,6 +70,13 @@ func (Commission) Fields() []ent.Field {
 			String("settle_interval").
 			Optional().
 			Default(types.SettleInterval_DefaultSettleInterval.String()),
+		field.
+			Other("threshold", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
 	}
 }
 
