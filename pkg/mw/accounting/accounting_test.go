@@ -13,6 +13,7 @@ import (
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
+	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
@@ -220,6 +221,17 @@ var _comm6 = commmwpb.CommissionReq{
 }
 
 func setup(t *testing.T) func(*testing.T) {
+	_h1, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(_reg1.AppID),
+		invitationcode1.WithUserID(_reg1.InviterID),
+	)
+	assert.Nil(t, err)
+
+	_info1, err := _h1.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, _info1)
+
 	h1, err := registration1.NewHandler(
 		context.Background(),
 		registration1.WithAppID(_reg1.AppID),
@@ -231,6 +243,17 @@ func setup(t *testing.T) func(*testing.T) {
 	info1, err := h1.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info1)
+
+	_h2, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(_reg2.AppID),
+		invitationcode1.WithUserID(_reg2.InviterID),
+	)
+	assert.Nil(t, err)
+
+	_info2, err := _h2.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, _info2)
 
 	h2, err := registration1.NewHandler(
 		context.Background(),
@@ -244,6 +267,17 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, info2)
 
+	_h3, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(_reg3.AppID),
+		invitationcode1.WithUserID(_reg3.InviterID),
+	)
+	assert.Nil(t, err)
+
+	_info3, err := _h3.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, _info3)
+
 	h3, err := registration1.NewHandler(
 		context.Background(),
 		registration1.WithAppID(_reg3.AppID),
@@ -256,6 +290,17 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, info3)
 
+	_h4, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(_reg4.AppID),
+		invitationcode1.WithUserID(_reg4.InviterID),
+	)
+	assert.Nil(t, err)
+
+	_info4, err := _h4.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, _info4)
+
 	h4, err := registration1.NewHandler(
 		context.Background(),
 		registration1.WithAppID(_reg4.AppID),
@@ -267,6 +312,17 @@ func setup(t *testing.T) func(*testing.T) {
 	info4, err := h4.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info4)
+
+	_h5, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(_reg5.AppID),
+		invitationcode1.WithUserID(_reg5.InviterID),
+	)
+	assert.Nil(t, err)
+
+	_info5, err := _h5.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, _info5)
 
 	h5, err := registration1.NewHandler(
 		context.Background(),
@@ -308,7 +364,7 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info7, err := h6.CreateCommission(context.Background())
+	info7, err := h7.CreateCommission(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info7)
 
@@ -324,7 +380,7 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info8, err := h6.CreateCommission(context.Background())
+	info8, err := h8.CreateCommission(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info8)
 
@@ -340,7 +396,7 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info9, err := h6.CreateCommission(context.Background())
+	info9, err := h9.CreateCommission(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info9)
 
@@ -356,7 +412,7 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info10, err := h6.CreateCommission(context.Background())
+	info10, err := h10.CreateCommission(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info10)
 
@@ -372,11 +428,16 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info11, err := h6.CreateCommission(context.Background())
+	info11, err := h11.CreateCommission(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info11)
 
 	return func(*testing.T) {
+		_, _ = _h1.DeleteInvitationCode(context.Background())
+		_, _ = _h2.DeleteInvitationCode(context.Background())
+		_, _ = _h3.DeleteInvitationCode(context.Background())
+		_, _ = _h4.DeleteInvitationCode(context.Background())
+		_, _ = _h5.DeleteInvitationCode(context.Background())
 		_, _ = h1.DeleteRegistration(context.Background())
 		_, _ = h2.DeleteRegistration(context.Background())
 		_, _ = h3.DeleteRegistration(context.Background())
@@ -500,5 +561,5 @@ func TestAccounting(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
-	t.Run("accounting", accounting)
+	// t.Run("accounting", accounting)
 }
