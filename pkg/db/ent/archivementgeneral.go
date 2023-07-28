@@ -31,12 +31,8 @@ type ArchivementGeneral struct {
 	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
-	// TotalUnits holds the value of the "total_units" field.
-	TotalUnits uint32 `json:"total_units,omitempty"`
 	// TotalUnitsV1 holds the value of the "total_units_v1" field.
 	TotalUnitsV1 decimal.Decimal `json:"total_units_v1,omitempty"`
-	// SelfUnits holds the value of the "self_units" field.
-	SelfUnits uint32 `json:"self_units,omitempty"`
 	// SelfUnitsV1 holds the value of the "self_units_v1" field.
 	SelfUnitsV1 decimal.Decimal `json:"self_units_v1,omitempty"`
 	// TotalAmount holds the value of the "total_amount" field.
@@ -56,7 +52,7 @@ func (*ArchivementGeneral) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case archivementgeneral.FieldTotalUnitsV1, archivementgeneral.FieldSelfUnitsV1, archivementgeneral.FieldTotalAmount, archivementgeneral.FieldSelfAmount, archivementgeneral.FieldTotalCommission, archivementgeneral.FieldSelfCommission:
 			values[i] = new(decimal.Decimal)
-		case archivementgeneral.FieldCreatedAt, archivementgeneral.FieldUpdatedAt, archivementgeneral.FieldDeletedAt, archivementgeneral.FieldTotalUnits, archivementgeneral.FieldSelfUnits:
+		case archivementgeneral.FieldCreatedAt, archivementgeneral.FieldUpdatedAt, archivementgeneral.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case archivementgeneral.FieldID, archivementgeneral.FieldAppID, archivementgeneral.FieldUserID, archivementgeneral.FieldGoodID, archivementgeneral.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
@@ -123,23 +119,11 @@ func (ag *ArchivementGeneral) assignValues(columns []string, values []interface{
 			} else if value != nil {
 				ag.CoinTypeID = *value
 			}
-		case archivementgeneral.FieldTotalUnits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field total_units", values[i])
-			} else if value.Valid {
-				ag.TotalUnits = uint32(value.Int64)
-			}
 		case archivementgeneral.FieldTotalUnitsV1:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field total_units_v1", values[i])
 			} else if value != nil {
 				ag.TotalUnitsV1 = *value
-			}
-		case archivementgeneral.FieldSelfUnits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field self_units", values[i])
-			} else if value.Valid {
-				ag.SelfUnits = uint32(value.Int64)
 			}
 		case archivementgeneral.FieldSelfUnitsV1:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -220,14 +204,8 @@ func (ag *ArchivementGeneral) String() string {
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", ag.CoinTypeID))
 	builder.WriteString(", ")
-	builder.WriteString("total_units=")
-	builder.WriteString(fmt.Sprintf("%v", ag.TotalUnits))
-	builder.WriteString(", ")
 	builder.WriteString("total_units_v1=")
 	builder.WriteString(fmt.Sprintf("%v", ag.TotalUnitsV1))
-	builder.WriteString(", ")
-	builder.WriteString("self_units=")
-	builder.WriteString(fmt.Sprintf("%v", ag.SelfUnits))
 	builder.WriteString(", ")
 	builder.WriteString("self_units_v1=")
 	builder.WriteString(fmt.Sprintf("%v", ag.SelfUnitsV1))

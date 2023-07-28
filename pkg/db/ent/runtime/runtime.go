@@ -167,36 +167,28 @@ func init() {
 	archivementgeneralDescCoinTypeID := archivementgeneralFields[4].Descriptor()
 	// archivementgeneral.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	archivementgeneral.DefaultCoinTypeID = archivementgeneralDescCoinTypeID.Default.(func() uuid.UUID)
-	// archivementgeneralDescTotalUnits is the schema descriptor for total_units field.
-	archivementgeneralDescTotalUnits := archivementgeneralFields[5].Descriptor()
-	// archivementgeneral.DefaultTotalUnits holds the default value on creation for the total_units field.
-	archivementgeneral.DefaultTotalUnits = archivementgeneralDescTotalUnits.Default.(uint32)
 	// archivementgeneralDescTotalUnitsV1 is the schema descriptor for total_units_v1 field.
-	archivementgeneralDescTotalUnitsV1 := archivementgeneralFields[6].Descriptor()
+	archivementgeneralDescTotalUnitsV1 := archivementgeneralFields[5].Descriptor()
 	// archivementgeneral.DefaultTotalUnitsV1 holds the default value on creation for the total_units_v1 field.
 	archivementgeneral.DefaultTotalUnitsV1 = archivementgeneralDescTotalUnitsV1.Default.(decimal.Decimal)
-	// archivementgeneralDescSelfUnits is the schema descriptor for self_units field.
-	archivementgeneralDescSelfUnits := archivementgeneralFields[7].Descriptor()
-	// archivementgeneral.DefaultSelfUnits holds the default value on creation for the self_units field.
-	archivementgeneral.DefaultSelfUnits = archivementgeneralDescSelfUnits.Default.(uint32)
 	// archivementgeneralDescSelfUnitsV1 is the schema descriptor for self_units_v1 field.
-	archivementgeneralDescSelfUnitsV1 := archivementgeneralFields[8].Descriptor()
+	archivementgeneralDescSelfUnitsV1 := archivementgeneralFields[6].Descriptor()
 	// archivementgeneral.DefaultSelfUnitsV1 holds the default value on creation for the self_units_v1 field.
 	archivementgeneral.DefaultSelfUnitsV1 = archivementgeneralDescSelfUnitsV1.Default.(decimal.Decimal)
 	// archivementgeneralDescTotalAmount is the schema descriptor for total_amount field.
-	archivementgeneralDescTotalAmount := archivementgeneralFields[9].Descriptor()
+	archivementgeneralDescTotalAmount := archivementgeneralFields[7].Descriptor()
 	// archivementgeneral.DefaultTotalAmount holds the default value on creation for the total_amount field.
 	archivementgeneral.DefaultTotalAmount = archivementgeneralDescTotalAmount.Default.(decimal.Decimal)
 	// archivementgeneralDescSelfAmount is the schema descriptor for self_amount field.
-	archivementgeneralDescSelfAmount := archivementgeneralFields[10].Descriptor()
+	archivementgeneralDescSelfAmount := archivementgeneralFields[8].Descriptor()
 	// archivementgeneral.DefaultSelfAmount holds the default value on creation for the self_amount field.
 	archivementgeneral.DefaultSelfAmount = archivementgeneralDescSelfAmount.Default.(decimal.Decimal)
 	// archivementgeneralDescTotalCommission is the schema descriptor for total_commission field.
-	archivementgeneralDescTotalCommission := archivementgeneralFields[11].Descriptor()
+	archivementgeneralDescTotalCommission := archivementgeneralFields[9].Descriptor()
 	// archivementgeneral.DefaultTotalCommission holds the default value on creation for the total_commission field.
 	archivementgeneral.DefaultTotalCommission = archivementgeneralDescTotalCommission.Default.(decimal.Decimal)
 	// archivementgeneralDescSelfCommission is the schema descriptor for self_commission field.
-	archivementgeneralDescSelfCommission := archivementgeneralFields[12].Descriptor()
+	archivementgeneralDescSelfCommission := archivementgeneralFields[10].Descriptor()
 	// archivementgeneral.DefaultSelfCommission holds the default value on creation for the self_commission field.
 	archivementgeneral.DefaultSelfCommission = archivementgeneralDescSelfCommission.Default.(decimal.Decimal)
 	// archivementgeneralDescID is the schema descriptor for id field.

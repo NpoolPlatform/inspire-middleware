@@ -122,20 +122,6 @@ func (agc *ArchivementGeneralCreate) SetNillableCoinTypeID(u *uuid.UUID) *Archiv
 	return agc
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (agc *ArchivementGeneralCreate) SetTotalUnits(u uint32) *ArchivementGeneralCreate {
-	agc.mutation.SetTotalUnits(u)
-	return agc
-}
-
-// SetNillableTotalUnits sets the "total_units" field if the given value is not nil.
-func (agc *ArchivementGeneralCreate) SetNillableTotalUnits(u *uint32) *ArchivementGeneralCreate {
-	if u != nil {
-		agc.SetTotalUnits(*u)
-	}
-	return agc
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (agc *ArchivementGeneralCreate) SetTotalUnitsV1(d decimal.Decimal) *ArchivementGeneralCreate {
 	agc.mutation.SetTotalUnitsV1(d)
@@ -146,20 +132,6 @@ func (agc *ArchivementGeneralCreate) SetTotalUnitsV1(d decimal.Decimal) *Archive
 func (agc *ArchivementGeneralCreate) SetNillableTotalUnitsV1(d *decimal.Decimal) *ArchivementGeneralCreate {
 	if d != nil {
 		agc.SetTotalUnitsV1(*d)
-	}
-	return agc
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (agc *ArchivementGeneralCreate) SetSelfUnits(u uint32) *ArchivementGeneralCreate {
-	agc.mutation.SetSelfUnits(u)
-	return agc
-}
-
-// SetNillableSelfUnits sets the "self_units" field if the given value is not nil.
-func (agc *ArchivementGeneralCreate) SetNillableSelfUnits(u *uint32) *ArchivementGeneralCreate {
-	if u != nil {
-		agc.SetSelfUnits(*u)
 	}
 	return agc
 }
@@ -376,17 +348,9 @@ func (agc *ArchivementGeneralCreate) defaults() error {
 		v := archivementgeneral.DefaultCoinTypeID()
 		agc.mutation.SetCoinTypeID(v)
 	}
-	if _, ok := agc.mutation.TotalUnits(); !ok {
-		v := archivementgeneral.DefaultTotalUnits
-		agc.mutation.SetTotalUnits(v)
-	}
 	if _, ok := agc.mutation.TotalUnitsV1(); !ok {
 		v := archivementgeneral.DefaultTotalUnitsV1
 		agc.mutation.SetTotalUnitsV1(v)
-	}
-	if _, ok := agc.mutation.SelfUnits(); !ok {
-		v := archivementgeneral.DefaultSelfUnits
-		agc.mutation.SetSelfUnits(v)
 	}
 	if _, ok := agc.mutation.SelfUnitsV1(); !ok {
 		v := archivementgeneral.DefaultSelfUnitsV1
@@ -522,14 +486,6 @@ func (agc *ArchivementGeneralCreate) createSpec() (*ArchivementGeneral, *sqlgrap
 		})
 		_node.CoinTypeID = value
 	}
-	if value, ok := agc.mutation.TotalUnits(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-		_node.TotalUnits = value
-	}
 	if value, ok := agc.mutation.TotalUnitsV1(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -537,14 +493,6 @@ func (agc *ArchivementGeneralCreate) createSpec() (*ArchivementGeneral, *sqlgrap
 			Column: archivementgeneral.FieldTotalUnitsV1,
 		})
 		_node.TotalUnitsV1 = value
-	}
-	if value, ok := agc.mutation.SelfUnits(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldSelfUnits,
-		})
-		_node.SelfUnits = value
 	}
 	if value, ok := agc.mutation.SelfUnitsV1(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -766,30 +714,6 @@ func (u *ArchivementGeneralUpsert) ClearCoinTypeID() *ArchivementGeneralUpsert {
 	return u
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (u *ArchivementGeneralUpsert) SetTotalUnits(v uint32) *ArchivementGeneralUpsert {
-	u.Set(archivementgeneral.FieldTotalUnits, v)
-	return u
-}
-
-// UpdateTotalUnits sets the "total_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsert) UpdateTotalUnits() *ArchivementGeneralUpsert {
-	u.SetExcluded(archivementgeneral.FieldTotalUnits)
-	return u
-}
-
-// AddTotalUnits adds v to the "total_units" field.
-func (u *ArchivementGeneralUpsert) AddTotalUnits(v uint32) *ArchivementGeneralUpsert {
-	u.Add(archivementgeneral.FieldTotalUnits, v)
-	return u
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (u *ArchivementGeneralUpsert) ClearTotalUnits() *ArchivementGeneralUpsert {
-	u.SetNull(archivementgeneral.FieldTotalUnits)
-	return u
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (u *ArchivementGeneralUpsert) SetTotalUnitsV1(v decimal.Decimal) *ArchivementGeneralUpsert {
 	u.Set(archivementgeneral.FieldTotalUnitsV1, v)
@@ -805,30 +729,6 @@ func (u *ArchivementGeneralUpsert) UpdateTotalUnitsV1() *ArchivementGeneralUpser
 // ClearTotalUnitsV1 clears the value of the "total_units_v1" field.
 func (u *ArchivementGeneralUpsert) ClearTotalUnitsV1() *ArchivementGeneralUpsert {
 	u.SetNull(archivementgeneral.FieldTotalUnitsV1)
-	return u
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (u *ArchivementGeneralUpsert) SetSelfUnits(v uint32) *ArchivementGeneralUpsert {
-	u.Set(archivementgeneral.FieldSelfUnits, v)
-	return u
-}
-
-// UpdateSelfUnits sets the "self_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsert) UpdateSelfUnits() *ArchivementGeneralUpsert {
-	u.SetExcluded(archivementgeneral.FieldSelfUnits)
-	return u
-}
-
-// AddSelfUnits adds v to the "self_units" field.
-func (u *ArchivementGeneralUpsert) AddSelfUnits(v uint32) *ArchivementGeneralUpsert {
-	u.Add(archivementgeneral.FieldSelfUnits, v)
-	return u
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (u *ArchivementGeneralUpsert) ClearSelfUnits() *ArchivementGeneralUpsert {
-	u.SetNull(archivementgeneral.FieldSelfUnits)
 	return u
 }
 
@@ -1119,34 +1019,6 @@ func (u *ArchivementGeneralUpsertOne) ClearCoinTypeID() *ArchivementGeneralUpser
 	})
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (u *ArchivementGeneralUpsertOne) SetTotalUnits(v uint32) *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.SetTotalUnits(v)
-	})
-}
-
-// AddTotalUnits adds v to the "total_units" field.
-func (u *ArchivementGeneralUpsertOne) AddTotalUnits(v uint32) *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.AddTotalUnits(v)
-	})
-}
-
-// UpdateTotalUnits sets the "total_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsertOne) UpdateTotalUnits() *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.UpdateTotalUnits()
-	})
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (u *ArchivementGeneralUpsertOne) ClearTotalUnits() *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.ClearTotalUnits()
-	})
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (u *ArchivementGeneralUpsertOne) SetTotalUnitsV1(v decimal.Decimal) *ArchivementGeneralUpsertOne {
 	return u.Update(func(s *ArchivementGeneralUpsert) {
@@ -1165,34 +1037,6 @@ func (u *ArchivementGeneralUpsertOne) UpdateTotalUnitsV1() *ArchivementGeneralUp
 func (u *ArchivementGeneralUpsertOne) ClearTotalUnitsV1() *ArchivementGeneralUpsertOne {
 	return u.Update(func(s *ArchivementGeneralUpsert) {
 		s.ClearTotalUnitsV1()
-	})
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (u *ArchivementGeneralUpsertOne) SetSelfUnits(v uint32) *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.SetSelfUnits(v)
-	})
-}
-
-// AddSelfUnits adds v to the "self_units" field.
-func (u *ArchivementGeneralUpsertOne) AddSelfUnits(v uint32) *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.AddSelfUnits(v)
-	})
-}
-
-// UpdateSelfUnits sets the "self_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsertOne) UpdateSelfUnits() *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.UpdateSelfUnits()
-	})
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (u *ArchivementGeneralUpsertOne) ClearSelfUnits() *ArchivementGeneralUpsertOne {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.ClearSelfUnits()
 	})
 }
 
@@ -1664,34 +1508,6 @@ func (u *ArchivementGeneralUpsertBulk) ClearCoinTypeID() *ArchivementGeneralUpse
 	})
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (u *ArchivementGeneralUpsertBulk) SetTotalUnits(v uint32) *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.SetTotalUnits(v)
-	})
-}
-
-// AddTotalUnits adds v to the "total_units" field.
-func (u *ArchivementGeneralUpsertBulk) AddTotalUnits(v uint32) *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.AddTotalUnits(v)
-	})
-}
-
-// UpdateTotalUnits sets the "total_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsertBulk) UpdateTotalUnits() *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.UpdateTotalUnits()
-	})
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (u *ArchivementGeneralUpsertBulk) ClearTotalUnits() *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.ClearTotalUnits()
-	})
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (u *ArchivementGeneralUpsertBulk) SetTotalUnitsV1(v decimal.Decimal) *ArchivementGeneralUpsertBulk {
 	return u.Update(func(s *ArchivementGeneralUpsert) {
@@ -1710,34 +1526,6 @@ func (u *ArchivementGeneralUpsertBulk) UpdateTotalUnitsV1() *ArchivementGeneralU
 func (u *ArchivementGeneralUpsertBulk) ClearTotalUnitsV1() *ArchivementGeneralUpsertBulk {
 	return u.Update(func(s *ArchivementGeneralUpsert) {
 		s.ClearTotalUnitsV1()
-	})
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (u *ArchivementGeneralUpsertBulk) SetSelfUnits(v uint32) *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.SetSelfUnits(v)
-	})
-}
-
-// AddSelfUnits adds v to the "self_units" field.
-func (u *ArchivementGeneralUpsertBulk) AddSelfUnits(v uint32) *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.AddSelfUnits(v)
-	})
-}
-
-// UpdateSelfUnits sets the "self_units" field to the value that was provided on create.
-func (u *ArchivementGeneralUpsertBulk) UpdateSelfUnits() *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.UpdateSelfUnits()
-	})
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (u *ArchivementGeneralUpsertBulk) ClearSelfUnits() *ArchivementGeneralUpsertBulk {
-	return u.Update(func(s *ArchivementGeneralUpsert) {
-		s.ClearSelfUnits()
 	})
 }
 

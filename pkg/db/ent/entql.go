@@ -76,9 +76,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			archivementgeneral.FieldUserID:          {Type: field.TypeUUID, Column: archivementgeneral.FieldUserID},
 			archivementgeneral.FieldGoodID:          {Type: field.TypeUUID, Column: archivementgeneral.FieldGoodID},
 			archivementgeneral.FieldCoinTypeID:      {Type: field.TypeUUID, Column: archivementgeneral.FieldCoinTypeID},
-			archivementgeneral.FieldTotalUnits:      {Type: field.TypeUint32, Column: archivementgeneral.FieldTotalUnits},
 			archivementgeneral.FieldTotalUnitsV1:    {Type: field.TypeOther, Column: archivementgeneral.FieldTotalUnitsV1},
-			archivementgeneral.FieldSelfUnits:       {Type: field.TypeUint32, Column: archivementgeneral.FieldSelfUnits},
 			archivementgeneral.FieldSelfUnitsV1:     {Type: field.TypeOther, Column: archivementgeneral.FieldSelfUnitsV1},
 			archivementgeneral.FieldTotalAmount:     {Type: field.TypeOther, Column: archivementgeneral.FieldTotalAmount},
 			archivementgeneral.FieldSelfAmount:      {Type: field.TypeOther, Column: archivementgeneral.FieldSelfAmount},
@@ -583,19 +581,9 @@ func (f *ArchivementGeneralFilter) WhereCoinTypeID(p entql.ValueP) {
 	f.Where(p.Field(archivementgeneral.FieldCoinTypeID))
 }
 
-// WhereTotalUnits applies the entql uint32 predicate on the total_units field.
-func (f *ArchivementGeneralFilter) WhereTotalUnits(p entql.Uint32P) {
-	f.Where(p.Field(archivementgeneral.FieldTotalUnits))
-}
-
 // WhereTotalUnitsV1 applies the entql other predicate on the total_units_v1 field.
 func (f *ArchivementGeneralFilter) WhereTotalUnitsV1(p entql.OtherP) {
 	f.Where(p.Field(archivementgeneral.FieldTotalUnitsV1))
-}
-
-// WhereSelfUnits applies the entql uint32 predicate on the self_units field.
-func (f *ArchivementGeneralFilter) WhereSelfUnits(p entql.Uint32P) {
-	f.Where(p.Field(archivementgeneral.FieldSelfUnits))
 }
 
 // WhereSelfUnitsV1 applies the entql other predicate on the self_units_v1 field.

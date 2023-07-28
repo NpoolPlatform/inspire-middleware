@@ -1729,11 +1729,7 @@ type ArchivementGeneralMutation struct {
 	user_id          *uuid.UUID
 	good_id          *uuid.UUID
 	coin_type_id     *uuid.UUID
-	total_units      *uint32
-	addtotal_units   *int32
 	total_units_v1   *decimal.Decimal
-	self_units       *uint32
-	addself_units    *int32
 	self_units_v1    *decimal.Decimal
 	total_amount     *decimal.Decimal
 	self_amount      *decimal.Decimal
@@ -2213,76 +2209,6 @@ func (m *ArchivementGeneralMutation) ResetCoinTypeID() {
 	delete(m.clearedFields, archivementgeneral.FieldCoinTypeID)
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (m *ArchivementGeneralMutation) SetTotalUnits(u uint32) {
-	m.total_units = &u
-	m.addtotal_units = nil
-}
-
-// TotalUnits returns the value of the "total_units" field in the mutation.
-func (m *ArchivementGeneralMutation) TotalUnits() (r uint32, exists bool) {
-	v := m.total_units
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTotalUnits returns the old "total_units" field's value of the ArchivementGeneral entity.
-// If the ArchivementGeneral object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ArchivementGeneralMutation) OldTotalUnits(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTotalUnits is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTotalUnits requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTotalUnits: %w", err)
-	}
-	return oldValue.TotalUnits, nil
-}
-
-// AddTotalUnits adds u to the "total_units" field.
-func (m *ArchivementGeneralMutation) AddTotalUnits(u int32) {
-	if m.addtotal_units != nil {
-		*m.addtotal_units += u
-	} else {
-		m.addtotal_units = &u
-	}
-}
-
-// AddedTotalUnits returns the value that was added to the "total_units" field in this mutation.
-func (m *ArchivementGeneralMutation) AddedTotalUnits() (r int32, exists bool) {
-	v := m.addtotal_units
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (m *ArchivementGeneralMutation) ClearTotalUnits() {
-	m.total_units = nil
-	m.addtotal_units = nil
-	m.clearedFields[archivementgeneral.FieldTotalUnits] = struct{}{}
-}
-
-// TotalUnitsCleared returns if the "total_units" field was cleared in this mutation.
-func (m *ArchivementGeneralMutation) TotalUnitsCleared() bool {
-	_, ok := m.clearedFields[archivementgeneral.FieldTotalUnits]
-	return ok
-}
-
-// ResetTotalUnits resets all changes to the "total_units" field.
-func (m *ArchivementGeneralMutation) ResetTotalUnits() {
-	m.total_units = nil
-	m.addtotal_units = nil
-	delete(m.clearedFields, archivementgeneral.FieldTotalUnits)
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (m *ArchivementGeneralMutation) SetTotalUnitsV1(d decimal.Decimal) {
 	m.total_units_v1 = &d
@@ -2330,76 +2256,6 @@ func (m *ArchivementGeneralMutation) TotalUnitsV1Cleared() bool {
 func (m *ArchivementGeneralMutation) ResetTotalUnitsV1() {
 	m.total_units_v1 = nil
 	delete(m.clearedFields, archivementgeneral.FieldTotalUnitsV1)
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (m *ArchivementGeneralMutation) SetSelfUnits(u uint32) {
-	m.self_units = &u
-	m.addself_units = nil
-}
-
-// SelfUnits returns the value of the "self_units" field in the mutation.
-func (m *ArchivementGeneralMutation) SelfUnits() (r uint32, exists bool) {
-	v := m.self_units
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSelfUnits returns the old "self_units" field's value of the ArchivementGeneral entity.
-// If the ArchivementGeneral object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ArchivementGeneralMutation) OldSelfUnits(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSelfUnits is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSelfUnits requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSelfUnits: %w", err)
-	}
-	return oldValue.SelfUnits, nil
-}
-
-// AddSelfUnits adds u to the "self_units" field.
-func (m *ArchivementGeneralMutation) AddSelfUnits(u int32) {
-	if m.addself_units != nil {
-		*m.addself_units += u
-	} else {
-		m.addself_units = &u
-	}
-}
-
-// AddedSelfUnits returns the value that was added to the "self_units" field in this mutation.
-func (m *ArchivementGeneralMutation) AddedSelfUnits() (r int32, exists bool) {
-	v := m.addself_units
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (m *ArchivementGeneralMutation) ClearSelfUnits() {
-	m.self_units = nil
-	m.addself_units = nil
-	m.clearedFields[archivementgeneral.FieldSelfUnits] = struct{}{}
-}
-
-// SelfUnitsCleared returns if the "self_units" field was cleared in this mutation.
-func (m *ArchivementGeneralMutation) SelfUnitsCleared() bool {
-	_, ok := m.clearedFields[archivementgeneral.FieldSelfUnits]
-	return ok
-}
-
-// ResetSelfUnits resets all changes to the "self_units" field.
-func (m *ArchivementGeneralMutation) ResetSelfUnits() {
-	m.self_units = nil
-	m.addself_units = nil
-	delete(m.clearedFields, archivementgeneral.FieldSelfUnits)
 }
 
 // SetSelfUnitsV1 sets the "self_units_v1" field.
@@ -2666,7 +2522,7 @@ func (m *ArchivementGeneralMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ArchivementGeneralMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, archivementgeneral.FieldCreatedAt)
 	}
@@ -2688,14 +2544,8 @@ func (m *ArchivementGeneralMutation) Fields() []string {
 	if m.coin_type_id != nil {
 		fields = append(fields, archivementgeneral.FieldCoinTypeID)
 	}
-	if m.total_units != nil {
-		fields = append(fields, archivementgeneral.FieldTotalUnits)
-	}
 	if m.total_units_v1 != nil {
 		fields = append(fields, archivementgeneral.FieldTotalUnitsV1)
-	}
-	if m.self_units != nil {
-		fields = append(fields, archivementgeneral.FieldSelfUnits)
 	}
 	if m.self_units_v1 != nil {
 		fields = append(fields, archivementgeneral.FieldSelfUnitsV1)
@@ -2734,12 +2584,8 @@ func (m *ArchivementGeneralMutation) Field(name string) (ent.Value, bool) {
 		return m.GoodID()
 	case archivementgeneral.FieldCoinTypeID:
 		return m.CoinTypeID()
-	case archivementgeneral.FieldTotalUnits:
-		return m.TotalUnits()
 	case archivementgeneral.FieldTotalUnitsV1:
 		return m.TotalUnitsV1()
-	case archivementgeneral.FieldSelfUnits:
-		return m.SelfUnits()
 	case archivementgeneral.FieldSelfUnitsV1:
 		return m.SelfUnitsV1()
 	case archivementgeneral.FieldTotalAmount:
@@ -2773,12 +2619,8 @@ func (m *ArchivementGeneralMutation) OldField(ctx context.Context, name string) 
 		return m.OldGoodID(ctx)
 	case archivementgeneral.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
-	case archivementgeneral.FieldTotalUnits:
-		return m.OldTotalUnits(ctx)
 	case archivementgeneral.FieldTotalUnitsV1:
 		return m.OldTotalUnitsV1(ctx)
-	case archivementgeneral.FieldSelfUnits:
-		return m.OldSelfUnits(ctx)
 	case archivementgeneral.FieldSelfUnitsV1:
 		return m.OldSelfUnitsV1(ctx)
 	case archivementgeneral.FieldTotalAmount:
@@ -2847,26 +2689,12 @@ func (m *ArchivementGeneralMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetCoinTypeID(v)
 		return nil
-	case archivementgeneral.FieldTotalUnits:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTotalUnits(v)
-		return nil
 	case archivementgeneral.FieldTotalUnitsV1:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalUnitsV1(v)
-		return nil
-	case archivementgeneral.FieldSelfUnits:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSelfUnits(v)
 		return nil
 	case archivementgeneral.FieldSelfUnitsV1:
 		v, ok := value.(decimal.Decimal)
@@ -2920,12 +2748,6 @@ func (m *ArchivementGeneralMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, archivementgeneral.FieldDeletedAt)
 	}
-	if m.addtotal_units != nil {
-		fields = append(fields, archivementgeneral.FieldTotalUnits)
-	}
-	if m.addself_units != nil {
-		fields = append(fields, archivementgeneral.FieldSelfUnits)
-	}
 	return fields
 }
 
@@ -2940,10 +2762,6 @@ func (m *ArchivementGeneralMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case archivementgeneral.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case archivementgeneral.FieldTotalUnits:
-		return m.AddedTotalUnits()
-	case archivementgeneral.FieldSelfUnits:
-		return m.AddedSelfUnits()
 	}
 	return nil, false
 }
@@ -2974,20 +2792,6 @@ func (m *ArchivementGeneralMutation) AddField(name string, value ent.Value) erro
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case archivementgeneral.FieldTotalUnits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTotalUnits(v)
-		return nil
-	case archivementgeneral.FieldSelfUnits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSelfUnits(v)
-		return nil
 	}
 	return fmt.Errorf("unknown ArchivementGeneral numeric field %s", name)
 }
@@ -3008,14 +2812,8 @@ func (m *ArchivementGeneralMutation) ClearedFields() []string {
 	if m.FieldCleared(archivementgeneral.FieldCoinTypeID) {
 		fields = append(fields, archivementgeneral.FieldCoinTypeID)
 	}
-	if m.FieldCleared(archivementgeneral.FieldTotalUnits) {
-		fields = append(fields, archivementgeneral.FieldTotalUnits)
-	}
 	if m.FieldCleared(archivementgeneral.FieldTotalUnitsV1) {
 		fields = append(fields, archivementgeneral.FieldTotalUnitsV1)
-	}
-	if m.FieldCleared(archivementgeneral.FieldSelfUnits) {
-		fields = append(fields, archivementgeneral.FieldSelfUnits)
 	}
 	if m.FieldCleared(archivementgeneral.FieldSelfUnitsV1) {
 		fields = append(fields, archivementgeneral.FieldSelfUnitsV1)
@@ -3058,14 +2856,8 @@ func (m *ArchivementGeneralMutation) ClearField(name string) error {
 	case archivementgeneral.FieldCoinTypeID:
 		m.ClearCoinTypeID()
 		return nil
-	case archivementgeneral.FieldTotalUnits:
-		m.ClearTotalUnits()
-		return nil
 	case archivementgeneral.FieldTotalUnitsV1:
 		m.ClearTotalUnitsV1()
-		return nil
-	case archivementgeneral.FieldSelfUnits:
-		m.ClearSelfUnits()
 		return nil
 	case archivementgeneral.FieldSelfUnitsV1:
 		m.ClearSelfUnitsV1()
@@ -3111,14 +2903,8 @@ func (m *ArchivementGeneralMutation) ResetField(name string) error {
 	case archivementgeneral.FieldCoinTypeID:
 		m.ResetCoinTypeID()
 		return nil
-	case archivementgeneral.FieldTotalUnits:
-		m.ResetTotalUnits()
-		return nil
 	case archivementgeneral.FieldTotalUnitsV1:
 		m.ResetTotalUnitsV1()
-		return nil
-	case archivementgeneral.FieldSelfUnits:
-		m.ResetSelfUnits()
 		return nil
 	case archivementgeneral.FieldSelfUnitsV1:
 		m.ResetSelfUnitsV1()

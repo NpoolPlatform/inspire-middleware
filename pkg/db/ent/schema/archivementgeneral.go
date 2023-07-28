@@ -52,20 +52,12 @@ func (ArchivementGeneral) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Uint32("total_units").
-			Optional().
-			Default(0),
-		field.
 			Other("total_units_v1", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
-		field.
-			Uint32("self_units").
-			Optional().
-			Default(0),
 		field.
 			Other("self_units_v1", decimal.Decimal{}).
 			SchemaType(map[string]string{

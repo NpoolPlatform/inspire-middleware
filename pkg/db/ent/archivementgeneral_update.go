@@ -165,33 +165,6 @@ func (agu *ArchivementGeneralUpdate) ClearCoinTypeID() *ArchivementGeneralUpdate
 	return agu
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (agu *ArchivementGeneralUpdate) SetTotalUnits(u uint32) *ArchivementGeneralUpdate {
-	agu.mutation.ResetTotalUnits()
-	agu.mutation.SetTotalUnits(u)
-	return agu
-}
-
-// SetNillableTotalUnits sets the "total_units" field if the given value is not nil.
-func (agu *ArchivementGeneralUpdate) SetNillableTotalUnits(u *uint32) *ArchivementGeneralUpdate {
-	if u != nil {
-		agu.SetTotalUnits(*u)
-	}
-	return agu
-}
-
-// AddTotalUnits adds u to the "total_units" field.
-func (agu *ArchivementGeneralUpdate) AddTotalUnits(u int32) *ArchivementGeneralUpdate {
-	agu.mutation.AddTotalUnits(u)
-	return agu
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (agu *ArchivementGeneralUpdate) ClearTotalUnits() *ArchivementGeneralUpdate {
-	agu.mutation.ClearTotalUnits()
-	return agu
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (agu *ArchivementGeneralUpdate) SetTotalUnitsV1(d decimal.Decimal) *ArchivementGeneralUpdate {
 	agu.mutation.SetTotalUnitsV1(d)
@@ -209,33 +182,6 @@ func (agu *ArchivementGeneralUpdate) SetNillableTotalUnitsV1(d *decimal.Decimal)
 // ClearTotalUnitsV1 clears the value of the "total_units_v1" field.
 func (agu *ArchivementGeneralUpdate) ClearTotalUnitsV1() *ArchivementGeneralUpdate {
 	agu.mutation.ClearTotalUnitsV1()
-	return agu
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (agu *ArchivementGeneralUpdate) SetSelfUnits(u uint32) *ArchivementGeneralUpdate {
-	agu.mutation.ResetSelfUnits()
-	agu.mutation.SetSelfUnits(u)
-	return agu
-}
-
-// SetNillableSelfUnits sets the "self_units" field if the given value is not nil.
-func (agu *ArchivementGeneralUpdate) SetNillableSelfUnits(u *uint32) *ArchivementGeneralUpdate {
-	if u != nil {
-		agu.SetSelfUnits(*u)
-	}
-	return agu
-}
-
-// AddSelfUnits adds u to the "self_units" field.
-func (agu *ArchivementGeneralUpdate) AddSelfUnits(u int32) *ArchivementGeneralUpdate {
-	agu.mutation.AddSelfUnits(u)
-	return agu
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (agu *ArchivementGeneralUpdate) ClearSelfUnits() *ArchivementGeneralUpdate {
-	agu.mutation.ClearSelfUnits()
 	return agu
 }
 
@@ -531,26 +477,6 @@ func (agu *ArchivementGeneralUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: archivementgeneral.FieldCoinTypeID,
 		})
 	}
-	if value, ok := agu.mutation.TotalUnits(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
-	if value, ok := agu.mutation.AddedTotalUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
-	if agu.mutation.TotalUnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
 	if value, ok := agu.mutation.TotalUnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -562,26 +488,6 @@ func (agu *ArchivementGeneralUpdate) sqlSave(ctx context.Context) (n int, err er
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: archivementgeneral.FieldTotalUnitsV1,
-		})
-	}
-	if value, ok := agu.mutation.SelfUnits(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldSelfUnits,
-		})
-	}
-	if value, ok := agu.mutation.AddedSelfUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldSelfUnits,
-		})
-	}
-	if agu.mutation.SelfUnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: archivementgeneral.FieldSelfUnits,
 		})
 	}
 	if value, ok := agu.mutation.SelfUnitsV1(); ok {
@@ -805,33 +711,6 @@ func (aguo *ArchivementGeneralUpdateOne) ClearCoinTypeID() *ArchivementGeneralUp
 	return aguo
 }
 
-// SetTotalUnits sets the "total_units" field.
-func (aguo *ArchivementGeneralUpdateOne) SetTotalUnits(u uint32) *ArchivementGeneralUpdateOne {
-	aguo.mutation.ResetTotalUnits()
-	aguo.mutation.SetTotalUnits(u)
-	return aguo
-}
-
-// SetNillableTotalUnits sets the "total_units" field if the given value is not nil.
-func (aguo *ArchivementGeneralUpdateOne) SetNillableTotalUnits(u *uint32) *ArchivementGeneralUpdateOne {
-	if u != nil {
-		aguo.SetTotalUnits(*u)
-	}
-	return aguo
-}
-
-// AddTotalUnits adds u to the "total_units" field.
-func (aguo *ArchivementGeneralUpdateOne) AddTotalUnits(u int32) *ArchivementGeneralUpdateOne {
-	aguo.mutation.AddTotalUnits(u)
-	return aguo
-}
-
-// ClearTotalUnits clears the value of the "total_units" field.
-func (aguo *ArchivementGeneralUpdateOne) ClearTotalUnits() *ArchivementGeneralUpdateOne {
-	aguo.mutation.ClearTotalUnits()
-	return aguo
-}
-
 // SetTotalUnitsV1 sets the "total_units_v1" field.
 func (aguo *ArchivementGeneralUpdateOne) SetTotalUnitsV1(d decimal.Decimal) *ArchivementGeneralUpdateOne {
 	aguo.mutation.SetTotalUnitsV1(d)
@@ -849,33 +728,6 @@ func (aguo *ArchivementGeneralUpdateOne) SetNillableTotalUnitsV1(d *decimal.Deci
 // ClearTotalUnitsV1 clears the value of the "total_units_v1" field.
 func (aguo *ArchivementGeneralUpdateOne) ClearTotalUnitsV1() *ArchivementGeneralUpdateOne {
 	aguo.mutation.ClearTotalUnitsV1()
-	return aguo
-}
-
-// SetSelfUnits sets the "self_units" field.
-func (aguo *ArchivementGeneralUpdateOne) SetSelfUnits(u uint32) *ArchivementGeneralUpdateOne {
-	aguo.mutation.ResetSelfUnits()
-	aguo.mutation.SetSelfUnits(u)
-	return aguo
-}
-
-// SetNillableSelfUnits sets the "self_units" field if the given value is not nil.
-func (aguo *ArchivementGeneralUpdateOne) SetNillableSelfUnits(u *uint32) *ArchivementGeneralUpdateOne {
-	if u != nil {
-		aguo.SetSelfUnits(*u)
-	}
-	return aguo
-}
-
-// AddSelfUnits adds u to the "self_units" field.
-func (aguo *ArchivementGeneralUpdateOne) AddSelfUnits(u int32) *ArchivementGeneralUpdateOne {
-	aguo.mutation.AddSelfUnits(u)
-	return aguo
-}
-
-// ClearSelfUnits clears the value of the "self_units" field.
-func (aguo *ArchivementGeneralUpdateOne) ClearSelfUnits() *ArchivementGeneralUpdateOne {
-	aguo.mutation.ClearSelfUnits()
 	return aguo
 }
 
@@ -1201,26 +1053,6 @@ func (aguo *ArchivementGeneralUpdateOne) sqlSave(ctx context.Context) (_node *Ar
 			Column: archivementgeneral.FieldCoinTypeID,
 		})
 	}
-	if value, ok := aguo.mutation.TotalUnits(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
-	if value, ok := aguo.mutation.AddedTotalUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
-	if aguo.mutation.TotalUnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: archivementgeneral.FieldTotalUnits,
-		})
-	}
 	if value, ok := aguo.mutation.TotalUnitsV1(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1232,26 +1064,6 @@ func (aguo *ArchivementGeneralUpdateOne) sqlSave(ctx context.Context) (_node *Ar
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: archivementgeneral.FieldTotalUnitsV1,
-		})
-	}
-	if value, ok := aguo.mutation.SelfUnits(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldSelfUnits,
-		})
-	}
-	if value, ok := aguo.mutation.AddedSelfUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: archivementgeneral.FieldSelfUnits,
-		})
-	}
-	if aguo.mutation.SelfUnitsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Column: archivementgeneral.FieldSelfUnits,
 		})
 	}
 	if value, ok := aguo.mutation.SelfUnitsV1(); ok {
