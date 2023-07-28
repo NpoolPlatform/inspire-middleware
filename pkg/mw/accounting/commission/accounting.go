@@ -4,26 +4,22 @@ import (
 	"context"
 	"fmt"
 
-	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	accmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
-	uuid1 "github.com/NpoolPlatform/go-service-framework/pkg/const/uuid"
-
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
-func (h *Handler) accountingCommission(
-	ctx context.Context,
-	inviters []*regmgrpb.Registration,
-	comms []*npool.Commission,
-	amount decimal.Decimal,
-) (
-	[]*accmwpb.Commission,
-	error,
-) {
+func (h *Handler) Accounting(ctx context.Context) ([]*accmwpb.Commission, error) {
+	amount := h.PaymentAmount
+	if h.SettleMode == types.SettleMode_SettleWithGoodValue {
+		amount = h.GoodValue
+	}
+
 	commMap := map[string]*npool.Commission{}
-	for _, comm := range comms {
+	for _, comm := range h.Commissions {
 		commMap[comm.UserID] = comm
 	}
 
@@ -33,8 +29,8 @@ func (h *Handler) accountingCommission(
 		return _comms, nil
 	}
 
-	for _, inviter := range inviters {
-		if inviter.InviterID == uuid1.InvalidUUIDStr {
+	for _, inviter := range h.Inviters {
+		if inviter.InviterID == uuid.Nil.String() {
 			break
 		}
 
@@ -45,7 +41,7 @@ func (h *Handler) accountingCommission(
 
 		comm1, ok := commMap[inviter.InviteeID]
 		if ok {
-			percent1, err = decimal.NewFromString(comm1.GetPercent())
+			percent1, err = decimal.NewFromString(comm1.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
 			}
@@ -53,7 +49,7 @@ func (h *Handler) accountingCommission(
 
 		comm2, ok := commMap[inviter.InviterID]
 		if ok {
-			percent2, err = decimal.NewFromString(comm2.GetPercent())
+			percent2, err = decimal.NewFromString(comm2.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
 			}
@@ -75,20 +71,20 @@ func (h *Handler) accountingCommission(
 		})
 	}
 
-	commLast, ok := commMap[inviters[len(inviters)-1].InviteeID]
+	commLast, ok := commMap[h.Inviters[len(h.Inviters)-1].InviteeID]
 	if !ok {
 		return _comms, nil
 	}
 
-	percent, err := decimal.NewFromString(commLast.GetPercent())
+	percent, err := decimal.NewFromString(commLast.GetAmountOrPercent())
 	if err != nil {
 		return nil, err
 	}
 
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {
 		_comms = append(_comms, &accmwpb.Commission{
-			AppID:  inviters[len(inviters)-1].AppID,
-			UserID: inviters[len(inviters)-1].InviteeID,
+			AppID:  h.Inviters[len(h.Inviters)-1].AppID,
+			UserID: h.Inviters[len(h.Inviters)-1].InviteeID,
 			Amount: amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
 	}

@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	archivement1 "github.com/NpoolPlatform/inspire-middleware/pkg/archivement"
 	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
 
+	commission2 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/accounting/commission"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
@@ -23,14 +23,13 @@ import (
 
 //nolint
 func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
-	handler, err := registration1.NewHandler(
-		ctx,
-		registration1.WithAppID(&h.AppID),
-		registration1.WithInviteeID(&h.UserID),
-	)
+	handler, err := registration1.NewHandler(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	handler.AppID = &h.AppID
+	handler.InviteeID = &h.UserID
 
 	inviters, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
@@ -40,9 +39,9 @@ func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
 	h1, err := commission1.NewHandler(
 		ctx,
 		commission1.WithConds(&commmwpb.Conds{
-			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID},
+			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
-			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID},
+			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
 			SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 			EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 			StartAt:    &basetypes.Uint32Val{Op: cruder.LT, Value: h.OrderCreatedAt},
@@ -60,19 +59,23 @@ func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
 	}
 
 	_comms := []*npool.Commission{}
-	if hasCommission {
-		_comms, err = commission1.Accounting(
+	if h.HasCommission {
+		handler, err := commission2.NewHandler(
 			ctx,
-			settleType,
-			inviters,
-			comms,
-			paymentAmount,
-			goodValue,
+			commission2.WithSettleType(h.SettleType),
+			commission2.WithSettleMode(h.SettleMode),
+			commission2.WithInviters(inviters),
+			commission2.WithCommissions(comms),
+			commission2.WithPaymentAmount(h.PaymentAmount.String()),
+			commission2.WithGoodValue(h.GoodValue.String()),
 		)
 		if err != nil {
 			return nil, err
 		}
-
+		_comms, err = handler.Accounting(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	commMap := map[string]*npool.Commission{}
@@ -80,12 +83,12 @@ func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
 		commMap[comm.UserID] = comm
 	}
 
-	if hasCommission {
+	if h.HasCommission {
 		_details, _, err := archivement1.GetDetails(ctx, &detailmgrpb.Conds{
-			AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: appID},
+			AppID:   &commonpb.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			UserIDs: &commonpb.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
-			GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: goodID},
-			OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: orderID},
+			GoodID:  &commonpb.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+			OrderID: &commonpb.StringVal{Op: cruder.EQ, Value: h.OrderID.String()},
 		}, 0, int32(len(inviterIDs)))
 		if err != nil {
 			return nil, err
@@ -119,19 +122,28 @@ func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
 				continue
 			}
 
-			return nil, fmt.Errorf("order %v of user %v's commission exist", orderID, inviter)
+			return nil, fmt.Errorf("order %v of user %v's commission exist", h.OrderID, inviter)
 		}
 	}
 
-	currency := paymentCoinUSDCurrency.String()
-	amount := goodValue.Div(paymentCoinUSDCurrency).String()
-	usdAmount := goodValue.String()
+	currency := h.PaymentCoinUSDCurrency.String()
+	amount := h.GoodValue.Div(h.PaymentCoinUSDCurrency).String()
+	usdAmount := h.GoodValue.String()
+
+	appID := h.AppID.String()
+	goodID := h.GoodID.String()
+	orderID := h.OrderID.String()
+	paymentID := h.PaymentID.String()
+	coinTypeID := h.CoinTypeID.String()
+	paymentCoinTypeID := h.PaymentCoinTypeID.String()
+	units := h.Units.String()
+	userID := h.UserID.String()
 
 	details := []*detailmgrpb.DetailReq{}
 	for _, inviter := range inviters {
 		commission := decimal.NewFromInt(0).String()
 		comm, ok := commMap[inviter.InviterID]
-		if ok && hasCommission {
+		if ok && h.HasCommission {
 			commission = comm.Amount
 		}
 
@@ -157,8 +169,8 @@ func (h *Handler) Accounting(ctx context.Context) ([]*npool.Commission, error) {
 
 	commission := decimal.NewFromInt(0).String()
 	selfOrder := true
-	comm, ok := commMap[userID]
-	if ok && hasCommission {
+	comm, ok := commMap[h.UserID.String()]
+	if ok && h.HasCommission {
 		commission = comm.Amount
 	}
 

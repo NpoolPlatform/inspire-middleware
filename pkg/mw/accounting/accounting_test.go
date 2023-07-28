@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	commmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
-	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/commission"
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
@@ -95,178 +95,345 @@ var percent1 = "30"
 var goodID = uuid.NewString()
 
 var comm1 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg1.InviterID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent1,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg1.InviterID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent1,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm1 = commmwpb.CommissionReq{
-	AppID:      &comm1.AppID,
-	UserID:     &comm1.UserID,
-	GoodID:     comm1.GoodID,
-	SettleType: &comm1.SettleType,
-	Percent:    comm1.Percent,
-	StartAt:    &comm1.StartAt,
+	AppID:           &comm1.AppID,
+	UserID:          &comm1.UserID,
+	GoodID:          comm1.GoodID,
+	SettleType:      &comm1.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm1.AmountOrPercent,
+	StartAt:         &comm1.StartAt,
 }
 
 var percent2 = "25"
 var comm2 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg2.InviterID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent2,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg2.InviterID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent2,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm2 = commmwpb.CommissionReq{
-	AppID:      &comm2.AppID,
-	UserID:     &comm2.UserID,
-	GoodID:     comm2.GoodID,
-	SettleType: &comm2.SettleType,
-	Percent:    comm2.Percent,
-	StartAt:    &comm2.StartAt,
+	AppID:           &comm2.AppID,
+	UserID:          &comm2.UserID,
+	GoodID:          comm2.GoodID,
+	SettleType:      &comm2.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm2.AmountOrPercent,
+	StartAt:         &comm2.StartAt,
 }
 
 var percent3 = "20"
 var comm3 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg3.InviterID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent3,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg3.InviterID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent3,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm3 = commmwpb.CommissionReq{
-	AppID:      &comm3.AppID,
-	UserID:     &comm3.UserID,
-	GoodID:     comm3.GoodID,
-	SettleType: &comm3.SettleType,
-	Percent:    comm3.Percent,
-	StartAt:    &comm3.StartAt,
+	AppID:           &comm3.AppID,
+	UserID:          &comm3.UserID,
+	GoodID:          comm3.GoodID,
+	SettleType:      &comm3.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm3.AmountOrPercent,
+	StartAt:         &comm3.StartAt,
 }
 
 var percent4 = "15"
 var comm4 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg4.InviterID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent4,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg4.InviterID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent4,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm4 = commmwpb.CommissionReq{
-	AppID:      &comm4.AppID,
-	UserID:     &comm4.UserID,
-	GoodID:     comm4.GoodID,
-	SettleType: &comm4.SettleType,
-	Percent:    comm4.Percent,
-	StartAt:    &comm4.StartAt,
+	AppID:           &comm4.AppID,
+	UserID:          &comm4.UserID,
+	GoodID:          comm4.GoodID,
+	SettleType:      &comm4.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm4.AmountOrPercent,
+	StartAt:         &comm4.StartAt,
 }
 
 var percent5 = "12.4"
 var comm5 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg5.InviterID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent5,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg5.InviterID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent5,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm5 = commmwpb.CommissionReq{
-	AppID:      &comm5.AppID,
-	UserID:     &comm5.UserID,
-	GoodID:     comm5.GoodID,
-	SettleType: &comm5.SettleType,
-	Percent:    comm5.Percent,
-	StartAt:    &comm5.StartAt,
+	AppID:           &comm5.AppID,
+	UserID:          &comm5.UserID,
+	GoodID:          comm5.GoodID,
+	SettleType:      &comm5.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm5.AmountOrPercent,
+	StartAt:         &comm5.StartAt,
 }
 
 var percent6 = "7"
 var comm6 = commmwpb.Commission{
-	AppID:      reg1.AppID,
-	UserID:     reg5.InviteeID,
-	GoodID:     &goodID,
-	SettleType: commmgrpb.SettleType_GoodOrderPercent,
-	Percent:    &percent6,
-	StartAt:    uint32(time.Now().Unix()),
+	AppID:           reg1.AppID,
+	UserID:          reg5.InviteeID,
+	GoodID:          &goodID,
+	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	AmountOrPercent: percent6,
+	StartAt:         uint32(time.Now().Unix()),
 }
 
 var _comm6 = commmwpb.CommissionReq{
-	AppID:      &comm6.AppID,
-	UserID:     &comm6.UserID,
-	GoodID:     comm6.GoodID,
-	SettleType: &comm6.SettleType,
-	Percent:    comm6.Percent,
-	StartAt:    &comm6.StartAt,
+	AppID:           &comm6.AppID,
+	UserID:          &comm6.UserID,
+	GoodID:          comm6.GoodID,
+	SettleType:      &comm6.SettleType,
+	SettleMode:      &comm1.SettleMode,
+	AmountOrPercent: &comm6.AmountOrPercent,
+	StartAt:         &comm6.StartAt,
+}
+
+func setup(t *testing.T) func(*testing.T) {
+	h1, err := registration1.NewHandler(
+		context.Background(),
+		registration1.WithAppID(_reg1.AppID),
+		registration1.WithInviterID(_reg1.InviterID),
+		registration1.WithInviteeID(_reg1.InviteeID),
+	)
+	assert.Nil(t, err)
+
+	info1, err := h1.CreateRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info1)
+
+	h2, err := registration1.NewHandler(
+		context.Background(),
+		registration1.WithAppID(_reg2.AppID),
+		registration1.WithInviterID(_reg2.InviterID),
+		registration1.WithInviteeID(_reg2.InviteeID),
+	)
+	assert.Nil(t, err)
+
+	info2, err := h2.CreateRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info2)
+
+	h3, err := registration1.NewHandler(
+		context.Background(),
+		registration1.WithAppID(_reg3.AppID),
+		registration1.WithInviterID(_reg3.InviterID),
+		registration1.WithInviteeID(_reg3.InviteeID),
+	)
+	assert.Nil(t, err)
+
+	info3, err := h3.CreateRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info3)
+
+	h4, err := registration1.NewHandler(
+		context.Background(),
+		registration1.WithAppID(_reg4.AppID),
+		registration1.WithInviterID(_reg4.InviterID),
+		registration1.WithInviteeID(_reg4.InviteeID),
+	)
+	assert.Nil(t, err)
+
+	info4, err := h4.CreateRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info4)
+
+	h5, err := registration1.NewHandler(
+		context.Background(),
+		registration1.WithAppID(_reg5.AppID),
+		registration1.WithInviterID(_reg5.InviterID),
+		registration1.WithInviteeID(_reg5.InviteeID),
+	)
+	assert.Nil(t, err)
+
+	info5, err := h5.CreateRegistration(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info5)
+
+	h6, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm1.AppID),
+		commission1.WithUserID(_comm1.UserID),
+		commission1.WithGoodID(_comm1.GoodID),
+		commission1.WithSettleType(_comm1.SettleType),
+		commission1.WithSettleMode(_comm1.SettleMode),
+		commission1.WithAmountOrPercent(_comm1.AmountOrPercent),
+		commission1.WithStartAt(_comm1.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info6, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info6)
+
+	h7, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm2.AppID),
+		commission1.WithUserID(_comm2.UserID),
+		commission1.WithGoodID(_comm2.GoodID),
+		commission1.WithSettleType(_comm2.SettleType),
+		commission1.WithSettleMode(_comm2.SettleMode),
+		commission1.WithAmountOrPercent(_comm2.AmountOrPercent),
+		commission1.WithStartAt(_comm2.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info7, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info7)
+
+	h8, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm3.AppID),
+		commission1.WithUserID(_comm3.UserID),
+		commission1.WithGoodID(_comm3.GoodID),
+		commission1.WithSettleType(_comm3.SettleType),
+		commission1.WithSettleMode(_comm3.SettleMode),
+		commission1.WithAmountOrPercent(_comm3.AmountOrPercent),
+		commission1.WithStartAt(_comm3.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info8, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info8)
+
+	h9, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm4.AppID),
+		commission1.WithUserID(_comm4.UserID),
+		commission1.WithGoodID(_comm4.GoodID),
+		commission1.WithSettleType(_comm4.SettleType),
+		commission1.WithSettleMode(_comm4.SettleMode),
+		commission1.WithAmountOrPercent(_comm4.AmountOrPercent),
+		commission1.WithStartAt(_comm4.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info9, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info9)
+
+	h10, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm5.AppID),
+		commission1.WithUserID(_comm5.UserID),
+		commission1.WithGoodID(_comm5.GoodID),
+		commission1.WithSettleType(_comm5.SettleType),
+		commission1.WithSettleMode(_comm5.SettleMode),
+		commission1.WithAmountOrPercent(_comm5.AmountOrPercent),
+		commission1.WithStartAt(_comm5.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info10, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info10)
+
+	h11, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithAppID(_comm6.AppID),
+		commission1.WithUserID(_comm6.UserID),
+		commission1.WithGoodID(_comm6.GoodID),
+		commission1.WithSettleType(_comm6.SettleType),
+		commission1.WithSettleMode(_comm6.SettleMode),
+		commission1.WithAmountOrPercent(_comm6.AmountOrPercent),
+		commission1.WithStartAt(_comm6.StartAt),
+	)
+	assert.Nil(t, err)
+
+	info11, err := h6.CreateCommission(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info11)
+
+	return func(*testing.T) {
+		_, _ = h1.DeleteRegistration(context.Background())
+		_, _ = h2.DeleteRegistration(context.Background())
+		_, _ = h3.DeleteRegistration(context.Background())
+		_, _ = h4.DeleteRegistration(context.Background())
+		_, _ = h5.DeleteRegistration(context.Background())
+		_, _ = h6.DeleteCommission(context.Background())
+		_, _ = h7.DeleteCommission(context.Background())
+		_, _ = h8.DeleteCommission(context.Background())
+		_, _ = h9.DeleteCommission(context.Background())
+		_, _ = h10.DeleteCommission(context.Background())
+		_, _ = h11.DeleteCommission(context.Background())
+	}
 }
 
 //nolint
 func accounting(t *testing.T) {
-	_, err := registration1.CreateRegistration(context.Background(), &_reg1)
-	assert.Nil(t, err)
-	_, err = registration1.CreateRegistration(context.Background(), &_reg2)
-	assert.Nil(t, err)
-	_, err = registration1.CreateRegistration(context.Background(), &_reg3)
-	assert.Nil(t, err)
-	_, err = registration1.CreateRegistration(context.Background(), &_reg4)
-	assert.Nil(t, err)
-	_, err = registration1.CreateRegistration(context.Background(), &_reg5)
-	assert.Nil(t, err)
-
-	_, err = commission1.CreateCommission(context.Background(), &_comm1)
-	assert.Nil(t, err)
-	_, err = commission1.CreateCommission(context.Background(), &_comm2)
-	assert.Nil(t, err)
-	_, err = commission1.CreateCommission(context.Background(), &_comm3)
-	assert.Nil(t, err)
-	_, err = commission1.CreateCommission(context.Background(), &_comm4)
-	assert.Nil(t, err)
-	_, err = commission1.CreateCommission(context.Background(), &_comm5)
-	assert.Nil(t, err)
-	_, err = commission1.CreateCommission(context.Background(), &_comm6)
-	assert.Nil(t, err)
-
 	orderID := uuid.NewString()
 	paymentID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345")
-	units := decimal.NewFromInt(10)
-	paymentAmount := decimal.NewFromInt(2000)
-	goodValue := decimal.NewFromInt(3000)
-	settleType := commmgrpb.SettleType_GoodOrderPercent
+	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
+	units := decimal.NewFromInt(10).String()
+	paymentAmount := decimal.NewFromInt(2000).String()
+	goodValue := decimal.NewFromInt(3000).String()
+	settleType := types.SettleType_GoodOrderPercent
+	settleMode := types.SettleMode_SettleWithPaymentAmount
+	hasCommission := true
+	orderCreatedAt := uint32(time.Now().Unix())
 
-	comms, err := Accounting(
+	handler, err := NewHandler(
 		context.Background(),
-		comm6.AppID,
-		comm6.UserID,
-		comm6.GetGoodID(),
-		orderID,
-		paymentID,
-		coinTypeID,
-		paymentCoinTypeID,
-		paymentCoinUSDCurrency,
-		units.String(),
-		settleType,
-		paymentAmount,
-		goodValue,
-		true,
-		uint32(time.Now().Unix()),
+		WithAppID(comm6.AppID),
+		WithUserID(comm6.UserID),
+		WithOrderID(orderID),
+		WithPaymentID(paymentID),
+		WithCoinTypeID(coinTypeID),
+		WithPaymentCoinTypeID(paymentCoinTypeID),
+		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
+		WithUnits(units),
+		WithPaymentAmount(paymentAmount),
+		WithGoodValue(goodValue),
+		WithHasCommission(hasCommission),
+		WithOrderCreatedAt(orderCreatedAt),
+		WithSettleType(settleType),
+		WithSettleMode(settleMode),
 	)
+	assert.Nil(t, err)
+
+	comms, err := handler.Accounting(context.Background())
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(comms), 6)
 
+		_paymentAmount := decimal.RequireFromString(paymentAmount)
 		found := false
 		for _, comm := range comms {
 			if comm.UserID == comm1.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -276,7 +443,7 @@ func accounting(t *testing.T) {
 		found = false
 		for _, comm := range comms {
 			if comm.UserID == comm2.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -286,7 +453,7 @@ func accounting(t *testing.T) {
 		found = false
 		for _, comm := range comms {
 			if comm.UserID == comm3.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -296,7 +463,7 @@ func accounting(t *testing.T) {
 		found = false
 		for _, comm := range comms {
 			if comm.UserID == comm4.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -306,7 +473,7 @@ func accounting(t *testing.T) {
 		found = false
 		for _, comm := range comms {
 			if comm.UserID == comm5.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -316,7 +483,7 @@ func accounting(t *testing.T) {
 		found = false
 		for _, comm := range comms {
 			if comm.UserID == comm6.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -329,6 +496,9 @@ func TestAccounting(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
+
+	teardown := setup(t)
+	defer teardown(t)
 
 	t.Run("accounting", accounting)
 }
