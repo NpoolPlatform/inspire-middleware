@@ -3,8 +3,8 @@ package statement
 import (
 	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
-	entarchivementdetail "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/archivementdetail"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entarchivementdetail "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"

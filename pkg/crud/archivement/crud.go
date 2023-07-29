@@ -3,8 +3,8 @@ package archivement
 import (
 	"fmt"
 
-	"github.com/NpoolPlatform/inspire-manager/pkg/db/ent"
-	entarchivementgeneral "github.com/NpoolPlatform/inspire-manager/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entarchivementgeneral "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
@@ -41,12 +41,24 @@ func CreateSet(c *ent.ArchivementGeneralCreate, req *Req) *ent.ArchivementGenera
 	if req.CoinTypeID != nil {
 		c.SetCoinTypeID(*req.CoinTypeID)
 	}
-	c.SetTotalAmount(decimal.NewFromInt(0))
-	c.SetSelfAmount(decimal.NewFromInt(0))
-	c.SetTotalUnitsV1(decimal.NewFromInt(0))
-	c.SetSelfUnitsV1(decimal.NewFromInt(0))
-	c.SetTotalCommission(decimal.NewFromInt(0))
-	c.SetSelfCommission(decimal.NewFromInt(0))
+	if req.TotalAmount != nil {
+		c.SetTotalAmount(*req.TotalAmount)
+	}
+	if req.SelfAmount != nil {
+		c.SetSelfAmount(*req.SelfAmount)
+	}
+	if req.TotalUnits != nil {
+		c.SetTotalUnitsV1(*req.TotalUnits)
+	}
+	if req.SelfUnits != nil {
+		c.SetSelfUnitsV1(*req.SelfUnits)
+	}
+	if req.TotalCommission != nil {
+		c.SetTotalCommission(*req.TotalCommission)
+	}
+	if req.SelfCommission != nil {
+		c.SetSelfCommission(*req.SelfCommission)
+	}
 
 	return c
 }
