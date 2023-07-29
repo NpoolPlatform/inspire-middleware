@@ -1,4 +1,4 @@
-package detail
+package statement
 
 import (
 	"fmt"
@@ -107,7 +107,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.AppID != nil {
@@ -119,7 +119,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.UserID != nil {
@@ -131,7 +131,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.UserIDs != nil {
@@ -143,7 +143,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.IN:
 			q.Where(entarchivementdetail.UserIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.DirectContributorID != nil {
@@ -155,7 +155,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.DirectContributorID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.GoodID != nil {
@@ -167,7 +167,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.OrderID != nil {
@@ -179,7 +179,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.SelfOrder != nil {
@@ -191,7 +191,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.SelfOrder(selfOrder))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.PaymentID != nil {
@@ -203,7 +203,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.PaymentID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.CoinTypeID != nil {
@@ -215,7 +215,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.CoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	if conds.PaymentCoinTypeID != nil {
@@ -227,7 +227,7 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		case cruder.EQ:
 			q.Where(entarchivementdetail.PaymentCoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid detail field")
+			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
 	return q, nil
