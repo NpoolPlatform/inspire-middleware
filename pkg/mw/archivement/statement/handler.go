@@ -2,6 +2,7 @@ package statement
 
 import (
 	"context"
+	"fmt"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/archivement/statement"
@@ -14,6 +15,7 @@ import (
 
 type Handler struct {
 	statementcrud.Req
+	Reqs   []*statementcrud.Req
 	Conds  *statementcrud.Conds
 	Offset int32
 	Limit  int32
@@ -228,6 +230,158 @@ func WithCommission(amount *string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.Commission = &_amount
+		return nil
+	}
+}
+
+func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		appMap := map[string]struct{}{}
+		orderMap := map[string]struct{}{}
+
+		for _, req := range reqs {
+			if req.AppID == nil {
+				return fmt.Errorf("invalid appid")
+			}
+			if req.UserID == nil {
+				return fmt.Errorf("invalid userid")
+			}
+			if req.DirectContributorID == nil {
+				return fmt.Errorf("invalid directcontributorid")
+			}
+			if req.GoodID == nil {
+				return fmt.Errorf("invalid goodid")
+			}
+			if req.OrderID == nil {
+				return fmt.Errorf("invalid orderid")
+			}
+			if req.PaymentID == nil {
+				return fmt.Errorf("invalid paymentid")
+			}
+			if req.CoinTypeID == nil {
+				return fmt.Errorf("invalid paymentid")
+			}
+			if req.PaymentCoinTypeID == nil {
+				return fmt.Errorf("invalid paymentcointypeid")
+			}
+			if req.PaymentCoinUSDCurrency == nil {
+				return fmt.Errorf("invalid paymentcoinusdcurrency")
+			}
+			if req.Units == nil {
+				return fmt.Errorf("invalid units")
+			}
+			if req.Amount == nil {
+				return fmt.Errorf("invalid amount")
+			}
+			if req.USDAmount == nil {
+				return fmt.Errorf("invalid usdamount")
+			}
+			if req.Commission == nil {
+				return fmt.Errorf("invalid commission")
+			}
+
+			_req := &statementcrud.Req{
+				SelfOrder: req.SelfOrder,
+			}
+			var err error
+
+			if req.ID != nil {
+				id, err := uuid.Parse(*req.ID)
+				if err != nil {
+					return err
+				}
+				_req.ID = &id
+			}
+
+			id1, err := uuid.Parse(*req.AppID)
+			if err != nil {
+				return err
+			}
+			_req.AppID = &id1
+
+			id2, err := uuid.Parse(*req.UserID)
+			if err != nil {
+				return err
+			}
+			_req.UserID = &id2
+
+			id3, err := uuid.Parse(*req.DirectContributorID)
+			if err != nil {
+				return err
+			}
+			_req.DirectContributorID = &id3
+
+			id4, err := uuid.Parse(*req.GoodID)
+			if err != nil {
+				return err
+			}
+			_req.GoodID = &id4
+
+			id5, err := uuid.Parse(*req.OrderID)
+			if err != nil {
+				return err
+			}
+			_req.OrderID = &id5
+
+			id6, err := uuid.Parse(*req.PaymentID)
+			if err != nil {
+				return err
+			}
+			_req.PaymentID = &id6
+
+			id7, err := uuid.Parse(*req.CoinTypeID)
+			if err != nil {
+				return err
+			}
+			_req.CoinTypeID = &id7
+
+			id8, err := uuid.Parse(*req.PaymentCoinTypeID)
+			if err != nil {
+				return err
+			}
+			_req.PaymentCoinTypeID = &id8
+
+			amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
+			if err != nil {
+				return err
+			}
+			_req.PaymentCoinUSDCurrency = &amount1
+
+			amount2, err := decimal.NewFromString(*req.Units)
+			if err != nil {
+				return err
+			}
+			_req.Units = &amount2
+
+			amount3, err := decimal.NewFromString(*req.Amount)
+			if err != nil {
+				return err
+			}
+			_req.Amount = &amount3
+
+			amount4, err := decimal.NewFromString(*req.USDAmount)
+			if err != nil {
+				return err
+			}
+			_req.USDAmount = &amount4
+
+			amount5, err := decimal.NewFromString(*req.Commission)
+			if err != nil {
+				return err
+			}
+			_req.Commission = &amount5
+
+			appMap[*req.AppID] = struct{}{}
+			orderMap[*req.OrderID] = struct{}{}
+		}
+
+		if len(appMap) > 1 {
+			return fmt.Errorf("too many apps")
+		}
+		if len(orderMap) > 1 {
+			return fmt.Errorf("too many orders")
+		}
+
 		return nil
 	}
 }

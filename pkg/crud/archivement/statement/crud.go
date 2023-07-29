@@ -80,6 +80,7 @@ func CreateSet(c *ent.ArchivementDetailCreate, req *Req) *ent.ArchivementDetailC
 
 type Conds struct {
 	ID                  *cruder.Cond
+	IDs                 *cruder.Cond
 	AppID               *cruder.Cond
 	UserID              *cruder.Cond
 	DirectContributorID *cruder.Cond
@@ -130,6 +131,18 @@ func SetQueryConds(q *ent.ArchivementDetailQuery, conds *Conds) (*ent.Archivemen
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entarchivementdetail.UserID(id))
+		default:
+			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.IDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		switch conds.IDs.Op {
+		case cruder.IN:
+			q.Where(entarchivementdetail.IDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}

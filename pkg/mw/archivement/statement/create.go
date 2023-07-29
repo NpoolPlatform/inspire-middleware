@@ -21,24 +21,24 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req) error {
 	if _, err := statementcrud.CreateSet(
 		tx.ArchivementDetail.Create(),
-		&h.Req,
+		req,
 	).Save(ctx); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v:%v:%v",
 		basetypes.Prefix_PrefixCreateInspireArchivement,
-		*h.AppID,
-		*h.UserID,
-		*h.GoodID,
-		*h.CoinTypeID,
+		*req.AppID,
+		*req.UserID,
+		*req.GoodID,
+		*req.CoinTypeID,
 	)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return err
@@ -50,10 +50,10 @@ func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx) 
 	stm, err := archivementcrud.SetQueryConds(
 		tx.ArchivementGeneral.Query(),
 		&archivementcrud.Conds{
-			AppID:      &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
-			UserID:     &cruder.Cond{Op: cruder.EQ, Val: *h.UserID},
-			GoodID:     &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID},
-			CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: *h.CoinTypeID},
+			AppID:      &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
+			UserID:     &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
+			GoodID:     &cruder.Cond{Op: cruder.EQ, Val: *req.GoodID},
+			CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: *req.CoinTypeID},
 		},
 	)
 	if err != nil {
@@ -67,34 +67,36 @@ func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx) 
 		}
 	}
 
-	req := &archivementcrud.Req{
-		AppID:           h.AppID,
-		UserID:          h.UserID,
-		GoodID:          h.GoodID,
-		CoinTypeID:      h.CoinTypeID,
-		TotalAmount:     h.Amount,
-		TotalUnits:      h.Units,
-		TotalCommission: h.Commission,
+	_req := &archivementcrud.Req{
+		AppID:           req.AppID,
+		UserID:          req.UserID,
+		GoodID:          req.GoodID,
+		CoinTypeID:      req.CoinTypeID,
+		TotalAmount:     req.Amount,
+		TotalUnits:      req.Units,
+		TotalCommission: req.Commission,
 	}
-	if h.SelfOrder != nil && *h.SelfOrder {
-		req.SelfAmount = h.Amount
-		req.SelfUnits = h.Units
-		req.SelfCommission = h.Commission
+	if req.SelfOrder != nil && *req.SelfOrder {
+		_req.SelfAmount = req.Amount
+		_req.SelfUnits = req.Units
+		_req.SelfCommission = req.Commission
 	}
 
 	if info == nil {
 		if _, err = archivementcrud.CreateSet(
 			tx.ArchivementGeneral.Create(),
-			req,
+			_req,
 		).Save(ctx); err != nil {
 			return err
 		}
 		return nil
 	}
 
+	// TODO: add amount
+
 	if _, err := archivementcrud.UpdateSet(
 		tx.ArchivementGeneral.UpdateOneID(info.ID),
-		req,
+		_req,
 	).Save(ctx); err != nil {
 		return err
 	}
@@ -158,10 +160,10 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		Handler: h,
 	}
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createStatement(_ctx, tx); err != nil {
+		if err := handler.createStatement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrAddArchivement(_ctx, tx); err != nil {
+		if err := handler.createOrAddArchivement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
 		return nil
@@ -171,4 +173,39 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	}
 
 	return h.GetStatement(ctx)
+}
+
+func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, error) {
+	ids := []uuid.UUID{}
+
+	handler := &createHandler{
+		Handler: h,
+	}
+	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		for _, req := range h.Reqs {
+			id := uuid.New()
+			if req.ID == nil {
+				req.ID = &id
+			}
+			if err := handler.createStatement(_ctx, tx, req); err != nil {
+				return err
+			}
+			if err := handler.createOrAddArchivement(_ctx, tx, req); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	h.Conds = &statementcrud.Conds{
+		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
+	}
+	infos, _, err := h.GetStatements(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return infos, nil
 }

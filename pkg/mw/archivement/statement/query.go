@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/archivement/statement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entarchivementdetail "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
@@ -26,6 +27,20 @@ func (h *queryHandler) queryStatement(cli *ent.Client) {
 			entarchivementdetail.DeletedAt(0),
 		).
 		Select()
+}
+
+func (h *queryHandler) queryStatements(ctx context.Context, cli *ent.Client) error {
+	stm, err := statementcrud.SetQueryConds(cli.ArchivementDetail.Query(), h.Conds)
+	if err != nil {
+		return err
+	}
+	total, err := stm.Count(ctx)
+	if err != nil {
+		return err
+	}
+	h.total = uint32(total)
+	h.stmSelect = stm.Select()
+	return nil
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -57,4 +72,23 @@ func (h *Handler) GetStatement(ctx context.Context) (*npool.Statement, error) {
 	}
 
 	return handler.infos[0], nil
+}
+
+func (h *Handler) GetStatements(ctx context.Context) ([]*npool.Statement, uint32, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Statement{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryStatements(ctx, cli); err != nil {
+			return err
+		}
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return handler.infos, handler.total, nil
 }
