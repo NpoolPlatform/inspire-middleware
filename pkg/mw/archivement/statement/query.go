@@ -92,3 +92,28 @@ func (h *Handler) GetStatements(ctx context.Context) ([]*npool.Statement, uint32
 
 	return handler.infos, handler.total, nil
 }
+
+func (h *Handler) GetStatementOnly(ctx context.Context) (*npool.Statement, error) {
+	handler := &queryHandler{
+		Handler: h,
+		infos:   []*npool.Statement{},
+	}
+
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.queryStatements(ctx, cli); err != nil {
+			return err
+		}
+		return handler.scan(_ctx)
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(handler.infos) == 0 {
+		return nil, nil
+	}
+	if len(handler.infos) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+
+	return handler.infos[0], nil
+}

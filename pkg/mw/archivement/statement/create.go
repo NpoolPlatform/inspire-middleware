@@ -15,6 +15,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/archivement/statement"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type createHandler struct {
@@ -195,6 +196,22 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				defer func() {
 					_ = redis2.Unlock(key)
 				}()
+				handler.Conds = &statementcrud.Conds{
+					AppID:   &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
+					UserID:  &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
+					OrderID: &cruder.Cond{Op: cruder.EQ, Val: *req.OrderID},
+				}
+				info, err := handler.GetStatementOnly(ctx)
+				if err != nil {
+					return err
+				}
+				amount, err := decimal.NewFromString(info.Amount)
+				if err != nil {
+					return err
+				}
+				if req.Amount.Cmp(amount) != 0 {
+					return fmt.Errorf("mismatch statement")
+				}
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
 				}
