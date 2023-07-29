@@ -183,14 +183,27 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 	}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
-			id := uuid.New()
-			if req.ID == nil {
-				req.ID = &id
+			_f := func() error {
+				id := uuid.New()
+				if req.ID == nil {
+					req.ID = &id
+				}
+				key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *req.AppID, *req.OrderID)
+				if err := redis2.TryLock(key, 0); err != nil {
+					return err
+				}
+				defer func() {
+					_ = redis2.Unlock(key)
+				}()
+				if err := handler.createStatement(_ctx, tx, req); err != nil {
+					return err
+				}
+				if err := handler.createOrAddArchivement(_ctx, tx, req); err != nil {
+					return err
+				}
+				return nil
 			}
-			if err := handler.createStatement(_ctx, tx, req); err != nil {
-				return err
-			}
-			if err := handler.createOrAddArchivement(_ctx, tx, req); err != nil {
+			if err := _f(); err != nil {
 				return err
 			}
 		}
