@@ -93,7 +93,20 @@ func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx, 
 		return nil
 	}
 
-	// TODO: add amount
+	totalAmount := _req.TotalAmount.Add(info.TotalAmount)
+	_req.TotalAmount = &totalAmount
+	totalUnits := _req.TotalUnits.Add(info.TotalUnitsV1)
+	_req.TotalUnits = &totalUnits
+	totalCommission := _req.TotalCommission.Add(info.TotalCommission)
+	_req.TotalCommission = &totalCommission
+	if req.SelfOrder != nil && *req.SelfOrder {
+		selfAmount := _req.SelfAmount.Add(info.SelfAmount)
+		_req.SelfAmount = &selfAmount
+		selfUnits := _req.SelfUnits.Add(info.SelfUnitsV1)
+		_req.SelfUnits = &selfUnits
+		selfCommission := _req.SelfCommission.Add(info.SelfCommission)
+		_req.SelfCommission = &selfCommission
+	}
 
 	if _, err := archivementcrud.UpdateSet(
 		tx.ArchivementGeneral.UpdateOneID(info.ID),
