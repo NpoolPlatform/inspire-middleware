@@ -3,10 +3,9 @@ package archivement
 import (
 	"context"
 
-	detailmgrcli "github.com/NpoolPlatform/inspire-manager/pkg/client/archivement/detail"
-	detailmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement/detail"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/archivement"
 )
 
-func GetDetails(ctx context.Context, conds *detailmgrpb.Conds, offset, limit int32) ([]*detailmgrpb.Detail, uint32, error) {
-	return detailmgrcli.GetDetails(ctx, conds, offset, limit)
+func GetArchivements(ctx context.Context) ([]*npool.Archivement, uint32, error) {
+	return nil, 0, nil
 }
