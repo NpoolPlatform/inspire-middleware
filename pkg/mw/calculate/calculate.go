@@ -2,7 +2,6 @@ package calculate
 
 import (
 	"context"
-	"fmt"
 
 	commission2 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/calculate/commission"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
@@ -77,8 +76,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	for _, comm := range _comms {
 		commMap[comm.UserID] = comm
 	}
-
-	fmt.Printf("inviters | %v | %v\n", len(inviters), inviterIDs)
 
 	statements := []*statementmwpb.Statement{}
 	for _, inviter := range inviters {
