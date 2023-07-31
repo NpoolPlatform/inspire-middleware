@@ -9,13 +9,13 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	ivcodemwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/invitation/invitationcode"
-	ivcodemgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
+	ivcodemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"bou.ke/monkey"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -37,42 +37,42 @@ func init() {
 	}
 }
 
-var ret = &mgrpb.Registration{
+var ret = &npool.Registration{
 	ID:        uuid.NewString(),
 	AppID:     uuid.NewString(),
 	InviterID: uuid.NewString(),
 	InviteeID: uuid.NewString(),
 }
 
-var req = &mgrpb.RegistrationReq{
+var req = &npool.RegistrationReq{
 	ID:        &ret.ID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviterID,
 	InviteeID: &ret.InviteeID,
 }
 
-var ret1 = &mgrpb.Registration{
+var ret1 = &npool.Registration{
 	ID:        uuid.NewString(),
 	AppID:     ret.AppID,
 	InviterID: ret.InviterID,
 	InviteeID: uuid.NewString(),
 }
 
-var req1 = &mgrpb.RegistrationReq{
+var req1 = &npool.RegistrationReq{
 	ID:        &ret1.ID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviterID,
 	InviteeID: &ret1.InviteeID,
 }
 
-var ret2 = &mgrpb.Registration{
+var ret2 = &npool.Registration{
 	ID:        uuid.NewString(),
 	AppID:     ret.AppID,
 	InviterID: ret.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
-var req2 = &mgrpb.RegistrationReq{
+var req2 = &npool.RegistrationReq{
 	ID:        &ret2.ID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviteeID,
@@ -80,13 +80,13 @@ var req2 = &mgrpb.RegistrationReq{
 }
 
 func create(t *testing.T) {
-	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
+	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
 		AppID:  &ret.AppID,
 		UserID: &ret.InviterID,
 	})
 	assert.Nil(t, err)
 
-	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
+	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
 		AppID:  &ret.AppID,
 		UserID: &ret.InviteeID,
 	})
@@ -117,7 +117,7 @@ func create(t *testing.T) {
 func update(t *testing.T) {
 	inviterID := uuid.NewString()
 
-	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
+	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
 		AppID:  &ret.AppID,
 		UserID: &inviterID,
 	})
@@ -134,15 +134,9 @@ func update(t *testing.T) {
 }
 
 func getRegistrations(t *testing.T) {
-	infos, total, err := GetRegistrations(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviterID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.InviterID,
-		},
+	infos, total, err := GetRegistrations(context.Background(), &npool.Conds{
+		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		InviterID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.InviterID},
 	}, int32(0), int32(2))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(2))
@@ -151,15 +145,9 @@ func getRegistrations(t *testing.T) {
 }
 
 func getRegistrationOnly(t *testing.T) {
-	info, err := GetRegistrationOnly(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviteeID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.InviteeID,
-		},
+	info, err := GetRegistrationOnly(context.Background(), &npool.Conds{
+		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		InviteeID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.InviteeID},
 	})
 	if assert.Nil(t, err) {
 		assert.Equal(t, ret, info)
@@ -167,15 +155,9 @@ func getRegistrationOnly(t *testing.T) {
 }
 
 func getSubordinates(t *testing.T) {
-	infos, total, err := GetSubordinates(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviterIDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: []string{ret.InviterID},
-		},
+	infos, total, err := GetSubordinates(context.Background(), &npool.Conds{
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		InviterIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.InviterID}},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(3))
@@ -210,15 +192,9 @@ func getSubordinates(t *testing.T) {
 }
 
 func getSuperiores(t *testing.T) {
-	infos, total, err := GetSuperiores(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		InviteeIDs: &commonpb.StringSliceVal{
-			Op:    cruder.IN,
-			Value: []string{ret2.InviteeID},
-		},
+	infos, total, err := GetSuperiores(context.Background(), &npool.Conds{
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		InviteeIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret2.InviteeID}},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(2))

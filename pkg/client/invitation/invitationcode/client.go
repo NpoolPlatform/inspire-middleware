@@ -2,12 +2,12 @@ package invitationcode
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -17,7 +17,7 @@ var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func do(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -33,8 +33,8 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mgrpb.InvitationCode, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func CreateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.CreateInvitationCode(ctx, &npool.CreateInvitationCodeRequest{
 			Info: in,
 		})
@@ -46,27 +46,33 @@ func CreateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mg
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.InvitationCode), nil
+	return info.(*npool.InvitationCode), nil
 }
 
-func GetInvitationCodeOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.InvitationCode, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetInvitationCodeOnly(ctx, &npool.GetInvitationCodeOnlyRequest{
+func GetInvitationCodeOnly(ctx context.Context, conds *npool.Conds) (*npool.InvitationCode, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.InvitationCode), nil
+	if len(infos.([]*npool.InvitationCode)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.InvitationCode)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.InvitationCode)[0], nil
 }
 
-func UpdateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mgrpb.InvitationCode, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func UpdateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateInvitationCode(ctx, &npool.UpdateInvitationCodeRequest{
 			Info: in,
 		})
@@ -78,11 +84,11 @@ func UpdateInvitationCode(ctx context.Context, in *mgrpb.InvitationCodeReq) (*mg
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.InvitationCode), nil
+	return info.(*npool.InvitationCode), nil
 }
 
-func GetInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func GetInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetInvitationCode(ctx, &npool.GetInvitationCodeRequest{
 			ID: id,
 		})
@@ -94,13 +100,13 @@ func GetInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, e
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.InvitationCode), nil
+	return info.(*npool.InvitationCode), nil
 }
 
-func GetInvitationCodes(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*mgrpb.InvitationCode, uint32, error) {
+func GetInvitationCodes(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.InvitationCode, uint32, error) {
 	var total uint32
 
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -117,13 +123,13 @@ func GetInvitationCodes(ctx context.Context, conds *mgrpb.Conds, offset, limit i
 	if err != nil {
 		return nil, 0, err
 	}
-	return infos.([]*mgrpb.InvitationCode), total, nil
+	return infos.([]*npool.InvitationCode), total, nil
 }
 
-func DeleteInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func DeleteInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteInvitationCode(ctx, &npool.DeleteInvitationCodeRequest{
-			Info: &mgrpb.InvitationCodeReq{
+			Info: &npool.InvitationCodeReq{
 				ID: &id,
 			},
 		})
@@ -135,5 +141,5 @@ func DeleteInvitationCode(ctx context.Context, id string) (*mgrpb.InvitationCode
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.InvitationCode), nil
+	return info.(*npool.InvitationCode), nil
 }
