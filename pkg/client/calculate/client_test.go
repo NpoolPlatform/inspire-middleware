@@ -311,64 +311,62 @@ func calculate(t *testing.T) {
 		found := false
 		for _, comm := range comms {
 			if comm.UserID == comm1.UserID {
-				assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
 		}
 		assert.Equal(t, found, true)
 
-		/*
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm2.UserID {
-					assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm2.UserID {
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm3.UserID {
-					assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm3.UserID {
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm4.UserID {
-					assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm4.UserID {
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm5.UserID {
-					assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm5.UserID {
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm6.UserID {
-					assert.Equal(t, comm.Amount, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm6.UserID {
+				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
-		*/
+		}
+		assert.Equal(t, found, true)
 	}
 }
 
