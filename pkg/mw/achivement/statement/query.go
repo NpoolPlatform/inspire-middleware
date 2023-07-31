@@ -146,6 +146,9 @@ func (h *Handler) GetStatements(ctx context.Context) ([]*npool.Statement, uint32
 		if err := handler.queryStatements(ctx, cli); err != nil {
 			return err
 		}
+		handler.stmSelect.
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
 		return handler.scan(_ctx)
 	})
 	if err != nil {
