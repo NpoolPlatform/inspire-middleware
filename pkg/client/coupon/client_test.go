@@ -11,7 +11,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"bou.ke/monkey"
@@ -20,7 +20,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
@@ -38,33 +38,37 @@ func init() {
 }
 
 var ret = &npool.Coupon{
-	ID:               uuid.NewString(),
-	CouponType:       allocatedmgrpb.CouponType_FixAmount,
-	AppID:            uuid.NewString(),
-	Value:            "10.01",
-	Circulation:      "100.1",
-	ReleasedByUserID: uuid.NewString(),
-	StartAt:          uint32(time.Now().Unix()),
-	DurationDays:     30,
-	Message:          "Test coupon message",
-	Name:             "Test coupon name",
-	Allocated:        "0",
+	ID:                  uuid.NewString(),
+	CouponType:          types.CouponType_Discount,
+	CouponTypeStr:       types.CouponType_Discount.String(),
+	AppID:               uuid.NewString(),
+	Denomination:        "10.01",
+	Circulation:         "100.1",
+	IssuedBy:            uuid.NewString(),
+	StartAt:             uint32(time.Now().Unix()),
+	DurationDays:        30,
+	Message:             "Test coupon message",
+	Name:                "Test coupon name",
+	Allocated:           "0",
+	CouponConstraint:    types.CouponConstraint_Normal,
+	CouponConstraintStr: types.CouponConstraint_Normal.String(),
 }
 
 var req = &npool.CouponReq{
 	ID:               &ret.ID,
 	CouponType:       &ret.CouponType,
 	AppID:            &ret.AppID,
-	Value:            &ret.Value,
+	Denomination:     &ret.Denomination,
 	Circulation:      &ret.Circulation,
-	ReleasedByUserID: &ret.ReleasedByUserID,
+	IssuedBy:         &ret.IssuedBy,
 	StartAt:          &ret.StartAt,
 	DurationDays:     &ret.DurationDays,
 	Message:          &ret.Message,
 	Name:             &ret.Name,
+	CouponConstraint: &ret.CouponConstraint,
 }
 
-func create(t *testing.T) {
+func createDiscount(t *testing.T) {
 	info, err := CreateCoupon(context.Background(), req)
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
@@ -73,16 +77,15 @@ func create(t *testing.T) {
 	}
 }
 
-func update(t *testing.T) {
-	value := "10.02"
+func updateDiscount(t *testing.T) {
+	denomination := "10.02"
 	circulation := "200.4"
 
-	req.Value = &value
+	req.Denomination = &denomination
 	req.Circulation = &circulation
 
-	ret.Value = value
+	ret.Denomination = denomination
 	ret.Circulation = circulation
-
 	info, err := UpdateCoupon(context.Background(), req)
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
@@ -104,7 +107,7 @@ func update(t *testing.T) {
 
 	req.Allocated = &allocated
 	ret.Allocated = "6"
-	req.Value = nil
+	req.Denomination = nil
 	req.Circulation = nil
 
 	info, err = UpdateCoupon(context.Background(), req)
@@ -114,16 +117,10 @@ func update(t *testing.T) {
 	}
 }
 
-func get(t *testing.T) {
+func getDiscount(t *testing.T) {
 	infos, total, err := GetCoupons(context.Background(), &npool.Conds{
-		CouponType: &commonpb.Int32Val{
-			Op:    cruder.EQ,
-			Value: int32(allocatedmgrpb.CouponType_FixAmount),
-		},
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
+		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
+		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(1))
@@ -131,7 +128,7 @@ func get(t *testing.T) {
 	}
 }
 
-func TestCoupon(t *testing.T) {
+func TestCouponDiscount(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
@@ -142,7 +139,7 @@ func TestCoupon(t *testing.T) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
-	t.Run("create", create)
-	t.Run("update", update)
-	t.Run("get", get)
+	t.Run("createDiscount", createDiscount)
+	t.Run("updateDiscount", updateDiscount)
+	t.Run("getDiscount", getDiscount)
 }
