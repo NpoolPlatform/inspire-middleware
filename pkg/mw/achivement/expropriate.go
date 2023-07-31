@@ -48,7 +48,7 @@ func (h *expropriateHandler) getStatements(ctx context.Context) error {
 			break
 		}
 		h.statements = append(h.statements, statements...)
-		h.Offset += h.Limit
+		handler.Offset += handler.Limit
 	}
 
 	appMap := map[string]struct{}{}
@@ -69,13 +69,13 @@ func (h *expropriateHandler) getStatements(ctx context.Context) error {
 
 func (h *expropriateHandler) getAchivements(ctx context.Context) error {
 	h.Conds = &achivementcrud.Conds{
-		AppID:      &cruder.Cond{Op: cruder.EQ, Val: h.statements[0].AppID},
-		GoodID:     &cruder.Cond{Op: cruder.EQ, Val: h.statements[0].GoodID},
-		CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: h.statements[0].CoinTypeID},
+		AppID:      &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].AppID)},
+		GoodID:     &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].GoodID)},
+		CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].CoinTypeID)},
 	}
-	ids := []string{}
+	ids := []uuid.UUID{}
 	for _, statement := range h.statements {
-		ids = append(ids, statement.UserID)
+		ids = append(ids, uuid.MustParse(statement.UserID))
 	}
 	h.Conds.UserIDs = &cruder.Cond{Op: cruder.IN, Val: ids}
 	h.Offset = 0
