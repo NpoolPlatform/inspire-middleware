@@ -66,7 +66,7 @@ func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 		_inviteeIDs = fmt.Sprintf("%v%v", _inviteeIDs, id)
 	}
 
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		rows, err := cli.QueryContext(
 			ctx,
 			fmt.Sprintf("CALL get_superiores(\"%v\")", _inviteeIDs),
@@ -93,9 +93,11 @@ func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 		}
 		return nil
 	})
+	if err != nil {
+		return err
+	}
 
 	h.Conds.InviteeIDs.Val = inviteeIDs
-	fmt.Printf("inviteeIDs: %v\n", inviteeIDs)
 
 	return nil
 }

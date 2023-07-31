@@ -7,7 +7,7 @@ import (
 	commission2 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/calculate/commission"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
-	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/archivement/statement"
+	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achivement/statement"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
