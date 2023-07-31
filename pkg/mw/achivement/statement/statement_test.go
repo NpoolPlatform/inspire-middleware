@@ -9,7 +9,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/archivement/statement"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achivement/statement"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
