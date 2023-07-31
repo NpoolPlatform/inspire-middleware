@@ -10,8 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -24,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -44,8 +44,7 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		archivementdetail.Table:     archivementdetail.ValidColumn,
-		archivementgeneral.Table:    archivementgeneral.ValidColumn,
+		achivement.Table:            achivement.ValidColumn,
 		commission.Table:            commission.ValidColumn,
 		coupon.Table:                coupon.ValidColumn,
 		couponallocated.Table:       couponallocated.ValidColumn,
@@ -58,6 +57,7 @@ func columnChecker(table string) func(string) error {
 		invitationcode.Table:        invitationcode.ValidColumn,
 		pubsubmessage.Table:         pubsubmessage.ValidColumn,
 		registration.Table:          registration.ValidColumn,
+		statement.Table:             statement.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

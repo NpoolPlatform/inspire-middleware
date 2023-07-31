@@ -5,8 +5,7 @@ package runtime
 import (
 	"context"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -20,6 +19,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/schema"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -31,170 +31,78 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	archivementdetailMixin := schema.ArchivementDetail{}.Mixin()
-	archivementdetail.Policy = privacy.NewPolicies(archivementdetailMixin[0], schema.ArchivementDetail{})
-	archivementdetail.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	achivementMixin := schema.Achivement{}.Mixin()
+	achivement.Policy = privacy.NewPolicies(achivementMixin[0], schema.Achivement{})
+	achivement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := archivementdetail.Policy.EvalMutation(ctx, m); err != nil {
+			if err := achivement.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	archivementdetailMixinFields0 := archivementdetailMixin[0].Fields()
-	_ = archivementdetailMixinFields0
-	archivementdetailFields := schema.ArchivementDetail{}.Fields()
-	_ = archivementdetailFields
-	// archivementdetailDescCreatedAt is the schema descriptor for created_at field.
-	archivementdetailDescCreatedAt := archivementdetailMixinFields0[0].Descriptor()
-	// archivementdetail.DefaultCreatedAt holds the default value on creation for the created_at field.
-	archivementdetail.DefaultCreatedAt = archivementdetailDescCreatedAt.Default.(func() uint32)
-	// archivementdetailDescUpdatedAt is the schema descriptor for updated_at field.
-	archivementdetailDescUpdatedAt := archivementdetailMixinFields0[1].Descriptor()
-	// archivementdetail.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	archivementdetail.DefaultUpdatedAt = archivementdetailDescUpdatedAt.Default.(func() uint32)
-	// archivementdetail.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	archivementdetail.UpdateDefaultUpdatedAt = archivementdetailDescUpdatedAt.UpdateDefault.(func() uint32)
-	// archivementdetailDescDeletedAt is the schema descriptor for deleted_at field.
-	archivementdetailDescDeletedAt := archivementdetailMixinFields0[2].Descriptor()
-	// archivementdetail.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	archivementdetail.DefaultDeletedAt = archivementdetailDescDeletedAt.Default.(func() uint32)
-	// archivementdetailDescAppID is the schema descriptor for app_id field.
-	archivementdetailDescAppID := archivementdetailFields[1].Descriptor()
-	// archivementdetail.DefaultAppID holds the default value on creation for the app_id field.
-	archivementdetail.DefaultAppID = archivementdetailDescAppID.Default.(func() uuid.UUID)
-	// archivementdetailDescUserID is the schema descriptor for user_id field.
-	archivementdetailDescUserID := archivementdetailFields[2].Descriptor()
-	// archivementdetail.DefaultUserID holds the default value on creation for the user_id field.
-	archivementdetail.DefaultUserID = archivementdetailDescUserID.Default.(func() uuid.UUID)
-	// archivementdetailDescDirectContributorID is the schema descriptor for direct_contributor_id field.
-	archivementdetailDescDirectContributorID := archivementdetailFields[3].Descriptor()
-	// archivementdetail.DefaultDirectContributorID holds the default value on creation for the direct_contributor_id field.
-	archivementdetail.DefaultDirectContributorID = archivementdetailDescDirectContributorID.Default.(func() uuid.UUID)
-	// archivementdetailDescGoodID is the schema descriptor for good_id field.
-	archivementdetailDescGoodID := archivementdetailFields[4].Descriptor()
-	// archivementdetail.DefaultGoodID holds the default value on creation for the good_id field.
-	archivementdetail.DefaultGoodID = archivementdetailDescGoodID.Default.(func() uuid.UUID)
-	// archivementdetailDescOrderID is the schema descriptor for order_id field.
-	archivementdetailDescOrderID := archivementdetailFields[5].Descriptor()
-	// archivementdetail.DefaultOrderID holds the default value on creation for the order_id field.
-	archivementdetail.DefaultOrderID = archivementdetailDescOrderID.Default.(func() uuid.UUID)
-	// archivementdetailDescSelfOrder is the schema descriptor for self_order field.
-	archivementdetailDescSelfOrder := archivementdetailFields[6].Descriptor()
-	// archivementdetail.DefaultSelfOrder holds the default value on creation for the self_order field.
-	archivementdetail.DefaultSelfOrder = archivementdetailDescSelfOrder.Default.(bool)
-	// archivementdetailDescPaymentID is the schema descriptor for payment_id field.
-	archivementdetailDescPaymentID := archivementdetailFields[7].Descriptor()
-	// archivementdetail.DefaultPaymentID holds the default value on creation for the payment_id field.
-	archivementdetail.DefaultPaymentID = archivementdetailDescPaymentID.Default.(func() uuid.UUID)
-	// archivementdetailDescCoinTypeID is the schema descriptor for coin_type_id field.
-	archivementdetailDescCoinTypeID := archivementdetailFields[8].Descriptor()
-	// archivementdetail.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
-	archivementdetail.DefaultCoinTypeID = archivementdetailDescCoinTypeID.Default.(func() uuid.UUID)
-	// archivementdetailDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
-	archivementdetailDescPaymentCoinTypeID := archivementdetailFields[9].Descriptor()
-	// archivementdetail.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
-	archivementdetail.DefaultPaymentCoinTypeID = archivementdetailDescPaymentCoinTypeID.Default.(func() uuid.UUID)
-	// archivementdetailDescPaymentCoinUsdCurrency is the schema descriptor for payment_coin_usd_currency field.
-	archivementdetailDescPaymentCoinUsdCurrency := archivementdetailFields[10].Descriptor()
-	// archivementdetail.DefaultPaymentCoinUsdCurrency holds the default value on creation for the payment_coin_usd_currency field.
-	archivementdetail.DefaultPaymentCoinUsdCurrency = archivementdetailDescPaymentCoinUsdCurrency.Default.(decimal.Decimal)
-	// archivementdetailDescUnits is the schema descriptor for units field.
-	archivementdetailDescUnits := archivementdetailFields[11].Descriptor()
-	// archivementdetail.DefaultUnits holds the default value on creation for the units field.
-	archivementdetail.DefaultUnits = archivementdetailDescUnits.Default.(uint32)
-	// archivementdetailDescUnitsV1 is the schema descriptor for units_v1 field.
-	archivementdetailDescUnitsV1 := archivementdetailFields[12].Descriptor()
-	// archivementdetail.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
-	archivementdetail.DefaultUnitsV1 = archivementdetailDescUnitsV1.Default.(decimal.Decimal)
-	// archivementdetailDescAmount is the schema descriptor for amount field.
-	archivementdetailDescAmount := archivementdetailFields[13].Descriptor()
-	// archivementdetail.DefaultAmount holds the default value on creation for the amount field.
-	archivementdetail.DefaultAmount = archivementdetailDescAmount.Default.(decimal.Decimal)
-	// archivementdetailDescUsdAmount is the schema descriptor for usd_amount field.
-	archivementdetailDescUsdAmount := archivementdetailFields[14].Descriptor()
-	// archivementdetail.DefaultUsdAmount holds the default value on creation for the usd_amount field.
-	archivementdetail.DefaultUsdAmount = archivementdetailDescUsdAmount.Default.(decimal.Decimal)
-	// archivementdetailDescCommission is the schema descriptor for commission field.
-	archivementdetailDescCommission := archivementdetailFields[15].Descriptor()
-	// archivementdetail.DefaultCommission holds the default value on creation for the commission field.
-	archivementdetail.DefaultCommission = archivementdetailDescCommission.Default.(decimal.Decimal)
-	// archivementdetailDescID is the schema descriptor for id field.
-	archivementdetailDescID := archivementdetailFields[0].Descriptor()
-	// archivementdetail.DefaultID holds the default value on creation for the id field.
-	archivementdetail.DefaultID = archivementdetailDescID.Default.(func() uuid.UUID)
-	archivementgeneralMixin := schema.ArchivementGeneral{}.Mixin()
-	archivementgeneral.Policy = privacy.NewPolicies(archivementgeneralMixin[0], schema.ArchivementGeneral{})
-	archivementgeneral.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := archivementgeneral.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	archivementgeneralMixinFields0 := archivementgeneralMixin[0].Fields()
-	_ = archivementgeneralMixinFields0
-	archivementgeneralFields := schema.ArchivementGeneral{}.Fields()
-	_ = archivementgeneralFields
-	// archivementgeneralDescCreatedAt is the schema descriptor for created_at field.
-	archivementgeneralDescCreatedAt := archivementgeneralMixinFields0[0].Descriptor()
-	// archivementgeneral.DefaultCreatedAt holds the default value on creation for the created_at field.
-	archivementgeneral.DefaultCreatedAt = archivementgeneralDescCreatedAt.Default.(func() uint32)
-	// archivementgeneralDescUpdatedAt is the schema descriptor for updated_at field.
-	archivementgeneralDescUpdatedAt := archivementgeneralMixinFields0[1].Descriptor()
-	// archivementgeneral.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	archivementgeneral.DefaultUpdatedAt = archivementgeneralDescUpdatedAt.Default.(func() uint32)
-	// archivementgeneral.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	archivementgeneral.UpdateDefaultUpdatedAt = archivementgeneralDescUpdatedAt.UpdateDefault.(func() uint32)
-	// archivementgeneralDescDeletedAt is the schema descriptor for deleted_at field.
-	archivementgeneralDescDeletedAt := archivementgeneralMixinFields0[2].Descriptor()
-	// archivementgeneral.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	archivementgeneral.DefaultDeletedAt = archivementgeneralDescDeletedAt.Default.(func() uint32)
-	// archivementgeneralDescAppID is the schema descriptor for app_id field.
-	archivementgeneralDescAppID := archivementgeneralFields[1].Descriptor()
-	// archivementgeneral.DefaultAppID holds the default value on creation for the app_id field.
-	archivementgeneral.DefaultAppID = archivementgeneralDescAppID.Default.(func() uuid.UUID)
-	// archivementgeneralDescUserID is the schema descriptor for user_id field.
-	archivementgeneralDescUserID := archivementgeneralFields[2].Descriptor()
-	// archivementgeneral.DefaultUserID holds the default value on creation for the user_id field.
-	archivementgeneral.DefaultUserID = archivementgeneralDescUserID.Default.(func() uuid.UUID)
-	// archivementgeneralDescGoodID is the schema descriptor for good_id field.
-	archivementgeneralDescGoodID := archivementgeneralFields[3].Descriptor()
-	// archivementgeneral.DefaultGoodID holds the default value on creation for the good_id field.
-	archivementgeneral.DefaultGoodID = archivementgeneralDescGoodID.Default.(func() uuid.UUID)
-	// archivementgeneralDescCoinTypeID is the schema descriptor for coin_type_id field.
-	archivementgeneralDescCoinTypeID := archivementgeneralFields[4].Descriptor()
-	// archivementgeneral.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
-	archivementgeneral.DefaultCoinTypeID = archivementgeneralDescCoinTypeID.Default.(func() uuid.UUID)
-	// archivementgeneralDescTotalUnitsV1 is the schema descriptor for total_units_v1 field.
-	archivementgeneralDescTotalUnitsV1 := archivementgeneralFields[5].Descriptor()
-	// archivementgeneral.DefaultTotalUnitsV1 holds the default value on creation for the total_units_v1 field.
-	archivementgeneral.DefaultTotalUnitsV1 = archivementgeneralDescTotalUnitsV1.Default.(decimal.Decimal)
-	// archivementgeneralDescSelfUnitsV1 is the schema descriptor for self_units_v1 field.
-	archivementgeneralDescSelfUnitsV1 := archivementgeneralFields[6].Descriptor()
-	// archivementgeneral.DefaultSelfUnitsV1 holds the default value on creation for the self_units_v1 field.
-	archivementgeneral.DefaultSelfUnitsV1 = archivementgeneralDescSelfUnitsV1.Default.(decimal.Decimal)
-	// archivementgeneralDescTotalAmount is the schema descriptor for total_amount field.
-	archivementgeneralDescTotalAmount := archivementgeneralFields[7].Descriptor()
-	// archivementgeneral.DefaultTotalAmount holds the default value on creation for the total_amount field.
-	archivementgeneral.DefaultTotalAmount = archivementgeneralDescTotalAmount.Default.(decimal.Decimal)
-	// archivementgeneralDescSelfAmount is the schema descriptor for self_amount field.
-	archivementgeneralDescSelfAmount := archivementgeneralFields[8].Descriptor()
-	// archivementgeneral.DefaultSelfAmount holds the default value on creation for the self_amount field.
-	archivementgeneral.DefaultSelfAmount = archivementgeneralDescSelfAmount.Default.(decimal.Decimal)
-	// archivementgeneralDescTotalCommission is the schema descriptor for total_commission field.
-	archivementgeneralDescTotalCommission := archivementgeneralFields[9].Descriptor()
-	// archivementgeneral.DefaultTotalCommission holds the default value on creation for the total_commission field.
-	archivementgeneral.DefaultTotalCommission = archivementgeneralDescTotalCommission.Default.(decimal.Decimal)
-	// archivementgeneralDescSelfCommission is the schema descriptor for self_commission field.
-	archivementgeneralDescSelfCommission := archivementgeneralFields[10].Descriptor()
-	// archivementgeneral.DefaultSelfCommission holds the default value on creation for the self_commission field.
-	archivementgeneral.DefaultSelfCommission = archivementgeneralDescSelfCommission.Default.(decimal.Decimal)
-	// archivementgeneralDescID is the schema descriptor for id field.
-	archivementgeneralDescID := archivementgeneralFields[0].Descriptor()
-	// archivementgeneral.DefaultID holds the default value on creation for the id field.
-	archivementgeneral.DefaultID = archivementgeneralDescID.Default.(func() uuid.UUID)
+	achivementMixinFields0 := achivementMixin[0].Fields()
+	_ = achivementMixinFields0
+	achivementFields := schema.Achivement{}.Fields()
+	_ = achivementFields
+	// achivementDescCreatedAt is the schema descriptor for created_at field.
+	achivementDescCreatedAt := achivementMixinFields0[0].Descriptor()
+	// achivement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	achivement.DefaultCreatedAt = achivementDescCreatedAt.Default.(func() uint32)
+	// achivementDescUpdatedAt is the schema descriptor for updated_at field.
+	achivementDescUpdatedAt := achivementMixinFields0[1].Descriptor()
+	// achivement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	achivement.DefaultUpdatedAt = achivementDescUpdatedAt.Default.(func() uint32)
+	// achivement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	achivement.UpdateDefaultUpdatedAt = achivementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// achivementDescDeletedAt is the schema descriptor for deleted_at field.
+	achivementDescDeletedAt := achivementMixinFields0[2].Descriptor()
+	// achivement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	achivement.DefaultDeletedAt = achivementDescDeletedAt.Default.(func() uint32)
+	// achivementDescAppID is the schema descriptor for app_id field.
+	achivementDescAppID := achivementFields[1].Descriptor()
+	// achivement.DefaultAppID holds the default value on creation for the app_id field.
+	achivement.DefaultAppID = achivementDescAppID.Default.(func() uuid.UUID)
+	// achivementDescUserID is the schema descriptor for user_id field.
+	achivementDescUserID := achivementFields[2].Descriptor()
+	// achivement.DefaultUserID holds the default value on creation for the user_id field.
+	achivement.DefaultUserID = achivementDescUserID.Default.(func() uuid.UUID)
+	// achivementDescGoodID is the schema descriptor for good_id field.
+	achivementDescGoodID := achivementFields[3].Descriptor()
+	// achivement.DefaultGoodID holds the default value on creation for the good_id field.
+	achivement.DefaultGoodID = achivementDescGoodID.Default.(func() uuid.UUID)
+	// achivementDescCoinTypeID is the schema descriptor for coin_type_id field.
+	achivementDescCoinTypeID := achivementFields[4].Descriptor()
+	// achivement.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	achivement.DefaultCoinTypeID = achivementDescCoinTypeID.Default.(func() uuid.UUID)
+	// achivementDescTotalUnitsV1 is the schema descriptor for total_units_v1 field.
+	achivementDescTotalUnitsV1 := achivementFields[5].Descriptor()
+	// achivement.DefaultTotalUnitsV1 holds the default value on creation for the total_units_v1 field.
+	achivement.DefaultTotalUnitsV1 = achivementDescTotalUnitsV1.Default.(decimal.Decimal)
+	// achivementDescSelfUnitsV1 is the schema descriptor for self_units_v1 field.
+	achivementDescSelfUnitsV1 := achivementFields[6].Descriptor()
+	// achivement.DefaultSelfUnitsV1 holds the default value on creation for the self_units_v1 field.
+	achivement.DefaultSelfUnitsV1 = achivementDescSelfUnitsV1.Default.(decimal.Decimal)
+	// achivementDescTotalAmount is the schema descriptor for total_amount field.
+	achivementDescTotalAmount := achivementFields[7].Descriptor()
+	// achivement.DefaultTotalAmount holds the default value on creation for the total_amount field.
+	achivement.DefaultTotalAmount = achivementDescTotalAmount.Default.(decimal.Decimal)
+	// achivementDescSelfAmount is the schema descriptor for self_amount field.
+	achivementDescSelfAmount := achivementFields[8].Descriptor()
+	// achivement.DefaultSelfAmount holds the default value on creation for the self_amount field.
+	achivement.DefaultSelfAmount = achivementDescSelfAmount.Default.(decimal.Decimal)
+	// achivementDescTotalCommission is the schema descriptor for total_commission field.
+	achivementDescTotalCommission := achivementFields[9].Descriptor()
+	// achivement.DefaultTotalCommission holds the default value on creation for the total_commission field.
+	achivement.DefaultTotalCommission = achivementDescTotalCommission.Default.(decimal.Decimal)
+	// achivementDescSelfCommission is the schema descriptor for self_commission field.
+	achivementDescSelfCommission := achivementFields[10].Descriptor()
+	// achivement.DefaultSelfCommission holds the default value on creation for the self_commission field.
+	achivement.DefaultSelfCommission = achivementDescSelfCommission.Default.(decimal.Decimal)
+	// achivementDescID is the schema descriptor for id field.
+	achivementDescID := achivementFields[0].Descriptor()
+	// achivement.DefaultID holds the default value on creation for the id field.
+	achivement.DefaultID = achivementDescID.Default.(func() uuid.UUID)
 	commissionMixin := schema.Commission{}.Mixin()
 	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
 	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -871,6 +779,98 @@ func init() {
 	registrationDescID := registrationFields[0].Descriptor()
 	// registration.DefaultID holds the default value on creation for the id field.
 	registration.DefaultID = registrationDescID.Default.(func() uuid.UUID)
+	statementMixin := schema.Statement{}.Mixin()
+	statement.Policy = privacy.NewPolicies(statementMixin[0], schema.Statement{})
+	statement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := statement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	statementMixinFields0 := statementMixin[0].Fields()
+	_ = statementMixinFields0
+	statementFields := schema.Statement{}.Fields()
+	_ = statementFields
+	// statementDescCreatedAt is the schema descriptor for created_at field.
+	statementDescCreatedAt := statementMixinFields0[0].Descriptor()
+	// statement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	statement.DefaultCreatedAt = statementDescCreatedAt.Default.(func() uint32)
+	// statementDescUpdatedAt is the schema descriptor for updated_at field.
+	statementDescUpdatedAt := statementMixinFields0[1].Descriptor()
+	// statement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	statement.DefaultUpdatedAt = statementDescUpdatedAt.Default.(func() uint32)
+	// statement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	statement.UpdateDefaultUpdatedAt = statementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// statementDescDeletedAt is the schema descriptor for deleted_at field.
+	statementDescDeletedAt := statementMixinFields0[2].Descriptor()
+	// statement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	statement.DefaultDeletedAt = statementDescDeletedAt.Default.(func() uint32)
+	// statementDescAppID is the schema descriptor for app_id field.
+	statementDescAppID := statementFields[1].Descriptor()
+	// statement.DefaultAppID holds the default value on creation for the app_id field.
+	statement.DefaultAppID = statementDescAppID.Default.(func() uuid.UUID)
+	// statementDescUserID is the schema descriptor for user_id field.
+	statementDescUserID := statementFields[2].Descriptor()
+	// statement.DefaultUserID holds the default value on creation for the user_id field.
+	statement.DefaultUserID = statementDescUserID.Default.(func() uuid.UUID)
+	// statementDescDirectContributorID is the schema descriptor for direct_contributor_id field.
+	statementDescDirectContributorID := statementFields[3].Descriptor()
+	// statement.DefaultDirectContributorID holds the default value on creation for the direct_contributor_id field.
+	statement.DefaultDirectContributorID = statementDescDirectContributorID.Default.(func() uuid.UUID)
+	// statementDescGoodID is the schema descriptor for good_id field.
+	statementDescGoodID := statementFields[4].Descriptor()
+	// statement.DefaultGoodID holds the default value on creation for the good_id field.
+	statement.DefaultGoodID = statementDescGoodID.Default.(func() uuid.UUID)
+	// statementDescOrderID is the schema descriptor for order_id field.
+	statementDescOrderID := statementFields[5].Descriptor()
+	// statement.DefaultOrderID holds the default value on creation for the order_id field.
+	statement.DefaultOrderID = statementDescOrderID.Default.(func() uuid.UUID)
+	// statementDescSelfOrder is the schema descriptor for self_order field.
+	statementDescSelfOrder := statementFields[6].Descriptor()
+	// statement.DefaultSelfOrder holds the default value on creation for the self_order field.
+	statement.DefaultSelfOrder = statementDescSelfOrder.Default.(bool)
+	// statementDescPaymentID is the schema descriptor for payment_id field.
+	statementDescPaymentID := statementFields[7].Descriptor()
+	// statement.DefaultPaymentID holds the default value on creation for the payment_id field.
+	statement.DefaultPaymentID = statementDescPaymentID.Default.(func() uuid.UUID)
+	// statementDescCoinTypeID is the schema descriptor for coin_type_id field.
+	statementDescCoinTypeID := statementFields[8].Descriptor()
+	// statement.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	statement.DefaultCoinTypeID = statementDescCoinTypeID.Default.(func() uuid.UUID)
+	// statementDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
+	statementDescPaymentCoinTypeID := statementFields[9].Descriptor()
+	// statement.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
+	statement.DefaultPaymentCoinTypeID = statementDescPaymentCoinTypeID.Default.(func() uuid.UUID)
+	// statementDescPaymentCoinUsdCurrency is the schema descriptor for payment_coin_usd_currency field.
+	statementDescPaymentCoinUsdCurrency := statementFields[10].Descriptor()
+	// statement.DefaultPaymentCoinUsdCurrency holds the default value on creation for the payment_coin_usd_currency field.
+	statement.DefaultPaymentCoinUsdCurrency = statementDescPaymentCoinUsdCurrency.Default.(decimal.Decimal)
+	// statementDescUnits is the schema descriptor for units field.
+	statementDescUnits := statementFields[11].Descriptor()
+	// statement.DefaultUnits holds the default value on creation for the units field.
+	statement.DefaultUnits = statementDescUnits.Default.(uint32)
+	// statementDescUnitsV1 is the schema descriptor for units_v1 field.
+	statementDescUnitsV1 := statementFields[12].Descriptor()
+	// statement.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
+	statement.DefaultUnitsV1 = statementDescUnitsV1.Default.(decimal.Decimal)
+	// statementDescAmount is the schema descriptor for amount field.
+	statementDescAmount := statementFields[13].Descriptor()
+	// statement.DefaultAmount holds the default value on creation for the amount field.
+	statement.DefaultAmount = statementDescAmount.Default.(decimal.Decimal)
+	// statementDescUsdAmount is the schema descriptor for usd_amount field.
+	statementDescUsdAmount := statementFields[14].Descriptor()
+	// statement.DefaultUsdAmount holds the default value on creation for the usd_amount field.
+	statement.DefaultUsdAmount = statementDescUsdAmount.Default.(decimal.Decimal)
+	// statementDescCommission is the schema descriptor for commission field.
+	statementDescCommission := statementFields[15].Descriptor()
+	// statement.DefaultCommission holds the default value on creation for the commission field.
+	statement.DefaultCommission = statementDescCommission.Default.(decimal.Decimal)
+	// statementDescID is the schema descriptor for id field.
+	statementDescID := statementFields[0].Descriptor()
+	// statement.DefaultID holds the default value on creation for the id field.
+	statement.DefaultID = statementDescID.Default.(func() uuid.UUID)
 }
 
 const (

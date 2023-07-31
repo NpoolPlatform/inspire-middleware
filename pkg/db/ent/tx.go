@@ -14,10 +14,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// ArchivementDetail is the client for interacting with the ArchivementDetail builders.
-	ArchivementDetail *ArchivementDetailClient
-	// ArchivementGeneral is the client for interacting with the ArchivementGeneral builders.
-	ArchivementGeneral *ArchivementGeneralClient
+	// Achivement is the client for interacting with the Achivement builders.
+	Achivement *AchivementClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -42,6 +40,8 @@ type Tx struct {
 	PubsubMessage *PubsubMessageClient
 	// Registration is the client for interacting with the Registration builders.
 	Registration *RegistrationClient
+	// Statement is the client for interacting with the Statement builders.
+	Statement *StatementClient
 
 	// lazily loaded.
 	client     *Client
@@ -177,8 +177,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.ArchivementDetail = NewArchivementDetailClient(tx.config)
-	tx.ArchivementGeneral = NewArchivementGeneralClient(tx.config)
+	tx.Achivement = NewAchivementClient(tx.config)
 	tx.Commission = NewCommissionClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
@@ -191,6 +190,7 @@ func (tx *Tx) init() {
 	tx.InvitationCode = NewInvitationCodeClient(tx.config)
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)
 	tx.Registration = NewRegistrationClient(tx.config)
+	tx.Statement = NewStatementClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -200,7 +200,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: ArchivementDetail.QueryXXX(), the query will be executed
+// applies a query, for example: Achivement.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

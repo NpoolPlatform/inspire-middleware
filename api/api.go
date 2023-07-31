@@ -5,9 +5,9 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1"
 
-	"github.com/NpoolPlatform/inspire-middleware/api/accounting"
 	"github.com/NpoolPlatform/inspire-middleware/api/archivement"
 	"github.com/NpoolPlatform/inspire-middleware/api/archivement/detail"
+	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
@@ -31,7 +31,7 @@ func Register(server grpc.ServiceRegistrar) {
 	allocated.Register(server)
 	commission.Register(server)
 	archivement.Register(server)
-	accounting.Register(server)
+	calculate.Register(server)
 	event.Register(server)
 	detail.Register(server)
 }

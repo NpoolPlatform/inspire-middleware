@@ -150,52 +150,28 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The ArchivementDetailQueryRuleFunc type is an adapter to allow the use of ordinary
+// The AchivementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type ArchivementDetailQueryRuleFunc func(context.Context, *ent.ArchivementDetailQuery) error
+type AchivementQueryRuleFunc func(context.Context, *ent.AchivementQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f ArchivementDetailQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ArchivementDetailQuery); ok {
+func (f AchivementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AchivementQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ArchivementDetailQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AchivementQuery", q)
 }
 
-// The ArchivementDetailMutationRuleFunc type is an adapter to allow the use of ordinary
+// The AchivementMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type ArchivementDetailMutationRuleFunc func(context.Context, *ent.ArchivementDetailMutation) error
+type AchivementMutationRuleFunc func(context.Context, *ent.AchivementMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f ArchivementDetailMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.ArchivementDetailMutation); ok {
+func (f AchivementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AchivementMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ArchivementDetailMutation", m)
-}
-
-// The ArchivementGeneralQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type ArchivementGeneralQueryRuleFunc func(context.Context, *ent.ArchivementGeneralQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f ArchivementGeneralQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ArchivementGeneralQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ArchivementGeneralQuery", q)
-}
-
-// The ArchivementGeneralMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type ArchivementGeneralMutationRuleFunc func(context.Context, *ent.ArchivementGeneralMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f ArchivementGeneralMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.ArchivementGeneralMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ArchivementGeneralMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchivementMutation", m)
 }
 
 // The CommissionQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -486,6 +462,30 @@ func (f RegistrationMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RegistrationMutation", m)
 }
 
+// The StatementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type StatementQueryRuleFunc func(context.Context, *ent.StatementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f StatementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.StatementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.StatementQuery", q)
+}
+
+// The StatementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type StatementMutationRuleFunc func(context.Context, *ent.StatementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f StatementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.StatementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StatementMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -521,9 +521,7 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *ent.ArchivementDetailQuery:
-		return q.Filter(), nil
-	case *ent.ArchivementGeneralQuery:
+	case *ent.AchivementQuery:
 		return q.Filter(), nil
 	case *ent.CommissionQuery:
 		return q.Filter(), nil
@@ -549,6 +547,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RegistrationQuery:
 		return q.Filter(), nil
+	case *ent.StatementQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -556,9 +556,7 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *ent.ArchivementDetailMutation:
-		return m.Filter(), nil
-	case *ent.ArchivementGeneralMutation:
+	case *ent.AchivementMutation:
 		return m.Filter(), nil
 	case *ent.CommissionMutation:
 		return m.Filter(), nil
@@ -583,6 +581,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PubsubMessageMutation:
 		return m.Filter(), nil
 	case *ent.RegistrationMutation:
+		return m.Filter(), nil
+	case *ent.StatementMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

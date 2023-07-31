@@ -6,11 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ArchivementDetail is the predicate function for archivementdetail builders.
-type ArchivementDetail func(*sql.Selector)
-
-// ArchivementGeneral is the predicate function for archivementgeneral builders.
-type ArchivementGeneral func(*sql.Selector)
+// Achivement is the predicate function for achivement builders.
+type Achivement func(*sql.Selector)
 
 // Commission is the predicate function for commission builders.
 type Commission func(*sql.Selector)
@@ -47,3 +44,6 @@ type PubsubMessage func(*sql.Selector)
 
 // Registration is the predicate function for registration builders.
 type Registration func(*sql.Selector)
+
+// Statement is the predicate function for statement builders.
+type Statement func(*sql.Selector)

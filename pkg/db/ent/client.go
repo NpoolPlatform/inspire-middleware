@@ -11,8 +11,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/migrate"
 	"github.com/google/uuid"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementdetail"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/archivementgeneral"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -25,6 +24,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -35,10 +35,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// ArchivementDetail is the client for interacting with the ArchivementDetail builders.
-	ArchivementDetail *ArchivementDetailClient
-	// ArchivementGeneral is the client for interacting with the ArchivementGeneral builders.
-	ArchivementGeneral *ArchivementGeneralClient
+	// Achivement is the client for interacting with the Achivement builders.
+	Achivement *AchivementClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -63,6 +61,8 @@ type Client struct {
 	PubsubMessage *PubsubMessageClient
 	// Registration is the client for interacting with the Registration builders.
 	Registration *RegistrationClient
+	// Statement is the client for interacting with the Statement builders.
+	Statement *StatementClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -76,8 +76,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.ArchivementDetail = NewArchivementDetailClient(c.config)
-	c.ArchivementGeneral = NewArchivementGeneralClient(c.config)
+	c.Achivement = NewAchivementClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
@@ -90,6 +89,7 @@ func (c *Client) init() {
 	c.InvitationCode = NewInvitationCodeClient(c.config)
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
 	c.Registration = NewRegistrationClient(c.config)
+	c.Statement = NewStatementClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -123,8 +123,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                   ctx,
 		config:                cfg,
-		ArchivementDetail:     NewArchivementDetailClient(cfg),
-		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Achivement:            NewAchivementClient(cfg),
 		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
@@ -137,6 +136,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InvitationCode:        NewInvitationCodeClient(cfg),
 		PubsubMessage:         NewPubsubMessageClient(cfg),
 		Registration:          NewRegistrationClient(cfg),
+		Statement:             NewStatementClient(cfg),
 	}, nil
 }
 
@@ -156,8 +156,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                   ctx,
 		config:                cfg,
-		ArchivementDetail:     NewArchivementDetailClient(cfg),
-		ArchivementGeneral:    NewArchivementGeneralClient(cfg),
+		Achivement:            NewAchivementClient(cfg),
 		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
@@ -170,13 +169,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InvitationCode:        NewInvitationCodeClient(cfg),
 		PubsubMessage:         NewPubsubMessageClient(cfg),
 		Registration:          NewRegistrationClient(cfg),
+		Statement:             NewStatementClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		ArchivementDetail.
+//		Achivement.
 //		Query().
 //		Count(ctx)
 //
@@ -199,8 +199,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.ArchivementDetail.Use(hooks...)
-	c.ArchivementGeneral.Use(hooks...)
+	c.Achivement.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
@@ -213,86 +212,87 @@ func (c *Client) Use(hooks ...Hook) {
 	c.InvitationCode.Use(hooks...)
 	c.PubsubMessage.Use(hooks...)
 	c.Registration.Use(hooks...)
+	c.Statement.Use(hooks...)
 }
 
-// ArchivementDetailClient is a client for the ArchivementDetail schema.
-type ArchivementDetailClient struct {
+// AchivementClient is a client for the Achivement schema.
+type AchivementClient struct {
 	config
 }
 
-// NewArchivementDetailClient returns a client for the ArchivementDetail from the given config.
-func NewArchivementDetailClient(c config) *ArchivementDetailClient {
-	return &ArchivementDetailClient{config: c}
+// NewAchivementClient returns a client for the Achivement from the given config.
+func NewAchivementClient(c config) *AchivementClient {
+	return &AchivementClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `archivementdetail.Hooks(f(g(h())))`.
-func (c *ArchivementDetailClient) Use(hooks ...Hook) {
-	c.hooks.ArchivementDetail = append(c.hooks.ArchivementDetail, hooks...)
+// A call to `Use(f, g, h)` equals to `achivement.Hooks(f(g(h())))`.
+func (c *AchivementClient) Use(hooks ...Hook) {
+	c.hooks.Achivement = append(c.hooks.Achivement, hooks...)
 }
 
-// Create returns a builder for creating a ArchivementDetail entity.
-func (c *ArchivementDetailClient) Create() *ArchivementDetailCreate {
-	mutation := newArchivementDetailMutation(c.config, OpCreate)
-	return &ArchivementDetailCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Achivement entity.
+func (c *AchivementClient) Create() *AchivementCreate {
+	mutation := newAchivementMutation(c.config, OpCreate)
+	return &AchivementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ArchivementDetail entities.
-func (c *ArchivementDetailClient) CreateBulk(builders ...*ArchivementDetailCreate) *ArchivementDetailCreateBulk {
-	return &ArchivementDetailCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Achivement entities.
+func (c *AchivementClient) CreateBulk(builders ...*AchivementCreate) *AchivementCreateBulk {
+	return &AchivementCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ArchivementDetail.
-func (c *ArchivementDetailClient) Update() *ArchivementDetailUpdate {
-	mutation := newArchivementDetailMutation(c.config, OpUpdate)
-	return &ArchivementDetailUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Achivement.
+func (c *AchivementClient) Update() *AchivementUpdate {
+	mutation := newAchivementMutation(c.config, OpUpdate)
+	return &AchivementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ArchivementDetailClient) UpdateOne(ad *ArchivementDetail) *ArchivementDetailUpdateOne {
-	mutation := newArchivementDetailMutation(c.config, OpUpdateOne, withArchivementDetail(ad))
-	return &ArchivementDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AchivementClient) UpdateOne(a *Achivement) *AchivementUpdateOne {
+	mutation := newAchivementMutation(c.config, OpUpdateOne, withAchivement(a))
+	return &AchivementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ArchivementDetailClient) UpdateOneID(id uuid.UUID) *ArchivementDetailUpdateOne {
-	mutation := newArchivementDetailMutation(c.config, OpUpdateOne, withArchivementDetailID(id))
-	return &ArchivementDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AchivementClient) UpdateOneID(id uuid.UUID) *AchivementUpdateOne {
+	mutation := newAchivementMutation(c.config, OpUpdateOne, withAchivementID(id))
+	return &AchivementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ArchivementDetail.
-func (c *ArchivementDetailClient) Delete() *ArchivementDetailDelete {
-	mutation := newArchivementDetailMutation(c.config, OpDelete)
-	return &ArchivementDetailDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Achivement.
+func (c *AchivementClient) Delete() *AchivementDelete {
+	mutation := newAchivementMutation(c.config, OpDelete)
+	return &AchivementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ArchivementDetailClient) DeleteOne(ad *ArchivementDetail) *ArchivementDetailDeleteOne {
-	return c.DeleteOneID(ad.ID)
+func (c *AchivementClient) DeleteOne(a *Achivement) *AchivementDeleteOne {
+	return c.DeleteOneID(a.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *ArchivementDetailClient) DeleteOneID(id uuid.UUID) *ArchivementDetailDeleteOne {
-	builder := c.Delete().Where(archivementdetail.ID(id))
+func (c *AchivementClient) DeleteOneID(id uuid.UUID) *AchivementDeleteOne {
+	builder := c.Delete().Where(achivement.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ArchivementDetailDeleteOne{builder}
+	return &AchivementDeleteOne{builder}
 }
 
-// Query returns a query builder for ArchivementDetail.
-func (c *ArchivementDetailClient) Query() *ArchivementDetailQuery {
-	return &ArchivementDetailQuery{
+// Query returns a query builder for Achivement.
+func (c *AchivementClient) Query() *AchivementQuery {
+	return &AchivementQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a ArchivementDetail entity by its id.
-func (c *ArchivementDetailClient) Get(ctx context.Context, id uuid.UUID) (*ArchivementDetail, error) {
-	return c.Query().Where(archivementdetail.ID(id)).Only(ctx)
+// Get returns a Achivement entity by its id.
+func (c *AchivementClient) Get(ctx context.Context, id uuid.UUID) (*Achivement, error) {
+	return c.Query().Where(achivement.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ArchivementDetailClient) GetX(ctx context.Context, id uuid.UUID) *ArchivementDetail {
+func (c *AchivementClient) GetX(ctx context.Context, id uuid.UUID) *Achivement {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -301,100 +301,9 @@ func (c *ArchivementDetailClient) GetX(ctx context.Context, id uuid.UUID) *Archi
 }
 
 // Hooks returns the client hooks.
-func (c *ArchivementDetailClient) Hooks() []Hook {
-	hooks := c.hooks.ArchivementDetail
-	return append(hooks[:len(hooks):len(hooks)], archivementdetail.Hooks[:]...)
-}
-
-// ArchivementGeneralClient is a client for the ArchivementGeneral schema.
-type ArchivementGeneralClient struct {
-	config
-}
-
-// NewArchivementGeneralClient returns a client for the ArchivementGeneral from the given config.
-func NewArchivementGeneralClient(c config) *ArchivementGeneralClient {
-	return &ArchivementGeneralClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `archivementgeneral.Hooks(f(g(h())))`.
-func (c *ArchivementGeneralClient) Use(hooks ...Hook) {
-	c.hooks.ArchivementGeneral = append(c.hooks.ArchivementGeneral, hooks...)
-}
-
-// Create returns a builder for creating a ArchivementGeneral entity.
-func (c *ArchivementGeneralClient) Create() *ArchivementGeneralCreate {
-	mutation := newArchivementGeneralMutation(c.config, OpCreate)
-	return &ArchivementGeneralCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ArchivementGeneral entities.
-func (c *ArchivementGeneralClient) CreateBulk(builders ...*ArchivementGeneralCreate) *ArchivementGeneralCreateBulk {
-	return &ArchivementGeneralCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ArchivementGeneral.
-func (c *ArchivementGeneralClient) Update() *ArchivementGeneralUpdate {
-	mutation := newArchivementGeneralMutation(c.config, OpUpdate)
-	return &ArchivementGeneralUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ArchivementGeneralClient) UpdateOne(ag *ArchivementGeneral) *ArchivementGeneralUpdateOne {
-	mutation := newArchivementGeneralMutation(c.config, OpUpdateOne, withArchivementGeneral(ag))
-	return &ArchivementGeneralUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ArchivementGeneralClient) UpdateOneID(id uuid.UUID) *ArchivementGeneralUpdateOne {
-	mutation := newArchivementGeneralMutation(c.config, OpUpdateOne, withArchivementGeneralID(id))
-	return &ArchivementGeneralUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ArchivementGeneral.
-func (c *ArchivementGeneralClient) Delete() *ArchivementGeneralDelete {
-	mutation := newArchivementGeneralMutation(c.config, OpDelete)
-	return &ArchivementGeneralDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ArchivementGeneralClient) DeleteOne(ag *ArchivementGeneral) *ArchivementGeneralDeleteOne {
-	return c.DeleteOneID(ag.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *ArchivementGeneralClient) DeleteOneID(id uuid.UUID) *ArchivementGeneralDeleteOne {
-	builder := c.Delete().Where(archivementgeneral.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ArchivementGeneralDeleteOne{builder}
-}
-
-// Query returns a query builder for ArchivementGeneral.
-func (c *ArchivementGeneralClient) Query() *ArchivementGeneralQuery {
-	return &ArchivementGeneralQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a ArchivementGeneral entity by its id.
-func (c *ArchivementGeneralClient) Get(ctx context.Context, id uuid.UUID) (*ArchivementGeneral, error) {
-	return c.Query().Where(archivementgeneral.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ArchivementGeneralClient) GetX(ctx context.Context, id uuid.UUID) *ArchivementGeneral {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *ArchivementGeneralClient) Hooks() []Hook {
-	hooks := c.hooks.ArchivementGeneral
-	return append(hooks[:len(hooks):len(hooks)], archivementgeneral.Hooks[:]...)
+func (c *AchivementClient) Hooks() []Hook {
+	hooks := c.hooks.Achivement
+	return append(hooks[:len(hooks):len(hooks)], achivement.Hooks[:]...)
 }
 
 // CommissionClient is a client for the Commission schema.
@@ -1487,4 +1396,95 @@ func (c *RegistrationClient) GetX(ctx context.Context, id uuid.UUID) *Registrati
 func (c *RegistrationClient) Hooks() []Hook {
 	hooks := c.hooks.Registration
 	return append(hooks[:len(hooks):len(hooks)], registration.Hooks[:]...)
+}
+
+// StatementClient is a client for the Statement schema.
+type StatementClient struct {
+	config
+}
+
+// NewStatementClient returns a client for the Statement from the given config.
+func NewStatementClient(c config) *StatementClient {
+	return &StatementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `statement.Hooks(f(g(h())))`.
+func (c *StatementClient) Use(hooks ...Hook) {
+	c.hooks.Statement = append(c.hooks.Statement, hooks...)
+}
+
+// Create returns a builder for creating a Statement entity.
+func (c *StatementClient) Create() *StatementCreate {
+	mutation := newStatementMutation(c.config, OpCreate)
+	return &StatementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Statement entities.
+func (c *StatementClient) CreateBulk(builders ...*StatementCreate) *StatementCreateBulk {
+	return &StatementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Statement.
+func (c *StatementClient) Update() *StatementUpdate {
+	mutation := newStatementMutation(c.config, OpUpdate)
+	return &StatementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StatementClient) UpdateOne(s *Statement) *StatementUpdateOne {
+	mutation := newStatementMutation(c.config, OpUpdateOne, withStatement(s))
+	return &StatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StatementClient) UpdateOneID(id uuid.UUID) *StatementUpdateOne {
+	mutation := newStatementMutation(c.config, OpUpdateOne, withStatementID(id))
+	return &StatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Statement.
+func (c *StatementClient) Delete() *StatementDelete {
+	mutation := newStatementMutation(c.config, OpDelete)
+	return &StatementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StatementClient) DeleteOne(s *Statement) *StatementDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *StatementClient) DeleteOneID(id uuid.UUID) *StatementDeleteOne {
+	builder := c.Delete().Where(statement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StatementDeleteOne{builder}
+}
+
+// Query returns a query builder for Statement.
+func (c *StatementClient) Query() *StatementQuery {
+	return &StatementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Statement entity by its id.
+func (c *StatementClient) Get(ctx context.Context, id uuid.UUID) (*Statement, error) {
+	return c.Query().Where(statement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StatementClient) GetX(ctx context.Context, id uuid.UUID) *Statement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StatementClient) Hooks() []Hook {
+	hooks := c.hooks.Statement
+	return append(hooks[:len(hooks):len(hooks)], statement.Hooks[:]...)
 }

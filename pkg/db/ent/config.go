@@ -28,8 +28,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	ArchivementDetail     []ent.Hook
-	ArchivementGeneral    []ent.Hook
+	Achivement            []ent.Hook
 	Commission            []ent.Hook
 	Coupon                []ent.Hook
 	CouponAllocated       []ent.Hook
@@ -42,6 +41,7 @@ type hooks struct {
 	InvitationCode        []ent.Hook
 	PubsubMessage         []ent.Hook
 	Registration          []ent.Hook
+	Statement             []ent.Hook
 }
 
 // Options applies the options on the config object.

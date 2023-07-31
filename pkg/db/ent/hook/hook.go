@@ -9,28 +9,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 )
 
-// The ArchivementDetailFunc type is an adapter to allow the use of ordinary
-// function as ArchivementDetail mutator.
-type ArchivementDetailFunc func(context.Context, *ent.ArchivementDetailMutation) (ent.Value, error)
+// The AchivementFunc type is an adapter to allow the use of ordinary
+// function as Achivement mutator.
+type AchivementFunc func(context.Context, *ent.AchivementMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ArchivementDetailFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ArchivementDetailMutation)
+func (f AchivementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AchivementMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ArchivementDetailMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The ArchivementGeneralFunc type is an adapter to allow the use of ordinary
-// function as ArchivementGeneral mutator.
-type ArchivementGeneralFunc func(context.Context, *ent.ArchivementGeneralMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ArchivementGeneralFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ArchivementGeneralMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ArchivementGeneralMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AchivementMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -187,6 +174,19 @@ func (f RegistrationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	mv, ok := m.(*ent.RegistrationMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RegistrationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The StatementFunc type is an adapter to allow the use of ordinary
+// function as Statement mutator.
+type StatementFunc func(context.Context, *ent.StatementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StatementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.StatementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StatementMutation", m)
 	}
 	return f(ctx, mv)
 }

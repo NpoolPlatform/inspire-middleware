@@ -95,6 +95,7 @@ func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 	})
 
 	h.Conds.InviteeIDs.Val = inviteeIDs
+	fmt.Printf("inviteeIDs: %v\n", inviteeIDs)
 
 	return nil
 }
