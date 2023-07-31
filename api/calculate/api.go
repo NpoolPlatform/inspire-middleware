@@ -1,15 +1,15 @@
-package accounting
+package calculate
 
 import (
-	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
+	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	accounting.UnimplementedMiddlewareServer
+	calculate.UnimplementedMiddlewareServer
 }
 
 func Register(server grpc.ServiceRegistrar) {
-	accounting.RegisterMiddlewareServer(server, &Server{})
+	calculate.RegisterMiddlewareServer(server, &Server{})
 }

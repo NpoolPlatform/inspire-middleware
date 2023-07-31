@@ -54,3 +54,32 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		Info: info,
 	}, nil
 }
+
+func (s *Server) CreateStatements(ctx context.Context, in *npool.CreateStatementsRequest) (*npool.CreateStatementsResponse, error) {
+	reqs := in.GetInfos()
+	if len(reqs) == 0 {
+		logger.Sugar().Errorw(
+			"CreateStatements",
+			"In", in,
+		)
+		return &npool.CreateStatementsResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+	}
+	handler, err := statement1.NewHandler(
+		ctx,
+		statement1.WithReqs(reqs),
+	)
+
+	infos, err := handler.CreateStatements(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"CreateStatements",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.CreateStatementsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.CreateStatementsResponse{
+		Infos: infos,
+	}, nil
+}

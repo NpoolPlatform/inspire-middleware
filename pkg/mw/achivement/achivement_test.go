@@ -177,4 +177,5 @@ func TestAchivement(t *testing.T) {
 
 	t.Run("getAchivements", getAchivements)
 	t.Run("expropriateAchivement", expropriateAchivement)
+	t.Run("expropriateAchivement", expropriateAchivement)
 }
