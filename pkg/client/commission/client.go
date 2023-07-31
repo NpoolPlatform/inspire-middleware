@@ -2,6 +2,7 @@ package commission
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -17,7 +18,7 @@ var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func do(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -34,7 +35,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func CreateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Commission, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.CreateCommission(ctx, &npool.CreateCommissionRequest{
 			Info: in,
 		})
@@ -50,7 +51,7 @@ func CreateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 }
 
 func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Commission, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateCommission(ctx, &npool.UpdateCommissionRequest{
 			Info: in,
 		})
@@ -66,10 +67,9 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 }
 
 func GetCommission(ctx context.Context, id string, settleType mgrpb.SettleType) (*npool.Commission, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCommission(ctx, &npool.GetCommissionRequest{
-			ID:         id,
-			SettleType: settleType,
+			ID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -85,7 +85,7 @@ func GetCommission(ctx context.Context, id string, settleType mgrpb.SettleType) 
 func GetCommissions(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Commission, uint32, error) {
 	var total uint32
 
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCommissions(ctx, &npool.GetCommissionsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -106,29 +106,34 @@ func GetCommissions(ctx context.Context, conds *npool.Conds, offset, limit int32
 }
 
 func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commission, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetCommissionOnly(ctx, &npool.GetCommissionOnlyRequest{
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetCommissions(ctx, &npool.GetCommissionsRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Commission), nil
+	if len(infos.([]*npool.Commission)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.Commission)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.Commission)[0], nil
 }
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, value string, settleType mgrpb.SettleType) error {
-	_, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, scalePercent string, settleType mgrpb.SettleType) error {
+	_, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		_, err := cli.CloneCommissions(ctx, &npool.CloneCommissionsRequest{
-			AppID:      appID,
-			FromGoodID: fromGoodID,
-			ToGoodID:   toGoodID,
-			Value:      value,
-			SettleType: settleType,
+			AppID:        appID,
+			FromGoodID:   fromGoodID,
+			ToGoodID:     toGoodID,
+			ScalePercent: scalePercent,
 		})
 		if err != nil {
 			return nil, err

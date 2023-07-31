@@ -1,4 +1,4 @@
-package accounting
+package calculate
 
 import (
 	"context"
@@ -7,7 +7,8 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
+	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achivement/statement"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 )
@@ -16,7 +17,7 @@ var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func do(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -32,9 +33,9 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func Accounting(ctx context.Context, in *npool.AccountingRequest) ([]*npool.Commission, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.Accounting(ctx, in)
+func Calculate(ctx context.Context, in *npool.CalculateRequest) ([]*statementmwpb.Statement, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.Calculate(ctx, in)
 		if err != nil {
 			return nil, err
 		}
@@ -43,5 +44,5 @@ func Accounting(ctx context.Context, in *npool.AccountingRequest) ([]*npool.Comm
 	if err != nil {
 		return nil, err
 	}
-	return infos.([]*npool.Commission), nil
+	return infos.([]*statementmwpb.Statement), nil
 }

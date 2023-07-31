@@ -1,4 +1,4 @@
-package accounting
+package calculate
 
 import (
 	"context"
@@ -22,7 +22,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 	"github.com/shopspring/decimal"
 
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/accounting"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"bou.ke/monkey"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -219,7 +219,7 @@ var _comm6 = commmwpb.CommissionReq{
 }
 
 //nolint
-func accounting(t *testing.T) {
+func calculate(t *testing.T) {
 	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemgrpb.InvitationCodeReq{
 		AppID:  &reg1.AppID,
 		UserID: &reg1.InviterID,
@@ -284,9 +284,9 @@ func accounting(t *testing.T) {
 	goodValue := decimal.NewFromInt(3000)
 	settleType := commmgrpb.SettleType_GoodOrderPercent
 
-	comms, err := Accounting(
+	comms, err := Calculate(
 		context.Background(),
-		&npool.AccountingRequest{
+		&npool.CalculateRequest{
 			AppID:                  comm6.AppID,
 			UserID:                 comm6.UserID,
 			GoodID:                 comm6.GetGoodID(),
@@ -368,7 +368,7 @@ func accounting(t *testing.T) {
 	}
 }
 
-func TestAccounting(t *testing.T) {
+func TestCalculate(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
@@ -379,5 +379,5 @@ func TestAccounting(t *testing.T) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
-	t.Run("accounting", accounting)
+	t.Run("calculate", calculate)
 }
