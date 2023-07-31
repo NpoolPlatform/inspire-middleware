@@ -18,7 +18,7 @@ type Commission struct {
 	Amount                  string
 }
 
-func (h *Handler) Accounting(ctx context.Context) ([]*Commission, error) {
+func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	amount := h.PaymentAmount
 	if h.SettleMode == types.SettleMode_SettleWithGoodValue {
 		amount = h.GoodValue

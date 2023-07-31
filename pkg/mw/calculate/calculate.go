@@ -38,7 +38,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
 			SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 			EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-			StartAt:    &basetypes.Uint32Val{Op: cruder.LT, Value: h.OrderCreatedAt},
+			StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 		}),
 		commission1.WithOffset(0),
 		commission1.WithLimit(int32(len(inviterIDs))),
@@ -66,7 +66,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		if err != nil {
 			return nil, err
 		}
-		_comms, err = handler.Accounting(ctx)
+		_comms, err = handler.Calculate(ctx)
 		if err != nil {
 			return nil, err
 		}

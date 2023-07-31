@@ -151,8 +151,12 @@ func SetQueryConds(q *ent.CommissionQuery, conds *Conds) (*ent.CommissionQuery, 
 		switch conds.EndAt.Op {
 		case cruder.LT:
 			q.Where(entcommission.EndAtLT(at))
+		case cruder.LTE:
+			q.Where(entcommission.EndAtLTE(at))
 		case cruder.GT:
 			q.Where(entcommission.EndAtGT(at))
+		case cruder.GTE:
+			q.Where(entcommission.EndAtGTE(at))
 		case cruder.EQ:
 			q.Where(entcommission.EndAt(at))
 		case cruder.NEQ:
@@ -169,8 +173,12 @@ func SetQueryConds(q *ent.CommissionQuery, conds *Conds) (*ent.CommissionQuery, 
 		switch conds.StartAt.Op {
 		case cruder.LT:
 			q.Where(entcommission.StartAtLT(at))
+		case cruder.LTE:
+			q.Where(entcommission.StartAtLTE(at))
 		case cruder.GT:
 			q.Where(entcommission.StartAtGT(at))
+		case cruder.GTE:
+			q.Where(entcommission.StartAtGTE(at))
 		case cruder.EQ:
 			q.Where(entcommission.StartAt(at))
 		case cruder.NEQ:
