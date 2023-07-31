@@ -6,8 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Achivement is the predicate function for achivement builders.
-type Achivement func(*sql.Selector)
+// Achievement is the predicate function for achievement builders.
+type Achievement func(*sql.Selector)
 
 // Commission is the predicate function for commission builders.
 type Commission func(*sql.Selector)

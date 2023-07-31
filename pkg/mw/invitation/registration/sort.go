@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration, []string, error) { //nolint
+func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration, []string, error) {
 	if h.AppID == nil {
 		return nil, nil, fmt.Errorf("invalid appid")
 	}

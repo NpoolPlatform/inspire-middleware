@@ -54,7 +54,7 @@ type Conds struct {
 	InviteeIDs *cruder.Cond
 }
 
-func SetQueryConds(q *ent.RegistrationQuery, conds *Conds) (*ent.RegistrationQuery, error) {
+func SetQueryConds(q *ent.RegistrationQuery, conds *Conds) (*ent.RegistrationQuery, error) { //nolint
 	q.Where(entregistration.DeletedAt(0))
 	if conds == nil {
 		return q, nil

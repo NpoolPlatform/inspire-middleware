@@ -1,3 +1,4 @@
+//nolint:dupl
 package registration
 
 import (
@@ -97,7 +98,7 @@ var _reg5 = npool.RegistrationReq{
 	InviteeID: &reg5.InviteeID,
 }
 
-func setupSuperior(t *testing.T) func(*testing.T) {
+func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	_h1, err := invitationcode1.NewHandler(
 		context.Background(),
 		invitationcode1.WithAppID(_reg1.AppID),

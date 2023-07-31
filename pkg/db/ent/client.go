@@ -11,7 +11,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/migrate"
 	"github.com/google/uuid"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -35,8 +35,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Achivement is the client for interacting with the Achivement builders.
-	Achivement *AchivementClient
+	// Achievement is the client for interacting with the Achievement builders.
+	Achievement *AchievementClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -76,7 +76,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Achivement = NewAchivementClient(c.config)
+	c.Achievement = NewAchievementClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
@@ -123,7 +123,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                   ctx,
 		config:                cfg,
-		Achivement:            NewAchivementClient(cfg),
+		Achievement:           NewAchievementClient(cfg),
 		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
@@ -156,7 +156,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                   ctx,
 		config:                cfg,
-		Achivement:            NewAchivementClient(cfg),
+		Achievement:           NewAchievementClient(cfg),
 		Commission:            NewCommissionClient(cfg),
 		Coupon:                NewCouponClient(cfg),
 		CouponAllocated:       NewCouponAllocatedClient(cfg),
@@ -176,7 +176,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Achivement.
+//		Achievement.
 //		Query().
 //		Count(ctx)
 //
@@ -199,7 +199,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Achivement.Use(hooks...)
+	c.Achievement.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
@@ -215,84 +215,84 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Statement.Use(hooks...)
 }
 
-// AchivementClient is a client for the Achivement schema.
-type AchivementClient struct {
+// AchievementClient is a client for the Achievement schema.
+type AchievementClient struct {
 	config
 }
 
-// NewAchivementClient returns a client for the Achivement from the given config.
-func NewAchivementClient(c config) *AchivementClient {
-	return &AchivementClient{config: c}
+// NewAchievementClient returns a client for the Achievement from the given config.
+func NewAchievementClient(c config) *AchievementClient {
+	return &AchievementClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `achivement.Hooks(f(g(h())))`.
-func (c *AchivementClient) Use(hooks ...Hook) {
-	c.hooks.Achivement = append(c.hooks.Achivement, hooks...)
+// A call to `Use(f, g, h)` equals to `achievement.Hooks(f(g(h())))`.
+func (c *AchievementClient) Use(hooks ...Hook) {
+	c.hooks.Achievement = append(c.hooks.Achievement, hooks...)
 }
 
-// Create returns a builder for creating a Achivement entity.
-func (c *AchivementClient) Create() *AchivementCreate {
-	mutation := newAchivementMutation(c.config, OpCreate)
-	return &AchivementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Achievement entity.
+func (c *AchievementClient) Create() *AchievementCreate {
+	mutation := newAchievementMutation(c.config, OpCreate)
+	return &AchievementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Achivement entities.
-func (c *AchivementClient) CreateBulk(builders ...*AchivementCreate) *AchivementCreateBulk {
-	return &AchivementCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Achievement entities.
+func (c *AchievementClient) CreateBulk(builders ...*AchievementCreate) *AchievementCreateBulk {
+	return &AchievementCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Achivement.
-func (c *AchivementClient) Update() *AchivementUpdate {
-	mutation := newAchivementMutation(c.config, OpUpdate)
-	return &AchivementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Achievement.
+func (c *AchievementClient) Update() *AchievementUpdate {
+	mutation := newAchievementMutation(c.config, OpUpdate)
+	return &AchievementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *AchivementClient) UpdateOne(a *Achivement) *AchivementUpdateOne {
-	mutation := newAchivementMutation(c.config, OpUpdateOne, withAchivement(a))
-	return &AchivementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AchievementClient) UpdateOne(a *Achievement) *AchievementUpdateOne {
+	mutation := newAchievementMutation(c.config, OpUpdateOne, withAchievement(a))
+	return &AchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AchivementClient) UpdateOneID(id uuid.UUID) *AchivementUpdateOne {
-	mutation := newAchivementMutation(c.config, OpUpdateOne, withAchivementID(id))
-	return &AchivementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AchievementClient) UpdateOneID(id uuid.UUID) *AchievementUpdateOne {
+	mutation := newAchievementMutation(c.config, OpUpdateOne, withAchievementID(id))
+	return &AchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Achivement.
-func (c *AchivementClient) Delete() *AchivementDelete {
-	mutation := newAchivementMutation(c.config, OpDelete)
-	return &AchivementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Achievement.
+func (c *AchievementClient) Delete() *AchievementDelete {
+	mutation := newAchievementMutation(c.config, OpDelete)
+	return &AchievementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *AchivementClient) DeleteOne(a *Achivement) *AchivementDeleteOne {
+func (c *AchievementClient) DeleteOne(a *Achievement) *AchievementDeleteOne {
 	return c.DeleteOneID(a.ID)
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *AchivementClient) DeleteOneID(id uuid.UUID) *AchivementDeleteOne {
-	builder := c.Delete().Where(achivement.ID(id))
+func (c *AchievementClient) DeleteOneID(id uuid.UUID) *AchievementDeleteOne {
+	builder := c.Delete().Where(achievement.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &AchivementDeleteOne{builder}
+	return &AchievementDeleteOne{builder}
 }
 
-// Query returns a query builder for Achivement.
-func (c *AchivementClient) Query() *AchivementQuery {
-	return &AchivementQuery{
+// Query returns a query builder for Achievement.
+func (c *AchievementClient) Query() *AchievementQuery {
+	return &AchievementQuery{
 		config: c.config,
 	}
 }
 
-// Get returns a Achivement entity by its id.
-func (c *AchivementClient) Get(ctx context.Context, id uuid.UUID) (*Achivement, error) {
-	return c.Query().Where(achivement.ID(id)).Only(ctx)
+// Get returns a Achievement entity by its id.
+func (c *AchievementClient) Get(ctx context.Context, id uuid.UUID) (*Achievement, error) {
+	return c.Query().Where(achievement.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AchivementClient) GetX(ctx context.Context, id uuid.UUID) *Achivement {
+func (c *AchievementClient) GetX(ctx context.Context, id uuid.UUID) *Achievement {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -301,9 +301,9 @@ func (c *AchivementClient) GetX(ctx context.Context, id uuid.UUID) *Achivement {
 }
 
 // Hooks returns the client hooks.
-func (c *AchivementClient) Hooks() []Hook {
-	hooks := c.hooks.Achivement
-	return append(hooks[:len(hooks):len(hooks)], achivement.Hooks[:]...)
+func (c *AchievementClient) Hooks() []Hook {
+	hooks := c.hooks.Achievement
+	return append(hooks[:len(hooks):len(hooks)], achievement.Hooks[:]...)
 }
 
 // CommissionClient is a client for the Commission schema.

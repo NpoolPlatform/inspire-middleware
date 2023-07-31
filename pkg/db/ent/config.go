@@ -28,7 +28,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Achivement            []ent.Hook
+	Achievement           []ent.Hook
 	Commission            []ent.Hook
 	Coupon                []ent.Hook
 	CouponAllocated       []ent.Hook

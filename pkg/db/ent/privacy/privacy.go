@@ -150,28 +150,28 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The AchivementQueryRuleFunc type is an adapter to allow the use of ordinary
+// The AchievementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type AchivementQueryRuleFunc func(context.Context, *ent.AchivementQuery) error
+type AchievementQueryRuleFunc func(context.Context, *ent.AchievementQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f AchivementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AchivementQuery); ok {
+func (f AchievementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AchievementQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AchivementQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AchievementQuery", q)
 }
 
-// The AchivementMutationRuleFunc type is an adapter to allow the use of ordinary
+// The AchievementMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type AchivementMutationRuleFunc func(context.Context, *ent.AchivementMutation) error
+type AchievementMutationRuleFunc func(context.Context, *ent.AchievementMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f AchivementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.AchivementMutation); ok {
+func (f AchievementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AchievementMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchivementMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchievementMutation", m)
 }
 
 // The CommissionQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -521,7 +521,7 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *ent.AchivementQuery:
+	case *ent.AchievementQuery:
 		return q.Filter(), nil
 	case *ent.CommissionQuery:
 		return q.Filter(), nil
@@ -556,7 +556,7 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *ent.AchivementMutation:
+	case *ent.AchievementMutation:
 		return m.Filter(), nil
 	case *ent.CommissionMutation:
 		return m.Filter(), nil

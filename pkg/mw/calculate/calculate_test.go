@@ -220,7 +220,7 @@ var _comm6 = commmwpb.CommissionReq{
 	StartAt:         &comm6.StartAt,
 }
 
-func setup(t *testing.T) func(*testing.T) {
+func setup(t *testing.T) func(*testing.T) { //nolint
 	_h1, err := invitationcode1.NewHandler(
 		context.Background(),
 		invitationcode1.WithAppID(_reg1.AppID),

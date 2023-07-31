@@ -110,7 +110,9 @@ func (h *Handler) GetCommissions(ctx context.Context) ([]*npool.Commission, uint
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCommissions(ctx, cli)
+		if err := handler.queryCommissions(ctx, cli); err != nil {
+			return err
+		}
 		handler.stmSelect.
 			Offset(int(h.Offset)).
 			Limit(int(h.Limit))

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -38,7 +38,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAchivement            = "Achivement"
+	TypeAchievement           = "Achievement"
 	TypeCommission            = "Commission"
 	TypeCoupon                = "Coupon"
 	TypeCouponAllocated       = "CouponAllocated"
@@ -54,8 +54,8 @@ const (
 	TypeStatement             = "Statement"
 )
 
-// AchivementMutation represents an operation that mutates the Achivement nodes in the graph.
-type AchivementMutation struct {
+// AchievementMutation represents an operation that mutates the Achievement nodes in the graph.
+type AchievementMutation struct {
 	config
 	op               Op
 	typ              string
@@ -78,21 +78,21 @@ type AchivementMutation struct {
 	self_commission  *decimal.Decimal
 	clearedFields    map[string]struct{}
 	done             bool
-	oldValue         func(context.Context) (*Achivement, error)
-	predicates       []predicate.Achivement
+	oldValue         func(context.Context) (*Achievement, error)
+	predicates       []predicate.Achievement
 }
 
-var _ ent.Mutation = (*AchivementMutation)(nil)
+var _ ent.Mutation = (*AchievementMutation)(nil)
 
-// achivementOption allows management of the mutation configuration using functional options.
-type achivementOption func(*AchivementMutation)
+// achievementOption allows management of the mutation configuration using functional options.
+type achievementOption func(*AchievementMutation)
 
-// newAchivementMutation creates new mutation for the Achivement entity.
-func newAchivementMutation(c config, op Op, opts ...achivementOption) *AchivementMutation {
-	m := &AchivementMutation{
+// newAchievementMutation creates new mutation for the Achievement entity.
+func newAchievementMutation(c config, op Op, opts ...achievementOption) *AchievementMutation {
+	m := &AchievementMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeAchivement,
+		typ:           TypeAchievement,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -101,20 +101,20 @@ func newAchivementMutation(c config, op Op, opts ...achivementOption) *Achivemen
 	return m
 }
 
-// withAchivementID sets the ID field of the mutation.
-func withAchivementID(id uuid.UUID) achivementOption {
-	return func(m *AchivementMutation) {
+// withAchievementID sets the ID field of the mutation.
+func withAchievementID(id uuid.UUID) achievementOption {
+	return func(m *AchievementMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Achivement
+			value *Achievement
 		)
-		m.oldValue = func(ctx context.Context) (*Achivement, error) {
+		m.oldValue = func(ctx context.Context) (*Achievement, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Achivement.Get(ctx, id)
+					value, err = m.Client().Achievement.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -123,10 +123,10 @@ func withAchivementID(id uuid.UUID) achivementOption {
 	}
 }
 
-// withAchivement sets the old Achivement of the mutation.
-func withAchivement(node *Achivement) achivementOption {
-	return func(m *AchivementMutation) {
-		m.oldValue = func(context.Context) (*Achivement, error) {
+// withAchievement sets the old Achievement of the mutation.
+func withAchievement(node *Achievement) achievementOption {
+	return func(m *AchievementMutation) {
+		m.oldValue = func(context.Context) (*Achievement, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -135,7 +135,7 @@ func withAchivement(node *Achivement) achivementOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m AchivementMutation) Client() *Client {
+func (m AchievementMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -143,7 +143,7 @@ func (m AchivementMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m AchivementMutation) Tx() (*Tx, error) {
+func (m AchievementMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -153,14 +153,14 @@ func (m AchivementMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Achivement entities.
-func (m *AchivementMutation) SetID(id uuid.UUID) {
+// operation is only accepted on creation of Achievement entities.
+func (m *AchievementMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AchivementMutation) ID() (id uuid.UUID, exists bool) {
+func (m *AchievementMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -171,7 +171,7 @@ func (m *AchivementMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AchivementMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *AchievementMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -180,20 +180,20 @@ func (m *AchivementMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Achivement.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Achievement.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *AchivementMutation) SetCreatedAt(u uint32) {
+func (m *AchievementMutation) SetCreatedAt(u uint32) {
 	m.created_at = &u
 	m.addcreated_at = nil
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *AchivementMutation) CreatedAt() (r uint32, exists bool) {
+func (m *AchievementMutation) CreatedAt() (r uint32, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -201,10 +201,10 @@ func (m *AchivementMutation) CreatedAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+func (m *AchievementMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -219,7 +219,7 @@ func (m *AchivementMutation) OldCreatedAt(ctx context.Context) (v uint32, err er
 }
 
 // AddCreatedAt adds u to the "created_at" field.
-func (m *AchivementMutation) AddCreatedAt(u int32) {
+func (m *AchievementMutation) AddCreatedAt(u int32) {
 	if m.addcreated_at != nil {
 		*m.addcreated_at += u
 	} else {
@@ -228,7 +228,7 @@ func (m *AchivementMutation) AddCreatedAt(u int32) {
 }
 
 // AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
-func (m *AchivementMutation) AddedCreatedAt() (r int32, exists bool) {
+func (m *AchievementMutation) AddedCreatedAt() (r int32, exists bool) {
 	v := m.addcreated_at
 	if v == nil {
 		return
@@ -237,19 +237,19 @@ func (m *AchivementMutation) AddedCreatedAt() (r int32, exists bool) {
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *AchivementMutation) ResetCreatedAt() {
+func (m *AchievementMutation) ResetCreatedAt() {
 	m.created_at = nil
 	m.addcreated_at = nil
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (m *AchivementMutation) SetUpdatedAt(u uint32) {
+func (m *AchievementMutation) SetUpdatedAt(u uint32) {
 	m.updated_at = &u
 	m.addupdated_at = nil
 }
 
 // UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *AchivementMutation) UpdatedAt() (r uint32, exists bool) {
+func (m *AchievementMutation) UpdatedAt() (r uint32, exists bool) {
 	v := m.updated_at
 	if v == nil {
 		return
@@ -257,10 +257,10 @@ func (m *AchivementMutation) UpdatedAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+func (m *AchievementMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
@@ -275,7 +275,7 @@ func (m *AchivementMutation) OldUpdatedAt(ctx context.Context) (v uint32, err er
 }
 
 // AddUpdatedAt adds u to the "updated_at" field.
-func (m *AchivementMutation) AddUpdatedAt(u int32) {
+func (m *AchievementMutation) AddUpdatedAt(u int32) {
 	if m.addupdated_at != nil {
 		*m.addupdated_at += u
 	} else {
@@ -284,7 +284,7 @@ func (m *AchivementMutation) AddUpdatedAt(u int32) {
 }
 
 // AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
-func (m *AchivementMutation) AddedUpdatedAt() (r int32, exists bool) {
+func (m *AchievementMutation) AddedUpdatedAt() (r int32, exists bool) {
 	v := m.addupdated_at
 	if v == nil {
 		return
@@ -293,19 +293,19 @@ func (m *AchivementMutation) AddedUpdatedAt() (r int32, exists bool) {
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *AchivementMutation) ResetUpdatedAt() {
+func (m *AchievementMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	m.addupdated_at = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (m *AchivementMutation) SetDeletedAt(u uint32) {
+func (m *AchievementMutation) SetDeletedAt(u uint32) {
 	m.deleted_at = &u
 	m.adddeleted_at = nil
 }
 
 // DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *AchivementMutation) DeletedAt() (r uint32, exists bool) {
+func (m *AchievementMutation) DeletedAt() (r uint32, exists bool) {
 	v := m.deleted_at
 	if v == nil {
 		return
@@ -313,10 +313,10 @@ func (m *AchivementMutation) DeletedAt() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldDeletedAt returns the old "deleted_at" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedAt returns the old "deleted_at" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+func (m *AchievementMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -331,7 +331,7 @@ func (m *AchivementMutation) OldDeletedAt(ctx context.Context) (v uint32, err er
 }
 
 // AddDeletedAt adds u to the "deleted_at" field.
-func (m *AchivementMutation) AddDeletedAt(u int32) {
+func (m *AchievementMutation) AddDeletedAt(u int32) {
 	if m.adddeleted_at != nil {
 		*m.adddeleted_at += u
 	} else {
@@ -340,7 +340,7 @@ func (m *AchivementMutation) AddDeletedAt(u int32) {
 }
 
 // AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
-func (m *AchivementMutation) AddedDeletedAt() (r int32, exists bool) {
+func (m *AchievementMutation) AddedDeletedAt() (r int32, exists bool) {
 	v := m.adddeleted_at
 	if v == nil {
 		return
@@ -349,18 +349,18 @@ func (m *AchivementMutation) AddedDeletedAt() (r int32, exists bool) {
 }
 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *AchivementMutation) ResetDeletedAt() {
+func (m *AchievementMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 	m.adddeleted_at = nil
 }
 
 // SetAppID sets the "app_id" field.
-func (m *AchivementMutation) SetAppID(u uuid.UUID) {
+func (m *AchievementMutation) SetAppID(u uuid.UUID) {
 	m.app_id = &u
 }
 
 // AppID returns the value of the "app_id" field in the mutation.
-func (m *AchivementMutation) AppID() (r uuid.UUID, exists bool) {
+func (m *AchievementMutation) AppID() (r uuid.UUID, exists bool) {
 	v := m.app_id
 	if v == nil {
 		return
@@ -368,10 +368,10 @@ func (m *AchivementMutation) AppID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldAppID returns the old "app_id" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldAppID returns the old "app_id" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *AchievementMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
 	}
@@ -386,30 +386,30 @@ func (m *AchivementMutation) OldAppID(ctx context.Context) (v uuid.UUID, err err
 }
 
 // ClearAppID clears the value of the "app_id" field.
-func (m *AchivementMutation) ClearAppID() {
+func (m *AchievementMutation) ClearAppID() {
 	m.app_id = nil
-	m.clearedFields[achivement.FieldAppID] = struct{}{}
+	m.clearedFields[achievement.FieldAppID] = struct{}{}
 }
 
 // AppIDCleared returns if the "app_id" field was cleared in this mutation.
-func (m *AchivementMutation) AppIDCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldAppID]
+func (m *AchievementMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldAppID]
 	return ok
 }
 
 // ResetAppID resets all changes to the "app_id" field.
-func (m *AchivementMutation) ResetAppID() {
+func (m *AchievementMutation) ResetAppID() {
 	m.app_id = nil
-	delete(m.clearedFields, achivement.FieldAppID)
+	delete(m.clearedFields, achievement.FieldAppID)
 }
 
 // SetUserID sets the "user_id" field.
-func (m *AchivementMutation) SetUserID(u uuid.UUID) {
+func (m *AchievementMutation) SetUserID(u uuid.UUID) {
 	m.user_id = &u
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *AchivementMutation) UserID() (r uuid.UUID, exists bool) {
+func (m *AchievementMutation) UserID() (r uuid.UUID, exists bool) {
 	v := m.user_id
 	if v == nil {
 		return
@@ -417,10 +417,10 @@ func (m *AchivementMutation) UserID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldUserID returns the old "user_id" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldUserID returns the old "user_id" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *AchievementMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -435,30 +435,30 @@ func (m *AchivementMutation) OldUserID(ctx context.Context) (v uuid.UUID, err er
 }
 
 // ClearUserID clears the value of the "user_id" field.
-func (m *AchivementMutation) ClearUserID() {
+func (m *AchievementMutation) ClearUserID() {
 	m.user_id = nil
-	m.clearedFields[achivement.FieldUserID] = struct{}{}
+	m.clearedFields[achievement.FieldUserID] = struct{}{}
 }
 
 // UserIDCleared returns if the "user_id" field was cleared in this mutation.
-func (m *AchivementMutation) UserIDCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldUserID]
+func (m *AchievementMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldUserID]
 	return ok
 }
 
 // ResetUserID resets all changes to the "user_id" field.
-func (m *AchivementMutation) ResetUserID() {
+func (m *AchievementMutation) ResetUserID() {
 	m.user_id = nil
-	delete(m.clearedFields, achivement.FieldUserID)
+	delete(m.clearedFields, achievement.FieldUserID)
 }
 
 // SetGoodID sets the "good_id" field.
-func (m *AchivementMutation) SetGoodID(u uuid.UUID) {
+func (m *AchievementMutation) SetGoodID(u uuid.UUID) {
 	m.good_id = &u
 }
 
 // GoodID returns the value of the "good_id" field in the mutation.
-func (m *AchivementMutation) GoodID() (r uuid.UUID, exists bool) {
+func (m *AchievementMutation) GoodID() (r uuid.UUID, exists bool) {
 	v := m.good_id
 	if v == nil {
 		return
@@ -466,10 +466,10 @@ func (m *AchivementMutation) GoodID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldGoodID returns the old "good_id" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldGoodID returns the old "good_id" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *AchievementMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGoodID is only allowed on UpdateOne operations")
 	}
@@ -484,30 +484,30 @@ func (m *AchivementMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err er
 }
 
 // ClearGoodID clears the value of the "good_id" field.
-func (m *AchivementMutation) ClearGoodID() {
+func (m *AchievementMutation) ClearGoodID() {
 	m.good_id = nil
-	m.clearedFields[achivement.FieldGoodID] = struct{}{}
+	m.clearedFields[achievement.FieldGoodID] = struct{}{}
 }
 
 // GoodIDCleared returns if the "good_id" field was cleared in this mutation.
-func (m *AchivementMutation) GoodIDCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldGoodID]
+func (m *AchievementMutation) GoodIDCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldGoodID]
 	return ok
 }
 
 // ResetGoodID resets all changes to the "good_id" field.
-func (m *AchivementMutation) ResetGoodID() {
+func (m *AchievementMutation) ResetGoodID() {
 	m.good_id = nil
-	delete(m.clearedFields, achivement.FieldGoodID)
+	delete(m.clearedFields, achievement.FieldGoodID)
 }
 
 // SetCoinTypeID sets the "coin_type_id" field.
-func (m *AchivementMutation) SetCoinTypeID(u uuid.UUID) {
+func (m *AchievementMutation) SetCoinTypeID(u uuid.UUID) {
 	m.coin_type_id = &u
 }
 
 // CoinTypeID returns the value of the "coin_type_id" field in the mutation.
-func (m *AchivementMutation) CoinTypeID() (r uuid.UUID, exists bool) {
+func (m *AchievementMutation) CoinTypeID() (r uuid.UUID, exists bool) {
 	v := m.coin_type_id
 	if v == nil {
 		return
@@ -515,10 +515,10 @@ func (m *AchivementMutation) CoinTypeID() (r uuid.UUID, exists bool) {
 	return *v, true
 }
 
-// OldCoinTypeID returns the old "coin_type_id" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldCoinTypeID returns the old "coin_type_id" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *AchievementMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCoinTypeID is only allowed on UpdateOne operations")
 	}
@@ -533,30 +533,30 @@ func (m *AchivementMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, er
 }
 
 // ClearCoinTypeID clears the value of the "coin_type_id" field.
-func (m *AchivementMutation) ClearCoinTypeID() {
+func (m *AchievementMutation) ClearCoinTypeID() {
 	m.coin_type_id = nil
-	m.clearedFields[achivement.FieldCoinTypeID] = struct{}{}
+	m.clearedFields[achievement.FieldCoinTypeID] = struct{}{}
 }
 
 // CoinTypeIDCleared returns if the "coin_type_id" field was cleared in this mutation.
-func (m *AchivementMutation) CoinTypeIDCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldCoinTypeID]
+func (m *AchievementMutation) CoinTypeIDCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldCoinTypeID]
 	return ok
 }
 
 // ResetCoinTypeID resets all changes to the "coin_type_id" field.
-func (m *AchivementMutation) ResetCoinTypeID() {
+func (m *AchievementMutation) ResetCoinTypeID() {
 	m.coin_type_id = nil
-	delete(m.clearedFields, achivement.FieldCoinTypeID)
+	delete(m.clearedFields, achievement.FieldCoinTypeID)
 }
 
 // SetTotalUnitsV1 sets the "total_units_v1" field.
-func (m *AchivementMutation) SetTotalUnitsV1(d decimal.Decimal) {
+func (m *AchievementMutation) SetTotalUnitsV1(d decimal.Decimal) {
 	m.total_units_v1 = &d
 }
 
 // TotalUnitsV1 returns the value of the "total_units_v1" field in the mutation.
-func (m *AchivementMutation) TotalUnitsV1() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) TotalUnitsV1() (r decimal.Decimal, exists bool) {
 	v := m.total_units_v1
 	if v == nil {
 		return
@@ -564,10 +564,10 @@ func (m *AchivementMutation) TotalUnitsV1() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// OldTotalUnitsV1 returns the old "total_units_v1" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldTotalUnitsV1 returns the old "total_units_v1" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldTotalUnitsV1(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldTotalUnitsV1(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTotalUnitsV1 is only allowed on UpdateOne operations")
 	}
@@ -582,30 +582,30 @@ func (m *AchivementMutation) OldTotalUnitsV1(ctx context.Context) (v decimal.Dec
 }
 
 // ClearTotalUnitsV1 clears the value of the "total_units_v1" field.
-func (m *AchivementMutation) ClearTotalUnitsV1() {
+func (m *AchievementMutation) ClearTotalUnitsV1() {
 	m.total_units_v1 = nil
-	m.clearedFields[achivement.FieldTotalUnitsV1] = struct{}{}
+	m.clearedFields[achievement.FieldTotalUnitsV1] = struct{}{}
 }
 
 // TotalUnitsV1Cleared returns if the "total_units_v1" field was cleared in this mutation.
-func (m *AchivementMutation) TotalUnitsV1Cleared() bool {
-	_, ok := m.clearedFields[achivement.FieldTotalUnitsV1]
+func (m *AchievementMutation) TotalUnitsV1Cleared() bool {
+	_, ok := m.clearedFields[achievement.FieldTotalUnitsV1]
 	return ok
 }
 
 // ResetTotalUnitsV1 resets all changes to the "total_units_v1" field.
-func (m *AchivementMutation) ResetTotalUnitsV1() {
+func (m *AchievementMutation) ResetTotalUnitsV1() {
 	m.total_units_v1 = nil
-	delete(m.clearedFields, achivement.FieldTotalUnitsV1)
+	delete(m.clearedFields, achievement.FieldTotalUnitsV1)
 }
 
 // SetSelfUnitsV1 sets the "self_units_v1" field.
-func (m *AchivementMutation) SetSelfUnitsV1(d decimal.Decimal) {
+func (m *AchievementMutation) SetSelfUnitsV1(d decimal.Decimal) {
 	m.self_units_v1 = &d
 }
 
 // SelfUnitsV1 returns the value of the "self_units_v1" field in the mutation.
-func (m *AchivementMutation) SelfUnitsV1() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) SelfUnitsV1() (r decimal.Decimal, exists bool) {
 	v := m.self_units_v1
 	if v == nil {
 		return
@@ -613,10 +613,10 @@ func (m *AchivementMutation) SelfUnitsV1() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// OldSelfUnitsV1 returns the old "self_units_v1" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldSelfUnitsV1 returns the old "self_units_v1" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldSelfUnitsV1(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldSelfUnitsV1(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSelfUnitsV1 is only allowed on UpdateOne operations")
 	}
@@ -631,30 +631,30 @@ func (m *AchivementMutation) OldSelfUnitsV1(ctx context.Context) (v decimal.Deci
 }
 
 // ClearSelfUnitsV1 clears the value of the "self_units_v1" field.
-func (m *AchivementMutation) ClearSelfUnitsV1() {
+func (m *AchievementMutation) ClearSelfUnitsV1() {
 	m.self_units_v1 = nil
-	m.clearedFields[achivement.FieldSelfUnitsV1] = struct{}{}
+	m.clearedFields[achievement.FieldSelfUnitsV1] = struct{}{}
 }
 
 // SelfUnitsV1Cleared returns if the "self_units_v1" field was cleared in this mutation.
-func (m *AchivementMutation) SelfUnitsV1Cleared() bool {
-	_, ok := m.clearedFields[achivement.FieldSelfUnitsV1]
+func (m *AchievementMutation) SelfUnitsV1Cleared() bool {
+	_, ok := m.clearedFields[achievement.FieldSelfUnitsV1]
 	return ok
 }
 
 // ResetSelfUnitsV1 resets all changes to the "self_units_v1" field.
-func (m *AchivementMutation) ResetSelfUnitsV1() {
+func (m *AchievementMutation) ResetSelfUnitsV1() {
 	m.self_units_v1 = nil
-	delete(m.clearedFields, achivement.FieldSelfUnitsV1)
+	delete(m.clearedFields, achievement.FieldSelfUnitsV1)
 }
 
 // SetTotalAmount sets the "total_amount" field.
-func (m *AchivementMutation) SetTotalAmount(d decimal.Decimal) {
+func (m *AchievementMutation) SetTotalAmount(d decimal.Decimal) {
 	m.total_amount = &d
 }
 
 // TotalAmount returns the value of the "total_amount" field in the mutation.
-func (m *AchivementMutation) TotalAmount() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) TotalAmount() (r decimal.Decimal, exists bool) {
 	v := m.total_amount
 	if v == nil {
 		return
@@ -662,10 +662,10 @@ func (m *AchivementMutation) TotalAmount() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// OldTotalAmount returns the old "total_amount" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldTotalAmount returns the old "total_amount" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldTotalAmount(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldTotalAmount(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTotalAmount is only allowed on UpdateOne operations")
 	}
@@ -680,30 +680,30 @@ func (m *AchivementMutation) OldTotalAmount(ctx context.Context) (v decimal.Deci
 }
 
 // ClearTotalAmount clears the value of the "total_amount" field.
-func (m *AchivementMutation) ClearTotalAmount() {
+func (m *AchievementMutation) ClearTotalAmount() {
 	m.total_amount = nil
-	m.clearedFields[achivement.FieldTotalAmount] = struct{}{}
+	m.clearedFields[achievement.FieldTotalAmount] = struct{}{}
 }
 
 // TotalAmountCleared returns if the "total_amount" field was cleared in this mutation.
-func (m *AchivementMutation) TotalAmountCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldTotalAmount]
+func (m *AchievementMutation) TotalAmountCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldTotalAmount]
 	return ok
 }
 
 // ResetTotalAmount resets all changes to the "total_amount" field.
-func (m *AchivementMutation) ResetTotalAmount() {
+func (m *AchievementMutation) ResetTotalAmount() {
 	m.total_amount = nil
-	delete(m.clearedFields, achivement.FieldTotalAmount)
+	delete(m.clearedFields, achievement.FieldTotalAmount)
 }
 
 // SetSelfAmount sets the "self_amount" field.
-func (m *AchivementMutation) SetSelfAmount(d decimal.Decimal) {
+func (m *AchievementMutation) SetSelfAmount(d decimal.Decimal) {
 	m.self_amount = &d
 }
 
 // SelfAmount returns the value of the "self_amount" field in the mutation.
-func (m *AchivementMutation) SelfAmount() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) SelfAmount() (r decimal.Decimal, exists bool) {
 	v := m.self_amount
 	if v == nil {
 		return
@@ -711,10 +711,10 @@ func (m *AchivementMutation) SelfAmount() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// OldSelfAmount returns the old "self_amount" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldSelfAmount returns the old "self_amount" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldSelfAmount(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldSelfAmount(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSelfAmount is only allowed on UpdateOne operations")
 	}
@@ -729,30 +729,30 @@ func (m *AchivementMutation) OldSelfAmount(ctx context.Context) (v decimal.Decim
 }
 
 // ClearSelfAmount clears the value of the "self_amount" field.
-func (m *AchivementMutation) ClearSelfAmount() {
+func (m *AchievementMutation) ClearSelfAmount() {
 	m.self_amount = nil
-	m.clearedFields[achivement.FieldSelfAmount] = struct{}{}
+	m.clearedFields[achievement.FieldSelfAmount] = struct{}{}
 }
 
 // SelfAmountCleared returns if the "self_amount" field was cleared in this mutation.
-func (m *AchivementMutation) SelfAmountCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldSelfAmount]
+func (m *AchievementMutation) SelfAmountCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldSelfAmount]
 	return ok
 }
 
 // ResetSelfAmount resets all changes to the "self_amount" field.
-func (m *AchivementMutation) ResetSelfAmount() {
+func (m *AchievementMutation) ResetSelfAmount() {
 	m.self_amount = nil
-	delete(m.clearedFields, achivement.FieldSelfAmount)
+	delete(m.clearedFields, achievement.FieldSelfAmount)
 }
 
 // SetTotalCommission sets the "total_commission" field.
-func (m *AchivementMutation) SetTotalCommission(d decimal.Decimal) {
+func (m *AchievementMutation) SetTotalCommission(d decimal.Decimal) {
 	m.total_commission = &d
 }
 
 // TotalCommission returns the value of the "total_commission" field in the mutation.
-func (m *AchivementMutation) TotalCommission() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) TotalCommission() (r decimal.Decimal, exists bool) {
 	v := m.total_commission
 	if v == nil {
 		return
@@ -760,10 +760,10 @@ func (m *AchivementMutation) TotalCommission() (r decimal.Decimal, exists bool) 
 	return *v, true
 }
 
-// OldTotalCommission returns the old "total_commission" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldTotalCommission returns the old "total_commission" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldTotalCommission(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldTotalCommission(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTotalCommission is only allowed on UpdateOne operations")
 	}
@@ -778,30 +778,30 @@ func (m *AchivementMutation) OldTotalCommission(ctx context.Context) (v decimal.
 }
 
 // ClearTotalCommission clears the value of the "total_commission" field.
-func (m *AchivementMutation) ClearTotalCommission() {
+func (m *AchievementMutation) ClearTotalCommission() {
 	m.total_commission = nil
-	m.clearedFields[achivement.FieldTotalCommission] = struct{}{}
+	m.clearedFields[achievement.FieldTotalCommission] = struct{}{}
 }
 
 // TotalCommissionCleared returns if the "total_commission" field was cleared in this mutation.
-func (m *AchivementMutation) TotalCommissionCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldTotalCommission]
+func (m *AchievementMutation) TotalCommissionCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldTotalCommission]
 	return ok
 }
 
 // ResetTotalCommission resets all changes to the "total_commission" field.
-func (m *AchivementMutation) ResetTotalCommission() {
+func (m *AchievementMutation) ResetTotalCommission() {
 	m.total_commission = nil
-	delete(m.clearedFields, achivement.FieldTotalCommission)
+	delete(m.clearedFields, achievement.FieldTotalCommission)
 }
 
 // SetSelfCommission sets the "self_commission" field.
-func (m *AchivementMutation) SetSelfCommission(d decimal.Decimal) {
+func (m *AchievementMutation) SetSelfCommission(d decimal.Decimal) {
 	m.self_commission = &d
 }
 
 // SelfCommission returns the value of the "self_commission" field in the mutation.
-func (m *AchivementMutation) SelfCommission() (r decimal.Decimal, exists bool) {
+func (m *AchievementMutation) SelfCommission() (r decimal.Decimal, exists bool) {
 	v := m.self_commission
 	if v == nil {
 		return
@@ -809,10 +809,10 @@ func (m *AchivementMutation) SelfCommission() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// OldSelfCommission returns the old "self_commission" field's value of the Achivement entity.
-// If the Achivement object wasn't provided to the builder, the object is fetched from the database.
+// OldSelfCommission returns the old "self_commission" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchivementMutation) OldSelfCommission(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *AchievementMutation) OldSelfCommission(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSelfCommission is only allowed on UpdateOne operations")
 	}
@@ -827,81 +827,81 @@ func (m *AchivementMutation) OldSelfCommission(ctx context.Context) (v decimal.D
 }
 
 // ClearSelfCommission clears the value of the "self_commission" field.
-func (m *AchivementMutation) ClearSelfCommission() {
+func (m *AchievementMutation) ClearSelfCommission() {
 	m.self_commission = nil
-	m.clearedFields[achivement.FieldSelfCommission] = struct{}{}
+	m.clearedFields[achievement.FieldSelfCommission] = struct{}{}
 }
 
 // SelfCommissionCleared returns if the "self_commission" field was cleared in this mutation.
-func (m *AchivementMutation) SelfCommissionCleared() bool {
-	_, ok := m.clearedFields[achivement.FieldSelfCommission]
+func (m *AchievementMutation) SelfCommissionCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldSelfCommission]
 	return ok
 }
 
 // ResetSelfCommission resets all changes to the "self_commission" field.
-func (m *AchivementMutation) ResetSelfCommission() {
+func (m *AchievementMutation) ResetSelfCommission() {
 	m.self_commission = nil
-	delete(m.clearedFields, achivement.FieldSelfCommission)
+	delete(m.clearedFields, achievement.FieldSelfCommission)
 }
 
-// Where appends a list predicates to the AchivementMutation builder.
-func (m *AchivementMutation) Where(ps ...predicate.Achivement) {
+// Where appends a list predicates to the AchievementMutation builder.
+func (m *AchievementMutation) Where(ps ...predicate.Achievement) {
 	m.predicates = append(m.predicates, ps...)
 }
 
 // Op returns the operation name.
-func (m *AchivementMutation) Op() Op {
+func (m *AchievementMutation) Op() Op {
 	return m.op
 }
 
-// Type returns the node type of this mutation (Achivement).
-func (m *AchivementMutation) Type() string {
+// Type returns the node type of this mutation (Achievement).
+func (m *AchievementMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *AchivementMutation) Fields() []string {
+func (m *AchievementMutation) Fields() []string {
 	fields := make([]string, 0, 13)
 	if m.created_at != nil {
-		fields = append(fields, achivement.FieldCreatedAt)
+		fields = append(fields, achievement.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, achivement.FieldUpdatedAt)
+		fields = append(fields, achievement.FieldUpdatedAt)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, achivement.FieldDeletedAt)
+		fields = append(fields, achievement.FieldDeletedAt)
 	}
 	if m.app_id != nil {
-		fields = append(fields, achivement.FieldAppID)
+		fields = append(fields, achievement.FieldAppID)
 	}
 	if m.user_id != nil {
-		fields = append(fields, achivement.FieldUserID)
+		fields = append(fields, achievement.FieldUserID)
 	}
 	if m.good_id != nil {
-		fields = append(fields, achivement.FieldGoodID)
+		fields = append(fields, achievement.FieldGoodID)
 	}
 	if m.coin_type_id != nil {
-		fields = append(fields, achivement.FieldCoinTypeID)
+		fields = append(fields, achievement.FieldCoinTypeID)
 	}
 	if m.total_units_v1 != nil {
-		fields = append(fields, achivement.FieldTotalUnitsV1)
+		fields = append(fields, achievement.FieldTotalUnitsV1)
 	}
 	if m.self_units_v1 != nil {
-		fields = append(fields, achivement.FieldSelfUnitsV1)
+		fields = append(fields, achievement.FieldSelfUnitsV1)
 	}
 	if m.total_amount != nil {
-		fields = append(fields, achivement.FieldTotalAmount)
+		fields = append(fields, achievement.FieldTotalAmount)
 	}
 	if m.self_amount != nil {
-		fields = append(fields, achivement.FieldSelfAmount)
+		fields = append(fields, achievement.FieldSelfAmount)
 	}
 	if m.total_commission != nil {
-		fields = append(fields, achivement.FieldTotalCommission)
+		fields = append(fields, achievement.FieldTotalCommission)
 	}
 	if m.self_commission != nil {
-		fields = append(fields, achivement.FieldSelfCommission)
+		fields = append(fields, achievement.FieldSelfCommission)
 	}
 	return fields
 }
@@ -909,33 +909,33 @@ func (m *AchivementMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *AchivementMutation) Field(name string) (ent.Value, bool) {
+func (m *AchievementMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		return m.CreatedAt()
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		return m.DeletedAt()
-	case achivement.FieldAppID:
+	case achievement.FieldAppID:
 		return m.AppID()
-	case achivement.FieldUserID:
+	case achievement.FieldUserID:
 		return m.UserID()
-	case achivement.FieldGoodID:
+	case achievement.FieldGoodID:
 		return m.GoodID()
-	case achivement.FieldCoinTypeID:
+	case achievement.FieldCoinTypeID:
 		return m.CoinTypeID()
-	case achivement.FieldTotalUnitsV1:
+	case achievement.FieldTotalUnitsV1:
 		return m.TotalUnitsV1()
-	case achivement.FieldSelfUnitsV1:
+	case achievement.FieldSelfUnitsV1:
 		return m.SelfUnitsV1()
-	case achivement.FieldTotalAmount:
+	case achievement.FieldTotalAmount:
 		return m.TotalAmount()
-	case achivement.FieldSelfAmount:
+	case achievement.FieldSelfAmount:
 		return m.SelfAmount()
-	case achivement.FieldTotalCommission:
+	case achievement.FieldTotalCommission:
 		return m.TotalCommission()
-	case achivement.FieldSelfCommission:
+	case achievement.FieldSelfCommission:
 		return m.SelfCommission()
 	}
 	return nil, false
@@ -944,128 +944,128 @@ func (m *AchivementMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *AchivementMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *AchievementMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case achivement.FieldAppID:
+	case achievement.FieldAppID:
 		return m.OldAppID(ctx)
-	case achivement.FieldUserID:
+	case achievement.FieldUserID:
 		return m.OldUserID(ctx)
-	case achivement.FieldGoodID:
+	case achievement.FieldGoodID:
 		return m.OldGoodID(ctx)
-	case achivement.FieldCoinTypeID:
+	case achievement.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
-	case achivement.FieldTotalUnitsV1:
+	case achievement.FieldTotalUnitsV1:
 		return m.OldTotalUnitsV1(ctx)
-	case achivement.FieldSelfUnitsV1:
+	case achievement.FieldSelfUnitsV1:
 		return m.OldSelfUnitsV1(ctx)
-	case achivement.FieldTotalAmount:
+	case achievement.FieldTotalAmount:
 		return m.OldTotalAmount(ctx)
-	case achivement.FieldSelfAmount:
+	case achievement.FieldSelfAmount:
 		return m.OldSelfAmount(ctx)
-	case achivement.FieldTotalCommission:
+	case achievement.FieldTotalCommission:
 		return m.OldTotalCommission(ctx)
-	case achivement.FieldSelfCommission:
+	case achievement.FieldSelfCommission:
 		return m.OldSelfCommission(ctx)
 	}
-	return nil, fmt.Errorf("unknown Achivement field %s", name)
+	return nil, fmt.Errorf("unknown Achievement field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AchivementMutation) SetField(name string, value ent.Value) error {
+func (m *AchievementMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case achivement.FieldAppID:
+	case achievement.FieldAppID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
 		return nil
-	case achivement.FieldUserID:
+	case achievement.FieldUserID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
 		return nil
-	case achivement.FieldGoodID:
+	case achievement.FieldGoodID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
 		return nil
-	case achivement.FieldCoinTypeID:
+	case achievement.FieldCoinTypeID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCoinTypeID(v)
 		return nil
-	case achivement.FieldTotalUnitsV1:
+	case achievement.FieldTotalUnitsV1:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalUnitsV1(v)
 		return nil
-	case achivement.FieldSelfUnitsV1:
+	case achievement.FieldSelfUnitsV1:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSelfUnitsV1(v)
 		return nil
-	case achivement.FieldTotalAmount:
+	case achievement.FieldTotalAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalAmount(v)
 		return nil
-	case achivement.FieldSelfAmount:
+	case achievement.FieldSelfAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSelfAmount(v)
 		return nil
-	case achivement.FieldTotalCommission:
+	case achievement.FieldTotalCommission:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTotalCommission(v)
 		return nil
-	case achivement.FieldSelfCommission:
+	case achievement.FieldSelfCommission:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -1073,21 +1073,21 @@ func (m *AchivementMutation) SetField(name string, value ent.Value) error {
 		m.SetSelfCommission(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Achivement field %s", name)
+	return fmt.Errorf("unknown Achievement field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *AchivementMutation) AddedFields() []string {
+func (m *AchievementMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_at != nil {
-		fields = append(fields, achivement.FieldCreatedAt)
+		fields = append(fields, achievement.FieldCreatedAt)
 	}
 	if m.addupdated_at != nil {
-		fields = append(fields, achivement.FieldUpdatedAt)
+		fields = append(fields, achievement.FieldUpdatedAt)
 	}
 	if m.adddeleted_at != nil {
-		fields = append(fields, achivement.FieldDeletedAt)
+		fields = append(fields, achievement.FieldDeletedAt)
 	}
 	return fields
 }
@@ -1095,13 +1095,13 @@ func (m *AchivementMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *AchivementMutation) AddedField(name string) (ent.Value, bool) {
+func (m *AchievementMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		return m.AddedCreatedAt()
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		return m.AddedUpdatedAt()
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		return m.AddedDeletedAt()
 	}
 	return nil, false
@@ -1110,23 +1110,23 @@ func (m *AchivementMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AchivementMutation) AddField(name string, value ent.Value) error {
+func (m *AchievementMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddCreatedAt(v)
 		return nil
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddUpdatedAt(v)
 		return nil
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -1134,184 +1134,184 @@ func (m *AchivementMutation) AddField(name string, value ent.Value) error {
 		m.AddDeletedAt(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Achivement numeric field %s", name)
+	return fmt.Errorf("unknown Achievement numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *AchivementMutation) ClearedFields() []string {
+func (m *AchievementMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(achivement.FieldAppID) {
-		fields = append(fields, achivement.FieldAppID)
+	if m.FieldCleared(achievement.FieldAppID) {
+		fields = append(fields, achievement.FieldAppID)
 	}
-	if m.FieldCleared(achivement.FieldUserID) {
-		fields = append(fields, achivement.FieldUserID)
+	if m.FieldCleared(achievement.FieldUserID) {
+		fields = append(fields, achievement.FieldUserID)
 	}
-	if m.FieldCleared(achivement.FieldGoodID) {
-		fields = append(fields, achivement.FieldGoodID)
+	if m.FieldCleared(achievement.FieldGoodID) {
+		fields = append(fields, achievement.FieldGoodID)
 	}
-	if m.FieldCleared(achivement.FieldCoinTypeID) {
-		fields = append(fields, achivement.FieldCoinTypeID)
+	if m.FieldCleared(achievement.FieldCoinTypeID) {
+		fields = append(fields, achievement.FieldCoinTypeID)
 	}
-	if m.FieldCleared(achivement.FieldTotalUnitsV1) {
-		fields = append(fields, achivement.FieldTotalUnitsV1)
+	if m.FieldCleared(achievement.FieldTotalUnitsV1) {
+		fields = append(fields, achievement.FieldTotalUnitsV1)
 	}
-	if m.FieldCleared(achivement.FieldSelfUnitsV1) {
-		fields = append(fields, achivement.FieldSelfUnitsV1)
+	if m.FieldCleared(achievement.FieldSelfUnitsV1) {
+		fields = append(fields, achievement.FieldSelfUnitsV1)
 	}
-	if m.FieldCleared(achivement.FieldTotalAmount) {
-		fields = append(fields, achivement.FieldTotalAmount)
+	if m.FieldCleared(achievement.FieldTotalAmount) {
+		fields = append(fields, achievement.FieldTotalAmount)
 	}
-	if m.FieldCleared(achivement.FieldSelfAmount) {
-		fields = append(fields, achivement.FieldSelfAmount)
+	if m.FieldCleared(achievement.FieldSelfAmount) {
+		fields = append(fields, achievement.FieldSelfAmount)
 	}
-	if m.FieldCleared(achivement.FieldTotalCommission) {
-		fields = append(fields, achivement.FieldTotalCommission)
+	if m.FieldCleared(achievement.FieldTotalCommission) {
+		fields = append(fields, achievement.FieldTotalCommission)
 	}
-	if m.FieldCleared(achivement.FieldSelfCommission) {
-		fields = append(fields, achivement.FieldSelfCommission)
+	if m.FieldCleared(achievement.FieldSelfCommission) {
+		fields = append(fields, achievement.FieldSelfCommission)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *AchivementMutation) FieldCleared(name string) bool {
+func (m *AchievementMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *AchivementMutation) ClearField(name string) error {
+func (m *AchievementMutation) ClearField(name string) error {
 	switch name {
-	case achivement.FieldAppID:
+	case achievement.FieldAppID:
 		m.ClearAppID()
 		return nil
-	case achivement.FieldUserID:
+	case achievement.FieldUserID:
 		m.ClearUserID()
 		return nil
-	case achivement.FieldGoodID:
+	case achievement.FieldGoodID:
 		m.ClearGoodID()
 		return nil
-	case achivement.FieldCoinTypeID:
+	case achievement.FieldCoinTypeID:
 		m.ClearCoinTypeID()
 		return nil
-	case achivement.FieldTotalUnitsV1:
+	case achievement.FieldTotalUnitsV1:
 		m.ClearTotalUnitsV1()
 		return nil
-	case achivement.FieldSelfUnitsV1:
+	case achievement.FieldSelfUnitsV1:
 		m.ClearSelfUnitsV1()
 		return nil
-	case achivement.FieldTotalAmount:
+	case achievement.FieldTotalAmount:
 		m.ClearTotalAmount()
 		return nil
-	case achivement.FieldSelfAmount:
+	case achievement.FieldSelfAmount:
 		m.ClearSelfAmount()
 		return nil
-	case achivement.FieldTotalCommission:
+	case achievement.FieldTotalCommission:
 		m.ClearTotalCommission()
 		return nil
-	case achivement.FieldSelfCommission:
+	case achievement.FieldSelfCommission:
 		m.ClearSelfCommission()
 		return nil
 	}
-	return fmt.Errorf("unknown Achivement nullable field %s", name)
+	return fmt.Errorf("unknown Achievement nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *AchivementMutation) ResetField(name string) error {
+func (m *AchievementMutation) ResetField(name string) error {
 	switch name {
-	case achivement.FieldCreatedAt:
+	case achievement.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case achivement.FieldUpdatedAt:
+	case achievement.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case achivement.FieldDeletedAt:
+	case achievement.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case achivement.FieldAppID:
+	case achievement.FieldAppID:
 		m.ResetAppID()
 		return nil
-	case achivement.FieldUserID:
+	case achievement.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case achivement.FieldGoodID:
+	case achievement.FieldGoodID:
 		m.ResetGoodID()
 		return nil
-	case achivement.FieldCoinTypeID:
+	case achievement.FieldCoinTypeID:
 		m.ResetCoinTypeID()
 		return nil
-	case achivement.FieldTotalUnitsV1:
+	case achievement.FieldTotalUnitsV1:
 		m.ResetTotalUnitsV1()
 		return nil
-	case achivement.FieldSelfUnitsV1:
+	case achievement.FieldSelfUnitsV1:
 		m.ResetSelfUnitsV1()
 		return nil
-	case achivement.FieldTotalAmount:
+	case achievement.FieldTotalAmount:
 		m.ResetTotalAmount()
 		return nil
-	case achivement.FieldSelfAmount:
+	case achievement.FieldSelfAmount:
 		m.ResetSelfAmount()
 		return nil
-	case achivement.FieldTotalCommission:
+	case achievement.FieldTotalCommission:
 		m.ResetTotalCommission()
 		return nil
-	case achivement.FieldSelfCommission:
+	case achievement.FieldSelfCommission:
 		m.ResetSelfCommission()
 		return nil
 	}
-	return fmt.Errorf("unknown Achivement field %s", name)
+	return fmt.Errorf("unknown Achievement field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *AchivementMutation) AddedEdges() []string {
+func (m *AchievementMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *AchivementMutation) AddedIDs(name string) []ent.Value {
+func (m *AchievementMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *AchivementMutation) RemovedEdges() []string {
+func (m *AchievementMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *AchivementMutation) RemovedIDs(name string) []ent.Value {
+func (m *AchievementMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *AchivementMutation) ClearedEdges() []string {
+func (m *AchievementMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *AchivementMutation) EdgeCleared(name string) bool {
+func (m *AchievementMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *AchivementMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Achivement unique edge %s", name)
+func (m *AchievementMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Achievement unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *AchivementMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Achivement edge %s", name)
+func (m *AchievementMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Achievement edge %s", name)
 }
 
 // CommissionMutation represents an operation that mutates the Commission nodes in the graph.

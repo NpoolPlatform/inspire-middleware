@@ -2,12 +2,12 @@ package event
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/event"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -33,21 +33,27 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func GetEventOnly(ctx context.Context, conds *mgrpb.Conds) (*mgrpb.Event, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetEventOnly(ctx, &npool.GetEventOnlyRequest{
+func GetEventOnly(ctx context.Context, conds *npool.Conds) (*npool.Event, error) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetEvents(ctx, &npool.GetEventsRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return nil, err
 		}
 
-		return resp.Info, nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*mgrpb.Event), nil
+	if len(infos.([]*npool.Event)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.Event)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.Event)[0], nil
 }
 
 func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) ([]*npool.Credit, error) {

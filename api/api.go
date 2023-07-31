@@ -5,8 +5,8 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1"
 
-	"github.com/NpoolPlatform/inspire-middleware/api/achivement"
-	"github.com/NpoolPlatform/inspire-middleware/api/achivement/statement"
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement/statement"
 	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
@@ -30,7 +30,7 @@ func Register(server grpc.ServiceRegistrar) {
 	coupon.Register(server)
 	allocated.Register(server)
 	commission.Register(server)
-	achivement.Register(server)
+	achievement.Register(server)
 	calculate.Register(server)
 	event.Register(server)
 	statement.Register(server)

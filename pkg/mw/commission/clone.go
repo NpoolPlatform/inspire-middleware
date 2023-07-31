@@ -54,7 +54,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 
 		percent := decimal.NewFromInt(1)
 		if h.ScalePercent != nil {
-			percent = h.ScalePercent.Div(decimal.NewFromInt(100))
+			percent = h.ScalePercent.Div(decimal.NewFromInt(100)) //nolint
 		}
 
 		cs := []*ent.CommissionCreate{}

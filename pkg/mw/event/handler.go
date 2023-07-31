@@ -141,7 +141,6 @@ func WithUserID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-//nolint
 func WithEventType(eventType *basetypes.UsedFor) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if eventType == nil {

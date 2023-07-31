@@ -9,15 +9,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 )
 
-// The AchivementFunc type is an adapter to allow the use of ordinary
-// function as Achivement mutator.
-type AchivementFunc func(context.Context, *ent.AchivementMutation) (ent.Value, error)
+// The AchievementFunc type is an adapter to allow the use of ordinary
+// function as Achievement mutator.
+type AchievementFunc func(context.Context, *ent.AchievementMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f AchivementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.AchivementMutation)
+func (f AchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AchievementMutation)
 	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AchivementMutation", m)
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AchievementMutation", m)
 	}
 	return f(ctx, mv)
 }

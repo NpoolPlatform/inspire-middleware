@@ -7,7 +7,7 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achivement/statement"
+	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"

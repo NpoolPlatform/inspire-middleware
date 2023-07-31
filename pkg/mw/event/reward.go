@@ -64,9 +64,10 @@ func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, erro
 func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) error {
 	coups := []*couponmwpb.Coupon{}
 	for _, id := range ev.CouponIDs {
+		_id := id
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(&id),
+			coupon1.WithID(&_id),
 		)
 		if err != nil {
 			return err

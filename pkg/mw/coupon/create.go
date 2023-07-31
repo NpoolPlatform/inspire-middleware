@@ -39,7 +39,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return nil, fmt.Errorf("denomination > circulation")
 		}
 	case types.CouponType_Discount:
-		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 {
+		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 { //nolint
 			return nil, fmt.Errorf("100 discounat not allowed")
 		}
 	case types.CouponType_SpecialOffer:
@@ -59,7 +59,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			if h.GoodID == nil {
 				return nil, fmt.Errorf("goodid is must")
 			}
-			fallthrough //nolint
+			fallthrough
 		case types.CouponConstraint_PaymentThreshold:
 			if h.Threshold == nil {
 				return nil, fmt.Errorf("threshold is must")

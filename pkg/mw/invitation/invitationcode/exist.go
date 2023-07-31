@@ -16,9 +16,8 @@ func (h *Handler) ExistInvitationCode(ctx context.Context) (bool, error) {
 	}
 
 	exist := false
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		_exist, err := cli.
 			InvitationCode.
 			Query().
 			Where(
@@ -29,6 +28,7 @@ func (h *Handler) ExistInvitationCode(ctx context.Context) (bool, error) {
 		if err != nil {
 			return err
 		}
+		exist = _exist
 		return nil
 	})
 	if err != nil {
@@ -40,8 +40,7 @@ func (h *Handler) ExistInvitationCode(ctx context.Context) (bool, error) {
 
 func (h *Handler) ExistInvitationCodeConds(ctx context.Context) (bool, error) {
 	exist := false
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := invitationcodecrud.SetQueryConds(cli.InvitationCode.Query(), h.Conds)
 		if err != nil {
 			return err

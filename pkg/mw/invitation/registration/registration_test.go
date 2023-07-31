@@ -27,14 +27,12 @@ func init() {
 	}
 }
 
-var (
-	ret = npool.Registration{
-		ID:        uuid.NewString(),
-		AppID:     uuid.NewString(),
-		InviterID: uuid.NewString(),
-		InviteeID: uuid.NewString(),
-	}
-)
+var ret = npool.Registration{
+	ID:        uuid.NewString(),
+	AppID:     uuid.NewString(),
+	InviterID: uuid.NewString(),
+	InviteeID: uuid.NewString(),
+}
 
 func setup(t *testing.T) func(*testing.T) {
 	h, err := invitationcode1.NewHandler(

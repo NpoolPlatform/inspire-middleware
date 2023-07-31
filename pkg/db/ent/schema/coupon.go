@@ -1,4 +1,3 @@
-//nolint:dupl
 package schema
 
 import (
@@ -78,7 +77,7 @@ func (Coupon) Fields() []ent.Field {
 		field.
 			Uint32("duration_days").
 			Optional().
-			Default(365),
+			Default(365), //nolint
 		field.
 			String("message").
 			Optional().

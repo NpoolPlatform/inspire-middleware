@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achivement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -29,28 +29,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 14)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   achivement.Table,
-			Columns: achivement.Columns,
+			Table:   achievement.Table,
+			Columns: achievement.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUUID,
-				Column: achivement.FieldID,
+				Column: achievement.FieldID,
 			},
 		},
-		Type: "Achivement",
+		Type: "Achievement",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			achivement.FieldCreatedAt:       {Type: field.TypeUint32, Column: achivement.FieldCreatedAt},
-			achivement.FieldUpdatedAt:       {Type: field.TypeUint32, Column: achivement.FieldUpdatedAt},
-			achivement.FieldDeletedAt:       {Type: field.TypeUint32, Column: achivement.FieldDeletedAt},
-			achivement.FieldAppID:           {Type: field.TypeUUID, Column: achivement.FieldAppID},
-			achivement.FieldUserID:          {Type: field.TypeUUID, Column: achivement.FieldUserID},
-			achivement.FieldGoodID:          {Type: field.TypeUUID, Column: achivement.FieldGoodID},
-			achivement.FieldCoinTypeID:      {Type: field.TypeUUID, Column: achivement.FieldCoinTypeID},
-			achivement.FieldTotalUnitsV1:    {Type: field.TypeOther, Column: achivement.FieldTotalUnitsV1},
-			achivement.FieldSelfUnitsV1:     {Type: field.TypeOther, Column: achivement.FieldSelfUnitsV1},
-			achivement.FieldTotalAmount:     {Type: field.TypeOther, Column: achivement.FieldTotalAmount},
-			achivement.FieldSelfAmount:      {Type: field.TypeOther, Column: achivement.FieldSelfAmount},
-			achivement.FieldTotalCommission: {Type: field.TypeOther, Column: achivement.FieldTotalCommission},
-			achivement.FieldSelfCommission:  {Type: field.TypeOther, Column: achivement.FieldSelfCommission},
+			achievement.FieldCreatedAt:       {Type: field.TypeUint32, Column: achievement.FieldCreatedAt},
+			achievement.FieldUpdatedAt:       {Type: field.TypeUint32, Column: achievement.FieldUpdatedAt},
+			achievement.FieldDeletedAt:       {Type: field.TypeUint32, Column: achievement.FieldDeletedAt},
+			achievement.FieldAppID:           {Type: field.TypeUUID, Column: achievement.FieldAppID},
+			achievement.FieldUserID:          {Type: field.TypeUUID, Column: achievement.FieldUserID},
+			achievement.FieldGoodID:          {Type: field.TypeUUID, Column: achievement.FieldGoodID},
+			achievement.FieldCoinTypeID:      {Type: field.TypeUUID, Column: achievement.FieldCoinTypeID},
+			achievement.FieldTotalUnitsV1:    {Type: field.TypeOther, Column: achievement.FieldTotalUnitsV1},
+			achievement.FieldSelfUnitsV1:     {Type: field.TypeOther, Column: achievement.FieldSelfUnitsV1},
+			achievement.FieldTotalAmount:     {Type: field.TypeOther, Column: achievement.FieldTotalAmount},
+			achievement.FieldSelfAmount:      {Type: field.TypeOther, Column: achievement.FieldSelfAmount},
+			achievement.FieldTotalCommission: {Type: field.TypeOther, Column: achievement.FieldTotalCommission},
+			achievement.FieldSelfCommission:  {Type: field.TypeOther, Column: achievement.FieldSelfCommission},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -377,33 +377,33 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (aq *AchivementQuery) addPredicate(pred func(s *sql.Selector)) {
+func (aq *AchievementQuery) addPredicate(pred func(s *sql.Selector)) {
 	aq.predicates = append(aq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the AchivementQuery builder.
-func (aq *AchivementQuery) Filter() *AchivementFilter {
-	return &AchivementFilter{config: aq.config, predicateAdder: aq}
+// Filter returns a Filter implementation to apply filters on the AchievementQuery builder.
+func (aq *AchievementQuery) Filter() *AchievementFilter {
+	return &AchievementFilter{config: aq.config, predicateAdder: aq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *AchivementMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *AchievementMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the AchivementMutation builder.
-func (m *AchivementMutation) Filter() *AchivementFilter {
-	return &AchivementFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the AchievementMutation builder.
+func (m *AchievementMutation) Filter() *AchievementFilter {
+	return &AchievementFilter{config: m.config, predicateAdder: m}
 }
 
-// AchivementFilter provides a generic filtering capability at runtime for AchivementQuery.
-type AchivementFilter struct {
+// AchievementFilter provides a generic filtering capability at runtime for AchievementQuery.
+type AchievementFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *AchivementFilter) Where(p entql.P) {
+func (f *AchievementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
@@ -412,73 +412,73 @@ func (f *AchivementFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql [16]byte predicate on the id field.
-func (f *AchivementFilter) WhereID(p entql.ValueP) {
-	f.Where(p.Field(achivement.FieldID))
+func (f *AchievementFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *AchivementFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(achivement.FieldCreatedAt))
+func (f *AchievementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(achievement.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *AchivementFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(achivement.FieldUpdatedAt))
+func (f *AchievementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(achievement.FieldUpdatedAt))
 }
 
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *AchivementFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(achivement.FieldDeletedAt))
+func (f *AchievementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(achievement.FieldDeletedAt))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
-func (f *AchivementFilter) WhereAppID(p entql.ValueP) {
-	f.Where(p.Field(achivement.FieldAppID))
+func (f *AchievementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldAppID))
 }
 
 // WhereUserID applies the entql [16]byte predicate on the user_id field.
-func (f *AchivementFilter) WhereUserID(p entql.ValueP) {
-	f.Where(p.Field(achivement.FieldUserID))
+func (f *AchievementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldUserID))
 }
 
 // WhereGoodID applies the entql [16]byte predicate on the good_id field.
-func (f *AchivementFilter) WhereGoodID(p entql.ValueP) {
-	f.Where(p.Field(achivement.FieldGoodID))
+func (f *AchievementFilter) WhereGoodID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldGoodID))
 }
 
 // WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
-func (f *AchivementFilter) WhereCoinTypeID(p entql.ValueP) {
-	f.Where(p.Field(achivement.FieldCoinTypeID))
+func (f *AchievementFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldCoinTypeID))
 }
 
 // WhereTotalUnitsV1 applies the entql other predicate on the total_units_v1 field.
-func (f *AchivementFilter) WhereTotalUnitsV1(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldTotalUnitsV1))
+func (f *AchievementFilter) WhereTotalUnitsV1(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldTotalUnitsV1))
 }
 
 // WhereSelfUnitsV1 applies the entql other predicate on the self_units_v1 field.
-func (f *AchivementFilter) WhereSelfUnitsV1(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldSelfUnitsV1))
+func (f *AchievementFilter) WhereSelfUnitsV1(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldSelfUnitsV1))
 }
 
 // WhereTotalAmount applies the entql other predicate on the total_amount field.
-func (f *AchivementFilter) WhereTotalAmount(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldTotalAmount))
+func (f *AchievementFilter) WhereTotalAmount(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldTotalAmount))
 }
 
 // WhereSelfAmount applies the entql other predicate on the self_amount field.
-func (f *AchivementFilter) WhereSelfAmount(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldSelfAmount))
+func (f *AchievementFilter) WhereSelfAmount(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldSelfAmount))
 }
 
 // WhereTotalCommission applies the entql other predicate on the total_commission field.
-func (f *AchivementFilter) WhereTotalCommission(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldTotalCommission))
+func (f *AchievementFilter) WhereTotalCommission(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldTotalCommission))
 }
 
 // WhereSelfCommission applies the entql other predicate on the self_commission field.
-func (f *AchivementFilter) WhereSelfCommission(p entql.OtherP) {
-	f.Where(p.Field(achivement.FieldSelfCommission))
+func (f *AchievementFilter) WhereSelfCommission(p entql.OtherP) {
+	f.Where(p.Field(achievement.FieldSelfCommission))
 }
 
 // addPredicate implements the predicateAdder interface.
