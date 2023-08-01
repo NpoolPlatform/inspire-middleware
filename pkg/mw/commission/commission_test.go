@@ -30,12 +30,11 @@ func init() {
 }
 
 var (
-	goodID = uuid.NewString()
-	ret    = npool.Commission{
+	ret = npool.Commission{
 		ID:                uuid.NewString(),
 		AppID:             uuid.NewString(),
 		UserID:            uuid.NewString(),
-		GoodID:            &goodID,
+		GoodID:            uuid.NewString(),
 		SettleType:        types.SettleType_GoodOrderPercent,
 		SettleTypeStr:     types.SettleType_GoodOrderPercent.String(),
 		SettleMode:        types.SettleMode_SettleWithGoodValue,
@@ -58,7 +57,7 @@ func createCommission(t *testing.T) {
 		WithID(&ret.ID),
 		WithAppID(&ret.AppID),
 		WithUserID(&ret.UserID),
-		WithGoodID(ret.GoodID),
+		WithGoodID(&ret.GoodID),
 		WithSettleType(&ret.SettleType),
 		WithSettleMode(&ret.SettleMode),
 		WithSettleInterval(&ret.SettleInterval),
@@ -111,7 +110,7 @@ func getCommissions(t *testing.T) {
 		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
-		GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: *ret.GoodID},
+		GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
 		EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.EndAt},
 		UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},

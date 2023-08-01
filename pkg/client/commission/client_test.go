@@ -38,13 +38,12 @@ func init() {
 }
 
 var percent = "10"
-var goodID = uuid.NewString()
 
 var ret = &npool.Commission{
 	ID:                uuid.NewString(),
 	AppID:             uuid.NewString(),
 	UserID:            uuid.NewString(),
-	GoodID:            &goodID,
+	GoodID:            uuid.NewString(),
 	SettleType:        types.SettleType_GoodOrderPercent,
 	SettleTypeStr:     types.SettleType_GoodOrderPercent.String(),
 	SettleMode:        types.SettleMode_SettleWithPaymentAmount,
@@ -60,7 +59,7 @@ var req = &npool.CommissionReq{
 	ID:              &ret.ID,
 	AppID:           &ret.AppID,
 	UserID:          &ret.UserID,
-	GoodID:          ret.GoodID,
+	GoodID:          &ret.GoodID,
 	SettleType:      &ret.SettleType,
 	SettleMode:      &ret.SettleMode,
 	SettleInterval:  &ret.SettleInterval,

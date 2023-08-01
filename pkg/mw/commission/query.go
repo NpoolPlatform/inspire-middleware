@@ -11,7 +11,6 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
-	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -53,9 +52,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
-		if *info.GoodID == uuid.Nil.String() {
-			info.GoodID = nil
-		}
 		info.SettleType = types.SettleType(types.SettleType_value[info.SettleTypeStr])
 		info.SettleMode = types.SettleMode(types.SettleMode_value[info.SettleModeStr])
 		info.SettleInterval = types.SettleInterval(types.SettleInterval_value[info.SettleIntervalStr])
