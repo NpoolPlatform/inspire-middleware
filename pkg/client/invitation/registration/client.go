@@ -66,6 +66,22 @@ func UpdateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.
 	return info.(*npool.Registration), nil
 }
 
+func ExistRegistrationConds(ctx context.Context, conds *npool.Conds) (bool, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.ExistRegistrationConds(ctx, &npool.ExistRegistrationCondsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return info.(bool), nil
+}
+
 func GetRegistrations(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Registration, uint32, error) {
 	var total uint32
 
