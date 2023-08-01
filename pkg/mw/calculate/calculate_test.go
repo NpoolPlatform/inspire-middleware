@@ -9,8 +9,8 @@ import (
 	"time"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
-	regmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/registration"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
+	regmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
@@ -32,61 +32,61 @@ func init() {
 	}
 }
 
-var reg1 = regmgrpb.Registration{
+var reg1 = regmwpb.Registration{
 	AppID:     uuid.NewString(),
 	InviterID: uuid.NewString(),
 	InviteeID: uuid.NewString(),
 }
 
-var _reg1 = regmgrpb.RegistrationReq{
+var _reg1 = regmwpb.RegistrationReq{
 	AppID:     &reg1.AppID,
 	InviterID: &reg1.InviterID,
 	InviteeID: &reg1.InviteeID,
 }
 
-var reg2 = regmgrpb.Registration{
+var reg2 = regmwpb.Registration{
 	AppID:     reg1.AppID,
 	InviterID: reg1.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
-var _reg2 = regmgrpb.RegistrationReq{
+var _reg2 = regmwpb.RegistrationReq{
 	AppID:     &reg2.AppID,
 	InviterID: &reg2.InviterID,
 	InviteeID: &reg2.InviteeID,
 }
 
-var reg3 = regmgrpb.Registration{
+var reg3 = regmwpb.Registration{
 	AppID:     reg1.AppID,
 	InviterID: reg2.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
-var _reg3 = regmgrpb.RegistrationReq{
+var _reg3 = regmwpb.RegistrationReq{
 	AppID:     &reg3.AppID,
 	InviterID: &reg3.InviterID,
 	InviteeID: &reg3.InviteeID,
 }
 
-var reg4 = regmgrpb.Registration{
+var reg4 = regmwpb.Registration{
 	AppID:     reg1.AppID,
 	InviterID: reg3.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
-var _reg4 = regmgrpb.RegistrationReq{
+var _reg4 = regmwpb.RegistrationReq{
 	AppID:     &reg4.AppID,
 	InviterID: &reg4.InviterID,
 	InviteeID: &reg4.InviteeID,
 }
 
-var reg5 = regmgrpb.Registration{
+var reg5 = regmwpb.Registration{
 	AppID:     reg1.AppID,
 	InviterID: reg4.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
-var _reg5 = regmgrpb.RegistrationReq{
+var _reg5 = regmwpb.RegistrationReq{
 	AppID:     &reg5.AppID,
 	InviterID: &reg5.InviterID,
 	InviteeID: &reg5.InviteeID,

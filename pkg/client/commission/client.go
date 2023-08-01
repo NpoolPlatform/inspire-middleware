@@ -8,7 +8,6 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/commission"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -66,7 +65,7 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 	return info.(*npool.Commission), nil
 }
 
-func GetCommission(ctx context.Context, id string, settleType mgrpb.SettleType) (*npool.Commission, error) {
+func GetCommission(ctx context.Context, id string) (*npool.Commission, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCommission(ctx, &npool.GetCommissionRequest{
 			ID: id,
@@ -127,7 +126,7 @@ func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commissi
 	return infos.([]*npool.Commission)[0], nil
 }
 
-func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, scalePercent string, settleType mgrpb.SettleType) error {
+func CloneCommissions(ctx context.Context, appID, fromGoodID, toGoodID, scalePercent string) error {
 	_, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		_, err := cli.CloneCommissions(ctx, &npool.CloneCommissionsRequest{
 			AppID:        appID,

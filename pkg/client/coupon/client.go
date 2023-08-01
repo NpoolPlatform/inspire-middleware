@@ -7,7 +7,6 @@ import (
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	allocatedmgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -88,7 +87,7 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 	return info.(*npool.Coupon), nil
 }
 
-func GetCoupon(ctx context.Context, id string, couponType allocatedmgrpb.CouponType) (*npool.Coupon, error) {
+func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
 			ID: id,
