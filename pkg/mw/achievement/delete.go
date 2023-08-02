@@ -81,6 +81,7 @@ func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, er
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		now := uint32(time.Now().Unix())
 		if _, err := tx.
 			Statement.
 			Update().
@@ -88,7 +89,7 @@ func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, er
 				entstatement.IDIn(handler.statementIDs...),
 				entstatement.DeletedAt(0),
 			).
-			SetDeletedAt(uint32(time.Now().Unix())).
+			SetDeletedAt(now).
 			Save(_ctx); err != nil {
 			return err
 		}
@@ -99,6 +100,7 @@ func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, er
 				entachievement.ID(uuid.MustParse(handler.info.ID)),
 				entachievement.DeletedAt(0),
 			).
+			SetDeletedAt(now).
 			Save(_ctx); err != nil {
 			return err
 		}
