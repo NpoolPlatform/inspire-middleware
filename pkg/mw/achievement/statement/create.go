@@ -143,6 +143,15 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	if h.PaymentCoinTypeID == nil {
 		return nil, fmt.Errorf("invalid paymentcointypeid")
 	}
+	if h.Amount == nil {
+		return nil, fmt.Errorf("invalid amount")
+	}
+	if h.Units == nil {
+		return nil, fmt.Errorf("invalid units")
+	}
+	if h.Commission == nil {
+		return nil, fmt.Errorf("invalid commission")
+	}
 
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *h.AppID, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
