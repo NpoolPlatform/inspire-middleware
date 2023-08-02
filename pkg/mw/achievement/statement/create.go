@@ -235,6 +235,8 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 					if req.Amount.Cmp(amount) != 0 {
 						return fmt.Errorf("mismatch statement")
 					}
+					ids = append(ids, uuid.MustParse(info.ID))
+					return nil
 				}
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
@@ -242,6 +244,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err := handler.createOrAddArchivement(_ctx, tx, req); err != nil {
 					return err
 				}
+				ids = append(ids, id)
 				return nil
 			}
 			if err := _f(); err != nil {
