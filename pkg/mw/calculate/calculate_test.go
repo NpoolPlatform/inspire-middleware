@@ -470,7 +470,7 @@ func calculate(t *testing.T) {
 		context.Background(),
 		WithAppID(comm6.AppID),
 		WithUserID(comm6.UserID),
-		WithGoodID(*comm6.GoodID),
+		WithGoodID(comm6.GoodID),
 		WithOrderID(orderID),
 		WithPaymentID(paymentID),
 		WithCoinTypeID(coinTypeID),
