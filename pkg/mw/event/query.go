@@ -56,7 +56,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EventType = basetypes.UsedFor(basetypes.UsedFor_value[info.EventTypeStr])
 		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
-		if *info.GoodID == uuid.Nil.String() {
+		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
 		amount, err := decimal.NewFromString(info.Credits)
