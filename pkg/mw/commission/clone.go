@@ -27,13 +27,23 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 	if h.ScalePercent != nil && h.ScalePercent.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return nil
 	}
+	if *h.FromGoodID == *h.ToGoodID {
+		return nil
+	}
 
-	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.FromGoodID, *h.ToGoodID)
-	if err := redis2.TryLock(key, 0); err != nil {
+	key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.FromGoodID)
+	if err := redis2.TryLock(key1, 0); err != nil {
 		return err
 	}
 	defer func() {
-		_ = redis2.Unlock(key)
+		_ = redis2.Unlock(key1)
+	}()
+	key2 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.ToGoodID)
+	if err := redis2.TryLock(key2, 0); err != nil {
+		return err
+	}
+	defer func() {
+		_ = redis2.Unlock(key2)
 	}()
 
 	now := uint32(time.Now().Unix())
@@ -52,6 +62,8 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 			return err
 		}
 
+		fmt.Printf("Infos: %v, AppID: %v, GoodID: %v\n", infos, *h.AppID, *h.FromGoodID)
+
 		percent := decimal.NewFromInt(1)
 		if h.ScalePercent != nil {
 			percent = h.ScalePercent.Div(decimal.NewFromInt(100)) //nolint
@@ -59,6 +71,24 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 
 		cs := []*ent.CommissionCreate{}
 		for _, info := range infos {
+			exist, err := cli.
+				Commission.
+				Query().
+				Where(
+					entcommission.AppID(*h.AppID),
+					entcommission.UserID(info.UserID),
+					entcommission.GoodID(*h.ToGoodID),
+					entcommission.EndAt(0),
+					entcommission.DeletedAt(0),
+				).
+				Exist(_ctx)
+			if err != nil {
+				return err
+			}
+			if exist {
+				continue
+			}
+
 			c := cli.
 				Commission.
 				Create().
