@@ -147,6 +147,9 @@ func (h *Handler) GetAchievements(ctx context.Context) ([]*npool.Achievement, ui
 		if err := handler.queryAchievements(_ctx, cli); err != nil {
 			return err
 		}
+		handler.stmSelect.
+			Offset(int(h.Offset)).
+			Limit(int(h.Offset))
 		return handler.scan(_ctx)
 	})
 	if err != nil {
