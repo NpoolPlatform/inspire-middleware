@@ -238,6 +238,7 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		appMap := map[string]struct{}{}
 		orderMap := map[string]struct{}{}
+		_reqs := []*statementcrud.Req{}
 
 		for _, req := range reqs {
 			if req.AppID == nil {
@@ -373,6 +374,7 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 
 			appMap[*req.AppID] = struct{}{}
 			orderMap[*req.OrderID] = struct{}{}
+			_reqs = append(_reqs, _req)
 		}
 
 		if len(appMap) > 1 {
@@ -381,6 +383,8 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 		if len(orderMap) > 1 {
 			return fmt.Errorf("too many orders")
 		}
+
+		h.Reqs = _reqs
 
 		return nil
 	}

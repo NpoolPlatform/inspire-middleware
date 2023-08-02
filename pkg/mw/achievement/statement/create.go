@@ -227,12 +227,14 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err != nil {
 					return err
 				}
-				amount, err := decimal.NewFromString(info.Amount)
-				if err != nil {
-					return err
-				}
-				if req.Amount.Cmp(amount) != 0 {
-					return fmt.Errorf("mismatch statement")
+				if info != nil {
+					amount, err := decimal.NewFromString(info.Amount)
+					if err != nil {
+						return err
+					}
+					if req.Amount.Cmp(amount) != 0 {
+						return fmt.Errorf("mismatch statement")
+					}
 				}
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
