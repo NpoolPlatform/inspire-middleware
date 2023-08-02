@@ -148,7 +148,7 @@ func WithEventType(eventType *basetypes.UsedFor) func(context.Context, *Handler)
 		}
 
 		switch *eventType {
-		/// Already implemented
+		// Already implemented
 		case basetypes.UsedFor_Signup:
 			fallthrough //nolint
 		case basetypes.UsedFor_AffiliateSignup:
@@ -156,7 +156,7 @@ func WithEventType(eventType *basetypes.UsedFor) func(context.Context, *Handler)
 		case basetypes.UsedFor_Purchase:
 			fallthrough //nolint
 		case basetypes.UsedFor_AffiliatePurchase:
-		/// Not implemented
+		// Not implemented
 		case basetypes.UsedFor_Signin:
 			fallthrough //nolint
 		case basetypes.UsedFor_Update:
