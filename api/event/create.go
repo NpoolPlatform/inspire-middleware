@@ -40,7 +40,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 			"In", in,
 			"Err", err,
 		)
-		return &npool.CreateEventResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.CreateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := handler.CreateEvent(ctx)
@@ -50,7 +50,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 			"In", in,
 			"Err", err,
 		)
-		return &npool.CreateEventResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.CreateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	return &npool.CreateEventResponse{
