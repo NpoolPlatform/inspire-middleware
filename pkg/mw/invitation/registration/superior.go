@@ -37,7 +37,7 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 			else
 			  SET superiores = CONCAT(superiores, ',', my_invitees);
 			END if;
-		    SELECT GROUP_CONCAT(DISTINCT inviter_id) INTO my_invitees FROM registrations WHERE FIND_IN_SET(invitee_id, my_invitees);
+		    SELECT GROUP_CONCAT(DISTINCT inviter_id) INTO my_invitees FROM registrations WHERE FIND_IN_SET(invitee_id, my_invitees) AND deleted_at=0;
 		  END WHILE;
 		  SELECT superiores;
 		END

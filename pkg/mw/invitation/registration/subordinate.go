@@ -37,7 +37,7 @@ func CreateSubordinateProcedure(ctx context.Context) error {
 			else
 			  SET subordinates = CONCAT(subordinates, ',', my_inviters);
 			END if;
-		    SELECT GROUP_CONCAT(DISTINCT invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters);
+		    SELECT GROUP_CONCAT(DISTINCT invitee_id) INTO my_inviters FROM registrations WHERE FIND_IN_SET(inviter_id, my_inviters) AND deleted_at=0;
 		  END WHILE;
 		  SELECT subordinates;
 		END
