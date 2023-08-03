@@ -34,7 +34,7 @@ func (h *rewardHandler) condGood() {
 func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 	h.Conds = &eventcrud.Conds{
 		AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
-		EventType: &cruder.Cond{Op: cruder.EQ, Val: uint32(*h.EventType)},
+		EventType: &cruder.Cond{Op: cruder.EQ, Val: *h.EventType},
 	}
 	if h.GoodID != nil {
 		h.condGood()

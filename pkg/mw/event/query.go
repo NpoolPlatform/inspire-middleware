@@ -128,6 +128,7 @@ func (h *Handler) GetEvents(ctx context.Context) ([]*npool.Event, uint32, error)
 }
 
 func (h *Handler) GetEventOnly(ctx context.Context) (*npool.Event, error) {
+	h.Limit = 2 //nolint
 	infos, _, err := h.GetEvents(ctx)
 	if err != nil {
 		return nil, err
