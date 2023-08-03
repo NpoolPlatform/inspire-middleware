@@ -40,11 +40,6 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 		h.ID = &id
 	}
 
-	now := uint32(time.Now().Unix())
-	if h.StartAt == nil {
-		h.StartAt = &now
-	}
-
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		stm := tx.
 			Commission.
@@ -62,7 +57,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 		}
 
 		if _, err := stm.
-			SetEndAt(now).
+			SetEndAt(uint32(time.Now().Unix())).
 			Save(_ctx); err != nil {
 			return err
 		}
