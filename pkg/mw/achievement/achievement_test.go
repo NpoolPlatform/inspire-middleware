@@ -101,7 +101,7 @@ func getAchievements(t *testing.T) {
 			CoinTypeID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.CoinTypeID},
 			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},
 		}),
-		WithOffset(0),
+		WithLimit(0),
 	)
 	assert.Nil(t, err)
 
@@ -146,7 +146,7 @@ func expropriateAchievement(t *testing.T) {
 			CoinTypeID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.CoinTypeID},
 			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},
 		}),
-		WithOffset(0),
+		WithLimit(0),
 	)
 	assert.Nil(t, err)
 
@@ -176,6 +176,5 @@ func TestAchievement(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("getAchievements", getAchievements)
-	t.Run("expropriateAchievement", expropriateAchievement)
 	t.Run("expropriateAchievement", expropriateAchievement)
 }

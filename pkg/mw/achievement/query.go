@@ -149,7 +149,7 @@ func (h *Handler) GetAchievements(ctx context.Context) ([]*npool.Achievement, ui
 		}
 		handler.stmSelect.
 			Offset(int(h.Offset)).
-			Limit(int(h.Offset))
+			Limit(int(h.Limit))
 		return handler.scan(_ctx)
 	})
 	if err != nil {
