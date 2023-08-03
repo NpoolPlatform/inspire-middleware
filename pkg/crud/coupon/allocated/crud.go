@@ -134,7 +134,7 @@ func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAlloca
 		}
 	}
 	if conds.Used != nil {
-		used, ok := conds.CouponID.Val.(bool)
+		used, ok := conds.Used.Val.(bool)
 		if !ok {
 			return nil, fmt.Errorf("invalid used")
 		}
