@@ -14,6 +14,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+//nolint:funlen
 func (h *Handler) CloneCommissions(ctx context.Context) error {
 	if h.AppID == nil {
 		return fmt.Errorf("invalid appid")
