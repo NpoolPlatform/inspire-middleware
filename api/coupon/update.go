@@ -30,6 +30,8 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 		coupon1.WithDurationDays(req.DurationDays),
 		coupon1.WithMessage(req.Message),
 		coupon1.WithName(req.Name),
+		coupon1.WithRandom(req.Random),
+		coupon1.WithThreshold(req.Threshold),
 		coupon1.WithAllocated(req.Allocated),
 	)
 	if err != nil {
