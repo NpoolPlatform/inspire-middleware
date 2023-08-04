@@ -84,7 +84,9 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 				).
 				Only(_ctx)
 			if err != nil {
-				return err
+				if !ent.IsNotFound(err) {
+					return err
+				}
 			}
 			if info1 != nil {
 				if _, err := cli.
