@@ -102,6 +102,12 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	if req.Name != nil {
 		u.SetName(*req.Name)
 	}
+	if req.Random != nil {
+		u.SetRandom(*req.Random)
+	}
+	if req.Threshold != nil {
+		u.SetThreshold(*req.Threshold)
+	}
 	if req.Allocated != nil {
 		u.SetAllocated(*req.Allocated)
 	}
