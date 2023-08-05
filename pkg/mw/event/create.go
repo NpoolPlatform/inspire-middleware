@@ -15,10 +15,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type createHandler struct {
-	*Handler
-}
-
 func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	if h.AppID == nil {
 		return nil, fmt.Errorf("invalid appid")
