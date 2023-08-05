@@ -3,11 +3,13 @@ package allocated
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
@@ -32,6 +34,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if h.UserID == nil {
 		return nil, fmt.Errorf("invalid userid")
 	}
+	now := uint32(time.Now().Unix())
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		coup, err := tx.
@@ -45,6 +48,14 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			Only(_ctx)
 		if err != nil {
 			return err
+		}
+
+		if coup.StartAt+coup.DurationDays*timedef.SecondsPerDay < now {
+			return fmt.Errorf("coupon expired")
+		}
+		startAt := coup.StartAt
+		if startAt < now {
+			startAt = now
 		}
 
 		allocated := coup.Allocated
@@ -69,6 +80,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				AppID:        h.AppID,
 				CouponID:     h.CouponID,
 				UserID:       h.UserID,
+				StartAt:      &startAt,
 				Denomination: &coup.Denomination,
 			},
 		).Save(_ctx); err != nil {

@@ -20,6 +20,7 @@ type Req struct {
 	Used          *bool
 	UsedByOrderID *uuid.UUID
 	Denomination  *decimal.Decimal
+	StartAt       *uint32
 	DeletedAt     *uint32
 }
 
@@ -38,6 +39,9 @@ func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreat
 	}
 	if req.Denomination != nil {
 		c.SetDenomination(*req.Denomination)
+	}
+	if req.StartAt != nil {
+		c.SetStartAt(*req.StartAt)
 	}
 	c.SetUsed(false)
 	c.SetUsedAt(0)
