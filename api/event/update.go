@@ -37,7 +37,7 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 			"In", in,
 			"Err", err,
 		)
-		return &npool.UpdateEventResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.UpdateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := handler.UpdateEvent(ctx)
@@ -47,7 +47,7 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 			"In", in,
 			"Err", err,
 		)
-		return &npool.UpdateEventResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.UpdateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	return &npool.UpdateEventResponse{
