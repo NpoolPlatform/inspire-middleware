@@ -15,6 +15,10 @@ func (h *Handler) UpdateEvent(ctx context.Context) (*npool.Event, error) {
 		return nil, fmt.Errorf("invalid id")
 	}
 
+	if err := h.validateCoupons(ctx); err != nil {
+		return nil, err
+	}
+
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := eventcrud.UpdateSet(
 			cli.Event.UpdateOneID(*h.ID),

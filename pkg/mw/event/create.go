@@ -3,14 +3,11 @@ package event
 import (
 	"context"
 	"fmt"
-	"time"
 
-	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
@@ -22,41 +19,6 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) validateCoupons(ctx context.Context) error {
-	if len(h.CouponIDs) == 0 {
-		return nil
-	}
-
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		infos, err := cli.
-			Coupon.
-			Query().
-			Where(
-				entcoupon.AppID(*h.AppID),
-				entcoupon.IDIn(h.CouponIDs...),
-				entcoupon.DeletedAt(0),
-			).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-		infoMap := map[uuid.UUID]*ent.Coupon{}
-		now := uint32(time.Now().Unix())
-		for _, info := range infos {
-			if info.StartAt+info.DurationDays*timedef.SecondsPerDay <= now {
-				return fmt.Errorf("coupon expired")
-			}
-			infoMap[info.ID] = info
-		}
-		for _, id := range h.CouponIDs {
-			if _, ok := infoMap[id]; !ok {
-				return fmt.Errorf("invalid couponid")
-			}
-		}
-		return nil
-	})
-}
-
 func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	if h.AppID == nil {
 		return nil, fmt.Errorf("invalid appid")
@@ -65,10 +27,7 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 		return nil, fmt.Errorf("invalid eventtype")
 	}
 
-	handler := &createHandler{
-		Handler: h,
-	}
-	if err := handler.validateCoupons(ctx); err != nil {
+	if err := h.validateCoupons(ctx); err != nil {
 		return nil, err
 	}
 
