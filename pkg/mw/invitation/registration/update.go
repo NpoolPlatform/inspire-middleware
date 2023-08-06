@@ -15,8 +15,19 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 	if h.ID == nil {
 		return nil, fmt.Errorf("invalid id")
 	}
+	if h.InviterID == nil {
+		return nil, fmt.Errorf("invalid inviterid")
+	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	info, err := h.GetRegistration(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if info.InviterID == h.InviterID.String() || info.InviteeID == h.InviterID.String() {
+		return nil, fmt.Errorf("invalid inviterid")
+	}
+
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := registrationcrud.UpdateSet(
 			cli.Registration.UpdateOneID(*h.ID),
 			&registrationcrud.Req{
