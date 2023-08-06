@@ -125,9 +125,6 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	if h.UserID == nil {
 		return nil, fmt.Errorf("invalid userid")
 	}
-	if h.DirectContributorID == nil {
-		return nil, fmt.Errorf("invalid directcontributorid")
-	}
 	if h.GoodID == nil {
 		return nil, fmt.Errorf("invalid goodid")
 	}
