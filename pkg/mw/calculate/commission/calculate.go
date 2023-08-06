@@ -19,21 +19,12 @@ type Commission struct {
 }
 
 func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
-	amount := h.PaymentAmount
-	if h.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValue
-	}
-
 	commMap := map[string]*npool.Commission{}
 	for _, comm := range h.Commissions {
 		commMap[comm.UserID] = comm
 	}
 
 	_comms := []*Commission{}
-
-	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return _comms, nil
-	}
 
 	for _, inviter := range h.Inviters {
 		if inviter.InviterID == uuid.Nil.String() {
@@ -69,6 +60,15 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 			continue
 		}
 
+		amount := h.PaymentAmount
+		if comm2.SettleMode == types.SettleMode_SettleWithGoodValue {
+			amount = h.GoodValue
+		}
+
+		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return _comms, nil
+		}
+
 		_comms = append(_comms, &Commission{
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
@@ -85,6 +85,15 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	percent, err := decimal.NewFromString(commLast.GetAmountOrPercent())
 	if err != nil {
 		return nil, err
+	}
+
+	amount := h.PaymentAmount
+	if commLast.SettleMode == types.SettleMode_SettleWithGoodValue {
+		amount = h.GoodValue
+	}
+
+	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		return _comms, nil
 	}
 
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {

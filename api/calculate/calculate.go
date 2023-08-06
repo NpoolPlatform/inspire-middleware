@@ -25,7 +25,6 @@ func (s *Server) Calculate(ctx context.Context, in *npool.CalculateRequest) (*np
 		calculate1.WithPaymentCoinUSDCurrency(in.GetPaymentCoinUSDCurrency()),
 		calculate1.WithUnits(in.GetUnits()),
 		calculate1.WithSettleType(in.GetSettleType()),
-		calculate1.WithSettleMode(in.GetSettleMode()),
 		calculate1.WithPaymentAmount(in.GetPaymentAmount()),
 		calculate1.WithGoodValue(in.GetGoodValue()),
 		calculate1.WithHasCommission(in.GetHasCommission()),

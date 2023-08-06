@@ -57,7 +57,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		handler, err := commission2.NewHandler(
 			ctx,
 			commission2.WithSettleType(h.SettleType),
-			commission2.WithSettleMode(h.SettleMode),
 			commission2.WithInviters(inviters),
 			commission2.WithCommissions(comms),
 			commission2.WithPaymentAmount(h.PaymentAmount.String()),

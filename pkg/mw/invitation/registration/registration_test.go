@@ -33,6 +33,7 @@ var ret = npool.Registration{
 	InviterID: uuid.NewString(),
 	InviteeID: uuid.NewString(),
 }
+var updateInviterID = uuid.NewString()
 
 func setup(t *testing.T) func(*testing.T) {
 	h, err := invitationcode1.NewHandler(
@@ -46,8 +47,20 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, info)
 
+	h1, err := invitationcode1.NewHandler(
+		context.Background(),
+		invitationcode1.WithAppID(&ret.AppID),
+		invitationcode1.WithUserID(&updateInviterID),
+	)
+	assert.Nil(t, err)
+
+	info, err = h1.CreateInvitationCode(context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, info)
+
 	return func(*testing.T) {
 		_, _ = h.DeleteInvitationCode(context.Background())
+		_, _ = h1.DeleteInvitationCode(context.Background())
 	}
 }
 
@@ -70,10 +83,11 @@ func createRegistration(t *testing.T) {
 }
 
 func updateRegistration(t *testing.T) {
-	ret.InviterID = uuid.NewString()
+	ret.InviterID = updateInviterID
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID),
+		WithAppID(&ret.AppID),
 		WithInviterID(&ret.InviterID),
 	)
 	assert.Nil(t, err)

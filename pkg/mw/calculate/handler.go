@@ -23,7 +23,6 @@ type Handler struct {
 	PaymentAmount          decimal.Decimal
 	GoodValue              decimal.Decimal
 	SettleType             types.SettleType
-	SettleMode             types.SettleMode
 	HasCommission          bool
 	OrderCreatedAt         uint32
 }
@@ -168,19 +167,6 @@ func WithSettleType(settleType types.SettleType) func(context.Context, *Handler)
 			return fmt.Errorf("invalid settletype")
 		}
 		h.SettleType = settleType
-		return nil
-	}
-}
-
-func WithSettleMode(settleMode types.SettleMode) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		switch settleMode {
-		case types.SettleMode_SettleWithGoodValue:
-		case types.SettleMode_SettleWithPaymentAmount:
-		default:
-			return fmt.Errorf("invalid settlemode")
-		}
-		h.SettleMode = settleMode
 		return nil
 	}
 }
