@@ -19,6 +19,10 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 		return nil, fmt.Errorf("invalid inviterid")
 	}
 
+	if err := h.validateInvitationCode(ctx); err != nil {
+		return nil, err
+	}
+
 	info, err := h.GetRegistration(ctx)
 	if err != nil {
 		return nil, err

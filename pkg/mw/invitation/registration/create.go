@@ -9,10 +9,8 @@ import (
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
-	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	invitationcodemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"github.com/google/uuid"
@@ -29,24 +27,8 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 		return nil, fmt.Errorf("invalid inviteeid")
 	}
 
-	h1, err := invitationcode1.NewHandler(
-		ctx,
-		invitationcode1.WithConds(&invitationcodemwpb.Conds{
-			AppID:    &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-			UserID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.InviterID.String()},
-			Disabled: &basetypes.BoolVal{Op: cruder.EQ, Value: false},
-		}),
-		invitationcode1.WithLimit(0),
-	)
-	if err != nil {
+	if err := h.validateInvitationCode(ctx); err != nil {
 		return nil, err
-	}
-	exist, err := h1.ExistInvitationCodeConds(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !exist {
-		return nil, fmt.Errorf("invalid inviterid")
 	}
 
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateRegistration, *h.AppID, *h.InviteeID)
@@ -61,7 +43,7 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 		AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		InviteeID: &cruder.Cond{Op: cruder.EQ, Val: *h.InviteeID},
 	}
-	exist, err = h.ExistRegistrationConds(ctx)
+	exist, err := h.ExistRegistrationConds(ctx)
 	if err != nil {
 		return nil, err
 	}
