@@ -24,6 +24,7 @@ func (s *Server) UpdateRegistration(ctx context.Context, in *npool.UpdateRegistr
 	handler, err := registration1.NewHandler(
 		ctx,
 		registration1.WithID(req.ID),
+		registration1.WithAppID(req.AppID),
 		registration1.WithInviterID(req.InviterID),
 	)
 	if err != nil {
