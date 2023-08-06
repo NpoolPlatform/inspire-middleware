@@ -281,7 +281,6 @@ func calculate(t *testing.T) {
 	paymentAmount := decimal.NewFromInt(2000)
 	goodValue := decimal.NewFromInt(3000)
 	settleType := types.SettleType_GoodOrderPercent
-	settleMode := types.SettleMode_SettleWithPaymentAmount
 
 	comms, err := Calculate(
 		context.Background(),
@@ -296,7 +295,6 @@ func calculate(t *testing.T) {
 			PaymentCoinUSDCurrency: paymentCoinUSDCurrency.String(),
 			Units:                  units,
 			SettleType:             settleType,
-			SettleMode:             settleMode,
 			PaymentAmount:          paymentAmount.String(),
 			GoodValue:              goodValue.String(),
 			HasCommission:          true,
