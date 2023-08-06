@@ -23,6 +23,10 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 		return nil, fmt.Errorf("invalid eventtype")
 	}
 
+	if err := h.validateCoupons(ctx); err != nil {
+		return nil, err
+	}
+
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateAppEvent, *h.AppID, *h.EventType)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err

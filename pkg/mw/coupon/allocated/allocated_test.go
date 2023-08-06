@@ -88,6 +88,7 @@ func creatCoupon(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		ret.StartAt = info.StartAt
 		assert.Equal(t, info, &ret)
 	}
 }

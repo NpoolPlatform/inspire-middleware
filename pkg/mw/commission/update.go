@@ -22,6 +22,7 @@ func (h *Handler) UpdateCommission(ctx context.Context) (*npool.Commission, erro
 				ID:              h.ID,
 				AmountOrPercent: h.AmountOrPercent,
 				StartAt:         h.StartAt,
+				Threshold:       h.Threshold,
 			},
 		).Save(_ctx); err != nil {
 			return err

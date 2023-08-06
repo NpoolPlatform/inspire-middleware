@@ -14,6 +14,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+//nolint:funlen
 func (h *Handler) CloneCommissions(ctx context.Context) error {
 	if h.AppID == nil {
 		return fmt.Errorf("invalid appid")
@@ -71,7 +72,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 
 		cs := []*ent.CommissionCreate{}
 		for _, info := range infos {
-			exist, err := cli.
+			info1, err := cli.
 				Commission.
 				Query().
 				Where(
@@ -81,11 +82,24 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 					entcommission.EndAt(0),
 					entcommission.DeletedAt(0),
 				).
-				Exist(_ctx)
+				Only(_ctx)
 			if err != nil {
-				return err
+				if !ent.IsNotFound(err) {
+					return err
+				}
 			}
-			if exist {
+			if info1 != nil {
+				if _, err := cli.
+					Commission.
+					UpdateOneID(info1.ID).
+					SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
+					SetSettleType(info.SettleType).
+					SetSettleMode(info.SettleMode).
+					SetSettleInterval(info.SettleInterval).
+					SetThreshold(info.Threshold).
+					Save(_ctx); err != nil {
+					return err
+				}
 				continue
 			}
 
