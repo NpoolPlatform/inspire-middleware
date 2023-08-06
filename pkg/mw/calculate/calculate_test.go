@@ -462,7 +462,6 @@ func calculate(t *testing.T) {
 	paymentAmount := decimal.NewFromInt(2000).String()
 	goodValue := decimal.NewFromInt(3000).String()
 	settleType := types.SettleType_GoodOrderPercent
-	settleMode := types.SettleMode_SettleWithPaymentAmount
 	hasCommission := true
 	orderCreatedAt := uint32(time.Now().Unix())
 
@@ -482,7 +481,6 @@ func calculate(t *testing.T) {
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
-		WithSettleMode(settleMode),
 	)
 	assert.Nil(t, err)
 
