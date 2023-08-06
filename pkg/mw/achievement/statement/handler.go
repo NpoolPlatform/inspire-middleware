@@ -247,9 +247,6 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 			if req.UserID == nil {
 				return fmt.Errorf("invalid userid")
 			}
-			if req.DirectContributorID == nil {
-				return fmt.Errorf("invalid directcontributorid")
-			}
 			if req.GoodID == nil {
 				return fmt.Errorf("invalid goodid")
 			}
@@ -306,11 +303,13 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 			}
 			_req.UserID = &id2
 
-			id3, err := uuid.Parse(*req.DirectContributorID)
-			if err != nil {
-				return err
+			if req.DirectContributorID != nil {
+				id3, err := uuid.Parse(*req.DirectContributorID)
+				if err != nil {
+					return err
+				}
+				_req.DirectContributorID = &id3
 			}
-			_req.DirectContributorID = &id3
 
 			id4, err := uuid.Parse(*req.GoodID)
 			if err != nil {
