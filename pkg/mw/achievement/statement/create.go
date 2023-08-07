@@ -150,7 +150,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		return nil, fmt.Errorf("invalid commission")
 	}
 
-	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *h.AppID, *h.OrderID)
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *h.AppID, *h.UserID, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}
@@ -158,9 +158,9 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		_ = redis2.Unlock(key)
 	}()
 
-	// TODO: Check order
 	h.Conds = &statementcrud.Conds{
 		AppID:   &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+		UserID:  &cruder.Cond{Op: cruder.EQ, Val: *h.UserID},
 		OrderID: &cruder.Cond{Op: cruder.EQ, Val: *h.OrderID},
 	}
 	exist, err := h.ExistStatementConds(ctx)
@@ -208,7 +208,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if req.ID == nil {
 					req.ID = &id
 				}
-				key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *req.AppID, *req.OrderID)
+				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *req.AppID, *req.UserID, *req.OrderID)
 				if err := redis2.TryLock(key, 0); err != nil {
 					return err
 				}
@@ -222,14 +222,20 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				}
 				info, err := handler.GetStatementOnly(ctx)
 				if err != nil {
-					return err
+					if !ent.IsNotFound(err) {
+						return err
+					}
 				}
 				if info != nil {
 					amount, err := decimal.NewFromString(info.Amount)
 					if err != nil {
 						return err
 					}
-					if req.Amount.Cmp(amount) != 0 {
+					commission, err := decimal.NewFromString(info.Commission)
+					if err != nil {
+						return err
+					}
+					if req.Amount.Cmp(amount) != 0 || req.Commission.Cmp(commission) != 0 {
 						return fmt.Errorf("mismatch statement")
 					}
 					ids = append(ids, uuid.MustParse(info.ID))
