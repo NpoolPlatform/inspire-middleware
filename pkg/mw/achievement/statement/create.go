@@ -32,10 +32,10 @@ func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *st
 	return nil
 }
 
-func (h *createHandler) createOrAddArchivement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req) error {
+func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v:%v:%v",
-		basetypes.Prefix_PrefixCreateInspireArchivement,
+		basetypes.Prefix_PrefixCreateInspireAchievement,
 		*req.AppID,
 		*req.UserID,
 		*req.GoodID,
@@ -150,7 +150,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		return nil, fmt.Errorf("invalid commission")
 	}
 
-	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *h.AppID, *h.UserID, *h.OrderID)
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *h.AppID, *h.UserID, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		if err := handler.createStatement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrAddArchivement(_ctx, tx, &handler.Req); err != nil {
+		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
 		return nil
@@ -193,6 +193,41 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	}
 
 	return h.GetStatement(ctx)
+}
+
+func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statementcrud.Req, tx *ent.Tx) (string, error) {
+	h.Conds = &statementcrud.Conds{
+		AppID:   &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
+		UserID:  &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
+		OrderID: &cruder.Cond{Op: cruder.EQ, Val: *req.OrderID},
+	}
+	info, err := h.GetStatementOnly(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return "", err
+		}
+	}
+	if info == nil {
+		return "", nil
+	}
+
+	amount, err := decimal.NewFromString(info.Amount)
+	if err != nil {
+		return "", err
+	}
+	if req.Amount.Cmp(amount) != 0 {
+		return "", fmt.Errorf("mismatch statement")
+	}
+
+	if _, err := tx.
+		Statement.
+		UpdateOneID(uuid.MustParse(info.ID)).
+		SetCommission(*req.Commission).
+		Save(ctx); err != nil {
+		return "", err
+	}
+
+	return info.ID, nil
 }
 
 func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, error) {
@@ -208,43 +243,27 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if req.ID == nil {
 					req.ID = &id
 				}
-				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireArchivementStatement, *req.AppID, *req.UserID, *req.OrderID)
+				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *req.AppID, *req.UserID, *req.OrderID)
 				if err := redis2.TryLock(key, 0); err != nil {
 					return err
 				}
 				defer func() {
 					_ = redis2.Unlock(key)
 				}()
-				handler.Conds = &statementcrud.Conds{
-					AppID:   &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
-					UserID:  &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
-					OrderID: &cruder.Cond{Op: cruder.EQ, Val: *req.OrderID},
-				}
-				info, err := handler.GetStatementOnly(ctx)
+
+				updatedID, err := handler.tryUpdateExistStatement(ctx, req, tx)
 				if err != nil {
-					if !ent.IsNotFound(err) {
-						return err
-					}
+					return err
 				}
-				if info != nil {
-					amount, err := decimal.NewFromString(info.Amount)
-					if err != nil {
-						return err
-					}
-					commission, err := decimal.NewFromString(info.Commission)
-					if err != nil {
-						return err
-					}
-					if req.Amount.Cmp(amount) != 0 || req.Commission.Cmp(commission) != 0 {
-						return fmt.Errorf("mismatch statement")
-					}
-					ids = append(ids, uuid.MustParse(info.ID))
+				if _id, err := uuid.Parse(updatedID); err == nil {
+					ids = append(ids, _id)
 					return nil
 				}
+
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
 				}
-				if err := handler.createOrAddArchivement(_ctx, tx, req); err != nil {
+				if err := handler.createOrAddAchievement(_ctx, tx, req); err != nil {
 					return err
 				}
 				ids = append(ids, id)
