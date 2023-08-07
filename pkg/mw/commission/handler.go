@@ -23,6 +23,7 @@ type Handler struct {
 	ToGoodID        *uuid.UUID
 	SettleType      *types.SettleType
 	SettleMode      *types.SettleMode
+	SettleAmount    *types.SettleAmount
 	SettleInterval  *types.SettleInterval
 	AmountOrPercent *decimal.Decimal
 	StartAt         *uint32
@@ -133,7 +134,7 @@ func WithSettleType(settleType *types.SettleType) func(context.Context, *Handler
 			return nil
 		}
 		switch *settleType {
-		case types.SettleType_GoodOrderPercent:
+		case types.SettleType_GoodOrderPayment:
 		case types.SettleType_TechniqueFeePercent:
 		default:
 			return fmt.Errorf("invalid settletype")
@@ -155,6 +156,22 @@ func WithSettleMode(settleMode *types.SettleMode) func(context.Context, *Handler
 			return fmt.Errorf("invalid settlemode")
 		}
 		h.SettleMode = settleMode
+		return nil
+	}
+}
+
+func WithSettleAmount(settleAmount *types.SettleAmount) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if settleAmount == nil {
+			return nil
+		}
+		switch *settleAmount {
+		case types.SettleAmount_SettleByPercent:
+		case types.SettleAmount_SettleByAmount:
+		default:
+			return fmt.Errorf("invalid settleamount")
+		}
+		h.SettleAmount = settleAmount
 		return nil
 	}
 }
