@@ -80,8 +80,10 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		_req.TotalUnits = req.Units
 	}
 	if req.SelfOrder != nil && *req.SelfOrder {
-		_req.SelfAmount = req.Amount
-		_req.SelfUnits = req.Units
+		if !commissionOnly {
+			_req.SelfAmount = req.Amount
+			_req.SelfUnits = req.Units
+		}
 		_req.SelfCommission = req.Commission
 	}
 
