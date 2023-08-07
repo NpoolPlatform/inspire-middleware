@@ -32,7 +32,7 @@ func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *st
 	return nil
 }
 
-func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req) error {
+func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req, commissionOnly bool) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v:%v:%v",
 		basetypes.Prefix_PrefixCreateInspireAchievement,
@@ -73,9 +73,11 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		UserID:          req.UserID,
 		GoodID:          req.GoodID,
 		CoinTypeID:      req.CoinTypeID,
-		TotalAmount:     req.Amount,
-		TotalUnits:      req.Units,
 		TotalCommission: req.Commission,
+	}
+	if !commissionOnly {
+		_req.TotalAmount = req.Amount
+		_req.TotalUnits = req.Units
 	}
 	if req.SelfOrder != nil && *req.SelfOrder {
 		_req.SelfAmount = req.Amount
@@ -99,6 +101,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 	_req.TotalUnits = &totalUnits
 	totalCommission := _req.TotalCommission.Add(info.TotalCommission)
 	_req.TotalCommission = &totalCommission
+
 	if req.SelfOrder != nil && *req.SelfOrder {
 		selfAmount := _req.SelfAmount.Add(info.SelfAmount)
 		_req.SelfAmount = &selfAmount
@@ -183,7 +186,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		if err := handler.createStatement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req); err != nil {
+		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req, true); err != nil {
 			return err
 		}
 		return nil
@@ -227,6 +230,10 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", err
 	}
 
+	if err := h.createOrAddAchievement(ctx, tx, req, false); err != nil {
+		return "", err
+	}
+
 	return info.ID, nil
 }
 
@@ -263,7 +270,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
 				}
-				if err := handler.createOrAddAchievement(_ctx, tx, req); err != nil {
+				if err := handler.createOrAddAchievement(_ctx, tx, req, true); err != nil {
 					return err
 				}
 				ids = append(ids, id)
