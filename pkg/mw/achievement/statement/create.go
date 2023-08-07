@@ -234,6 +234,9 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 	}
 
 	commission, err := decimal.NewFromString(info.Commission)
+	if err != nil {
+		return "", err
+	}
 	if req.Commission.Cmp(commission) == 0 {
 		return info.ID, nil
 	}
