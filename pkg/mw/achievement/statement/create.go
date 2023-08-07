@@ -233,6 +233,11 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", fmt.Errorf("mismatch statement")
 	}
 
+	commission, err := decimal.NewFromString(info.Commission)
+	if req.Commission.Cmp(commission) == 0 {
+		return info.ID, nil
+	}
+
 	if _, err := tx.
 		Statement.
 		UpdateOneID(uuid.MustParse(info.ID)).
