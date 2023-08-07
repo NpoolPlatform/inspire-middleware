@@ -1337,6 +1337,7 @@ type CommissionMutation struct {
 	settle_type       *string
 	settle_mode       *string
 	settle_interval   *string
+	settle_amount     *string
 	threshold         *decimal.Decimal
 	order_limit       *uint32
 	addorder_limit    *int32
@@ -2101,6 +2102,55 @@ func (m *CommissionMutation) ResetSettleInterval() {
 	delete(m.clearedFields, commission.FieldSettleInterval)
 }
 
+// SetSettleAmount sets the "settle_amount" field.
+func (m *CommissionMutation) SetSettleAmount(s string) {
+	m.settle_amount = &s
+}
+
+// SettleAmount returns the value of the "settle_amount" field in the mutation.
+func (m *CommissionMutation) SettleAmount() (r string, exists bool) {
+	v := m.settle_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettleAmount returns the old "settle_amount" field's value of the Commission entity.
+// If the Commission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommissionMutation) OldSettleAmount(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettleAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettleAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettleAmount: %w", err)
+	}
+	return oldValue.SettleAmount, nil
+}
+
+// ClearSettleAmount clears the value of the "settle_amount" field.
+func (m *CommissionMutation) ClearSettleAmount() {
+	m.settle_amount = nil
+	m.clearedFields[commission.FieldSettleAmount] = struct{}{}
+}
+
+// SettleAmountCleared returns if the "settle_amount" field was cleared in this mutation.
+func (m *CommissionMutation) SettleAmountCleared() bool {
+	_, ok := m.clearedFields[commission.FieldSettleAmount]
+	return ok
+}
+
+// ResetSettleAmount resets all changes to the "settle_amount" field.
+func (m *CommissionMutation) ResetSettleAmount() {
+	m.settle_amount = nil
+	delete(m.clearedFields, commission.FieldSettleAmount)
+}
+
 // SetThreshold sets the "threshold" field.
 func (m *CommissionMutation) SetThreshold(d decimal.Decimal) {
 	m.threshold = &d
@@ -2239,7 +2289,7 @@ func (m *CommissionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CommissionMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, commission.FieldCreatedAt)
 	}
@@ -2275,6 +2325,9 @@ func (m *CommissionMutation) Fields() []string {
 	}
 	if m.settle_interval != nil {
 		fields = append(fields, commission.FieldSettleInterval)
+	}
+	if m.settle_amount != nil {
+		fields = append(fields, commission.FieldSettleAmount)
 	}
 	if m.threshold != nil {
 		fields = append(fields, commission.FieldThreshold)
@@ -2314,6 +2367,8 @@ func (m *CommissionMutation) Field(name string) (ent.Value, bool) {
 		return m.SettleMode()
 	case commission.FieldSettleInterval:
 		return m.SettleInterval()
+	case commission.FieldSettleAmount:
+		return m.SettleAmount()
 	case commission.FieldThreshold:
 		return m.Threshold()
 	case commission.FieldOrderLimit:
@@ -2351,6 +2406,8 @@ func (m *CommissionMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldSettleMode(ctx)
 	case commission.FieldSettleInterval:
 		return m.OldSettleInterval(ctx)
+	case commission.FieldSettleAmount:
+		return m.OldSettleAmount(ctx)
 	case commission.FieldThreshold:
 		return m.OldThreshold(ctx)
 	case commission.FieldOrderLimit:
@@ -2447,6 +2504,13 @@ func (m *CommissionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSettleInterval(v)
+		return nil
+	case commission.FieldSettleAmount:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettleAmount(v)
 		return nil
 	case commission.FieldThreshold:
 		v, ok := value.(decimal.Decimal)
@@ -2594,6 +2658,9 @@ func (m *CommissionMutation) ClearedFields() []string {
 	if m.FieldCleared(commission.FieldSettleInterval) {
 		fields = append(fields, commission.FieldSettleInterval)
 	}
+	if m.FieldCleared(commission.FieldSettleAmount) {
+		fields = append(fields, commission.FieldSettleAmount)
+	}
 	if m.FieldCleared(commission.FieldThreshold) {
 		fields = append(fields, commission.FieldThreshold)
 	}
@@ -2640,6 +2707,9 @@ func (m *CommissionMutation) ClearField(name string) error {
 		return nil
 	case commission.FieldSettleInterval:
 		m.ClearSettleInterval()
+		return nil
+	case commission.FieldSettleAmount:
+		m.ClearSettleAmount()
 		return nil
 	case commission.FieldThreshold:
 		m.ClearThreshold()
@@ -2690,6 +2760,9 @@ func (m *CommissionMutation) ResetField(name string) error {
 		return nil
 	case commission.FieldSettleInterval:
 		m.ResetSettleInterval()
+		return nil
+	case commission.FieldSettleAmount:
+		m.ResetSettleAmount()
 		return nil
 	case commission.FieldThreshold:
 		m.ResetThreshold()

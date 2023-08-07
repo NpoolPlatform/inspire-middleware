@@ -279,6 +279,26 @@ func (cu *CommissionUpdate) ClearSettleInterval() *CommissionUpdate {
 	return cu
 }
 
+// SetSettleAmount sets the "settle_amount" field.
+func (cu *CommissionUpdate) SetSettleAmount(s string) *CommissionUpdate {
+	cu.mutation.SetSettleAmount(s)
+	return cu
+}
+
+// SetNillableSettleAmount sets the "settle_amount" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableSettleAmount(s *string) *CommissionUpdate {
+	if s != nil {
+		cu.SetSettleAmount(*s)
+	}
+	return cu
+}
+
+// ClearSettleAmount clears the value of the "settle_amount" field.
+func (cu *CommissionUpdate) ClearSettleAmount() *CommissionUpdate {
+	cu.mutation.ClearSettleAmount()
+	return cu
+}
+
 // SetThreshold sets the "threshold" field.
 func (cu *CommissionUpdate) SetThreshold(d decimal.Decimal) *CommissionUpdate {
 	cu.mutation.SetThreshold(d)
@@ -597,6 +617,19 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commission.FieldSettleInterval,
 		})
 	}
+	if value, ok := cu.mutation.SettleAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: commission.FieldSettleAmount,
+		})
+	}
+	if cu.mutation.SettleAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: commission.FieldSettleAmount,
+		})
+	}
 	if value, ok := cu.mutation.Threshold(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -897,6 +930,26 @@ func (cuo *CommissionUpdateOne) SetNillableSettleInterval(s *string) *Commission
 // ClearSettleInterval clears the value of the "settle_interval" field.
 func (cuo *CommissionUpdateOne) ClearSettleInterval() *CommissionUpdateOne {
 	cuo.mutation.ClearSettleInterval()
+	return cuo
+}
+
+// SetSettleAmount sets the "settle_amount" field.
+func (cuo *CommissionUpdateOne) SetSettleAmount(s string) *CommissionUpdateOne {
+	cuo.mutation.SetSettleAmount(s)
+	return cuo
+}
+
+// SetNillableSettleAmount sets the "settle_amount" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableSettleAmount(s *string) *CommissionUpdateOne {
+	if s != nil {
+		cuo.SetSettleAmount(*s)
+	}
+	return cuo
+}
+
+// ClearSettleAmount clears the value of the "settle_amount" field.
+func (cuo *CommissionUpdateOne) ClearSettleAmount() *CommissionUpdateOne {
+	cuo.mutation.ClearSettleAmount()
 	return cuo
 }
 
@@ -1246,6 +1299,19 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: commission.FieldSettleInterval,
+		})
+	}
+	if value, ok := cuo.mutation.SettleAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: commission.FieldSettleAmount,
+		})
+	}
+	if cuo.mutation.SettleAmountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: commission.FieldSettleAmount,
 		})
 	}
 	if value, ok := cuo.mutation.Threshold(); ok {

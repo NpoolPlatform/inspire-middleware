@@ -76,6 +76,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldSettleType:      {Type: field.TypeString, Column: commission.FieldSettleType},
 			commission.FieldSettleMode:      {Type: field.TypeString, Column: commission.FieldSettleMode},
 			commission.FieldSettleInterval:  {Type: field.TypeString, Column: commission.FieldSettleInterval},
+			commission.FieldSettleAmount:    {Type: field.TypeString, Column: commission.FieldSettleAmount},
 			commission.FieldThreshold:       {Type: field.TypeOther, Column: commission.FieldThreshold},
 			commission.FieldOrderLimit:      {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
 		},
@@ -579,6 +580,11 @@ func (f *CommissionFilter) WhereSettleMode(p entql.StringP) {
 // WhereSettleInterval applies the entql string predicate on the settle_interval field.
 func (f *CommissionFilter) WhereSettleInterval(p entql.StringP) {
 	f.Where(p.Field(commission.FieldSettleInterval))
+}
+
+// WhereSettleAmount applies the entql string predicate on the settle_amount field.
+func (f *CommissionFilter) WhereSettleAmount(p entql.StringP) {
+	f.Where(p.Field(commission.FieldSettleAmount))
 }
 
 // WhereThreshold applies the entql other predicate on the threshold field.

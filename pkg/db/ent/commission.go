@@ -41,6 +41,8 @@ type Commission struct {
 	SettleMode string `json:"settle_mode,omitempty"`
 	// SettleInterval holds the value of the "settle_interval" field.
 	SettleInterval string `json:"settle_interval,omitempty"`
+	// SettleAmount holds the value of the "settle_amount" field.
+	SettleAmount string `json:"settle_amount,omitempty"`
 	// Threshold holds the value of the "threshold" field.
 	Threshold decimal.Decimal `json:"threshold,omitempty"`
 	// OrderLimit holds the value of the "order_limit" field.
@@ -56,7 +58,7 @@ func (*Commission) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt, commission.FieldOrderLimit:
 			values[i] = new(sql.NullInt64)
-		case commission.FieldSettleType, commission.FieldSettleMode, commission.FieldSettleInterval:
+		case commission.FieldSettleType, commission.FieldSettleMode, commission.FieldSettleInterval, commission.FieldSettleAmount:
 			values[i] = new(sql.NullString)
 		case commission.FieldID, commission.FieldAppID, commission.FieldUserID, commission.FieldGoodID:
 			values[i] = new(uuid.UUID)
@@ -153,6 +155,12 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				c.SettleInterval = value.String
 			}
+		case commission.FieldSettleAmount:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field settle_amount", values[i])
+			} else if value.Valid {
+				c.SettleAmount = value.String
+			}
 		case commission.FieldThreshold:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field threshold", values[i])
@@ -228,6 +236,9 @@ func (c *Commission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("settle_interval=")
 	builder.WriteString(c.SettleInterval)
+	builder.WriteString(", ")
+	builder.WriteString("settle_amount=")
+	builder.WriteString(c.SettleAmount)
 	builder.WriteString(", ")
 	builder.WriteString("threshold=")
 	builder.WriteString(fmt.Sprintf("%v", c.Threshold))

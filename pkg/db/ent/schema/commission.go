@@ -72,6 +72,10 @@ func (Commission) Fields() []ent.Field {
 			Optional().
 			Default(types.SettleInterval_DefaultSettleInterval.String()),
 		field.
+			String("settle_amount").
+			Optional().
+			Default(types.SettleAmount_SettleByPercent.String()),
+		field.
 			Other("threshold", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

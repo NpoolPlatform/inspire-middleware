@@ -164,6 +164,13 @@ func SettleInterval(v string) predicate.Commission {
 	})
 }
 
+// SettleAmount applies equality check predicate on the "settle_amount" field. It's identical to SettleAmountEQ.
+func SettleAmount(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSettleAmount), v))
+	})
+}
+
 // Threshold applies equality check predicate on the "threshold" field. It's identical to ThresholdEQ.
 func Threshold(v decimal.Decimal) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
@@ -1174,6 +1181,119 @@ func SettleIntervalEqualFold(v string) predicate.Commission {
 func SettleIntervalContainsFold(v string) predicate.Commission {
 	return predicate.Commission(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldSettleInterval), v))
+	})
+}
+
+// SettleAmountEQ applies the EQ predicate on the "settle_amount" field.
+func SettleAmountEQ(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountNEQ applies the NEQ predicate on the "settle_amount" field.
+func SettleAmountNEQ(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountIn applies the In predicate on the "settle_amount" field.
+func SettleAmountIn(vs ...string) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldSettleAmount), v...))
+	})
+}
+
+// SettleAmountNotIn applies the NotIn predicate on the "settle_amount" field.
+func SettleAmountNotIn(vs ...string) predicate.Commission {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldSettleAmount), v...))
+	})
+}
+
+// SettleAmountGT applies the GT predicate on the "settle_amount" field.
+func SettleAmountGT(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountGTE applies the GTE predicate on the "settle_amount" field.
+func SettleAmountGTE(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountLT applies the LT predicate on the "settle_amount" field.
+func SettleAmountLT(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountLTE applies the LTE predicate on the "settle_amount" field.
+func SettleAmountLTE(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountContains applies the Contains predicate on the "settle_amount" field.
+func SettleAmountContains(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountHasPrefix applies the HasPrefix predicate on the "settle_amount" field.
+func SettleAmountHasPrefix(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountHasSuffix applies the HasSuffix predicate on the "settle_amount" field.
+func SettleAmountHasSuffix(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountIsNil applies the IsNil predicate on the "settle_amount" field.
+func SettleAmountIsNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldSettleAmount)))
+	})
+}
+
+// SettleAmountNotNil applies the NotNil predicate on the "settle_amount" field.
+func SettleAmountNotNil() predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldSettleAmount)))
+	})
+}
+
+// SettleAmountEqualFold applies the EqualFold predicate on the "settle_amount" field.
+func SettleAmountEqualFold(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldSettleAmount), v))
+	})
+}
+
+// SettleAmountContainsFold applies the ContainsFold predicate on the "settle_amount" field.
+func SettleAmountContainsFold(v string) predicate.Commission {
+	return predicate.Commission(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldSettleAmount), v))
 	})
 }
 
