@@ -237,6 +237,9 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 	if req.Commission.Cmp(commission) == 0 {
 		return info.ID, nil
 	}
+	if commission.Cmp(decimal.NewFromInt(0)) != 0 {
+		return "", fmt.Errorf("permission denied")
+	}
 
 	if _, err := tx.
 		Statement.
