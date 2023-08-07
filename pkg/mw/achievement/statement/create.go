@@ -116,10 +116,18 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 	_req.TotalCommission = &totalCommission
 
 	if req.SelfOrder != nil && *req.SelfOrder {
-		selfAmount := _req.SelfAmount.Add(info.SelfAmount)
+		selfAmount := info.SelfAmount
+		if _req.SelfAmount != nil {
+			selfAmount = _req.SelfAmount.Add(selfAmount)
+		}
 		_req.SelfAmount = &selfAmount
-		selfUnits := _req.SelfUnits.Add(info.SelfUnitsV1)
+
+		selfUnits := info.SelfUnitsV1
+		if _req.SelfUnits != nil {
+			selfUnits = _req.SelfUnits.Add(selfUnits)
+		}
 		_req.SelfUnits = &selfUnits
+
 		selfCommission := _req.SelfCommission.Add(info.SelfCommission)
 		_req.SelfCommission = &selfCommission
 	}
