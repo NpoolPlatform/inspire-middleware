@@ -112,7 +112,7 @@ func getAchievements(t *testing.T) {
 			ret1.ID = infos[0].ID
 			ret1.CreatedAt = infos[0].CreatedAt
 			ret1.UpdatedAt = infos[0].UpdatedAt
-			assert.Equal(t, ret1, infos[0])
+			assert.Equal(t, infos[0], ret1)
 		}
 	}
 }
@@ -162,7 +162,7 @@ func expropriateAchievement(t *testing.T) {
 			ret1.SelfCommission = decimal.NewFromInt(0).String()
 			ret1.CreatedAt = infos[0].CreatedAt
 			ret1.UpdatedAt = infos[0].UpdatedAt
-			assert.Equal(t, ret1, infos[0])
+			assert.Equal(t, infos[0], ret1)
 		}
 	}
 }

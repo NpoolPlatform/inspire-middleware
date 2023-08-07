@@ -186,7 +186,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		if err := handler.createStatement(_ctx, tx, &handler.Req); err != nil {
 			return err
 		}
-		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req, true); err != nil {
+		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req, false); err != nil {
 			return err
 		}
 		return nil
@@ -230,7 +230,7 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", err
 	}
 
-	if err := h.createOrAddAchievement(ctx, tx, req, false); err != nil {
+	if err := h.createOrAddAchievement(ctx, tx, req, true); err != nil {
 		return "", err
 	}
 
@@ -270,7 +270,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err := handler.createStatement(_ctx, tx, req); err != nil {
 					return err
 				}
-				if err := handler.createOrAddAchievement(_ctx, tx, req, true); err != nil {
+				if err := handler.createOrAddAchievement(_ctx, tx, req, false); err != nil {
 					return err
 				}
 				ids = append(ids, id)
