@@ -95,11 +95,22 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		return nil
 	}
 
-	totalAmount := _req.TotalAmount.Add(info.TotalAmount)
+	totalAmount := info.TotalAmount
+	if _req.TotalAmount != nil {
+		totalAmount = _req.TotalAmount.Add(totalAmount)
+	}
 	_req.TotalAmount = &totalAmount
-	totalUnits := _req.TotalUnits.Add(info.TotalUnitsV1)
+
+	totalUnits := info.TotalUnitsV1
+	if _req.TotalUnits != nil {
+		totalUnits = _req.TotalUnits.Add(totalUnits)
+	}
 	_req.TotalUnits = &totalUnits
-	totalCommission := _req.TotalCommission.Add(info.TotalCommission)
+
+	totalCommission := info.TotalCommission
+	if _req.TotalCommission != nil {
+		totalCommission = _req.TotalCommission.Add(totalCommission)
+	}
 	_req.TotalCommission = &totalCommission
 
 	if req.SelfOrder != nil && *req.SelfOrder {
