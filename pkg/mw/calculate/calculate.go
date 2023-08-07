@@ -12,6 +12,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -78,6 +79,10 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 
 	statements := []*statementmwpb.Statement{}
 	for _, inviter := range inviters {
+		if inviter.InviterID == uuid.Nil.String() {
+			continue
+		}
+
 		commission := decimal.NewFromInt(0).String()
 		comm, ok := commMap[inviter.InviterID]
 		if ok && h.HasCommission {
