@@ -11,12 +11,12 @@ import (
 )
 
 type Handler struct {
-	SettleType    types.SettleType
-	SettleAmount  types.SettleAmount
-	Inviters      []*registrationmwpb.Registration
-	Commissions   []*commissionmwpb.Commission
-	PaymentAmount decimal.Decimal
-	GoodValue     decimal.Decimal
+	SettleType       types.SettleType
+	SettleAmountType types.SettleAmountType
+	Inviters         []*registrationmwpb.Registration
+	Commissions      []*commissionmwpb.Commission
+	PaymentAmount    decimal.Decimal
+	GoodValue        decimal.Decimal
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -36,9 +36,9 @@ func WithSettleType(settleType types.SettleType) func(context.Context, *Handler)
 	}
 }
 
-func WithSettleAmount(settleAmount types.SettleAmount) func(context.Context, *Handler) error {
+func WithSettleAmountType(settleAmount types.SettleAmountType) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.SettleAmount = settleAmount
+		h.SettleAmountType = settleAmount
 		return nil
 	}
 }

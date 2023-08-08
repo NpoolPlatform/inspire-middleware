@@ -96,7 +96,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 					SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
 					SetSettleType(info.SettleType).
 					SetSettleMode(info.SettleMode).
-					SetSettleAmount(info.SettleAmount).
+					SetSettleAmountType(info.SettleAmountType).
 					SetSettleInterval(info.SettleInterval).
 					SetThreshold(info.Threshold).
 					Save(_ctx); err != nil {
@@ -113,7 +113,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 				SetGoodID(*h.ToGoodID).
 				SetSettleType(info.SettleType).
 				SetSettleMode(info.SettleMode).
-				SetSettleAmount(info.SettleAmount).
+				SetSettleAmountType(info.SettleAmountType).
 				SetSettleInterval(info.SettleInterval).
 				SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
 				SetStartAt(now).

@@ -37,8 +37,8 @@ const (
 	FieldSettleMode = "settle_mode"
 	// FieldSettleInterval holds the string denoting the settle_interval field in the database.
 	FieldSettleInterval = "settle_interval"
-	// FieldSettleAmount holds the string denoting the settle_amount field in the database.
-	FieldSettleAmount = "settle_amount"
+	// FieldSettleAmountType holds the string denoting the settle_amount_type field in the database.
+	FieldSettleAmountType = "settle_amount_type"
 	// FieldThreshold holds the string denoting the threshold field in the database.
 	FieldThreshold = "threshold"
 	// FieldOrderLimit holds the string denoting the order_limit field in the database.
@@ -62,7 +62,7 @@ var Columns = []string{
 	FieldSettleType,
 	FieldSettleMode,
 	FieldSettleInterval,
-	FieldSettleAmount,
+	FieldSettleAmountType,
 	FieldThreshold,
 	FieldOrderLimit,
 }
@@ -112,8 +112,8 @@ var (
 	DefaultSettleMode string
 	// DefaultSettleInterval holds the default value on creation for the "settle_interval" field.
 	DefaultSettleInterval string
-	// DefaultSettleAmount holds the default value on creation for the "settle_amount" field.
-	DefaultSettleAmount string
+	// DefaultSettleAmountType holds the default value on creation for the "settle_amount_type" field.
+	DefaultSettleAmountType string
 	// DefaultThreshold holds the default value on creation for the "threshold" field.
 	DefaultThreshold decimal.Decimal
 	// DefaultOrderLimit holds the default value on creation for the "order_limit" field.

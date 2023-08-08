@@ -167,10 +167,10 @@ func init() {
 	commissionDescSettleInterval := commissionFields[9].Descriptor()
 	// commission.DefaultSettleInterval holds the default value on creation for the settle_interval field.
 	commission.DefaultSettleInterval = commissionDescSettleInterval.Default.(string)
-	// commissionDescSettleAmount is the schema descriptor for settle_amount field.
-	commissionDescSettleAmount := commissionFields[10].Descriptor()
-	// commission.DefaultSettleAmount holds the default value on creation for the settle_amount field.
-	commission.DefaultSettleAmount = commissionDescSettleAmount.Default.(string)
+	// commissionDescSettleAmountType is the schema descriptor for settle_amount_type field.
+	commissionDescSettleAmountType := commissionFields[10].Descriptor()
+	// commission.DefaultSettleAmountType holds the default value on creation for the settle_amount_type field.
+	commission.DefaultSettleAmountType = commissionDescSettleAmountType.Default.(string)
 	// commissionDescThreshold is the schema descriptor for threshold field.
 	commissionDescThreshold := commissionFields[11].Descriptor()
 	// commission.DefaultThreshold holds the default value on creation for the threshold field.

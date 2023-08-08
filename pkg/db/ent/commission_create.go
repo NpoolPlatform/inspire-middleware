@@ -192,16 +192,16 @@ func (cc *CommissionCreate) SetNillableSettleInterval(s *string) *CommissionCrea
 	return cc
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (cc *CommissionCreate) SetSettleAmount(s string) *CommissionCreate {
-	cc.mutation.SetSettleAmount(s)
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (cc *CommissionCreate) SetSettleAmountType(s string) *CommissionCreate {
+	cc.mutation.SetSettleAmountType(s)
 	return cc
 }
 
-// SetNillableSettleAmount sets the "settle_amount" field if the given value is not nil.
-func (cc *CommissionCreate) SetNillableSettleAmount(s *string) *CommissionCreate {
+// SetNillableSettleAmountType sets the "settle_amount_type" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableSettleAmountType(s *string) *CommissionCreate {
 	if s != nil {
-		cc.SetSettleAmount(*s)
+		cc.SetSettleAmountType(*s)
 	}
 	return cc
 }
@@ -393,9 +393,9 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultSettleInterval
 		cc.mutation.SetSettleInterval(v)
 	}
-	if _, ok := cc.mutation.SettleAmount(); !ok {
-		v := commission.DefaultSettleAmount
-		cc.mutation.SetSettleAmount(v)
+	if _, ok := cc.mutation.SettleAmountType(); !ok {
+		v := commission.DefaultSettleAmountType
+		cc.mutation.SetSettleAmountType(v)
 	}
 	if _, ok := cc.mutation.Threshold(); !ok {
 		v := commission.DefaultThreshold
@@ -559,13 +559,13 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 		})
 		_node.SettleInterval = value
 	}
-	if value, ok := cc.mutation.SettleAmount(); ok {
+	if value, ok := cc.mutation.SettleAmountType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commission.FieldSettleAmount,
+			Column: commission.FieldSettleAmountType,
 		})
-		_node.SettleAmount = value
+		_node.SettleAmountType = value
 	}
 	if value, ok := cc.mutation.Threshold(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -865,21 +865,21 @@ func (u *CommissionUpsert) ClearSettleInterval() *CommissionUpsert {
 	return u
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (u *CommissionUpsert) SetSettleAmount(v string) *CommissionUpsert {
-	u.Set(commission.FieldSettleAmount, v)
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (u *CommissionUpsert) SetSettleAmountType(v string) *CommissionUpsert {
+	u.Set(commission.FieldSettleAmountType, v)
 	return u
 }
 
-// UpdateSettleAmount sets the "settle_amount" field to the value that was provided on create.
-func (u *CommissionUpsert) UpdateSettleAmount() *CommissionUpsert {
-	u.SetExcluded(commission.FieldSettleAmount)
+// UpdateSettleAmountType sets the "settle_amount_type" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateSettleAmountType() *CommissionUpsert {
+	u.SetExcluded(commission.FieldSettleAmountType)
 	return u
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (u *CommissionUpsert) ClearSettleAmount() *CommissionUpsert {
-	u.SetNull(commission.FieldSettleAmount)
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (u *CommissionUpsert) ClearSettleAmountType() *CommissionUpsert {
+	u.SetNull(commission.FieldSettleAmountType)
 	return u
 }
 
@@ -1241,24 +1241,24 @@ func (u *CommissionUpsertOne) ClearSettleInterval() *CommissionUpsertOne {
 	})
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (u *CommissionUpsertOne) SetSettleAmount(v string) *CommissionUpsertOne {
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (u *CommissionUpsertOne) SetSettleAmountType(v string) *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.SetSettleAmount(v)
+		s.SetSettleAmountType(v)
 	})
 }
 
-// UpdateSettleAmount sets the "settle_amount" field to the value that was provided on create.
-func (u *CommissionUpsertOne) UpdateSettleAmount() *CommissionUpsertOne {
+// UpdateSettleAmountType sets the "settle_amount_type" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateSettleAmountType() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.UpdateSettleAmount()
+		s.UpdateSettleAmountType()
 	})
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (u *CommissionUpsertOne) ClearSettleAmount() *CommissionUpsertOne {
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (u *CommissionUpsertOne) ClearSettleAmountType() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
-		s.ClearSettleAmount()
+		s.ClearSettleAmountType()
 	})
 }
 
@@ -1793,24 +1793,24 @@ func (u *CommissionUpsertBulk) ClearSettleInterval() *CommissionUpsertBulk {
 	})
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (u *CommissionUpsertBulk) SetSettleAmount(v string) *CommissionUpsertBulk {
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (u *CommissionUpsertBulk) SetSettleAmountType(v string) *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.SetSettleAmount(v)
+		s.SetSettleAmountType(v)
 	})
 }
 
-// UpdateSettleAmount sets the "settle_amount" field to the value that was provided on create.
-func (u *CommissionUpsertBulk) UpdateSettleAmount() *CommissionUpsertBulk {
+// UpdateSettleAmountType sets the "settle_amount_type" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateSettleAmountType() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.UpdateSettleAmount()
+		s.UpdateSettleAmountType()
 	})
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (u *CommissionUpsertBulk) ClearSettleAmount() *CommissionUpsertBulk {
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (u *CommissionUpsertBulk) ClearSettleAmountType() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
-		s.ClearSettleAmount()
+		s.ClearSettleAmountType()
 	})
 }
 

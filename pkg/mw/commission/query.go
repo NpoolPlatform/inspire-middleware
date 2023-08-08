@@ -54,7 +54,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.SettleType = types.SettleType(types.SettleType_value[info.SettleTypeStr])
 		info.SettleMode = types.SettleMode(types.SettleMode_value[info.SettleModeStr])
-		info.SettleAmount = types.SettleAmount(types.SettleAmount_value[info.SettleAmountStr])
+		info.SettleAmountType = types.SettleAmountType(types.SettleAmountType_value[info.SettleAmountTypeStr])
 		info.SettleInterval = types.SettleInterval(types.SettleInterval_value[info.SettleIntervalStr])
 		amount, err := decimal.NewFromString(info.AmountOrPercent)
 		if err != nil {

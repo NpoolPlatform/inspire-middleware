@@ -279,23 +279,23 @@ func (cu *CommissionUpdate) ClearSettleInterval() *CommissionUpdate {
 	return cu
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (cu *CommissionUpdate) SetSettleAmount(s string) *CommissionUpdate {
-	cu.mutation.SetSettleAmount(s)
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (cu *CommissionUpdate) SetSettleAmountType(s string) *CommissionUpdate {
+	cu.mutation.SetSettleAmountType(s)
 	return cu
 }
 
-// SetNillableSettleAmount sets the "settle_amount" field if the given value is not nil.
-func (cu *CommissionUpdate) SetNillableSettleAmount(s *string) *CommissionUpdate {
+// SetNillableSettleAmountType sets the "settle_amount_type" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableSettleAmountType(s *string) *CommissionUpdate {
 	if s != nil {
-		cu.SetSettleAmount(*s)
+		cu.SetSettleAmountType(*s)
 	}
 	return cu
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (cu *CommissionUpdate) ClearSettleAmount() *CommissionUpdate {
-	cu.mutation.ClearSettleAmount()
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (cu *CommissionUpdate) ClearSettleAmountType() *CommissionUpdate {
+	cu.mutation.ClearSettleAmountType()
 	return cu
 }
 
@@ -617,17 +617,17 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commission.FieldSettleInterval,
 		})
 	}
-	if value, ok := cu.mutation.SettleAmount(); ok {
+	if value, ok := cu.mutation.SettleAmountType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commission.FieldSettleAmount,
+			Column: commission.FieldSettleAmountType,
 		})
 	}
-	if cu.mutation.SettleAmountCleared() {
+	if cu.mutation.SettleAmountTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: commission.FieldSettleAmount,
+			Column: commission.FieldSettleAmountType,
 		})
 	}
 	if value, ok := cu.mutation.Threshold(); ok {
@@ -933,23 +933,23 @@ func (cuo *CommissionUpdateOne) ClearSettleInterval() *CommissionUpdateOne {
 	return cuo
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (cuo *CommissionUpdateOne) SetSettleAmount(s string) *CommissionUpdateOne {
-	cuo.mutation.SetSettleAmount(s)
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (cuo *CommissionUpdateOne) SetSettleAmountType(s string) *CommissionUpdateOne {
+	cuo.mutation.SetSettleAmountType(s)
 	return cuo
 }
 
-// SetNillableSettleAmount sets the "settle_amount" field if the given value is not nil.
-func (cuo *CommissionUpdateOne) SetNillableSettleAmount(s *string) *CommissionUpdateOne {
+// SetNillableSettleAmountType sets the "settle_amount_type" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableSettleAmountType(s *string) *CommissionUpdateOne {
 	if s != nil {
-		cuo.SetSettleAmount(*s)
+		cuo.SetSettleAmountType(*s)
 	}
 	return cuo
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (cuo *CommissionUpdateOne) ClearSettleAmount() *CommissionUpdateOne {
-	cuo.mutation.ClearSettleAmount()
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (cuo *CommissionUpdateOne) ClearSettleAmountType() *CommissionUpdateOne {
+	cuo.mutation.ClearSettleAmountType()
 	return cuo
 }
 
@@ -1301,17 +1301,17 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 			Column: commission.FieldSettleInterval,
 		})
 	}
-	if value, ok := cuo.mutation.SettleAmount(); ok {
+	if value, ok := cuo.mutation.SettleAmountType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: commission.FieldSettleAmount,
+			Column: commission.FieldSettleAmountType,
 		})
 	}
-	if cuo.mutation.SettleAmountCleared() {
+	if cuo.mutation.SettleAmountTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: commission.FieldSettleAmount,
+			Column: commission.FieldSettleAmountType,
 		})
 	}
 	if value, ok := cuo.mutation.Threshold(); ok {

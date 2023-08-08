@@ -64,21 +64,21 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Commission",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			commission.FieldCreatedAt:       {Type: field.TypeUint32, Column: commission.FieldCreatedAt},
-			commission.FieldUpdatedAt:       {Type: field.TypeUint32, Column: commission.FieldUpdatedAt},
-			commission.FieldDeletedAt:       {Type: field.TypeUint32, Column: commission.FieldDeletedAt},
-			commission.FieldAppID:           {Type: field.TypeUUID, Column: commission.FieldAppID},
-			commission.FieldUserID:          {Type: field.TypeUUID, Column: commission.FieldUserID},
-			commission.FieldGoodID:          {Type: field.TypeUUID, Column: commission.FieldGoodID},
-			commission.FieldAmountOrPercent: {Type: field.TypeOther, Column: commission.FieldAmountOrPercent},
-			commission.FieldStartAt:         {Type: field.TypeUint32, Column: commission.FieldStartAt},
-			commission.FieldEndAt:           {Type: field.TypeUint32, Column: commission.FieldEndAt},
-			commission.FieldSettleType:      {Type: field.TypeString, Column: commission.FieldSettleType},
-			commission.FieldSettleMode:      {Type: field.TypeString, Column: commission.FieldSettleMode},
-			commission.FieldSettleInterval:  {Type: field.TypeString, Column: commission.FieldSettleInterval},
-			commission.FieldSettleAmount:    {Type: field.TypeString, Column: commission.FieldSettleAmount},
-			commission.FieldThreshold:       {Type: field.TypeOther, Column: commission.FieldThreshold},
-			commission.FieldOrderLimit:      {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
+			commission.FieldCreatedAt:        {Type: field.TypeUint32, Column: commission.FieldCreatedAt},
+			commission.FieldUpdatedAt:        {Type: field.TypeUint32, Column: commission.FieldUpdatedAt},
+			commission.FieldDeletedAt:        {Type: field.TypeUint32, Column: commission.FieldDeletedAt},
+			commission.FieldAppID:            {Type: field.TypeUUID, Column: commission.FieldAppID},
+			commission.FieldUserID:           {Type: field.TypeUUID, Column: commission.FieldUserID},
+			commission.FieldGoodID:           {Type: field.TypeUUID, Column: commission.FieldGoodID},
+			commission.FieldAmountOrPercent:  {Type: field.TypeOther, Column: commission.FieldAmountOrPercent},
+			commission.FieldStartAt:          {Type: field.TypeUint32, Column: commission.FieldStartAt},
+			commission.FieldEndAt:            {Type: field.TypeUint32, Column: commission.FieldEndAt},
+			commission.FieldSettleType:       {Type: field.TypeString, Column: commission.FieldSettleType},
+			commission.FieldSettleMode:       {Type: field.TypeString, Column: commission.FieldSettleMode},
+			commission.FieldSettleInterval:   {Type: field.TypeString, Column: commission.FieldSettleInterval},
+			commission.FieldSettleAmountType: {Type: field.TypeString, Column: commission.FieldSettleAmountType},
+			commission.FieldThreshold:        {Type: field.TypeOther, Column: commission.FieldThreshold},
+			commission.FieldOrderLimit:       {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -582,9 +582,9 @@ func (f *CommissionFilter) WhereSettleInterval(p entql.StringP) {
 	f.Where(p.Field(commission.FieldSettleInterval))
 }
 
-// WhereSettleAmount applies the entql string predicate on the settle_amount field.
-func (f *CommissionFilter) WhereSettleAmount(p entql.StringP) {
-	f.Where(p.Field(commission.FieldSettleAmount))
+// WhereSettleAmountType applies the entql string predicate on the settle_amount_type field.
+func (f *CommissionFilter) WhereSettleAmountType(p entql.StringP) {
+	f.Where(p.Field(commission.FieldSettleAmountType))
 }
 
 // WhereThreshold applies the entql other predicate on the threshold field.

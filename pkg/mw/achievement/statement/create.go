@@ -32,6 +32,7 @@ func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *st
 	return nil
 }
 
+//nolint:funlen
 func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req, commissionOnly bool) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v:%v:%v",
@@ -138,7 +139,6 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 	).Save(ctx); err != nil {
 		return err
 	}
-
 	return nil
 }
 

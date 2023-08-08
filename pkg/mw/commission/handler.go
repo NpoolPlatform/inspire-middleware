@@ -15,23 +15,23 @@ import (
 )
 
 type Handler struct {
-	ID              *uuid.UUID
-	AppID           *uuid.UUID
-	UserID          *uuid.UUID
-	GoodID          *uuid.UUID
-	FromGoodID      *uuid.UUID
-	ToGoodID        *uuid.UUID
-	SettleType      *types.SettleType
-	SettleMode      *types.SettleMode
-	SettleAmount    *types.SettleAmount
-	SettleInterval  *types.SettleInterval
-	AmountOrPercent *decimal.Decimal
-	StartAt         *uint32
-	Threshold       *decimal.Decimal
-	ScalePercent    *decimal.Decimal
-	Conds           *commissioncrud.Conds
-	Offset          int32
-	Limit           int32
+	ID               *uuid.UUID
+	AppID            *uuid.UUID
+	UserID           *uuid.UUID
+	GoodID           *uuid.UUID
+	FromGoodID       *uuid.UUID
+	ToGoodID         *uuid.UUID
+	SettleType       *types.SettleType
+	SettleMode       *types.SettleMode
+	SettleAmountType *types.SettleAmountType
+	SettleInterval   *types.SettleInterval
+	AmountOrPercent  *decimal.Decimal
+	StartAt          *uint32
+	Threshold        *decimal.Decimal
+	ScalePercent     *decimal.Decimal
+	Conds            *commissioncrud.Conds
+	Offset           int32
+	Limit            int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -160,18 +160,18 @@ func WithSettleMode(settleMode *types.SettleMode) func(context.Context, *Handler
 	}
 }
 
-func WithSettleAmount(settleAmount *types.SettleAmount) func(context.Context, *Handler) error {
+func WithSettleAmountType(settleAmount *types.SettleAmountType) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleAmount == nil {
 			return nil
 		}
 		switch *settleAmount {
-		case types.SettleAmount_SettleByPercent:
-		case types.SettleAmount_SettleByAmount:
+		case types.SettleAmountType_SettleByPercent:
+		case types.SettleAmountType_SettleByAmount:
 		default:
 			return fmt.Errorf("invalid settleamount")
 		}
-		h.SettleAmount = settleAmount
+		h.SettleAmountType = settleAmount
 		return nil
 	}
 }

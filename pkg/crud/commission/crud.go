@@ -14,19 +14,19 @@ import (
 )
 
 type Req struct {
-	ID              *uuid.UUID
-	AppID           *uuid.UUID
-	UserID          *uuid.UUID
-	GoodID          *uuid.UUID
-	AmountOrPercent *decimal.Decimal
-	EndAt           *uint32
-	StartAt         *uint32
-	SettleType      *types.SettleType
-	SettleMode      *types.SettleMode
-	SettleAmount    *types.SettleAmount
-	SettleInterval  *types.SettleInterval
-	Threshold       *decimal.Decimal
-	DeletedAt       *uint32
+	ID               *uuid.UUID
+	AppID            *uuid.UUID
+	UserID           *uuid.UUID
+	GoodID           *uuid.UUID
+	AmountOrPercent  *decimal.Decimal
+	EndAt            *uint32
+	StartAt          *uint32
+	SettleType       *types.SettleType
+	SettleMode       *types.SettleMode
+	SettleAmountType *types.SettleAmountType
+	SettleInterval   *types.SettleInterval
+	Threshold        *decimal.Decimal
+	DeletedAt        *uint32
 }
 
 func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
@@ -52,8 +52,8 @@ func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
 	if req.SettleType != nil {
 		c.SetSettleType(req.SettleType.String())
 	}
-	if req.SettleAmount != nil {
-		c.SetSettleAmount(req.SettleAmount.String())
+	if req.SettleAmountType != nil {
+		c.SetSettleAmountType(req.SettleAmountType.String())
 	}
 	if req.SettleMode != nil {
 		c.SetSettleMode(req.SettleMode.String())

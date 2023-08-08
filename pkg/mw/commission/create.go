@@ -63,17 +63,17 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 		if _, err := commissioncrud.CreateSet(
 			tx.Commission.Create(),
 			&commissioncrud.Req{
-				ID:              h.ID,
-				AppID:           h.AppID,
-				UserID:          h.UserID,
-				GoodID:          h.GoodID,
-				SettleType:      h.SettleType,
-				SettleMode:      h.SettleMode,
-				SettleAmount:    h.SettleAmount,
-				SettleInterval:  h.SettleInterval,
-				AmountOrPercent: h.AmountOrPercent,
-				StartAt:         h.StartAt,
-				Threshold:       h.Threshold,
+				ID:               h.ID,
+				AppID:            h.AppID,
+				UserID:           h.UserID,
+				GoodID:           h.GoodID,
+				SettleType:       h.SettleType,
+				SettleMode:       h.SettleMode,
+				SettleAmountType: h.SettleAmountType,
+				SettleInterval:   h.SettleInterval,
+				AmountOrPercent:  h.AmountOrPercent,
+				StartAt:          h.StartAt,
+				Threshold:        h.Threshold,
 			},
 		).Save(_ctx); err != nil {
 			return err

@@ -72,9 +72,9 @@ func (Commission) Fields() []ent.Field {
 			Optional().
 			Default(types.SettleInterval_DefaultSettleInterval.String()),
 		field.
-			String("settle_amount").
+			String("settle_amount_type").
 			Optional().
-			Default(types.SettleAmount_SettleByPercent.String()),
+			Default(types.SettleAmountType_SettleByPercent.String()),
 		field.
 			Other("threshold", decimal.Decimal{}).
 			SchemaType(map[string]string{

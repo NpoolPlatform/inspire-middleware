@@ -1317,34 +1317,34 @@ func (m *AchievementMutation) ResetEdge(name string) error {
 // CommissionMutation represents an operation that mutates the Commission nodes in the graph.
 type CommissionMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *uuid.UUID
-	created_at        *uint32
-	addcreated_at     *int32
-	updated_at        *uint32
-	addupdated_at     *int32
-	deleted_at        *uint32
-	adddeleted_at     *int32
-	app_id            *uuid.UUID
-	user_id           *uuid.UUID
-	good_id           *uuid.UUID
-	amount_or_percent *decimal.Decimal
-	start_at          *uint32
-	addstart_at       *int32
-	end_at            *uint32
-	addend_at         *int32
-	settle_type       *string
-	settle_mode       *string
-	settle_interval   *string
-	settle_amount     *string
-	threshold         *decimal.Decimal
-	order_limit       *uint32
-	addorder_limit    *int32
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*Commission, error)
-	predicates        []predicate.Commission
+	op                 Op
+	typ                string
+	id                 *uuid.UUID
+	created_at         *uint32
+	addcreated_at      *int32
+	updated_at         *uint32
+	addupdated_at      *int32
+	deleted_at         *uint32
+	adddeleted_at      *int32
+	app_id             *uuid.UUID
+	user_id            *uuid.UUID
+	good_id            *uuid.UUID
+	amount_or_percent  *decimal.Decimal
+	start_at           *uint32
+	addstart_at        *int32
+	end_at             *uint32
+	addend_at          *int32
+	settle_type        *string
+	settle_mode        *string
+	settle_interval    *string
+	settle_amount_type *string
+	threshold          *decimal.Decimal
+	order_limit        *uint32
+	addorder_limit     *int32
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*Commission, error)
+	predicates         []predicate.Commission
 }
 
 var _ ent.Mutation = (*CommissionMutation)(nil)
@@ -2102,53 +2102,53 @@ func (m *CommissionMutation) ResetSettleInterval() {
 	delete(m.clearedFields, commission.FieldSettleInterval)
 }
 
-// SetSettleAmount sets the "settle_amount" field.
-func (m *CommissionMutation) SetSettleAmount(s string) {
-	m.settle_amount = &s
+// SetSettleAmountType sets the "settle_amount_type" field.
+func (m *CommissionMutation) SetSettleAmountType(s string) {
+	m.settle_amount_type = &s
 }
 
-// SettleAmount returns the value of the "settle_amount" field in the mutation.
-func (m *CommissionMutation) SettleAmount() (r string, exists bool) {
-	v := m.settle_amount
+// SettleAmountType returns the value of the "settle_amount_type" field in the mutation.
+func (m *CommissionMutation) SettleAmountType() (r string, exists bool) {
+	v := m.settle_amount_type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSettleAmount returns the old "settle_amount" field's value of the Commission entity.
+// OldSettleAmountType returns the old "settle_amount_type" field's value of the Commission entity.
 // If the Commission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CommissionMutation) OldSettleAmount(ctx context.Context) (v string, err error) {
+func (m *CommissionMutation) OldSettleAmountType(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSettleAmount is only allowed on UpdateOne operations")
+		return v, errors.New("OldSettleAmountType is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSettleAmount requires an ID field in the mutation")
+		return v, errors.New("OldSettleAmountType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSettleAmount: %w", err)
+		return v, fmt.Errorf("querying old value for OldSettleAmountType: %w", err)
 	}
-	return oldValue.SettleAmount, nil
+	return oldValue.SettleAmountType, nil
 }
 
-// ClearSettleAmount clears the value of the "settle_amount" field.
-func (m *CommissionMutation) ClearSettleAmount() {
-	m.settle_amount = nil
-	m.clearedFields[commission.FieldSettleAmount] = struct{}{}
+// ClearSettleAmountType clears the value of the "settle_amount_type" field.
+func (m *CommissionMutation) ClearSettleAmountType() {
+	m.settle_amount_type = nil
+	m.clearedFields[commission.FieldSettleAmountType] = struct{}{}
 }
 
-// SettleAmountCleared returns if the "settle_amount" field was cleared in this mutation.
-func (m *CommissionMutation) SettleAmountCleared() bool {
-	_, ok := m.clearedFields[commission.FieldSettleAmount]
+// SettleAmountTypeCleared returns if the "settle_amount_type" field was cleared in this mutation.
+func (m *CommissionMutation) SettleAmountTypeCleared() bool {
+	_, ok := m.clearedFields[commission.FieldSettleAmountType]
 	return ok
 }
 
-// ResetSettleAmount resets all changes to the "settle_amount" field.
-func (m *CommissionMutation) ResetSettleAmount() {
-	m.settle_amount = nil
-	delete(m.clearedFields, commission.FieldSettleAmount)
+// ResetSettleAmountType resets all changes to the "settle_amount_type" field.
+func (m *CommissionMutation) ResetSettleAmountType() {
+	m.settle_amount_type = nil
+	delete(m.clearedFields, commission.FieldSettleAmountType)
 }
 
 // SetThreshold sets the "threshold" field.
@@ -2326,8 +2326,8 @@ func (m *CommissionMutation) Fields() []string {
 	if m.settle_interval != nil {
 		fields = append(fields, commission.FieldSettleInterval)
 	}
-	if m.settle_amount != nil {
-		fields = append(fields, commission.FieldSettleAmount)
+	if m.settle_amount_type != nil {
+		fields = append(fields, commission.FieldSettleAmountType)
 	}
 	if m.threshold != nil {
 		fields = append(fields, commission.FieldThreshold)
@@ -2367,8 +2367,8 @@ func (m *CommissionMutation) Field(name string) (ent.Value, bool) {
 		return m.SettleMode()
 	case commission.FieldSettleInterval:
 		return m.SettleInterval()
-	case commission.FieldSettleAmount:
-		return m.SettleAmount()
+	case commission.FieldSettleAmountType:
+		return m.SettleAmountType()
 	case commission.FieldThreshold:
 		return m.Threshold()
 	case commission.FieldOrderLimit:
@@ -2406,8 +2406,8 @@ func (m *CommissionMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldSettleMode(ctx)
 	case commission.FieldSettleInterval:
 		return m.OldSettleInterval(ctx)
-	case commission.FieldSettleAmount:
-		return m.OldSettleAmount(ctx)
+	case commission.FieldSettleAmountType:
+		return m.OldSettleAmountType(ctx)
 	case commission.FieldThreshold:
 		return m.OldThreshold(ctx)
 	case commission.FieldOrderLimit:
@@ -2505,12 +2505,12 @@ func (m *CommissionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSettleInterval(v)
 		return nil
-	case commission.FieldSettleAmount:
+	case commission.FieldSettleAmountType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSettleAmount(v)
+		m.SetSettleAmountType(v)
 		return nil
 	case commission.FieldThreshold:
 		v, ok := value.(decimal.Decimal)
@@ -2658,8 +2658,8 @@ func (m *CommissionMutation) ClearedFields() []string {
 	if m.FieldCleared(commission.FieldSettleInterval) {
 		fields = append(fields, commission.FieldSettleInterval)
 	}
-	if m.FieldCleared(commission.FieldSettleAmount) {
-		fields = append(fields, commission.FieldSettleAmount)
+	if m.FieldCleared(commission.FieldSettleAmountType) {
+		fields = append(fields, commission.FieldSettleAmountType)
 	}
 	if m.FieldCleared(commission.FieldThreshold) {
 		fields = append(fields, commission.FieldThreshold)
@@ -2708,8 +2708,8 @@ func (m *CommissionMutation) ClearField(name string) error {
 	case commission.FieldSettleInterval:
 		m.ClearSettleInterval()
 		return nil
-	case commission.FieldSettleAmount:
-		m.ClearSettleAmount()
+	case commission.FieldSettleAmountType:
+		m.ClearSettleAmountType()
 		return nil
 	case commission.FieldThreshold:
 		m.ClearThreshold()
@@ -2761,8 +2761,8 @@ func (m *CommissionMutation) ResetField(name string) error {
 	case commission.FieldSettleInterval:
 		m.ResetSettleInterval()
 		return nil
-	case commission.FieldSettleAmount:
-		m.ResetSettleAmount()
+	case commission.FieldSettleAmountType:
+		m.ResetSettleAmountType()
 		return nil
 	case commission.FieldThreshold:
 		m.ResetThreshold()
