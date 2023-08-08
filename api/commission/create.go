@@ -29,6 +29,7 @@ func (s *Server) CreateCommission(ctx context.Context, in *npool.CreateCommissio
 		commission1.WithGoodID(req.GoodID),
 		commission1.WithSettleType(req.SettleType),
 		commission1.WithSettleMode(req.SettleMode),
+		commission1.WithSettleAmount(req.SettleAmount),
 		commission1.WithSettleInterval(req.SettleInterval),
 		commission1.WithAmountOrPercent(req.AmountOrPercent),
 		commission1.WithStartAt(req.StartAt),

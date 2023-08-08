@@ -98,8 +98,9 @@ var comm1 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg1.InviterID,
 	GoodID:          uuid.NewString(),
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent1,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -110,6 +111,7 @@ var _comm1 = commmwpb.CommissionReq{
 	GoodID:          &comm1.GoodID,
 	SettleType:      &comm1.SettleType,
 	SettleMode:      &comm1.SettleMode,
+	SettleAmount:    &comm1.SettleAmount,
 	AmountOrPercent: &comm1.AmountOrPercent,
 	StartAt:         &comm1.StartAt,
 }
@@ -119,8 +121,9 @@ var comm2 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg2.InviterID,
 	GoodID:          comm1.GoodID,
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent2,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -130,7 +133,8 @@ var _comm2 = commmwpb.CommissionReq{
 	UserID:          &comm2.UserID,
 	GoodID:          &comm2.GoodID,
 	SettleType:      &comm2.SettleType,
-	SettleMode:      &comm1.SettleMode,
+	SettleMode:      &comm2.SettleMode,
+	SettleAmount:    &comm2.SettleAmount,
 	AmountOrPercent: &comm2.AmountOrPercent,
 	StartAt:         &comm2.StartAt,
 }
@@ -140,8 +144,9 @@ var comm3 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg3.InviterID,
 	GoodID:          comm1.GoodID,
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent3,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -151,7 +156,8 @@ var _comm3 = commmwpb.CommissionReq{
 	UserID:          &comm3.UserID,
 	GoodID:          &comm3.GoodID,
 	SettleType:      &comm3.SettleType,
-	SettleMode:      &comm1.SettleMode,
+	SettleMode:      &comm2.SettleMode,
+	SettleAmount:    &comm3.SettleAmount,
 	AmountOrPercent: &comm3.AmountOrPercent,
 	StartAt:         &comm3.StartAt,
 }
@@ -161,8 +167,9 @@ var comm4 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg4.InviterID,
 	GoodID:          comm1.GoodID,
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent4,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -173,6 +180,7 @@ var _comm4 = commmwpb.CommissionReq{
 	GoodID:          &comm4.GoodID,
 	SettleType:      &comm4.SettleType,
 	SettleMode:      &comm1.SettleMode,
+	SettleAmount:    &comm4.SettleAmount,
 	AmountOrPercent: &comm4.AmountOrPercent,
 	StartAt:         &comm4.StartAt,
 }
@@ -182,8 +190,9 @@ var comm5 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg5.InviterID,
 	GoodID:          comm1.GoodID,
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent5,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -193,7 +202,8 @@ var _comm5 = commmwpb.CommissionReq{
 	UserID:          &comm5.UserID,
 	GoodID:          &comm5.GoodID,
 	SettleType:      &comm5.SettleType,
-	SettleMode:      &comm1.SettleMode,
+	SettleMode:      &comm5.SettleMode,
+	SettleAmount:    &comm5.SettleAmount,
 	AmountOrPercent: &comm5.AmountOrPercent,
 	StartAt:         &comm5.StartAt,
 }
@@ -203,8 +213,9 @@ var comm6 = commmwpb.Commission{
 	AppID:           reg1.AppID,
 	UserID:          reg5.InviteeID,
 	GoodID:          comm1.GoodID,
-	SettleType:      types.SettleType_GoodOrderPercent,
+	SettleType:      types.SettleType_GoodOrderPayment,
 	SettleMode:      types.SettleMode_SettleWithPaymentAmount,
+	SettleAmount:    types.SettleAmount_SettleByPercent,
 	AmountOrPercent: percent6,
 	StartAt:         uint32(time.Now().Unix()),
 }
@@ -214,7 +225,8 @@ var _comm6 = commmwpb.CommissionReq{
 	UserID:          &comm6.UserID,
 	GoodID:          &comm6.GoodID,
 	SettleType:      &comm6.SettleType,
-	SettleMode:      &comm1.SettleMode,
+	SettleMode:      &comm6.SettleMode,
+	SettleAmount:    &comm6.SettleAmount,
 	AmountOrPercent: &comm6.AmountOrPercent,
 	StartAt:         &comm6.StartAt,
 }
@@ -342,6 +354,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm1.GoodID),
 		commission1.WithSettleType(_comm1.SettleType),
 		commission1.WithSettleMode(_comm1.SettleMode),
+		commission1.WithSettleAmount(_comm1.SettleAmount),
 		commission1.WithAmountOrPercent(_comm1.AmountOrPercent),
 		commission1.WithStartAt(_comm1.StartAt),
 	)
@@ -358,6 +371,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm2.GoodID),
 		commission1.WithSettleType(_comm2.SettleType),
 		commission1.WithSettleMode(_comm2.SettleMode),
+		commission1.WithSettleAmount(_comm2.SettleAmount),
 		commission1.WithAmountOrPercent(_comm2.AmountOrPercent),
 		commission1.WithStartAt(_comm2.StartAt),
 	)
@@ -374,6 +388,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm3.GoodID),
 		commission1.WithSettleType(_comm3.SettleType),
 		commission1.WithSettleMode(_comm3.SettleMode),
+		commission1.WithSettleAmount(_comm3.SettleAmount),
 		commission1.WithAmountOrPercent(_comm3.AmountOrPercent),
 		commission1.WithStartAt(_comm3.StartAt),
 	)
@@ -390,6 +405,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm4.GoodID),
 		commission1.WithSettleType(_comm4.SettleType),
 		commission1.WithSettleMode(_comm4.SettleMode),
+		commission1.WithSettleAmount(_comm4.SettleAmount),
 		commission1.WithAmountOrPercent(_comm4.AmountOrPercent),
 		commission1.WithStartAt(_comm4.StartAt),
 	)
@@ -406,6 +422,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm5.GoodID),
 		commission1.WithSettleType(_comm5.SettleType),
 		commission1.WithSettleMode(_comm5.SettleMode),
+		commission1.WithSettleAmount(_comm5.SettleAmount),
 		commission1.WithAmountOrPercent(_comm5.AmountOrPercent),
 		commission1.WithStartAt(_comm5.StartAt),
 	)
@@ -422,6 +439,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		commission1.WithGoodID(_comm6.GoodID),
 		commission1.WithSettleType(_comm6.SettleType),
 		commission1.WithSettleMode(_comm6.SettleMode),
+		commission1.WithSettleAmount(_comm6.SettleAmount),
 		commission1.WithAmountOrPercent(_comm6.AmountOrPercent),
 		commission1.WithStartAt(_comm6.StartAt),
 	)
@@ -461,7 +479,8 @@ func calculate(t *testing.T) {
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	goodValue := decimal.NewFromInt(3000).String()
-	settleType := types.SettleType_GoodOrderPercent
+	settleType := types.SettleType_GoodOrderPayment
+	settleAmount := types.SettleAmount_SettleByPercent
 	hasCommission := true
 	orderCreatedAt := uint32(time.Now().Unix())
 
@@ -481,6 +500,7 @@ func calculate(t *testing.T) {
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
+		WithSettleAmount(settleAmount),
 	)
 	assert.Nil(t, err)
 
@@ -499,57 +519,55 @@ func calculate(t *testing.T) {
 		}
 		assert.Equal(t, found, true)
 
-		/*
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm2.UserID {
-					assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm2.UserID {
+				assert.Equal(t, comm.Commission, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm3.UserID {
-					assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm3.UserID {
+				assert.Equal(t, comm.Commission, _paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm4.UserID {
-					assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm4.UserID {
+				assert.Equal(t, comm.Commission, _paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm5.UserID {
-					assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm5.UserID {
+				assert.Equal(t, comm.Commission, _paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
+		}
+		assert.Equal(t, found, true)
 
-			found = false
-			for _, comm := range comms {
-				if comm.UserID == comm6.UserID {
-					assert.Equal(t, comm.Amount, _paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
-					found = true
-					break
-				}
+		found = false
+		for _, comm := range comms {
+			if comm.UserID == comm6.UserID {
+				assert.Equal(t, comm.Commission, _paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
+				found = true
+				break
 			}
-			assert.Equal(t, found, true)
-		*/
+		}
+		assert.Equal(t, found, true)
 	}
 }
 

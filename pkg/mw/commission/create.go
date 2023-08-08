@@ -23,11 +23,14 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 	if h.UserID == nil {
 		return nil, fmt.Errorf("invalid userid")
 	}
-
-	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID)
-	if h.GoodID != nil {
-		key = fmt.Sprintf("%v:%v", key, *h.GoodID)
+	if h.SettleType == nil {
+		return nil, fmt.Errorf("invalid settletype")
 	}
+	if h.GoodID == nil {
+		return nil, fmt.Errorf("invalid goodid")
+	}
+
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID, *h.GoodID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}
@@ -41,22 +44,17 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		stm := tx.
+		if _, err := tx.
 			Commission.
 			Update().
 			Where(
 				entcommission.AppID(*h.AppID),
 				entcommission.UserID(*h.UserID),
+				entcommission.GoodID(*h.GoodID),
+				entcommission.SettleType(h.SettleType.String()),
 				entcommission.EndAt(0),
 				entcommission.DeletedAt(0),
-			)
-		if h.GoodID != nil {
-			stm.Where(
-				entcommission.GoodID(*h.GoodID),
-			)
-		}
-
-		if _, err := stm.
+			).
 			SetEndAt(uint32(time.Now().Unix())).
 			Save(_ctx); err != nil {
 			return err
@@ -71,6 +69,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 				GoodID:          h.GoodID,
 				SettleType:      h.SettleType,
 				SettleMode:      h.SettleMode,
+				SettleAmount:    h.SettleAmount,
 				SettleInterval:  h.SettleInterval,
 				AmountOrPercent: h.AmountOrPercent,
 				StartAt:         h.StartAt,

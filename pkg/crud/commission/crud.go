@@ -23,6 +23,7 @@ type Req struct {
 	StartAt         *uint32
 	SettleType      *types.SettleType
 	SettleMode      *types.SettleMode
+	SettleAmount    *types.SettleAmount
 	SettleInterval  *types.SettleInterval
 	Threshold       *decimal.Decimal
 	DeletedAt       *uint32
@@ -50,6 +51,9 @@ func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
 	c.SetEndAt(0)
 	if req.SettleType != nil {
 		c.SetSettleType(req.SettleType.String())
+	}
+	if req.SettleAmount != nil {
+		c.SetSettleAmount(req.SettleAmount.String())
 	}
 	if req.SettleMode != nil {
 		c.SetSettleMode(req.SettleMode.String())
@@ -140,6 +144,18 @@ func SetQueryConds(q *ent.CommissionQuery, conds *Conds) (*ent.CommissionQuery, 
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entcommission.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.SettleType != nil {
+		settleType, ok := conds.SettleType.Val.(types.SettleType)
+		if !ok {
+			return nil, fmt.Errorf("invalid settletype")
+		}
+		switch conds.SettleType.Op {
+		case cruder.EQ:
+			q.Where(entcommission.SettleType(settleType.String()))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}

@@ -79,6 +79,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 					entcommission.AppID(*h.AppID),
 					entcommission.UserID(info.UserID),
 					entcommission.GoodID(*h.ToGoodID),
+					entcommission.SettleType(info.SettleType),
 					entcommission.EndAt(0),
 					entcommission.DeletedAt(0),
 				).
@@ -95,6 +96,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 					SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
 					SetSettleType(info.SettleType).
 					SetSettleMode(info.SettleMode).
+					SetSettleAmount(info.SettleAmount).
 					SetSettleInterval(info.SettleInterval).
 					SetThreshold(info.Threshold).
 					Save(_ctx); err != nil {
@@ -111,6 +113,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 				SetGoodID(*h.ToGoodID).
 				SetSettleType(info.SettleType).
 				SetSettleMode(info.SettleMode).
+				SetSettleAmount(info.SettleAmount).
 				SetSettleInterval(info.SettleInterval).
 				SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
 				SetStartAt(now).
