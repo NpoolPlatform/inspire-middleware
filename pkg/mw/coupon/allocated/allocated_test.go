@@ -45,6 +45,7 @@ var (
 		CouponName:       uuid.NewString(),
 		Message:          uuid.NewString(),
 		CouponConstraint: types.CouponConstraint_Normal,
+		Valid:            true,
 	}
 )
 
