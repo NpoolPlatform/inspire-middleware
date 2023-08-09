@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
@@ -123,8 +125,13 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 		return nil, err
 	}
 
+	// We don't care about result of allocate coupon
 	if err := h.allocateCoupons(ctx, ev); err != nil {
-		return nil, err
+		logger.Sugar().Warnw(
+			"rewardSelf",
+			"Event", ev,
+			"Error", err,
+		)
 	}
 
 	_credits := []*npool.Credit{}
