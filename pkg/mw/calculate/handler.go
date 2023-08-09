@@ -163,7 +163,7 @@ func WithSettleType(settleType types.SettleType) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		switch settleType {
 		case types.SettleType_GoodOrderPayment:
-		case types.SettleType_TechniqueFeePercent:
+		case types.SettleType_TechniqueServiceFee:
 		default:
 			return fmt.Errorf("invalid settletype")
 		}
