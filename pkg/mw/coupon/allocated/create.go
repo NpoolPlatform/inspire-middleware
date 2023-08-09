@@ -53,9 +53,9 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if coup.StartAt+coup.DurationDays*timedef.SecondsPerDay < now {
 			return fmt.Errorf("coupon expired")
 		}
-		startAt := coup.StartAt
-		if startAt < now {
-			startAt = now
+		startAt := now
+		if startAt < coup.StartAt {
+			startAt = coup.StartAt
 		}
 
 		allocated := coup.Allocated

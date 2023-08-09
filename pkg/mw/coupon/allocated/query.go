@@ -3,9 +3,11 @@ package allocated
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -129,6 +131,9 @@ func (h *queryHandler) scan(ctx context.Context) error {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
+		endAt := info.StartAt + info.DurationDays*timedef.SecondsPerDay
+		info.Expired = uint32(time.Now().Unix()) > endAt
+		info.Valid = uint32(time.Now().Unix()) >= info.StartAt && uint32(time.Now().Unix()) <= endAt
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
 		if info.CouponName == "" {

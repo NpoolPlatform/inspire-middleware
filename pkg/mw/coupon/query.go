@@ -55,6 +55,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
+
 		if *info.UserID == uuid.Nil.String() {
 			info.UserID = nil
 		}
