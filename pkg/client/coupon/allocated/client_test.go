@@ -83,6 +83,7 @@ var ret1 = &npool.Coupon{
 	Message:             ret.Message,
 	CouponConstraint:    types.CouponConstraint_Normal,
 	CouponConstraintStr: types.CouponConstraint_Normal.String(),
+	Valid:               true,
 }
 
 var req1 = &npool.CouponReq{
