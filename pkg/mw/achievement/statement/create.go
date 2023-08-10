@@ -69,20 +69,21 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		}
 	}
 
+	commission := req.Commission.Mul(*req.PaymentCoinUSDCurrency)
 	_req := &achievementcrud.Req{
 		AppID:           req.AppID,
 		UserID:          req.UserID,
 		GoodID:          req.GoodID,
 		CoinTypeID:      req.CoinTypeID,
-		TotalCommission: req.Commission,
+		TotalCommission: &commission,
 	}
 	if !commissionOnly {
-		_req.TotalAmount = req.Amount
+		_req.TotalAmount = req.USDAmount
 		_req.TotalUnits = req.Units
 	}
 	if req.SelfOrder != nil && *req.SelfOrder {
 		if !commissionOnly {
-			_req.SelfAmount = req.Amount
+			_req.SelfAmount = req.USDAmount
 			_req.SelfUnits = req.Units
 		}
 		_req.SelfCommission = req.Commission
