@@ -62,7 +62,7 @@ func (Commission) Fields() []ent.Field {
 		field.
 			String("settle_type").
 			Optional().
-			Default(types.SettleType_NoCommission.String()),
+			Default(types.SettleType_DefaultSettleType.String()),
 		field.
 			String("settle_mode").
 			Optional().
