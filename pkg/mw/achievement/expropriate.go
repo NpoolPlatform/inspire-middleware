@@ -99,7 +99,7 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 		if !ok {
 			continue
 		}
-		orderAmount, err := decimal.NewFromString(statement.Amount)
+		orderAmount, err := decimal.NewFromString(statement.USDAmount)
 		if err != nil {
 			return err
 		}
@@ -110,10 +110,15 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 		if orderAmount.Cmp(totalAmount) > 0 {
 			return fmt.Errorf("invalid amount")
 		}
+		currency, err := decimal.NewFromString(statement.PaymentCoinUSDCurrency)
+		if err != nil {
+			return err
+		}
 		orderCommission, err := decimal.NewFromString(statement.Commission)
 		if err != nil {
 			return err
 		}
+		orderCommission = orderCommission.Mul(currency)
 		totalCommission, err := decimal.NewFromString(achievement.TotalCommission)
 		if err != nil {
 			return err

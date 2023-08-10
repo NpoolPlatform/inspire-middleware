@@ -53,12 +53,12 @@ var ret1 = &npool.Achievement{
 	UserID:          ret.UserID,
 	GoodID:          ret.GoodID,
 	CoinTypeID:      ret.CoinTypeID,
-	TotalAmount:     ret.Amount,
-	SelfAmount:      ret.Amount,
+	TotalAmount:     ret.USDAmount,
+	SelfAmount:      ret.USDAmount,
 	TotalUnits:      ret.Units,
 	SelfUnits:       ret.Units,
-	TotalCommission: ret.Commission,
-	SelfCommission:  ret.Commission,
+	TotalCommission: "3030.3",
+	SelfCommission:  "3030.3",
 }
 
 func setup(t *testing.T) func(*testing.T) {

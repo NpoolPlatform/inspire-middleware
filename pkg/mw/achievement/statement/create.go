@@ -86,7 +86,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 			_req.SelfAmount = req.USDAmount
 			_req.SelfUnits = req.Units
 		}
-		_req.SelfCommission = req.Commission
+		_req.SelfCommission = &commission
 	}
 
 	if info == nil {
