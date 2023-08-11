@@ -3,7 +3,7 @@ package statement
 import (
 	"context"
 	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
@@ -241,6 +241,7 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", err
 	}
 	if req.Amount.Cmp(amount) != 0 {
+		logger.Sugar().Infow("xxxxxxx", "xxxxxx", req.Amount)
 		return "", fmt.Errorf("mismatch statement")
 	}
 
