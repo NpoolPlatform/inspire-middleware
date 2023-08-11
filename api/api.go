@@ -5,12 +5,12 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1"
 
-	"github.com/NpoolPlatform/inspire-middleware/api/accounting"
-	"github.com/NpoolPlatform/inspire-middleware/api/archivement"
-	"github.com/NpoolPlatform/inspire-middleware/api/archivement/detail"
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement/statement"
+	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
+	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
-	"github.com/NpoolPlatform/inspire-middleware/api/coupon/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
@@ -30,10 +30,10 @@ func Register(server grpc.ServiceRegistrar) {
 	coupon.Register(server)
 	allocated.Register(server)
 	commission.Register(server)
-	archivement.Register(server)
-	accounting.Register(server)
+	achievement.Register(server)
+	calculate.Register(server)
 	event.Register(server)
-	detail.Register(server)
+	statement.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

@@ -9,10 +9,10 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/invitation/invitationcode"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	commonpb "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"bou.ke/monkey"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -34,13 +34,13 @@ func init() {
 	}
 }
 
-var ret = &mgrpb.InvitationCode{
+var ret = &npool.InvitationCode{
 	ID:     uuid.NewString(),
 	AppID:  uuid.NewString(),
 	UserID: uuid.NewString(),
 }
 
-var req = &mgrpb.InvitationCodeReq{
+var req = &npool.InvitationCodeReq{
 	ID:     &ret.ID,
 	AppID:  &ret.AppID,
 	UserID: &ret.UserID,
@@ -70,19 +70,10 @@ func update(t *testing.T) {
 }
 
 func getOnly(t *testing.T) {
-	info, err := GetInvitationCodeOnly(context.Background(), &mgrpb.Conds{
-		AppID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.AppID,
-		},
-		UserID: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.UserID,
-		},
-		InvitationCode: &commonpb.StringVal{
-			Op:    cruder.EQ,
-			Value: ret.InvitationCode,
-		},
+	info, err := GetInvitationCodeOnly(context.Background(), &npool.Conds{
+		AppID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		UserID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
+		InvitationCode: &basetypes.StringVal{Op: cruder.EQ, Value: ret.InvitationCode},
 	})
 	if assert.Nil(t, err) {
 		assert.Equal(t, ret, info)
@@ -97,6 +88,9 @@ func TestInvitationCode(t *testing.T) {
 	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
 
 	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
+		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	})
+	monkey.Patch(grpc2.GetGRPCConnV1, func(service string, recvMsgBytes int, tags ...string) (*grpc.ClientConn, error) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 

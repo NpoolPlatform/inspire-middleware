@@ -2,12 +2,12 @@ package allocated
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	mgrpb "github.com/NpoolPlatform/message/npool/inspire/mgr/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -17,7 +17,7 @@ var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func do(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
@@ -34,7 +34,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.CreateCoupon(ctx, &npool.CreateCouponRequest{
 			Info: in,
 		})
@@ -50,7 +50,7 @@ func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 }
 
 func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.UpdateCoupon(ctx, &npool.UpdateCouponRequest{
 			Info: in,
 		})
@@ -66,7 +66,7 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 }
 
 func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
 			ID: id,
 		})
@@ -81,26 +81,9 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	return info.(*npool.Coupon), nil
 }
 
-func GetManyCoupons(ctx context.Context, ids []string) ([]*npool.Coupon, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetManyCoupons(ctx, &npool.GetManyCouponsRequest{
-			IDs: ids,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Coupon), nil
-}
-
-func GetCoupons(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
+func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
 	var total uint32
-
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupons(ctx, &npool.GetCouponsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -120,18 +103,24 @@ func GetCoupons(ctx context.Context, conds *mgrpb.Conds, offset, limit int32) ([
 	return infos.([]*npool.Coupon), total, nil
 }
 
-func GetCouponOnly(ctx context.Context, conds *mgrpb.Conds) (*npool.Coupon, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.GetCouponOnly(ctx, &npool.GetCouponOnlyRequest{
+func GetCouponOnly(ctx context.Context, conds *npool.Conds) (*npool.Coupon, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetCoupons(ctx, &npool.GetCouponsRequest{
 			Conds: conds,
 		})
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Coupon), nil
+	if len(infos.([]*npool.Coupon)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.Coupon)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.Coupon)[0], nil
 }

@@ -4,33 +4,38 @@ package registration
 import (
 	"context"
 
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
-	reg1 "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/registration"
+	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) GetSubordinates(
-	ctx context.Context,
-	in *npool.GetSubordinatesRequest,
-) (
-	*npool.GetSubordinatesResponse,
-	error,
-) {
-	if err := ValidateConds(in.GetConds()); err != nil {
+func (s *Server) GetSubordinates(ctx context.Context, in *npool.GetSubordinatesRequest) (*npool.GetSubordinatesResponse, error) {
+	handler, err := registration1.NewHandler(
+		ctx,
+		registration1.WithConds(in.GetConds()),
+		registration1.WithOffset(in.GetOffset()),
+		registration1.WithLimit(in.GetLimit()),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"GetSubordinates",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetSubordinatesResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	limit := constant.DefaultRowLimit
-	if in.GetLimit() > 0 {
-		limit = in.GetLimit()
-	}
-
-	infos, total, err := reg1.GetSubordinates(ctx, in.GetConds(), in.GetOffset(), limit)
+	infos, total, err := handler.GetSubordinates(ctx)
 	if err != nil {
+		logger.Sugar().Errorw(
+			"GetSubordinates",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.GetSubordinatesResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

@@ -3,30 +3,45 @@ package invitationcode
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
+	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
-
-	ivcode "github.com/NpoolPlatform/inspire-middleware/pkg/invitation/invitationcode"
-
-	"github.com/google/uuid"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) DeleteInvitationCode(
-	ctx context.Context,
-	in *npool.DeleteInvitationCodeRequest,
-) (
-	*npool.DeleteInvitationCodeResponse,
-	error,
-) {
-	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
+func (s *Server) DeleteInvitationCode(ctx context.Context, in *npool.DeleteInvitationCodeRequest) (*npool.DeleteInvitationCodeResponse, error) {
+	req := in.GetInfo()
+	if req == nil {
+		logger.Sugar().Errorw(
+			"DeleteInvitationCode",
+			"In", in,
+		)
+		return &npool.DeleteInvitationCodeResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+	}
+	handler, err := invitationcode1.NewHandler(
+		ctx,
+		invitationcode1.WithID(req.ID),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteInvitationCode",
+			"In", in,
+			"Err", err,
+		)
 		return &npool.DeleteInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := ivcode.DeleteInvitationCode(ctx, in.GetInfo().GetID())
+	info, err := handler.DeleteInvitationCode(ctx)
 	if err != nil {
-		return &npool.DeleteInvitationCodeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw(
+			"DeleteInvitationCode",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.DeleteInvitationCodeResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.DeleteInvitationCodeResponse{

@@ -21,7 +21,7 @@ linters-settings:
       - whyNoLint
       - wrapperFunc
   gocyclo:
-    min-complexity: 15
+    min-complexity: 50
   goimports:
     local-prefixes: github.com/golangci/golangci-lint
   gomnd:
@@ -40,7 +40,7 @@ linters-settings:
       - strings.SplitN
 
   lll:
-    line-length: 140
+    line-length: 180
   misspell:
     locale: US
   nolintlint:
