@@ -10,7 +10,6 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
-	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 	"github.com/google/uuid"
@@ -73,9 +72,6 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, coup)
 
-	ret.StartAt = coup.StartAt
-	ret.EndAt = ret.StartAt + ret.DurationDays*timedef.SecondsPerDay
-
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
 	}
@@ -95,6 +91,8 @@ func creatCoupon(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		ret.StartAt = info.StartAt
+		ret.EndAt = info.EndAt
 		assert.Equal(t, info, &ret)
 	}
 }
