@@ -22,6 +22,7 @@ type Handler struct {
 	Units                  decimal.Decimal
 	PaymentAmount          decimal.Decimal
 	GoodValue              decimal.Decimal
+	GoodValueUSD           decimal.Decimal
 	SettleType             types.SettleType
 	SettleAmountType       types.SettleAmountType
 	HasCommission          bool
@@ -155,6 +156,17 @@ func WithGoodValue(value string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodValue = _amount
+		return nil
+	}
+}
+
+func WithGoodValueUSD(value string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_amount, err := decimal.NewFromString(value)
+		if err != nil {
+			return err
+		}
+		h.GoodValueUSD = _amount
 		return nil
 	}
 }

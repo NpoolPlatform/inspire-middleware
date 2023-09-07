@@ -126,7 +126,7 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 // Process will consume the message and return consuming state
 //  Return
 //   error   reason of error, if nil, means the message should be acked
-func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) {
+func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
 		err = event1.Apply(ctx, req, publisher)

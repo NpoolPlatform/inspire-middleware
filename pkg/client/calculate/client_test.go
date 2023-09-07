@@ -292,6 +292,7 @@ func calculate(t *testing.T) {
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000)
 	goodValue := decimal.NewFromInt(3000)
+	goodValueUSD := decimal.NewFromInt(30000)
 	settleType := types.SettleType_GoodOrderPayment
 
 	comms, err := Calculate(
@@ -309,6 +310,7 @@ func calculate(t *testing.T) {
 			SettleType:             settleType,
 			PaymentAmount:          paymentAmount.String(),
 			GoodValue:              goodValue.String(),
+			GoodValueUSD:           goodValueUSD.String(),
 			HasCommission:          true,
 			OrderCreatedAt:         uint32(time.Now().Unix()),
 		},

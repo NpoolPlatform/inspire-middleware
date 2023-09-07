@@ -103,7 +103,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			PaymentCoinUSDCurrency: h.PaymentCoinUSDCurrency.String(),
 			Units:                  h.Units.String(),
 			Amount:                 h.GoodValue.String(),
-			USDAmount:              h.GoodValue.Mul(h.PaymentCoinUSDCurrency).String(),
+			USDAmount:              h.GoodValueUSD.String(),
 			Commission:             commission,
 		})
 	}
@@ -126,7 +126,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		PaymentCoinUSDCurrency: h.PaymentCoinUSDCurrency.String(),
 		Units:                  h.Units.String(),
 		Amount:                 h.GoodValue.String(),
-		USDAmount:              h.GoodValue.Mul(h.PaymentCoinUSDCurrency).String(),
+		USDAmount:              h.GoodValueUSD.String(),
 		Commission:             commission,
 	})
 
