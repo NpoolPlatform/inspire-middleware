@@ -242,7 +242,6 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", err
 	}
 	if req.Amount.Cmp(amount) != 0 {
-		logger.Sugar().Infow("xxxxxxx", "xxxxxx", req.Amount)
 		return "", fmt.Errorf("mismatch statement")
 	}
 
