@@ -17,6 +17,7 @@ type Req struct {
 	UserID                 *uuid.UUID
 	DirectContributorID    *uuid.UUID
 	GoodID                 *uuid.UUID
+	AppGoodID              *uuid.UUID
 	OrderID                *uuid.UUID
 	SelfOrder              *bool
 	PaymentID              *uuid.UUID
@@ -44,6 +45,9 @@ func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
 	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
@@ -85,6 +89,7 @@ type Conds struct {
 	UserID              *cruder.Cond
 	DirectContributorID *cruder.Cond
 	GoodID              *cruder.Cond
+	AppGoodID           *cruder.Cond
 	OrderID             *cruder.Cond
 	SelfOrder           *cruder.Cond
 	PaymentID           *cruder.Cond
@@ -179,6 +184,18 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entstatement.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodid")
+		}
+		switch conds.AppGoodID.Op {
+		case cruder.EQ:
+			q.Where(entstatement.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}

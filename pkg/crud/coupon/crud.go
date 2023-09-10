@@ -17,6 +17,7 @@ type Req struct {
 	AppID            *uuid.UUID
 	UserID           *uuid.UUID
 	GoodID           *uuid.UUID
+	AppGoodID        *uuid.UUID
 	Denomination     *decimal.Decimal
 	Circulation      *decimal.Decimal
 	IssuedBy         *uuid.UUID
@@ -46,6 +47,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.Denomination != nil {
 		c.SetDenomination(*req.Denomination)
@@ -124,6 +128,7 @@ type Conds struct {
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
 	GoodID     *cruder.Cond
+	AppGoodID  *cruder.Cond
 }
 
 //nolint
@@ -171,7 +176,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, fmt.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
@@ -183,7 +188,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, fmt.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
@@ -195,11 +200,23 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 	if conds.GoodID != nil {
 		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, fmt.Errorf("invalid goodid")
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entcoupon.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid coupon field")
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodid")
+		}
+		switch conds.AppGoodID.Op {
+		case cruder.EQ:
+			q.Where(entcoupon.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid coupon field")
 		}

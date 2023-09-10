@@ -18,6 +18,7 @@ type Req struct {
 	AppID            *uuid.UUID
 	UserID           *uuid.UUID
 	GoodID           *uuid.UUID
+	AppGoodID        *uuid.UUID
 	AmountOrPercent  *decimal.Decimal
 	EndAt            *uint32
 	StartAt          *uint32
@@ -41,6 +42,9 @@ func CreateSet(c *ent.CommissionCreate, req *Req) *ent.CommissionCreate {
 	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.AmountOrPercent != nil {
 		c.SetAmountOrPercent(*req.AmountOrPercent)
@@ -88,6 +92,7 @@ type Conds struct {
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
 	GoodID     *cruder.Cond
+	AppGoodID  *cruder.Cond
 	SettleType *cruder.Cond
 	EndAt      *cruder.Cond
 	UserIDs    *cruder.Cond
@@ -144,6 +149,18 @@ func SetQueryConds(q *ent.CommissionQuery, conds *Conds) (*ent.CommissionQuery, 
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entcommission.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodid")
+		}
+		switch conds.AppGoodID.Op {
+		case cruder.EQ:
+			q.Where(entcommission.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
