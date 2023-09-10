@@ -27,6 +27,8 @@ const (
 	FieldDirectContributorID = "direct_contributor_id"
 	// FieldGoodID holds the string denoting the good_id field in the database.
 	FieldGoodID = "good_id"
+	// FieldAppGoodID holds the string denoting the app_good_id field in the database.
+	FieldAppGoodID = "app_good_id"
 	// FieldOrderID holds the string denoting the order_id field in the database.
 	FieldOrderID = "order_id"
 	// FieldSelfOrder holds the string denoting the self_order field in the database.
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldDirectContributorID,
 	FieldGoodID,
+	FieldAppGoodID,
 	FieldOrderID,
 	FieldSelfOrder,
 	FieldPaymentID,
@@ -111,6 +114,8 @@ var (
 	DefaultDirectContributorID func() uuid.UUID
 	// DefaultGoodID holds the default value on creation for the "good_id" field.
 	DefaultGoodID func() uuid.UUID
+	// DefaultAppGoodID holds the default value on creation for the "app_good_id" field.
+	DefaultAppGoodID func() uuid.UUID
 	// DefaultOrderID holds the default value on creation for the "order_id" field.
 	DefaultOrderID func() uuid.UUID
 	// DefaultSelfOrder holds the default value on creation for the "self_order" field.

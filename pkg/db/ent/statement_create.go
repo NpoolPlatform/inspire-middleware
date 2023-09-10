@@ -122,6 +122,20 @@ func (sc *StatementCreate) SetNillableGoodID(u *uuid.UUID) *StatementCreate {
 	return sc
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (sc *StatementCreate) SetAppGoodID(u uuid.UUID) *StatementCreate {
+	sc.mutation.SetAppGoodID(u)
+	return sc
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (sc *StatementCreate) SetNillableAppGoodID(u *uuid.UUID) *StatementCreate {
+	if u != nil {
+		sc.SetAppGoodID(*u)
+	}
+	return sc
+}
+
 // SetOrderID sets the "order_id" field.
 func (sc *StatementCreate) SetOrderID(u uuid.UUID) *StatementCreate {
 	sc.mutation.SetOrderID(u)
@@ -418,6 +432,13 @@ func (sc *StatementCreate) defaults() error {
 		v := statement.DefaultGoodID()
 		sc.mutation.SetGoodID(v)
 	}
+	if _, ok := sc.mutation.AppGoodID(); !ok {
+		if statement.DefaultAppGoodID == nil {
+			return fmt.Errorf("ent: uninitialized statement.DefaultAppGoodID (forgotten import ent/runtime?)")
+		}
+		v := statement.DefaultAppGoodID()
+		sc.mutation.SetAppGoodID(v)
+	}
 	if _, ok := sc.mutation.OrderID(); !ok {
 		if statement.DefaultOrderID == nil {
 			return fmt.Errorf("ent: uninitialized statement.DefaultOrderID (forgotten import ent/runtime?)")
@@ -587,6 +608,14 @@ func (sc *StatementCreate) createSpec() (*Statement, *sqlgraph.CreateSpec) {
 			Column: statement.FieldGoodID,
 		})
 		_node.GoodID = value
+	}
+	if value, ok := sc.mutation.AppGoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppGoodID,
+		})
+		_node.AppGoodID = value
 	}
 	if value, ok := sc.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -853,6 +882,24 @@ func (u *StatementUpsert) UpdateGoodID() *StatementUpsert {
 // ClearGoodID clears the value of the "good_id" field.
 func (u *StatementUpsert) ClearGoodID() *StatementUpsert {
 	u.SetNull(statement.FieldGoodID)
+	return u
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *StatementUpsert) SetAppGoodID(v uuid.UUID) *StatementUpsert {
+	u.Set(statement.FieldAppGoodID, v)
+	return u
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *StatementUpsert) UpdateAppGoodID() *StatementUpsert {
+	u.SetExcluded(statement.FieldAppGoodID)
+	return u
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *StatementUpsert) ClearAppGoodID() *StatementUpsert {
+	u.SetNull(statement.FieldAppGoodID)
 	return u
 }
 
@@ -1254,6 +1301,27 @@ func (u *StatementUpsertOne) UpdateGoodID() *StatementUpsertOne {
 func (u *StatementUpsertOne) ClearGoodID() *StatementUpsertOne {
 	return u.Update(func(s *StatementUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *StatementUpsertOne) SetAppGoodID(v uuid.UUID) *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *StatementUpsertOne) UpdateAppGoodID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *StatementUpsertOne) ClearAppGoodID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 
@@ -1855,6 +1923,27 @@ func (u *StatementUpsertBulk) UpdateGoodID() *StatementUpsertBulk {
 func (u *StatementUpsertBulk) ClearGoodID() *StatementUpsertBulk {
 	return u.Update(func(s *StatementUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *StatementUpsertBulk) SetAppGoodID(v uuid.UUID) *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *StatementUpsertBulk) UpdateAppGoodID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *StatementUpsertBulk) ClearAppGoodID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 

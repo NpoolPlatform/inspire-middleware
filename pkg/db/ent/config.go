@@ -28,20 +28,15 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Achievement           []ent.Hook
-	Commission            []ent.Hook
-	Coupon                []ent.Hook
-	CouponAllocated       []ent.Hook
-	CouponDiscount        []ent.Hook
-	CouponFixAmount       []ent.Hook
-	CouponSpecialOffer    []ent.Hook
-	Event                 []ent.Hook
-	GoodOrderPercent      []ent.Hook
-	GoodOrderValuePercent []ent.Hook
-	InvitationCode        []ent.Hook
-	PubsubMessage         []ent.Hook
-	Registration          []ent.Hook
-	Statement             []ent.Hook
+	Achievement     []ent.Hook
+	Commission      []ent.Hook
+	Coupon          []ent.Hook
+	CouponAllocated []ent.Hook
+	Event           []ent.Hook
+	InvitationCode  []ent.Hook
+	PubsubMessage   []ent.Hook
+	Registration    []ent.Hook
+	Statement       []ent.Hook
 }
 
 // Options applies the options on the config object.

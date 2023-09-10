@@ -145,6 +145,26 @@ func (cu *CommissionUpdate) ClearGoodID() *CommissionUpdate {
 	return cu
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (cu *CommissionUpdate) SetAppGoodID(u uuid.UUID) *CommissionUpdate {
+	cu.mutation.SetAppGoodID(u)
+	return cu
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableAppGoodID(u *uuid.UUID) *CommissionUpdate {
+	if u != nil {
+		cu.SetAppGoodID(*u)
+	}
+	return cu
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (cu *CommissionUpdate) ClearAppGoodID() *CommissionUpdate {
+	cu.mutation.ClearAppGoodID()
+	return cu
+}
+
 // SetAmountOrPercent sets the "amount_or_percent" field.
 func (cu *CommissionUpdate) SetAmountOrPercent(d decimal.Decimal) *CommissionUpdate {
 	cu.mutation.SetAmountOrPercent(d)
@@ -525,6 +545,19 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: commission.FieldGoodID,
 		})
 	}
+	if value, ok := cu.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldAppGoodID,
+		})
+	}
+	if cu.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: commission.FieldAppGoodID,
+		})
+	}
 	if value, ok := cu.mutation.AmountOrPercent(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -796,6 +829,26 @@ func (cuo *CommissionUpdateOne) SetNillableGoodID(u *uuid.UUID) *CommissionUpdat
 // ClearGoodID clears the value of the "good_id" field.
 func (cuo *CommissionUpdateOne) ClearGoodID() *CommissionUpdateOne {
 	cuo.mutation.ClearGoodID()
+	return cuo
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (cuo *CommissionUpdateOne) SetAppGoodID(u uuid.UUID) *CommissionUpdateOne {
+	cuo.mutation.SetAppGoodID(u)
+	return cuo
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *CommissionUpdateOne {
+	if u != nil {
+		cuo.SetAppGoodID(*u)
+	}
+	return cuo
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (cuo *CommissionUpdateOne) ClearAppGoodID() *CommissionUpdateOne {
+	cuo.mutation.ClearAppGoodID()
 	return cuo
 }
 
@@ -1207,6 +1260,19 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: commission.FieldGoodID,
+		})
+	}
+	if value, ok := cuo.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldAppGoodID,
+		})
+	}
+	if cuo.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: commission.FieldAppGoodID,
 		})
 	}
 	if value, ok := cuo.mutation.AmountOrPercent(); ok {

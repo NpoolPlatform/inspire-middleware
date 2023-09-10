@@ -54,6 +54,12 @@ func (Statement) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
+			UUID("app_good_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			UUID("order_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

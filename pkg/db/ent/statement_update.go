@@ -165,6 +165,26 @@ func (su *StatementUpdate) ClearGoodID() *StatementUpdate {
 	return su
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (su *StatementUpdate) SetAppGoodID(u uuid.UUID) *StatementUpdate {
+	su.mutation.SetAppGoodID(u)
+	return su
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (su *StatementUpdate) SetNillableAppGoodID(u *uuid.UUID) *StatementUpdate {
+	if u != nil {
+		su.SetAppGoodID(*u)
+	}
+	return su
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (su *StatementUpdate) ClearAppGoodID() *StatementUpdate {
+	su.mutation.ClearAppGoodID()
+	return su
+}
+
 // SetOrderID sets the "order_id" field.
 func (su *StatementUpdate) SetOrderID(u uuid.UUID) *StatementUpdate {
 	su.mutation.SetOrderID(u)
@@ -584,6 +604,19 @@ func (su *StatementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: statement.FieldGoodID,
 		})
 	}
+	if value, ok := su.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppGoodID,
+		})
+	}
+	if su.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldAppGoodID,
+		})
+	}
 	if value, ok := su.mutation.OrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -887,6 +920,26 @@ func (suo *StatementUpdateOne) SetNillableGoodID(u *uuid.UUID) *StatementUpdateO
 // ClearGoodID clears the value of the "good_id" field.
 func (suo *StatementUpdateOne) ClearGoodID() *StatementUpdateOne {
 	suo.mutation.ClearGoodID()
+	return suo
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (suo *StatementUpdateOne) SetAppGoodID(u uuid.UUID) *StatementUpdateOne {
+	suo.mutation.SetAppGoodID(u)
+	return suo
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (suo *StatementUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *StatementUpdateOne {
+	if u != nil {
+		suo.SetAppGoodID(*u)
+	}
+	return suo
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (suo *StatementUpdateOne) ClearAppGoodID() *StatementUpdateOne {
+	suo.mutation.ClearAppGoodID()
 	return suo
 }
 
@@ -1337,6 +1390,19 @@ func (suo *StatementUpdateOne) sqlSave(ctx context.Context) (_node *Statement, e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: statement.FieldGoodID,
+		})
+	}
+	if value, ok := suo.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppGoodID,
+		})
+	}
+	if suo.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldAppGoodID,
 		})
 	}
 	if value, ok := suo.mutation.OrderID(); ok {

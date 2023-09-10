@@ -108,6 +108,20 @@ func (cc *CommissionCreate) SetNillableGoodID(u *uuid.UUID) *CommissionCreate {
 	return cc
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (cc *CommissionCreate) SetAppGoodID(u uuid.UUID) *CommissionCreate {
+	cc.mutation.SetAppGoodID(u)
+	return cc
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableAppGoodID(u *uuid.UUID) *CommissionCreate {
+	if u != nil {
+		cc.SetAppGoodID(*u)
+	}
+	return cc
+}
+
 // SetAmountOrPercent sets the "amount_or_percent" field.
 func (cc *CommissionCreate) SetAmountOrPercent(d decimal.Decimal) *CommissionCreate {
 	cc.mutation.SetAmountOrPercent(d)
@@ -369,6 +383,13 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultGoodID()
 		cc.mutation.SetGoodID(v)
 	}
+	if _, ok := cc.mutation.AppGoodID(); !ok {
+		if commission.DefaultAppGoodID == nil {
+			return fmt.Errorf("ent: uninitialized commission.DefaultAppGoodID (forgotten import ent/runtime?)")
+		}
+		v := commission.DefaultAppGoodID()
+		cc.mutation.SetAppGoodID(v)
+	}
 	if _, ok := cc.mutation.AmountOrPercent(); !ok {
 		v := commission.DefaultAmountOrPercent
 		cc.mutation.SetAmountOrPercent(v)
@@ -510,6 +531,14 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 			Column: commission.FieldGoodID,
 		})
 		_node.GoodID = value
+	}
+	if value, ok := cc.mutation.AppGoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldAppGoodID,
+		})
+		_node.AppGoodID = value
 	}
 	if value, ok := cc.mutation.AmountOrPercent(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -742,6 +771,24 @@ func (u *CommissionUpsert) UpdateGoodID() *CommissionUpsert {
 // ClearGoodID clears the value of the "good_id" field.
 func (u *CommissionUpsert) ClearGoodID() *CommissionUpsert {
 	u.SetNull(commission.FieldGoodID)
+	return u
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *CommissionUpsert) SetAppGoodID(v uuid.UUID) *CommissionUpsert {
+	u.Set(commission.FieldAppGoodID, v)
+	return u
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateAppGoodID() *CommissionUpsert {
+	u.SetExcluded(commission.FieldAppGoodID)
+	return u
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *CommissionUpsert) ClearAppGoodID() *CommissionUpsert {
+	u.SetNull(commission.FieldAppGoodID)
 	return u
 }
 
@@ -1098,6 +1145,27 @@ func (u *CommissionUpsertOne) UpdateGoodID() *CommissionUpsertOne {
 func (u *CommissionUpsertOne) ClearGoodID() *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *CommissionUpsertOne) SetAppGoodID(v uuid.UUID) *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateAppGoodID() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *CommissionUpsertOne) ClearAppGoodID() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 
@@ -1650,6 +1718,27 @@ func (u *CommissionUpsertBulk) UpdateGoodID() *CommissionUpsertBulk {
 func (u *CommissionUpsertBulk) ClearGoodID() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *CommissionUpsertBulk) SetAppGoodID(v uuid.UUID) *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateAppGoodID() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *CommissionUpsertBulk) ClearAppGoodID() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 

@@ -22,18 +22,8 @@ type Tx struct {
 	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
-	// CouponDiscount is the client for interacting with the CouponDiscount builders.
-	CouponDiscount *CouponDiscountClient
-	// CouponFixAmount is the client for interacting with the CouponFixAmount builders.
-	CouponFixAmount *CouponFixAmountClient
-	// CouponSpecialOffer is the client for interacting with the CouponSpecialOffer builders.
-	CouponSpecialOffer *CouponSpecialOfferClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
-	// GoodOrderPercent is the client for interacting with the GoodOrderPercent builders.
-	GoodOrderPercent *GoodOrderPercentClient
-	// GoodOrderValuePercent is the client for interacting with the GoodOrderValuePercent builders.
-	GoodOrderValuePercent *GoodOrderValuePercentClient
 	// InvitationCode is the client for interacting with the InvitationCode builders.
 	InvitationCode *InvitationCodeClient
 	// PubsubMessage is the client for interacting with the PubsubMessage builders.
@@ -181,12 +171,7 @@ func (tx *Tx) init() {
 	tx.Commission = NewCommissionClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
-	tx.CouponDiscount = NewCouponDiscountClient(tx.config)
-	tx.CouponFixAmount = NewCouponFixAmountClient(tx.config)
-	tx.CouponSpecialOffer = NewCouponSpecialOfferClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
-	tx.GoodOrderPercent = NewGoodOrderPercentClient(tx.config)
-	tx.GoodOrderValuePercent = NewGoodOrderValuePercentClient(tx.config)
 	tx.InvitationCode = NewInvitationCodeClient(tx.config)
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)
 	tx.Registration = NewRegistrationClient(tx.config)

@@ -246,78 +246,6 @@ func (f CouponAllocatedMutationRuleFunc) EvalMutation(ctx context.Context, m ent
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponAllocatedMutation", m)
 }
 
-// The CouponDiscountQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type CouponDiscountQueryRuleFunc func(context.Context, *ent.CouponDiscountQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f CouponDiscountQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.CouponDiscountQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CouponDiscountQuery", q)
-}
-
-// The CouponDiscountMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type CouponDiscountMutationRuleFunc func(context.Context, *ent.CouponDiscountMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f CouponDiscountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.CouponDiscountMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponDiscountMutation", m)
-}
-
-// The CouponFixAmountQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type CouponFixAmountQueryRuleFunc func(context.Context, *ent.CouponFixAmountQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f CouponFixAmountQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.CouponFixAmountQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CouponFixAmountQuery", q)
-}
-
-// The CouponFixAmountMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type CouponFixAmountMutationRuleFunc func(context.Context, *ent.CouponFixAmountMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f CouponFixAmountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.CouponFixAmountMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponFixAmountMutation", m)
-}
-
-// The CouponSpecialOfferQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type CouponSpecialOfferQueryRuleFunc func(context.Context, *ent.CouponSpecialOfferQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f CouponSpecialOfferQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.CouponSpecialOfferQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CouponSpecialOfferQuery", q)
-}
-
-// The CouponSpecialOfferMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type CouponSpecialOfferMutationRuleFunc func(context.Context, *ent.CouponSpecialOfferMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f CouponSpecialOfferMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.CouponSpecialOfferMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponSpecialOfferMutation", m)
-}
-
 // The EventQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EventQueryRuleFunc func(context.Context, *ent.EventQuery) error
@@ -340,54 +268,6 @@ func (f EventMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventMutation", m)
-}
-
-// The GoodOrderPercentQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type GoodOrderPercentQueryRuleFunc func(context.Context, *ent.GoodOrderPercentQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f GoodOrderPercentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.GoodOrderPercentQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GoodOrderPercentQuery", q)
-}
-
-// The GoodOrderPercentMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type GoodOrderPercentMutationRuleFunc func(context.Context, *ent.GoodOrderPercentMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f GoodOrderPercentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.GoodOrderPercentMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GoodOrderPercentMutation", m)
-}
-
-// The GoodOrderValuePercentQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type GoodOrderValuePercentQueryRuleFunc func(context.Context, *ent.GoodOrderValuePercentQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f GoodOrderValuePercentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.GoodOrderValuePercentQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GoodOrderValuePercentQuery", q)
-}
-
-// The GoodOrderValuePercentMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type GoodOrderValuePercentMutationRuleFunc func(context.Context, *ent.GoodOrderValuePercentMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f GoodOrderValuePercentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.GoodOrderValuePercentMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GoodOrderValuePercentMutation", m)
 }
 
 // The InvitationCodeQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -529,17 +409,7 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CouponAllocatedQuery:
 		return q.Filter(), nil
-	case *ent.CouponDiscountQuery:
-		return q.Filter(), nil
-	case *ent.CouponFixAmountQuery:
-		return q.Filter(), nil
-	case *ent.CouponSpecialOfferQuery:
-		return q.Filter(), nil
 	case *ent.EventQuery:
-		return q.Filter(), nil
-	case *ent.GoodOrderPercentQuery:
-		return q.Filter(), nil
-	case *ent.GoodOrderValuePercentQuery:
 		return q.Filter(), nil
 	case *ent.InvitationCodeQuery:
 		return q.Filter(), nil
@@ -564,17 +434,7 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.CouponAllocatedMutation:
 		return m.Filter(), nil
-	case *ent.CouponDiscountMutation:
-		return m.Filter(), nil
-	case *ent.CouponFixAmountMutation:
-		return m.Filter(), nil
-	case *ent.CouponSpecialOfferMutation:
-		return m.Filter(), nil
 	case *ent.EventMutation:
-		return m.Filter(), nil
-	case *ent.GoodOrderPercentMutation:
-		return m.Filter(), nil
-	case *ent.GoodOrderValuePercentMutation:
 		return m.Filter(), nil
 	case *ent.InvitationCodeMutation:
 		return m.Filter(), nil
