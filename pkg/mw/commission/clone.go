@@ -19,27 +19,27 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 	if h.AppID == nil {
 		return fmt.Errorf("invalid appid")
 	}
-	if h.FromGoodID == nil {
-		return fmt.Errorf("invalid fromgoodid")
+	if h.FromAppGoodID == nil {
+		return fmt.Errorf("invalid fromappgoodid")
 	}
-	if h.ToGoodID == nil {
-		return fmt.Errorf("invalid togoodid")
+	if h.ToAppGoodID == nil {
+		return fmt.Errorf("invalid toappgoodid")
 	}
 	if h.ScalePercent != nil && h.ScalePercent.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return nil
 	}
-	if *h.FromGoodID == *h.ToGoodID {
+	if *h.FromAppGoodID == *h.ToAppGoodID {
 		return nil
 	}
 
-	key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.FromGoodID)
+	key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.FromAppGoodID)
 	if err := redis2.TryLock(key1, 0); err != nil {
 		return err
 	}
 	defer func() {
 		_ = redis2.Unlock(key1)
 	}()
-	key2 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.ToGoodID)
+	key2 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.ToAppGoodID)
 	if err := redis2.TryLock(key2, 0); err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 			Query().
 			Where(
 				entcommission.AppID(*h.AppID),
-				entcommission.GoodID(*h.FromGoodID),
+				entcommission.AppGoodID(*h.FromAppGoodID),
 				entcommission.EndAt(0),
 				entcommission.DeletedAt(0),
 			).
@@ -62,8 +62,6 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-
-		fmt.Printf("Infos: %v, AppID: %v, GoodID: %v\n", infos, *h.AppID, *h.FromGoodID)
 
 		percent := decimal.NewFromInt(1)
 		if h.ScalePercent != nil {
@@ -79,6 +77,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 					entcommission.AppID(*h.AppID),
 					entcommission.UserID(info.UserID),
 					entcommission.GoodID(*h.ToGoodID),
+					entcommission.AppGoodID(*h.ToAppGoodID),
 					entcommission.SettleType(info.SettleType),
 					entcommission.EndAt(0),
 					entcommission.DeletedAt(0),
@@ -111,6 +110,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 				SetAppID(info.AppID).
 				SetUserID(info.UserID).
 				SetGoodID(*h.ToGoodID).
+				SetAppGoodID(*h.ToAppGoodID).
 				SetSettleType(info.SettleType).
 				SetSettleMode(info.SettleMode).
 				SetSettleAmountType(info.SettleAmountType).

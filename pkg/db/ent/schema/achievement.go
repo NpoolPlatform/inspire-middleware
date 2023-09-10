@@ -48,6 +48,12 @@ func (Achievement) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
+			UUID("app_good_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			UUID("coin_type_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

@@ -66,32 +66,36 @@ func init() {
 	achievementDescGoodID := achievementFields[3].Descriptor()
 	// achievement.DefaultGoodID holds the default value on creation for the good_id field.
 	achievement.DefaultGoodID = achievementDescGoodID.Default.(func() uuid.UUID)
+	// achievementDescAppGoodID is the schema descriptor for app_good_id field.
+	achievementDescAppGoodID := achievementFields[4].Descriptor()
+	// achievement.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	achievement.DefaultAppGoodID = achievementDescAppGoodID.Default.(func() uuid.UUID)
 	// achievementDescCoinTypeID is the schema descriptor for coin_type_id field.
-	achievementDescCoinTypeID := achievementFields[4].Descriptor()
+	achievementDescCoinTypeID := achievementFields[5].Descriptor()
 	// achievement.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	achievement.DefaultCoinTypeID = achievementDescCoinTypeID.Default.(func() uuid.UUID)
 	// achievementDescTotalUnitsV1 is the schema descriptor for total_units_v1 field.
-	achievementDescTotalUnitsV1 := achievementFields[5].Descriptor()
+	achievementDescTotalUnitsV1 := achievementFields[6].Descriptor()
 	// achievement.DefaultTotalUnitsV1 holds the default value on creation for the total_units_v1 field.
 	achievement.DefaultTotalUnitsV1 = achievementDescTotalUnitsV1.Default.(decimal.Decimal)
 	// achievementDescSelfUnitsV1 is the schema descriptor for self_units_v1 field.
-	achievementDescSelfUnitsV1 := achievementFields[6].Descriptor()
+	achievementDescSelfUnitsV1 := achievementFields[7].Descriptor()
 	// achievement.DefaultSelfUnitsV1 holds the default value on creation for the self_units_v1 field.
 	achievement.DefaultSelfUnitsV1 = achievementDescSelfUnitsV1.Default.(decimal.Decimal)
 	// achievementDescTotalAmount is the schema descriptor for total_amount field.
-	achievementDescTotalAmount := achievementFields[7].Descriptor()
+	achievementDescTotalAmount := achievementFields[8].Descriptor()
 	// achievement.DefaultTotalAmount holds the default value on creation for the total_amount field.
 	achievement.DefaultTotalAmount = achievementDescTotalAmount.Default.(decimal.Decimal)
 	// achievementDescSelfAmount is the schema descriptor for self_amount field.
-	achievementDescSelfAmount := achievementFields[8].Descriptor()
+	achievementDescSelfAmount := achievementFields[9].Descriptor()
 	// achievement.DefaultSelfAmount holds the default value on creation for the self_amount field.
 	achievement.DefaultSelfAmount = achievementDescSelfAmount.Default.(decimal.Decimal)
 	// achievementDescTotalCommission is the schema descriptor for total_commission field.
-	achievementDescTotalCommission := achievementFields[9].Descriptor()
+	achievementDescTotalCommission := achievementFields[10].Descriptor()
 	// achievement.DefaultTotalCommission holds the default value on creation for the total_commission field.
 	achievement.DefaultTotalCommission = achievementDescTotalCommission.Default.(decimal.Decimal)
 	// achievementDescSelfCommission is the schema descriptor for self_commission field.
-	achievementDescSelfCommission := achievementFields[10].Descriptor()
+	achievementDescSelfCommission := achievementFields[11].Descriptor()
 	// achievement.DefaultSelfCommission holds the default value on creation for the self_commission field.
 	achievement.DefaultSelfCommission = achievementDescSelfCommission.Default.(decimal.Decimal)
 	// achievementDescID is the schema descriptor for id field.

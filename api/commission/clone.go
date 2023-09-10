@@ -18,6 +18,8 @@ func (s *Server) CloneCommissions(ctx context.Context, in *npool.CloneCommission
 		commission1.WithAppID(&in.AppID),
 		commission1.WithFromGoodID(&in.FromGoodID),
 		commission1.WithToGoodID(&in.ToGoodID),
+		commission1.WithFromAppGoodID(&in.FromAppGoodID),
+		commission1.WithToAppGoodID(&in.ToAppGoodID),
 		commission1.WithScalePercent(&in.ScalePercent),
 	)
 	if err != nil {

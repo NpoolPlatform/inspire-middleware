@@ -19,8 +19,11 @@ type Handler struct {
 	AppID            *uuid.UUID
 	UserID           *uuid.UUID
 	GoodID           *uuid.UUID
+	AppGoodID        *uuid.UUID
 	FromGoodID       *uuid.UUID
 	ToGoodID         *uuid.UUID
+	FromAppGoodID    *uuid.UUID
+	ToAppGoodID      *uuid.UUID
 	SettleType       *types.SettleType
 	SettleMode       *types.SettleMode
 	SettleAmountType *types.SettleAmountType
@@ -100,6 +103,20 @@ func WithGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
+func WithAppGoodID(id *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = &_id
+		return nil
+	}
+}
+
 func WithFromGoodID(id *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -124,6 +141,34 @@ func WithToGoodID(id *string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.ToGoodID = &_id
+		return nil
+	}
+}
+
+func WithFromAppGoodID(id *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.FromAppGoodID = &_id
+		return nil
+	}
+}
+
+func WithToAppGoodID(id *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.ToAppGoodID = &_id
 		return nil
 	}
 }

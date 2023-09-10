@@ -59,6 +59,7 @@ type AchievementMutation struct {
 	app_id           *uuid.UUID
 	user_id          *uuid.UUID
 	good_id          *uuid.UUID
+	app_good_id      *uuid.UUID
 	coin_type_id     *uuid.UUID
 	total_units_v1   *decimal.Decimal
 	self_units_v1    *decimal.Decimal
@@ -491,6 +492,55 @@ func (m *AchievementMutation) ResetGoodID() {
 	delete(m.clearedFields, achievement.FieldGoodID)
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (m *AchievementMutation) SetAppGoodID(u uuid.UUID) {
+	m.app_good_id = &u
+}
+
+// AppGoodID returns the value of the "app_good_id" field in the mutation.
+func (m *AchievementMutation) AppGoodID() (r uuid.UUID, exists bool) {
+	v := m.app_good_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppGoodID returns the old "app_good_id" field's value of the Achievement entity.
+// If the Achievement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AchievementMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
+	}
+	return oldValue.AppGoodID, nil
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (m *AchievementMutation) ClearAppGoodID() {
+	m.app_good_id = nil
+	m.clearedFields[achievement.FieldAppGoodID] = struct{}{}
+}
+
+// AppGoodIDCleared returns if the "app_good_id" field was cleared in this mutation.
+func (m *AchievementMutation) AppGoodIDCleared() bool {
+	_, ok := m.clearedFields[achievement.FieldAppGoodID]
+	return ok
+}
+
+// ResetAppGoodID resets all changes to the "app_good_id" field.
+func (m *AchievementMutation) ResetAppGoodID() {
+	m.app_good_id = nil
+	delete(m.clearedFields, achievement.FieldAppGoodID)
+}
+
 // SetCoinTypeID sets the "coin_type_id" field.
 func (m *AchievementMutation) SetCoinTypeID(u uuid.UUID) {
 	m.coin_type_id = &u
@@ -853,7 +903,7 @@ func (m *AchievementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AchievementMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, achievement.FieldCreatedAt)
 	}
@@ -871,6 +921,9 @@ func (m *AchievementMutation) Fields() []string {
 	}
 	if m.good_id != nil {
 		fields = append(fields, achievement.FieldGoodID)
+	}
+	if m.app_good_id != nil {
+		fields = append(fields, achievement.FieldAppGoodID)
 	}
 	if m.coin_type_id != nil {
 		fields = append(fields, achievement.FieldCoinTypeID)
@@ -913,6 +966,8 @@ func (m *AchievementMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case achievement.FieldGoodID:
 		return m.GoodID()
+	case achievement.FieldAppGoodID:
+		return m.AppGoodID()
 	case achievement.FieldCoinTypeID:
 		return m.CoinTypeID()
 	case achievement.FieldTotalUnitsV1:
@@ -948,6 +1003,8 @@ func (m *AchievementMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUserID(ctx)
 	case achievement.FieldGoodID:
 		return m.OldGoodID(ctx)
+	case achievement.FieldAppGoodID:
+		return m.OldAppGoodID(ctx)
 	case achievement.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
 	case achievement.FieldTotalUnitsV1:
@@ -1012,6 +1069,13 @@ func (m *AchievementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
+		return nil
+	case achievement.FieldAppGoodID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppGoodID(v)
 		return nil
 	case achievement.FieldCoinTypeID:
 		v, ok := value.(uuid.UUID)
@@ -1140,6 +1204,9 @@ func (m *AchievementMutation) ClearedFields() []string {
 	if m.FieldCleared(achievement.FieldGoodID) {
 		fields = append(fields, achievement.FieldGoodID)
 	}
+	if m.FieldCleared(achievement.FieldAppGoodID) {
+		fields = append(fields, achievement.FieldAppGoodID)
+	}
 	if m.FieldCleared(achievement.FieldCoinTypeID) {
 		fields = append(fields, achievement.FieldCoinTypeID)
 	}
@@ -1183,6 +1250,9 @@ func (m *AchievementMutation) ClearField(name string) error {
 		return nil
 	case achievement.FieldGoodID:
 		m.ClearGoodID()
+		return nil
+	case achievement.FieldAppGoodID:
+		m.ClearAppGoodID()
 		return nil
 	case achievement.FieldCoinTypeID:
 		m.ClearCoinTypeID()
@@ -1230,6 +1300,9 @@ func (m *AchievementMutation) ResetField(name string) error {
 		return nil
 	case achievement.FieldGoodID:
 		m.ResetGoodID()
+		return nil
+	case achievement.FieldAppGoodID:
+		m.ResetAppGoodID()
 		return nil
 	case achievement.FieldCoinTypeID:
 		m.ResetCoinTypeID()

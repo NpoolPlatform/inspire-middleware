@@ -39,6 +39,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			achievement.FieldAppID:           {Type: field.TypeUUID, Column: achievement.FieldAppID},
 			achievement.FieldUserID:          {Type: field.TypeUUID, Column: achievement.FieldUserID},
 			achievement.FieldGoodID:          {Type: field.TypeUUID, Column: achievement.FieldGoodID},
+			achievement.FieldAppGoodID:       {Type: field.TypeUUID, Column: achievement.FieldAppGoodID},
 			achievement.FieldCoinTypeID:      {Type: field.TypeUUID, Column: achievement.FieldCoinTypeID},
 			achievement.FieldTotalUnitsV1:    {Type: field.TypeOther, Column: achievement.FieldTotalUnitsV1},
 			achievement.FieldSelfUnitsV1:     {Type: field.TypeOther, Column: achievement.FieldSelfUnitsV1},
@@ -326,6 +327,11 @@ func (f *AchievementFilter) WhereUserID(p entql.ValueP) {
 // WhereGoodID applies the entql [16]byte predicate on the good_id field.
 func (f *AchievementFilter) WhereGoodID(p entql.ValueP) {
 	f.Where(p.Field(achievement.FieldGoodID))
+}
+
+// WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
+func (f *AchievementFilter) WhereAppGoodID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldAppGoodID))
 }
 
 // WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.

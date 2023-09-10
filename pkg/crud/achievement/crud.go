@@ -16,6 +16,7 @@ type Req struct {
 	AppID           *uuid.UUID
 	UserID          *uuid.UUID
 	GoodID          *uuid.UUID
+	AppGoodID       *uuid.UUID
 	CoinTypeID      *uuid.UUID
 	TotalAmount     *decimal.Decimal
 	SelfAmount      *decimal.Decimal
@@ -37,6 +38,9 @@ func CreateSet(c *ent.AchievementCreate, req *Req) *ent.AchievementCreate {
 	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.CoinTypeID != nil {
 		c.SetCoinTypeID(*req.CoinTypeID)
@@ -90,6 +94,7 @@ type Conds struct {
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
 	GoodID     *cruder.Cond
+	AppGoodID  *cruder.Cond
 	CoinTypeID *cruder.Cond
 	UserIDs    *cruder.Cond
 }
@@ -155,6 +160,18 @@ func SetQueryConds(q *ent.AchievementQuery, conds *Conds) (*ent.AchievementQuery
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entachievement.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid general field")
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodid")
+		}
+		switch conds.AppGoodID.Op {
+		case cruder.EQ:
+			q.Where(entachievement.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid general field")
 		}

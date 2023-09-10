@@ -108,6 +108,20 @@ func (ac *AchievementCreate) SetNillableGoodID(u *uuid.UUID) *AchievementCreate 
 	return ac
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (ac *AchievementCreate) SetAppGoodID(u uuid.UUID) *AchievementCreate {
+	ac.mutation.SetAppGoodID(u)
+	return ac
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (ac *AchievementCreate) SetNillableAppGoodID(u *uuid.UUID) *AchievementCreate {
+	if u != nil {
+		ac.SetAppGoodID(*u)
+	}
+	return ac
+}
+
 // SetCoinTypeID sets the "coin_type_id" field.
 func (ac *AchievementCreate) SetCoinTypeID(u uuid.UUID) *AchievementCreate {
 	ac.mutation.SetCoinTypeID(u)
@@ -341,6 +355,13 @@ func (ac *AchievementCreate) defaults() error {
 		v := achievement.DefaultGoodID()
 		ac.mutation.SetGoodID(v)
 	}
+	if _, ok := ac.mutation.AppGoodID(); !ok {
+		if achievement.DefaultAppGoodID == nil {
+			return fmt.Errorf("ent: uninitialized achievement.DefaultAppGoodID (forgotten import ent/runtime?)")
+		}
+		v := achievement.DefaultAppGoodID()
+		ac.mutation.SetAppGoodID(v)
+	}
 	if _, ok := ac.mutation.CoinTypeID(); !ok {
 		if achievement.DefaultCoinTypeID == nil {
 			return fmt.Errorf("ent: uninitialized achievement.DefaultCoinTypeID (forgotten import ent/runtime?)")
@@ -477,6 +498,14 @@ func (ac *AchievementCreate) createSpec() (*Achievement, *sqlgraph.CreateSpec) {
 			Column: achievement.FieldGoodID,
 		})
 		_node.GoodID = value
+	}
+	if value, ok := ac.mutation.AppGoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldAppGoodID,
+		})
+		_node.AppGoodID = value
 	}
 	if value, ok := ac.mutation.CoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -693,6 +722,24 @@ func (u *AchievementUpsert) UpdateGoodID() *AchievementUpsert {
 // ClearGoodID clears the value of the "good_id" field.
 func (u *AchievementUpsert) ClearGoodID() *AchievementUpsert {
 	u.SetNull(achievement.FieldGoodID)
+	return u
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *AchievementUpsert) SetAppGoodID(v uuid.UUID) *AchievementUpsert {
+	u.Set(achievement.FieldAppGoodID, v)
+	return u
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *AchievementUpsert) UpdateAppGoodID() *AchievementUpsert {
+	u.SetExcluded(achievement.FieldAppGoodID)
+	return u
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *AchievementUpsert) ClearAppGoodID() *AchievementUpsert {
+	u.SetNull(achievement.FieldAppGoodID)
 	return u
 }
 
@@ -995,6 +1042,27 @@ func (u *AchievementUpsertOne) UpdateGoodID() *AchievementUpsertOne {
 func (u *AchievementUpsertOne) ClearGoodID() *AchievementUpsertOne {
 	return u.Update(func(s *AchievementUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *AchievementUpsertOne) SetAppGoodID(v uuid.UUID) *AchievementUpsertOne {
+	return u.Update(func(s *AchievementUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *AchievementUpsertOne) UpdateAppGoodID() *AchievementUpsertOne {
+	return u.Update(func(s *AchievementUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *AchievementUpsertOne) ClearAppGoodID() *AchievementUpsertOne {
+	return u.Update(func(s *AchievementUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 
@@ -1484,6 +1552,27 @@ func (u *AchievementUpsertBulk) UpdateGoodID() *AchievementUpsertBulk {
 func (u *AchievementUpsertBulk) ClearGoodID() *AchievementUpsertBulk {
 	return u.Update(func(s *AchievementUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *AchievementUpsertBulk) SetAppGoodID(v uuid.UUID) *AchievementUpsertBulk {
+	return u.Update(func(s *AchievementUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *AchievementUpsertBulk) UpdateAppGoodID() *AchievementUpsertBulk {
+	return u.Update(func(s *AchievementUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *AchievementUpsertBulk) ClearAppGoodID() *AchievementUpsertBulk {
+	return u.Update(func(s *AchievementUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 
