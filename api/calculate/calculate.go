@@ -18,6 +18,7 @@ func (s *Server) Calculate(ctx context.Context, in *npool.CalculateRequest) (*np
 		calculate1.WithAppID(in.GetAppID()),
 		calculate1.WithUserID(in.GetUserID()),
 		calculate1.WithGoodID(in.GetGoodID()),
+		calculate1.WithAppGoodID(in.GetAppGoodID()),
 		calculate1.WithOrderID(in.GetOrderID()),
 		calculate1.WithPaymentID(in.GetPaymentID()),
 		calculate1.WithCoinTypeID(in.GetCoinTypeID()),
