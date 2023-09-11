@@ -100,6 +100,12 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	if req.DurationDays != nil {
 		u.SetDurationDays(*req.DurationDays)
 	}
+	if req.GoodID != nil {
+		u.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		u.SetAppGoodID(*req.AppGoodID)
+	}
 	if req.Message != nil {
 		u.SetMessage(*req.Message)
 	}
