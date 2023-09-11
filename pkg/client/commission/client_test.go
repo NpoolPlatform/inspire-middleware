@@ -44,6 +44,7 @@ var ret = &npool.Commission{
 	AppID:               uuid.NewString(),
 	UserID:              uuid.NewString(),
 	GoodID:              uuid.NewString(),
+	AppGoodID:           uuid.NewString(),
 	SettleType:          types.SettleType_GoodOrderPayment,
 	SettleTypeStr:       types.SettleType_GoodOrderPayment.String(),
 	SettleMode:          types.SettleMode_SettleWithPaymentAmount,
@@ -62,6 +63,7 @@ var req = &npool.CommissionReq{
 	AppID:            &ret.AppID,
 	UserID:           &ret.UserID,
 	GoodID:           &ret.GoodID,
+	AppGoodID:        &ret.AppGoodID,
 	SettleType:       &ret.SettleType,
 	SettleMode:       &ret.SettleMode,
 	SettleAmountType: &ret.SettleAmountType,
@@ -92,6 +94,7 @@ func getCommissions(t *testing.T) {
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.GetGoodID()},
+		AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.GetAppGoodID()},
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
@@ -105,6 +108,7 @@ func getCommissionOnly(t *testing.T) {
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.GetGoodID()},
+		AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.GetAppGoodID()},
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
 	})
 	if assert.Nil(t, err) {

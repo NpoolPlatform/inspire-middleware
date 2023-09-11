@@ -27,6 +27,7 @@ func (h *queryHandler) selectAchievement(stm *ent.AchievementQuery) {
 		entachievement.FieldAppID,
 		entachievement.FieldUserID,
 		entachievement.FieldGoodID,
+		entachievement.FieldAppGoodID,
 		entachievement.FieldCoinTypeID,
 		entachievement.FieldTotalAmount,
 		entachievement.FieldSelfAmount,

@@ -14,6 +14,7 @@ type Handler struct {
 	AppID                  uuid.UUID
 	UserID                 uuid.UUID
 	GoodID                 uuid.UUID
+	AppGoodID              uuid.UUID
 	OrderID                uuid.UUID
 	PaymentID              uuid.UUID
 	CoinTypeID             uuid.UUID
@@ -68,6 +69,17 @@ func WithGoodID(id string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodID = _id
+		return nil
+	}
+}
+
+func WithAppGoodID(id string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_id, err := uuid.Parse(id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = _id
 		return nil
 	}
 }
