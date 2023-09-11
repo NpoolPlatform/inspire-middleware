@@ -145,6 +145,26 @@ func (au *AchievementUpdate) ClearGoodID() *AchievementUpdate {
 	return au
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (au *AchievementUpdate) SetAppGoodID(u uuid.UUID) *AchievementUpdate {
+	au.mutation.SetAppGoodID(u)
+	return au
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (au *AchievementUpdate) SetNillableAppGoodID(u *uuid.UUID) *AchievementUpdate {
+	if u != nil {
+		au.SetAppGoodID(*u)
+	}
+	return au
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (au *AchievementUpdate) ClearAppGoodID() *AchievementUpdate {
+	au.mutation.ClearAppGoodID()
+	return au
+}
+
 // SetCoinTypeID sets the "coin_type_id" field.
 func (au *AchievementUpdate) SetCoinTypeID(u uuid.UUID) *AchievementUpdate {
 	au.mutation.SetCoinTypeID(u)
@@ -464,6 +484,19 @@ func (au *AchievementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: achievement.FieldGoodID,
 		})
 	}
+	if value, ok := au.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldAppGoodID,
+		})
+	}
+	if au.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: achievement.FieldAppGoodID,
+		})
+	}
 	if value, ok := au.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -688,6 +721,26 @@ func (auo *AchievementUpdateOne) SetNillableGoodID(u *uuid.UUID) *AchievementUpd
 // ClearGoodID clears the value of the "good_id" field.
 func (auo *AchievementUpdateOne) ClearGoodID() *AchievementUpdateOne {
 	auo.mutation.ClearGoodID()
+	return auo
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (auo *AchievementUpdateOne) SetAppGoodID(u uuid.UUID) *AchievementUpdateOne {
+	auo.mutation.SetAppGoodID(u)
+	return auo
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (auo *AchievementUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *AchievementUpdateOne {
+	if u != nil {
+		auo.SetAppGoodID(*u)
+	}
+	return auo
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (auo *AchievementUpdateOne) ClearAppGoodID() *AchievementUpdateOne {
+	auo.mutation.ClearAppGoodID()
 	return auo
 }
 
@@ -1038,6 +1091,19 @@ func (auo *AchievementUpdateOne) sqlSave(ctx context.Context) (_node *Achievemen
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: achievement.FieldGoodID,
+		})
+	}
+	if value, ok := auo.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldAppGoodID,
+		})
+	}
+	if auo.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: achievement.FieldAppGoodID,
 		})
 	}
 	if value, ok := auo.mutation.CoinTypeID(); ok {

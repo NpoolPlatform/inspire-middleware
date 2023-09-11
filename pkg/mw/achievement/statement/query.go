@@ -27,6 +27,7 @@ func (h *queryHandler) selectStatement(stm *ent.StatementQuery) {
 		entstatement.FieldUserID,
 		entstatement.FieldDirectContributorID,
 		entstatement.FieldGoodID,
+		entstatement.FieldAppGoodID,
 		entstatement.FieldOrderID,
 		entstatement.FieldSelfOrder,
 		entstatement.FieldPaymentID,

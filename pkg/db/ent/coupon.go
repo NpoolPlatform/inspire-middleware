@@ -29,6 +29,8 @@ type Coupon struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// GoodID holds the value of the "good_id" field.
 	GoodID uuid.UUID `json:"good_id,omitempty"`
+	// AppGoodID holds the value of the "app_good_id" field.
+	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// Denomination holds the value of the "denomination" field.
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
@@ -68,7 +70,7 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint:
 			values[i] = new(sql.NullString)
-		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldGoodID, coupon.FieldIssuedBy:
+		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldGoodID, coupon.FieldAppGoodID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Coupon", columns[i])
@@ -126,6 +128,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field good_id", values[i])
 			} else if value != nil {
 				c.GoodID = *value
+			}
+		case coupon.FieldAppGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
+			} else if value != nil {
+				c.AppGoodID = *value
 			}
 		case coupon.FieldDenomination:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -244,6 +252,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("good_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.GoodID))
+	builder.WriteString(", ")
+	builder.WriteString("app_good_id=")
+	builder.WriteString(fmt.Sprintf("%v", c.AppGoodID))
 	builder.WriteString(", ")
 	builder.WriteString("denomination=")
 	builder.WriteString(fmt.Sprintf("%v", c.Denomination))

@@ -14,6 +14,7 @@ type Handler struct {
 	AppID                  uuid.UUID
 	UserID                 uuid.UUID
 	GoodID                 uuid.UUID
+	AppGoodID              uuid.UUID
 	OrderID                uuid.UUID
 	PaymentID              uuid.UUID
 	CoinTypeID             uuid.UUID
@@ -22,6 +23,7 @@ type Handler struct {
 	Units                  decimal.Decimal
 	PaymentAmount          decimal.Decimal
 	GoodValue              decimal.Decimal
+	GoodValueUSD           decimal.Decimal
 	SettleType             types.SettleType
 	SettleAmountType       types.SettleAmountType
 	HasCommission          bool
@@ -67,6 +69,17 @@ func WithGoodID(id string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodID = _id
+		return nil
+	}
+}
+
+func WithAppGoodID(id string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_id, err := uuid.Parse(id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = _id
 		return nil
 	}
 }
@@ -155,6 +168,17 @@ func WithGoodValue(value string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodValue = _amount
+		return nil
+	}
+}
+
+func WithGoodValueUSD(value string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_amount, err := decimal.NewFromString(value)
+		if err != nil {
+			return err
+		}
+		h.GoodValueUSD = _amount
 		return nil
 	}
 }

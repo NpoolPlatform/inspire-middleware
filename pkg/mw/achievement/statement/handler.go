@@ -101,6 +101,20 @@ func WithGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
+func WithAppGoodID(id *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = &_id
+		return nil
+	}
+}
+
 func WithOrderID(id *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -250,6 +264,9 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 			if req.GoodID == nil {
 				return fmt.Errorf("invalid goodid")
 			}
+			if req.AppGoodID == nil {
+				return fmt.Errorf("invalid appgoodid")
+			}
 			if req.OrderID == nil {
 				return fmt.Errorf("invalid orderid")
 			}
@@ -340,6 +357,12 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 				return err
 			}
 			_req.PaymentCoinTypeID = &id8
+
+			id9, err := uuid.Parse(*req.AppGoodID)
+			if err != nil {
+				return err
+			}
+			_req.AppGoodID = &id9
 
 			amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
 			if err != nil {
@@ -456,6 +479,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nol
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppGoodID != nil {
+			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppGoodID = &cruder.Cond{
+				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}

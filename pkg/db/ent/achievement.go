@@ -29,6 +29,8 @@ type Achievement struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// GoodID holds the value of the "good_id" field.
 	GoodID uuid.UUID `json:"good_id,omitempty"`
+	// AppGoodID holds the value of the "app_good_id" field.
+	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// TotalUnitsV1 holds the value of the "total_units_v1" field.
@@ -54,7 +56,7 @@ func (*Achievement) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case achievement.FieldCreatedAt, achievement.FieldUpdatedAt, achievement.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case achievement.FieldID, achievement.FieldAppID, achievement.FieldUserID, achievement.FieldGoodID, achievement.FieldCoinTypeID:
+		case achievement.FieldID, achievement.FieldAppID, achievement.FieldUserID, achievement.FieldGoodID, achievement.FieldAppGoodID, achievement.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Achievement", columns[i])
@@ -112,6 +114,12 @@ func (a *Achievement) assignValues(columns []string, values []interface{}) error
 				return fmt.Errorf("unexpected type %T for field good_id", values[i])
 			} else if value != nil {
 				a.GoodID = *value
+			}
+		case achievement.FieldAppGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
+			} else if value != nil {
+				a.AppGoodID = *value
 			}
 		case achievement.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -200,6 +208,9 @@ func (a *Achievement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("good_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.GoodID))
+	builder.WriteString(", ")
+	builder.WriteString("app_good_id=")
+	builder.WriteString(fmt.Sprintf("%v", a.AppGoodID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.CoinTypeID))

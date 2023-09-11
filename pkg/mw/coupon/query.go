@@ -62,6 +62,9 @@ func (h *queryHandler) formalize() {
 		if *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
+		if *info.AppGoodID == uuid.Nil.String() {
+			info.AppGoodID = nil
+		}
 		amount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
 			info.Denomination = decimal.NewFromInt(0).String()

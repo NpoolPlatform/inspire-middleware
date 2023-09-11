@@ -126,30 +126,14 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 // Process will consume the message and return consuming state
 //  Return
 //   error   reason of error, if nil, means the message should be acked
-func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) {
-	defer func() {
-		if err != nil {
-			logger.Sugar().Warnw(
-				"process",
-				"MID", mid,
-				"UID", uid,
-				"Req", req,
-				"Error", err,
-			)
-		}
-	}()
-
+func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
 		err = event1.Apply(ctx, req, publisher)
 	default:
 		return nil
 	}
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // No matter what handler return, the message will be acked, unless handler halt

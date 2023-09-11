@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
@@ -40,7 +39,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		basetypes.Prefix_PrefixCreateInspireAchievement,
 		*req.AppID,
 		*req.UserID,
-		*req.GoodID,
+		*req.AppGoodID,
 		*req.CoinTypeID,
 	)
 	if err := redis2.TryLock(key, 0); err != nil {
@@ -55,7 +54,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		&achievementcrud.Conds{
 			AppID:      &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
 			UserID:     &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
-			GoodID:     &cruder.Cond{Op: cruder.EQ, Val: *req.GoodID},
+			AppGoodID:  &cruder.Cond{Op: cruder.EQ, Val: *req.AppGoodID},
 			CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: *req.CoinTypeID},
 		},
 	)
@@ -75,6 +74,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		AppID:           req.AppID,
 		UserID:          req.UserID,
 		GoodID:          req.GoodID,
+		AppGoodID:       req.AppGoodID,
 		CoinTypeID:      req.CoinTypeID,
 		TotalCommission: &commission,
 	}
@@ -153,6 +153,9 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	}
 	if h.GoodID == nil {
 		return nil, fmt.Errorf("invalid goodid")
+	}
+	if h.AppGoodID == nil {
+		return nil, fmt.Errorf("invalid appgoodid")
 	}
 	if h.OrderID == nil {
 		return nil, fmt.Errorf("invalid orderid")
@@ -242,7 +245,6 @@ func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statem
 		return "", err
 	}
 	if req.Amount.Cmp(amount) != 0 {
-		logger.Sugar().Infow("xxxxxxx", "xxxxxx", req.Amount)
 		return "", fmt.Errorf("mismatch statement")
 	}
 

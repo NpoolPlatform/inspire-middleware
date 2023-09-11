@@ -14,12 +14,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupondiscount"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponfixamount"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponspecialoffer"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodorderpercent"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodordervaluepercent"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
@@ -44,20 +39,15 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		achievement.Table:           achievement.ValidColumn,
-		commission.Table:            commission.ValidColumn,
-		coupon.Table:                coupon.ValidColumn,
-		couponallocated.Table:       couponallocated.ValidColumn,
-		coupondiscount.Table:        coupondiscount.ValidColumn,
-		couponfixamount.Table:       couponfixamount.ValidColumn,
-		couponspecialoffer.Table:    couponspecialoffer.ValidColumn,
-		event.Table:                 event.ValidColumn,
-		goodorderpercent.Table:      goodorderpercent.ValidColumn,
-		goodordervaluepercent.Table: goodordervaluepercent.ValidColumn,
-		invitationcode.Table:        invitationcode.ValidColumn,
-		pubsubmessage.Table:         pubsubmessage.ValidColumn,
-		registration.Table:          registration.ValidColumn,
-		statement.Table:             statement.ValidColumn,
+		achievement.Table:     achievement.ValidColumn,
+		commission.Table:      commission.ValidColumn,
+		coupon.Table:          coupon.ValidColumn,
+		couponallocated.Table: couponallocated.ValidColumn,
+		event.Table:           event.ValidColumn,
+		invitationcode.Table:  invitationcode.ValidColumn,
+		pubsubmessage.Table:   pubsubmessage.ValidColumn,
+		registration.Table:    registration.ValidColumn,
+		statement.Table:       statement.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

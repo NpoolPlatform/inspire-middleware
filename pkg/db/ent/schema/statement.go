@@ -23,6 +23,7 @@ func (Statement) Mixin() []ent.Mixin {
 }
 
 // Fields of the Statement.
+//nolint:funlen
 func (Statement) Fields() []ent.Field {
 	return []ent.Field{
 		field.
@@ -49,6 +50,12 @@ func (Statement) Fields() []ent.Field {
 			}),
 		field.
 			UUID("good_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
+			UUID("app_good_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.UUID{}

@@ -28,6 +28,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		statement1.WithUserID(req.UserID),
 		statement1.WithDirectContributorID(req.DirectContributorID),
 		statement1.WithGoodID(req.GoodID),
+		statement1.WithAppGoodID(req.AppGoodID),
 		statement1.WithOrderID(req.OrderID),
 		statement1.WithSelfOrder(req.SelfOrder),
 		statement1.WithPaymentID(req.PaymentID),

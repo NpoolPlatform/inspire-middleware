@@ -27,6 +27,7 @@ type Handler struct {
 	Name             *string
 	UserID           *uuid.UUID
 	GoodID           *uuid.UUID
+	AppGoodID        *uuid.UUID
 	Threshold        *decimal.Decimal
 	Allocated        *decimal.Decimal
 	CouponConstraint *types.CouponConstraint
@@ -201,6 +202,20 @@ func WithGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
+func WithAppGoodID(id *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = &_id
+		return nil
+	}
+}
+
 func WithThreshold(amount *string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -293,6 +308,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppGoodID != nil {
+			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppGoodID = &cruder.Cond{
+				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}

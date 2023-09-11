@@ -31,6 +31,8 @@ type Statement struct {
 	DirectContributorID uuid.UUID `json:"direct_contributor_id,omitempty"`
 	// GoodID holds the value of the "good_id" field.
 	GoodID uuid.UUID `json:"good_id,omitempty"`
+	// AppGoodID holds the value of the "app_good_id" field.
+	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// OrderID holds the value of the "order_id" field.
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// SelfOrder holds the value of the "self_order" field.
@@ -66,7 +68,7 @@ func (*Statement) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case statement.FieldCreatedAt, statement.FieldUpdatedAt, statement.FieldDeletedAt, statement.FieldUnits:
 			values[i] = new(sql.NullInt64)
-		case statement.FieldID, statement.FieldAppID, statement.FieldUserID, statement.FieldDirectContributorID, statement.FieldGoodID, statement.FieldOrderID, statement.FieldPaymentID, statement.FieldCoinTypeID, statement.FieldPaymentCoinTypeID:
+		case statement.FieldID, statement.FieldAppID, statement.FieldUserID, statement.FieldDirectContributorID, statement.FieldGoodID, statement.FieldAppGoodID, statement.FieldOrderID, statement.FieldPaymentID, statement.FieldCoinTypeID, statement.FieldPaymentCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Statement", columns[i])
@@ -130,6 +132,12 @@ func (s *Statement) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field good_id", values[i])
 			} else if value != nil {
 				s.GoodID = *value
+			}
+		case statement.FieldAppGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
+			} else if value != nil {
+				s.AppGoodID = *value
 			}
 		case statement.FieldOrderID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -245,6 +253,9 @@ func (s *Statement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("good_id=")
 	builder.WriteString(fmt.Sprintf("%v", s.GoodID))
+	builder.WriteString(", ")
+	builder.WriteString("app_good_id=")
+	builder.WriteString(fmt.Sprintf("%v", s.AppGoodID))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", s.OrderID))

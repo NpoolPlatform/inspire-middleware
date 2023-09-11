@@ -37,6 +37,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: inviterIDs},
 			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+			AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
 			SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 			EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 			StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
@@ -95,6 +96,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			UserID:                 inviter.InviterID,
 			DirectContributorID:    inviter.InviteeID,
 			GoodID:                 h.GoodID.String(),
+			AppGoodID:              h.AppGoodID.String(),
 			OrderID:                h.OrderID.String(),
 			SelfOrder:              false,
 			PaymentID:              h.PaymentID.String(),
@@ -103,7 +105,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			PaymentCoinUSDCurrency: h.PaymentCoinUSDCurrency.String(),
 			Units:                  h.Units.String(),
 			Amount:                 h.GoodValue.String(),
-			USDAmount:              h.GoodValue.Mul(h.PaymentCoinUSDCurrency).String(),
+			USDAmount:              h.GoodValueUSD.String(),
 			Commission:             commission,
 		})
 	}
@@ -118,6 +120,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		AppID:                  h.AppID.String(),
 		UserID:                 h.UserID.String(),
 		GoodID:                 h.GoodID.String(),
+		AppGoodID:              h.AppGoodID.String(),
 		OrderID:                h.OrderID.String(),
 		SelfOrder:              true,
 		PaymentID:              h.PaymentID.String(),
@@ -126,7 +129,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		PaymentCoinUSDCurrency: h.PaymentCoinUSDCurrency.String(),
 		Units:                  h.Units.String(),
 		Amount:                 h.GoodValue.String(),
-		USDAmount:              h.GoodValue.Mul(h.PaymentCoinUSDCurrency).String(),
+		USDAmount:              h.GoodValueUSD.String(),
 		Commission:             commission,
 	})
 

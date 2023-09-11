@@ -122,6 +122,13 @@ func GoodID(v uuid.UUID) predicate.Achievement {
 	})
 }
 
+// AppGoodID applies equality check predicate on the "app_good_id" field. It's identical to AppGoodIDEQ.
+func AppGoodID(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodID), v))
+	})
+}
+
 // CoinTypeID applies equality check predicate on the "coin_type_id" field. It's identical to CoinTypeIDEQ.
 func CoinTypeID(v uuid.UUID) predicate.Achievement {
 	return predicate.Achievement(func(s *sql.Selector) {
@@ -594,6 +601,84 @@ func GoodIDIsNil() predicate.Achievement {
 func GoodIDNotNil() predicate.Achievement {
 	return predicate.Achievement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldGoodID)))
+	})
+}
+
+// AppGoodIDEQ applies the EQ predicate on the "app_good_id" field.
+func AppGoodIDEQ(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDNEQ applies the NEQ predicate on the "app_good_id" field.
+func AppGoodIDNEQ(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDIn applies the In predicate on the "app_good_id" field.
+func AppGoodIDIn(vs ...uuid.UUID) predicate.Achievement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAppGoodID), v...))
+	})
+}
+
+// AppGoodIDNotIn applies the NotIn predicate on the "app_good_id" field.
+func AppGoodIDNotIn(vs ...uuid.UUID) predicate.Achievement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAppGoodID), v...))
+	})
+}
+
+// AppGoodIDGT applies the GT predicate on the "app_good_id" field.
+func AppGoodIDGT(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDGTE applies the GTE predicate on the "app_good_id" field.
+func AppGoodIDGTE(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDLT applies the LT predicate on the "app_good_id" field.
+func AppGoodIDLT(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDLTE applies the LTE predicate on the "app_good_id" field.
+func AppGoodIDLTE(v uuid.UUID) predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAppGoodID), v))
+	})
+}
+
+// AppGoodIDIsNil applies the IsNil predicate on the "app_good_id" field.
+func AppGoodIDIsNil() predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppGoodID)))
+	})
+}
+
+// AppGoodIDNotNil applies the NotNil predicate on the "app_good_id" field.
+func AppGoodIDNotNil() predicate.Achievement {
+	return predicate.Achievement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppGoodID)))
 	})
 }
 

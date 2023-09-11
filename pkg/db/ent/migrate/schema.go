@@ -18,6 +18,7 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "total_units_v1", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "self_units_v1", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
@@ -41,10 +42,11 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1691458912},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1694351032},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "NoCommission"},
+		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
 		{Name: "settle_interval", Type: field.TypeString, Nullable: true, Default: "DefaultSettleInterval"},
 		{Name: "settle_amount_type", Type: field.TypeString, Nullable: true, Default: "SettleByPercent"},
@@ -66,11 +68,12 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1691458912},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1694351032},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
@@ -98,77 +101,13 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1691458912},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1694351032},
 	}
 	// CouponAllocatedsTable holds the schema information for the "coupon_allocateds" table.
 	CouponAllocatedsTable = &schema.Table{
 		Name:       "coupon_allocateds",
 		Columns:    CouponAllocatedsColumns,
 		PrimaryKey: []*schema.Column{CouponAllocatedsColumns[0]},
-	}
-	// CouponDiscountsColumns holds the columns for the "coupon_discounts" table.
-	CouponDiscountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "discount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "released_by_user_id", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "allocated", Type: field.TypeUint32, Nullable: true, Default: 0},
-	}
-	// CouponDiscountsTable holds the schema information for the "coupon_discounts" table.
-	CouponDiscountsTable = &schema.Table{
-		Name:       "coupon_discounts",
-		Columns:    CouponDiscountsColumns,
-		PrimaryKey: []*schema.Column{CouponDiscountsColumns[0]},
-	}
-	// CouponFixAmountsColumns holds the columns for the "coupon_fix_amounts" table.
-	CouponFixAmountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "released_by_user_id", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "allocated", Type: field.TypeUint32, Nullable: true, Default: 0},
-	}
-	// CouponFixAmountsTable holds the schema information for the "coupon_fix_amounts" table.
-	CouponFixAmountsTable = &schema.Table{
-		Name:       "coupon_fix_amounts",
-		Columns:    CouponFixAmountsColumns,
-		PrimaryKey: []*schema.Column{CouponFixAmountsColumns[0]},
-	}
-	// CouponSpecialOffersColumns holds the columns for the "coupon_special_offers" table.
-	CouponSpecialOffersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "released_by_user_id", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
-	}
-	// CouponSpecialOffersTable holds the schema information for the "coupon_special_offers" table.
-	CouponSpecialOffersTable = &schema.Table{
-		Name:       "coupon_special_offers",
-		Columns:    CouponSpecialOffersColumns,
-		PrimaryKey: []*schema.Column{CouponSpecialOffersColumns[0]},
 	}
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{
@@ -190,44 +129,6 @@ var (
 		Name:       "events",
 		Columns:    EventsColumns,
 		PrimaryKey: []*schema.Column{EventsColumns[0]},
-	}
-	// GoodOrderPercentsColumns holds the columns for the "good_order_percents" table.
-	GoodOrderPercentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1691458912},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-	}
-	// GoodOrderPercentsTable holds the schema information for the "good_order_percents" table.
-	GoodOrderPercentsTable = &schema.Table{
-		Name:       "good_order_percents",
-		Columns:    GoodOrderPercentsColumns,
-		PrimaryKey: []*schema.Column{GoodOrderPercentsColumns[0]},
-	}
-	// GoodOrderValuePercentsColumns holds the columns for the "good_order_value_percents" table.
-	GoodOrderValuePercentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1691458912},
-		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-	}
-	// GoodOrderValuePercentsTable holds the schema information for the "good_order_value_percents" table.
-	GoodOrderValuePercentsTable = &schema.Table{
-		Name:       "good_order_value_percents",
-		Columns:    GoodOrderValuePercentsColumns,
-		PrimaryKey: []*schema.Column{GoodOrderValuePercentsColumns[0]},
 	}
 	// InvitationCodesColumns holds the columns for the "invitation_codes" table.
 	InvitationCodesColumns = []*schema.Column{
@@ -302,6 +203,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "direct_contributor_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "self_order", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "payment_id", Type: field.TypeUUID, Nullable: true},
@@ -326,12 +228,7 @@ var (
 		CommissionsTable,
 		CouponsTable,
 		CouponAllocatedsTable,
-		CouponDiscountsTable,
-		CouponFixAmountsTable,
-		CouponSpecialOffersTable,
 		EventsTable,
-		GoodOrderPercentsTable,
-		GoodOrderValuePercentsTable,
 		InvitationCodesTable,
 		PubsubMessagesTable,
 		RegistrationsTable,

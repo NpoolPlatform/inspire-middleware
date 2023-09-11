@@ -25,6 +25,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldGoodID holds the string denoting the good_id field in the database.
 	FieldGoodID = "good_id"
+	// FieldAppGoodID holds the string denoting the app_good_id field in the database.
+	FieldAppGoodID = "app_good_id"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
 	// FieldTotalUnitsV1 holds the string denoting the total_units_v1 field in the database.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldGoodID,
+	FieldAppGoodID,
 	FieldCoinTypeID,
 	FieldTotalUnitsV1,
 	FieldSelfUnitsV1,
@@ -94,6 +97,8 @@ var (
 	DefaultUserID func() uuid.UUID
 	// DefaultGoodID holds the default value on creation for the "good_id" field.
 	DefaultGoodID func() uuid.UUID
+	// DefaultAppGoodID holds the default value on creation for the "app_good_id" field.
+	DefaultAppGoodID func() uuid.UUID
 	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
 	DefaultCoinTypeID func() uuid.UUID
 	// DefaultTotalUnitsV1 holds the default value on creation for the "total_units_v1" field.

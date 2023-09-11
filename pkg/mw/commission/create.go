@@ -29,8 +29,11 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 	if h.GoodID == nil {
 		return nil, fmt.Errorf("invalid goodid")
 	}
+	if h.AppGoodID == nil {
+		return nil, fmt.Errorf("invalid appgoodid")
+	}
 
-	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID, *h.GoodID)
+	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID, *h.AppGoodID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err
 	}
@@ -50,7 +53,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 			Where(
 				entcommission.AppID(*h.AppID),
 				entcommission.UserID(*h.UserID),
-				entcommission.GoodID(*h.GoodID),
+				entcommission.AppGoodID(*h.AppGoodID),
 				entcommission.SettleType(h.SettleType.String()),
 				entcommission.EndAt(0),
 				entcommission.DeletedAt(0),
@@ -67,6 +70,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 				AppID:            h.AppID,
 				UserID:           h.UserID,
 				GoodID:           h.GoodID,
+				AppGoodID:        h.AppGoodID,
 				SettleType:       h.SettleType,
 				SettleMode:       h.SettleMode,
 				SettleAmountType: h.SettleAmountType,
