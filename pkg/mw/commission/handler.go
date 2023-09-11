@@ -288,6 +288,7 @@ func WithScalePercent(value *string) func(context.Context, *Handler) error {
 	}
 }
 
+//nolint:funlen
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &commissioncrud.Conds{}
@@ -331,6 +332,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppGoodID != nil {
+			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppGoodID = &cruder.Cond{
+				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}

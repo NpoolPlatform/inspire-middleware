@@ -355,6 +355,12 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 			}
 			_req.PaymentCoinTypeID = &id8
 
+			id9, err := uuid.Parse(*req.AppGoodID)
+			if err != nil {
+				return err
+			}
+			_req.AppGoodID = &id9
+
 			amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
 			if err != nil {
 				return err
@@ -470,6 +476,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nol
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppGoodID != nil {
+			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppGoodID = &cruder.Cond{
+				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}
