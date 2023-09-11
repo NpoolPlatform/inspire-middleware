@@ -264,6 +264,9 @@ func WithReqs(reqs []*npool.StatementReq) func(context.Context, *Handler) error 
 			if req.GoodID == nil {
 				return fmt.Errorf("invalid goodid")
 			}
+			if req.AppGoodID == nil {
+				return fmt.Errorf("invalid appgoodid")
+			}
 			if req.OrderID == nil {
 				return fmt.Errorf("invalid orderid")
 			}
