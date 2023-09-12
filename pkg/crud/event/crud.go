@@ -22,6 +22,7 @@ type Req struct {
 	CreditsPerUSD  *decimal.Decimal
 	MaxConsecutive *uint32
 	GoodID         *uuid.UUID
+	AppGoodID      *uuid.UUID
 	InviterLayers  *uint32
 	DeletedAt      *uint32
 }
@@ -50,6 +51,9 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 	}
 	if req.GoodID != nil {
 		c.SetGoodID(*req.GoodID)
+	}
+	if req.AppGoodID != nil {
+		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.InviterLayers != nil {
 		c.SetInviterLayers(*req.InviterLayers)
@@ -85,8 +89,10 @@ type Conds struct {
 	AppID     *cruder.Cond
 	EventType *cruder.Cond
 	GoodID    *cruder.Cond
+	AppGoodID *cruder.Cond
 }
 
+//nolint:funlen
 func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 	q.Where(entevent.DeletedAt(0))
 	if conds == nil {
@@ -148,6 +154,18 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entevent.GoodID(id))
+		default:
+			return nil, fmt.Errorf("invalid event field")
+		}
+	}
+	if conds.AppGoodID != nil {
+		id, ok := conds.AppGoodID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appgoodid")
+		}
+		switch conds.AppGoodID.Op {
+		case cruder.EQ:
+			q.Where(entevent.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid event field")
 		}

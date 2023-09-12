@@ -148,6 +148,20 @@ func (ec *EventCreate) SetNillableGoodID(u *uuid.UUID) *EventCreate {
 	return ec
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (ec *EventCreate) SetAppGoodID(u uuid.UUID) *EventCreate {
+	ec.mutation.SetAppGoodID(u)
+	return ec
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableAppGoodID(u *uuid.UUID) *EventCreate {
+	if u != nil {
+		ec.SetAppGoodID(*u)
+	}
+	return ec
+}
+
 // SetInviterLayers sets the "inviter_layers" field.
 func (ec *EventCreate) SetInviterLayers(u uint32) *EventCreate {
 	ec.mutation.SetInviterLayers(u)
@@ -303,6 +317,13 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultGoodID()
 		ec.mutation.SetGoodID(v)
 	}
+	if _, ok := ec.mutation.AppGoodID(); !ok {
+		if event.DefaultAppGoodID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultAppGoodID (forgotten import ent/runtime?)")
+		}
+		v := event.DefaultAppGoodID()
+		ec.mutation.SetAppGoodID(v)
+	}
 	if _, ok := ec.mutation.InviterLayers(); !ok {
 		v := event.DefaultInviterLayers
 		ec.mutation.SetInviterLayers(v)
@@ -447,6 +468,14 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			Column: event.FieldGoodID,
 		})
 		_node.GoodID = value
+	}
+	if value, ok := ec.mutation.AppGoodID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldAppGoodID,
+		})
+		_node.AppGoodID = value
 	}
 	if value, ok := ec.mutation.InviterLayers(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -687,6 +716,24 @@ func (u *EventUpsert) UpdateGoodID() *EventUpsert {
 // ClearGoodID clears the value of the "good_id" field.
 func (u *EventUpsert) ClearGoodID() *EventUpsert {
 	u.SetNull(event.FieldGoodID)
+	return u
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *EventUpsert) SetAppGoodID(v uuid.UUID) *EventUpsert {
+	u.Set(event.FieldAppGoodID, v)
+	return u
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *EventUpsert) UpdateAppGoodID() *EventUpsert {
+	u.SetExcluded(event.FieldAppGoodID)
+	return u
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *EventUpsert) ClearAppGoodID() *EventUpsert {
+	u.SetNull(event.FieldAppGoodID)
 	return u
 }
 
@@ -971,6 +1018,27 @@ func (u *EventUpsertOne) UpdateGoodID() *EventUpsertOne {
 func (u *EventUpsertOne) ClearGoodID() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *EventUpsertOne) SetAppGoodID(v uuid.UUID) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateAppGoodID() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *EventUpsertOne) ClearAppGoodID() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 
@@ -1425,6 +1493,27 @@ func (u *EventUpsertBulk) UpdateGoodID() *EventUpsertBulk {
 func (u *EventUpsertBulk) ClearGoodID() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
 		s.ClearGoodID()
+	})
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (u *EventUpsertBulk) SetAppGoodID(v uuid.UUID) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetAppGoodID(v)
+	})
+}
+
+// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateAppGoodID() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateAppGoodID()
+	})
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (u *EventUpsertBulk) ClearAppGoodID() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearAppGoodID()
 	})
 }
 

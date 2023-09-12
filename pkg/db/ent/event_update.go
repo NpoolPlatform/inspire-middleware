@@ -210,6 +210,26 @@ func (eu *EventUpdate) ClearGoodID() *EventUpdate {
 	return eu
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (eu *EventUpdate) SetAppGoodID(u uuid.UUID) *EventUpdate {
+	eu.mutation.SetAppGoodID(u)
+	return eu
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableAppGoodID(u *uuid.UUID) *EventUpdate {
+	if u != nil {
+		eu.SetAppGoodID(*u)
+	}
+	return eu
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (eu *EventUpdate) ClearAppGoodID() *EventUpdate {
+	eu.mutation.ClearAppGoodID()
+	return eu
+}
+
 // SetInviterLayers sets the "inviter_layers" field.
 func (eu *EventUpdate) SetInviterLayers(u uint32) *EventUpdate {
 	eu.mutation.ResetInviterLayers()
@@ -469,6 +489,19 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: event.FieldGoodID,
 		})
 	}
+	if value, ok := eu.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldAppGoodID,
+		})
+	}
+	if eu.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: event.FieldAppGoodID,
+		})
+	}
 	if value, ok := eu.mutation.InviterLayers(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -687,6 +720,26 @@ func (euo *EventUpdateOne) SetNillableGoodID(u *uuid.UUID) *EventUpdateOne {
 // ClearGoodID clears the value of the "good_id" field.
 func (euo *EventUpdateOne) ClearGoodID() *EventUpdateOne {
 	euo.mutation.ClearGoodID()
+	return euo
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (euo *EventUpdateOne) SetAppGoodID(u uuid.UUID) *EventUpdateOne {
+	euo.mutation.SetAppGoodID(u)
+	return euo
+}
+
+// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *EventUpdateOne {
+	if u != nil {
+		euo.SetAppGoodID(*u)
+	}
+	return euo
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (euo *EventUpdateOne) ClearAppGoodID() *EventUpdateOne {
+	euo.mutation.ClearAppGoodID()
 	return euo
 }
 
@@ -977,6 +1030,19 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: event.FieldGoodID,
+		})
+	}
+	if value, ok := euo.mutation.AppGoodID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldAppGoodID,
+		})
+	}
+	if euo.mutation.AppGoodIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: event.FieldAppGoodID,
 		})
 	}
 	if value, ok := euo.mutation.InviterLayers(); ok {

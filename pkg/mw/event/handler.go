@@ -25,6 +25,7 @@ type Handler struct {
 	UserID         *uuid.UUID
 	EventType      *basetypes.UsedFor
 	GoodID         *uuid.UUID
+	AppGoodID      *uuid.UUID
 	Consecutive    *uint32
 	Amount         *decimal.Decimal
 	Conds          *eventcrud.Conds
@@ -206,6 +207,20 @@ func WithGoodID(goodID *string) func(context.Context, *Handler) error {
 	}
 }
 
+func WithAppGoodID(goodID *string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if goodID == nil {
+			return nil
+		}
+		_id, err := uuid.Parse(*goodID)
+		if err != nil {
+			return err
+		}
+		h.AppGoodID = &_id
+		return nil
+	}
+}
+
 func WithConsecutive(consecutive *uint32) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Consecutive = consecutive
@@ -266,6 +281,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
+				Val: id,
+			}
+		}
+		if conds.AppGoodID != nil {
+			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppGoodID = &cruder.Cond{
+				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}

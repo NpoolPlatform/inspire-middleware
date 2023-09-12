@@ -28,6 +28,7 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		event1.WithUserID(&_req.UserID),
 		event1.WithEventType(&_req.EventType),
 		event1.WithGoodID(_req.GoodID),
+		event1.WithAppGoodID(_req.AppGoodID),
 		event1.WithConsecutive(&_req.Consecutive),
 		event1.WithAmount(&_req.Amount),
 	)

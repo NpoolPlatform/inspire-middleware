@@ -5850,6 +5850,7 @@ type EventMutation struct {
 	max_consecutive    *uint32
 	addmax_consecutive *int32
 	good_id            *uuid.UUID
+	app_good_id        *uuid.UUID
 	inviter_layers     *uint32
 	addinviter_layers  *int32
 	clearedFields      map[string]struct{}
@@ -6481,6 +6482,55 @@ func (m *EventMutation) ResetGoodID() {
 	delete(m.clearedFields, event.FieldGoodID)
 }
 
+// SetAppGoodID sets the "app_good_id" field.
+func (m *EventMutation) SetAppGoodID(u uuid.UUID) {
+	m.app_good_id = &u
+}
+
+// AppGoodID returns the value of the "app_good_id" field in the mutation.
+func (m *EventMutation) AppGoodID() (r uuid.UUID, exists bool) {
+	v := m.app_good_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppGoodID returns the old "app_good_id" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
+	}
+	return oldValue.AppGoodID, nil
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (m *EventMutation) ClearAppGoodID() {
+	m.app_good_id = nil
+	m.clearedFields[event.FieldAppGoodID] = struct{}{}
+}
+
+// AppGoodIDCleared returns if the "app_good_id" field was cleared in this mutation.
+func (m *EventMutation) AppGoodIDCleared() bool {
+	_, ok := m.clearedFields[event.FieldAppGoodID]
+	return ok
+}
+
+// ResetAppGoodID resets all changes to the "app_good_id" field.
+func (m *EventMutation) ResetAppGoodID() {
+	m.app_good_id = nil
+	delete(m.clearedFields, event.FieldAppGoodID)
+}
+
 // SetInviterLayers sets the "inviter_layers" field.
 func (m *EventMutation) SetInviterLayers(u uint32) {
 	m.inviter_layers = &u
@@ -6570,7 +6620,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, event.FieldCreatedAt)
 	}
@@ -6600,6 +6650,9 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.good_id != nil {
 		fields = append(fields, event.FieldGoodID)
+	}
+	if m.app_good_id != nil {
+		fields = append(fields, event.FieldAppGoodID)
 	}
 	if m.inviter_layers != nil {
 		fields = append(fields, event.FieldInviterLayers)
@@ -6632,6 +6685,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.MaxConsecutive()
 	case event.FieldGoodID:
 		return m.GoodID()
+	case event.FieldAppGoodID:
+		return m.AppGoodID()
 	case event.FieldInviterLayers:
 		return m.InviterLayers()
 	}
@@ -6663,6 +6718,8 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldMaxConsecutive(ctx)
 	case event.FieldGoodID:
 		return m.OldGoodID(ctx)
+	case event.FieldAppGoodID:
+		return m.OldAppGoodID(ctx)
 	case event.FieldInviterLayers:
 		return m.OldInviterLayers(ctx)
 	}
@@ -6743,6 +6800,13 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
+		return nil
+	case event.FieldAppGoodID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppGoodID(v)
 		return nil
 	case event.FieldInviterLayers:
 		v, ok := value.(uint32)
@@ -6862,6 +6926,9 @@ func (m *EventMutation) ClearedFields() []string {
 	if m.FieldCleared(event.FieldGoodID) {
 		fields = append(fields, event.FieldGoodID)
 	}
+	if m.FieldCleared(event.FieldAppGoodID) {
+		fields = append(fields, event.FieldAppGoodID)
+	}
 	if m.FieldCleared(event.FieldInviterLayers) {
 		fields = append(fields, event.FieldInviterLayers)
 	}
@@ -6896,6 +6963,9 @@ func (m *EventMutation) ClearField(name string) error {
 		return nil
 	case event.FieldGoodID:
 		m.ClearGoodID()
+		return nil
+	case event.FieldAppGoodID:
+		m.ClearAppGoodID()
 		return nil
 	case event.FieldInviterLayers:
 		m.ClearInviterLayers()
@@ -6937,6 +7007,9 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldGoodID:
 		m.ResetGoodID()
+		return nil
+	case event.FieldAppGoodID:
+		m.ResetAppGoodID()
 		return nil
 	case event.FieldInviterLayers:
 		m.ResetInviterLayers()

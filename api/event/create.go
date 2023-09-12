@@ -32,6 +32,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 		event1.WithCreditsPerUSD(req.CreditsPerUSD),
 		event1.WithMaxConsecutive(req.MaxConsecutive),
 		event1.WithGoodID(req.GoodID),
+		event1.WithAppGoodID(req.AppGoodID),
 		event1.WithInviterLayers(req.InviterLayers),
 	)
 	if err != nil {

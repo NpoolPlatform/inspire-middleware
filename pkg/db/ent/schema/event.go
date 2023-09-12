@@ -65,6 +65,12 @@ func (Event) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
+			UUID("app_good_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			Uint32("inviter_layers").
 			Optional().
 			Default(1),

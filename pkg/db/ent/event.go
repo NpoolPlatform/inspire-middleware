@@ -38,6 +38,8 @@ type Event struct {
 	MaxConsecutive uint32 `json:"max_consecutive,omitempty"`
 	// GoodID holds the value of the "good_id" field.
 	GoodID uuid.UUID `json:"good_id,omitempty"`
+	// AppGoodID holds the value of the "app_good_id" field.
+	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// InviterLayers holds the value of the "inviter_layers" field.
 	InviterLayers uint32 `json:"inviter_layers,omitempty"`
 }
@@ -55,7 +57,7 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case event.FieldEventType:
 			values[i] = new(sql.NullString)
-		case event.FieldID, event.FieldAppID, event.FieldGoodID:
+		case event.FieldID, event.FieldAppID, event.FieldGoodID, event.FieldAppGoodID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Event", columns[i])
@@ -140,6 +142,12 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				e.GoodID = *value
 			}
+		case event.FieldAppGoodID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
+			} else if value != nil {
+				e.AppGoodID = *value
+			}
 		case event.FieldInviterLayers:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field inviter_layers", values[i])
@@ -203,6 +211,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("good_id=")
 	builder.WriteString(fmt.Sprintf("%v", e.GoodID))
+	builder.WriteString(", ")
+	builder.WriteString("app_good_id=")
+	builder.WriteString(fmt.Sprintf("%v", e.AppGoodID))
 	builder.WriteString(", ")
 	builder.WriteString("inviter_layers=")
 	builder.WriteString(fmt.Sprintf("%v", e.InviterLayers))

@@ -59,6 +59,9 @@ func (h *queryHandler) formalize() {
 		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
+		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
+			info.AppGoodID = nil
+		}
 		amount, err := decimal.NewFromString(info.Credits)
 		if err != nil {
 			info.Credits = decimal.NewFromInt(0).String()

@@ -382,8 +382,12 @@ func init() {
 	eventDescGoodID := eventFields[7].Descriptor()
 	// event.DefaultGoodID holds the default value on creation for the good_id field.
 	event.DefaultGoodID = eventDescGoodID.Default.(func() uuid.UUID)
+	// eventDescAppGoodID is the schema descriptor for app_good_id field.
+	eventDescAppGoodID := eventFields[8].Descriptor()
+	// event.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	event.DefaultAppGoodID = eventDescAppGoodID.Default.(func() uuid.UUID)
 	// eventDescInviterLayers is the schema descriptor for inviter_layers field.
-	eventDescInviterLayers := eventFields[8].Descriptor()
+	eventDescInviterLayers := eventFields[9].Descriptor()
 	// event.DefaultInviterLayers holds the default value on creation for the inviter_layers field.
 	event.DefaultInviterLayers = eventDescInviterLayers.Default.(uint32)
 	// eventDescID is the schema descriptor for id field.

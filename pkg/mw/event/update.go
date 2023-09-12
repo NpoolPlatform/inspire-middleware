@@ -28,6 +28,7 @@ func (h *Handler) UpdateEvent(ctx context.Context) (*npool.Event, error) {
 				CreditsPerUSD:  h.CreditsPerUSD,
 				MaxConsecutive: h.MaxConsecutive,
 				GoodID:         h.GoodID,
+				AppGoodID:      h.AppGoodID,
 				InviterLayers:  h.InviterLayers,
 			},
 		).Save(_ctx); err != nil {
