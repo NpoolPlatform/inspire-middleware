@@ -56,13 +56,13 @@ func (h *queryHandler) formalize() {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
 
-		if *info.UserID == uuid.Nil.String() {
+		if info.UserID != nil && *info.UserID == uuid.Nil.String() {
 			info.UserID = nil
 		}
-		if *info.GoodID == uuid.Nil.String() {
+		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
-		if *info.AppGoodID == uuid.Nil.String() {
+		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
 			info.AppGoodID = nil
 		}
 		amount, err := decimal.NewFromString(info.Denomination)
