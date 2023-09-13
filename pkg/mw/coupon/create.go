@@ -20,19 +20,6 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		h.ID = &id
 	}
 
-	if h.CouponType == nil {
-		return nil, fmt.Errorf("invalid coupontype")
-	}
-	if h.Denomination == nil {
-		return nil, fmt.Errorf("invalid denomination")
-	}
-	if h.Circulation == nil {
-		return nil, fmt.Errorf("invalid circulation")
-	}
-	if h.Name == nil {
-		return nil, fmt.Errorf("invalid name")
-	}
-
 	switch *h.CouponType {
 	case types.CouponType_FixAmount:
 		if h.Denomination.Cmp(*h.Circulation) > 0 {

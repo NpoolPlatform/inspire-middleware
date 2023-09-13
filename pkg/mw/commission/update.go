@@ -2,7 +2,6 @@ package commission
 
 import (
 	"context"
-	"fmt"
 
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -11,10 +10,6 @@ import (
 )
 
 func (h *Handler) UpdateCommission(ctx context.Context) (*npool.Commission, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	err := db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
 		if _, err := commissioncrud.UpdateSet(
 			tx.Commission.UpdateOneID(*h.ID),

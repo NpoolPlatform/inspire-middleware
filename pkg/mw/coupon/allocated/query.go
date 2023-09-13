@@ -183,10 +183,6 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 		infos:   []*npool.Coupon{},

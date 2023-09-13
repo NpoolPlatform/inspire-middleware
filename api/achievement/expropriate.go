@@ -15,7 +15,7 @@ import (
 func (s *Server) ExpropriateAchievement(ctx context.Context, in *npool.ExpropriateAchievementRequest) (*npool.ExpropriateAchievementResponse, error) {
 	handler, err := achievement1.NewHandler(
 		ctx,
-		achievement1.WithOrderID(&in.OrderID),
+		achievement1.WithOrderID(&in.OrderID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

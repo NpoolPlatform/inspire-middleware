@@ -37,9 +37,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -51,9 +54,12 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCouponType(couponType *types.CouponType) func(context.Context, *Handler) error {
+func WithCouponType(couponType *types.CouponType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if couponType == nil {
+			if must {
+				return fmt.Errorf("invalid coupontype")
+			}
 			return nil
 		}
 		switch *couponType {
@@ -68,9 +74,12 @@ func WithCouponType(couponType *types.CouponType) func(context.Context, *Handler
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -82,14 +91,17 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCouponID(id *string) func(context.Context, *Handler) error {
+func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid couponid")
+			}
 			return nil
 		}
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(id),
+			coupon1.WithID(id, true),
 		)
 		if err != nil {
 			return err
@@ -107,9 +119,12 @@ func WithCouponID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUserID(id *string) func(context.Context, *Handler) error {
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid userid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -121,16 +136,19 @@ func WithUserID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUsed(value *bool) func(context.Context, *Handler) error {
+func WithUsed(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Used = value
 		return nil
 	}
 }
 
-func WithUsedByOrderID(id *string) func(context.Context, *Handler) error {
+func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid usedbyorderid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)

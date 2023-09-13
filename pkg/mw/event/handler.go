@@ -43,9 +43,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -57,9 +60,12 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -71,7 +77,7 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCouponIDs(ids []string) func(context.Context, *Handler) error {
+func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_ids := []uuid.UUID{}
 		for _, id := range ids {
@@ -86,9 +92,12 @@ func WithCouponIDs(ids []string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCredits(amount *string) func(context.Context, *Handler) error {
+func WithCredits(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid credits")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
@@ -100,9 +109,12 @@ func WithCredits(amount *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCreditsPerUSD(amount *string) func(context.Context, *Handler) error {
+func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid creditsperusd")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
@@ -114,23 +126,26 @@ func WithCreditsPerUSD(amount *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithMaxConsecutive(value *uint32) func(context.Context, *Handler) error {
+func WithMaxConsecutive(value *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.MaxConsecutive = value
 		return nil
 	}
 }
 
-func WithInviterLayers(value *uint32) func(context.Context, *Handler) error {
+func WithInviterLayers(value *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.InviterLayers = value
 		return nil
 	}
 }
 
-func WithUserID(id *string) func(context.Context, *Handler) error {
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid userid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -142,9 +157,12 @@ func WithUserID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithEventType(eventType *basetypes.UsedFor) func(context.Context, *Handler) error {
+func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if eventType == nil {
+			if must {
+				return fmt.Errorf("invalid eventtype")
+			}
 			return nil
 		}
 
@@ -193,9 +211,12 @@ func WithEventType(eventType *basetypes.UsedFor) func(context.Context, *Handler)
 	}
 }
 
-func WithGoodID(goodID *string) func(context.Context, *Handler) error {
+func WithGoodID(goodID *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if goodID == nil {
+			if must {
+				return fmt.Errorf("invalid goodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*goodID)
@@ -207,9 +228,12 @@ func WithGoodID(goodID *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppGoodID(goodID *string) func(context.Context, *Handler) error {
+func WithAppGoodID(goodID *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if goodID == nil {
+			if must {
+				return fmt.Errorf("invalid appgoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*goodID)
@@ -221,16 +245,19 @@ func WithAppGoodID(goodID *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithConsecutive(consecutive *uint32) func(context.Context, *Handler) error {
+func WithConsecutive(consecutive *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Consecutive = consecutive
 		return nil
 	}
 }
 
-func WithAmount(amount *string) func(context.Context, *Handler) error {
+func WithAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
+			if must {
+				return fmt.Errorf("invalid amount")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)

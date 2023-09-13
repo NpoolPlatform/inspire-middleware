@@ -57,18 +57,18 @@ func setup(t *testing.T) func(*testing.T) {
 func createCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithUserID(&ret.UserID),
-		WithGoodID(&ret.GoodID),
-		WithAppGoodID(&ret.AppGoodID),
-		WithSettleType(&ret.SettleType),
-		WithSettleMode(&ret.SettleMode),
-		WithSettleAmountType(&ret.SettleAmountType),
-		WithSettleInterval(&ret.SettleInterval),
-		WithAmountOrPercent(&ret.AmountOrPercent),
-		WithStartAt(&ret.StartAt),
-		WithThreshold(&ret.Threshold),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithUserID(&ret.UserID, true),
+		WithGoodID(&ret.GoodID, true),
+		WithAppGoodID(&ret.AppGoodID, true),
+		WithSettleType(&ret.SettleType, true),
+		WithSettleMode(&ret.SettleMode, true),
+		WithSettleAmountType(&ret.SettleAmountType, true),
+		WithSettleInterval(&ret.SettleInterval, true),
+		WithAmountOrPercent(&ret.AmountOrPercent, true),
+		WithStartAt(&ret.StartAt, true),
+		WithThreshold(&ret.Threshold, true),
 	)
 	assert.Nil(t, err)
 
@@ -83,10 +83,10 @@ func createCommission(t *testing.T) {
 func updateCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAmountOrPercent(&ret.AmountOrPercent),
-		WithStartAt(&ret.StartAt),
-		WithThreshold(&ret.Threshold),
+		WithID(&ret.ID, true),
+		WithAmountOrPercent(&ret.AmountOrPercent, true),
+		WithStartAt(&ret.StartAt, true),
+		WithThreshold(&ret.Threshold, true),
 	)
 	assert.Nil(t, err)
 
@@ -100,7 +100,7 @@ func updateCommission(t *testing.T) {
 func getCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -141,7 +141,7 @@ func getCommissions(t *testing.T) {
 func deleteCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

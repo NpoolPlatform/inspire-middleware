@@ -101,8 +101,8 @@ var _reg5 = npool.RegistrationReq{
 func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	_h1, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg1.AppID),
-		invitationcode1.WithUserID(_reg1.InviterID),
+		invitationcode1.WithAppID(_reg1.AppID, true),
+		invitationcode1.WithUserID(_reg1.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -112,10 +112,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h1, err := NewHandler(
 		context.Background(),
-		WithID(_reg1.ID),
-		WithAppID(_reg1.AppID),
-		WithInviterID(_reg1.InviterID),
-		WithInviteeID(_reg1.InviteeID),
+		WithID(_reg1.ID, true),
+		WithAppID(_reg1.AppID, true),
+		WithInviterID(_reg1.InviterID, true),
+		WithInviteeID(_reg1.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -127,8 +127,8 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	_h2, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg2.AppID),
-		invitationcode1.WithUserID(_reg2.InviterID),
+		invitationcode1.WithAppID(_reg2.AppID, true),
+		invitationcode1.WithUserID(_reg2.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -138,10 +138,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h2, err := NewHandler(
 		context.Background(),
-		WithID(_reg2.ID),
-		WithAppID(_reg2.AppID),
-		WithInviterID(_reg2.InviterID),
-		WithInviteeID(_reg2.InviteeID),
+		WithID(_reg2.ID, true),
+		WithAppID(_reg2.AppID, true),
+		WithInviterID(_reg2.InviterID, true),
+		WithInviteeID(_reg2.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -153,8 +153,8 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	_h3, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg3.AppID),
-		invitationcode1.WithUserID(_reg3.InviterID),
+		invitationcode1.WithAppID(_reg3.AppID, true),
+		invitationcode1.WithUserID(_reg3.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -164,10 +164,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h3, err := NewHandler(
 		context.Background(),
-		WithID(_reg3.ID),
-		WithAppID(_reg3.AppID),
-		WithInviterID(_reg3.InviterID),
-		WithInviteeID(_reg3.InviteeID),
+		WithID(_reg3.ID, true),
+		WithAppID(_reg3.AppID, true),
+		WithInviterID(_reg3.InviterID, true),
+		WithInviteeID(_reg3.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -179,8 +179,8 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	_h4, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg4.AppID),
-		invitationcode1.WithUserID(_reg4.InviterID),
+		invitationcode1.WithAppID(_reg4.AppID, true),
+		invitationcode1.WithUserID(_reg4.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -190,10 +190,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h4, err := NewHandler(
 		context.Background(),
-		WithID(_reg4.ID),
-		WithAppID(_reg4.AppID),
-		WithInviterID(_reg4.InviterID),
-		WithInviteeID(_reg4.InviteeID),
+		WithID(_reg4.ID, true),
+		WithAppID(_reg4.AppID, true),
+		WithInviterID(_reg4.InviterID, true),
+		WithInviteeID(_reg4.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -205,8 +205,8 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	_h5, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg5.AppID),
-		invitationcode1.WithUserID(_reg5.InviterID),
+		invitationcode1.WithAppID(_reg5.AppID, true),
+		invitationcode1.WithUserID(_reg5.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -216,10 +216,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h5, err := NewHandler(
 		context.Background(),
-		WithID(_reg5.ID),
-		WithAppID(_reg5.AppID),
-		WithInviterID(_reg5.InviterID),
-		WithInviteeID(_reg5.InviteeID),
+		WithID(_reg5.ID, true),
+		WithAppID(_reg5.AppID, true),
+		WithInviterID(_reg5.InviterID, true),
+		WithInviteeID(_reg5.InviteeID, true),
 	)
 	assert.Nil(t, err)
 

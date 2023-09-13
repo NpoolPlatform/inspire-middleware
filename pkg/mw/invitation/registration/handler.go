@@ -2,6 +2,7 @@ package registration
 
 import (
 	"context"
+	"fmt"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
@@ -31,9 +32,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -45,9 +49,12 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -59,9 +66,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithInviterID(id *string) func(context.Context, *Handler) error {
+func WithInviterID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid inviterid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -73,9 +83,12 @@ func WithInviterID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithInviteeID(id *string) func(context.Context, *Handler) error {
+func WithInviteeID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid inviteeid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)

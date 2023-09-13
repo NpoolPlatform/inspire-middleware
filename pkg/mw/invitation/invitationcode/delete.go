@@ -2,7 +2,6 @@ package invitationcode
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
@@ -12,10 +11,6 @@ import (
 )
 
 func (h *Handler) DeleteInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetInvitationCode(ctx)
 	if err != nil {
 		return nil, err

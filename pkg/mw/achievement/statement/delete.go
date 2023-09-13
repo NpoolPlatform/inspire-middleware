@@ -2,7 +2,6 @@ package statement
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -12,10 +11,6 @@ import (
 )
 
 func (h *Handler) DeleteStatement(ctx context.Context) (*npool.Statement, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetStatement(ctx)
 	if err != nil {
 		return nil, err

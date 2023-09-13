@@ -16,7 +16,7 @@ import (
 func (s *Server) GetRegistration(ctx context.Context, in *npool.GetRegistrationRequest) (*npool.GetRegistrationResponse, error) {
 	handler, err := registration1.NewHandler(
 		ctx,
-		registration1.WithID(&in.ID),
+		registration1.WithID(&in.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

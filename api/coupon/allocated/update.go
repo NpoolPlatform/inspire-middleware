@@ -24,9 +24,9 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 
 	handler, err := allocated1.NewHandler(
 		ctx,
-		allocated1.WithID(req.ID),
-		allocated1.WithUsed(req.Used),
-		allocated1.WithUsedByOrderID(req.UsedByOrderID),
+		allocated1.WithID(req.ID, true),
+		allocated1.WithUsed(req.Used, false),
+		allocated1.WithUsedByOrderID(req.UsedByOrderID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

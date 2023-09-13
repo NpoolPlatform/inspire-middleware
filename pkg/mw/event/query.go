@@ -78,10 +78,6 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 		infos:   []*npool.Event{},

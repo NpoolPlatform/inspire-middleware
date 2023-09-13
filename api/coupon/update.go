@@ -23,18 +23,18 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 	}
 	handler, err := coupon1.NewHandler(
 		ctx,
-		coupon1.WithID(req.ID),
-		coupon1.WithDenomination(req.Denomination),
-		coupon1.WithCirculation(req.Circulation),
-		coupon1.WithStartAt(req.StartAt),
-		coupon1.WithDurationDays(req.DurationDays),
-		coupon1.WithMessage(req.Message),
-		coupon1.WithGoodID(req.GoodID),
-		coupon1.WithAppGoodID(req.AppGoodID),
-		coupon1.WithName(req.Name),
-		coupon1.WithRandom(req.Random),
-		coupon1.WithThreshold(req.Threshold),
-		coupon1.WithAllocated(req.Allocated),
+		coupon1.WithID(req.ID, true),
+		coupon1.WithDenomination(req.Denomination, false),
+		coupon1.WithCirculation(req.Circulation, false),
+		coupon1.WithStartAt(req.StartAt, false),
+		coupon1.WithDurationDays(req.DurationDays, false),
+		coupon1.WithMessage(req.Message, false),
+		coupon1.WithGoodID(req.GoodID, false),
+		coupon1.WithAppGoodID(req.AppGoodID, false),
+		coupon1.WithName(req.Name, false),
+		coupon1.WithRandom(req.Random, false),
+		coupon1.WithThreshold(req.Threshold, false),
+		coupon1.WithAllocated(req.Allocated, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

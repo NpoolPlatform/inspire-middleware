@@ -55,22 +55,22 @@ func setup(t *testing.T) func(*testing.T) {
 func createStatement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithUserID(&ret.UserID),
-		WithDirectContributorID(&ret.DirectContributorID),
-		WithGoodID(&ret.GoodID),
-		WithAppGoodID(&ret.AppGoodID),
-		WithOrderID(&ret.OrderID),
-		WithSelfOrder(&ret.SelfOrder),
-		WithPaymentID(&ret.PaymentID),
-		WithCoinTypeID(&ret.CoinTypeID),
-		WithPaymentCoinTypeID(&ret.PaymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(&ret.PaymentCoinUSDCurrency),
-		WithUnits(&ret.Units),
-		WithAmount(&ret.Amount),
-		WithUSDAmount(&ret.USDAmount),
-		WithCommission(&ret.Commission),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithUserID(&ret.UserID, true),
+		WithDirectContributorID(&ret.DirectContributorID, true),
+		WithGoodID(&ret.GoodID, true),
+		WithAppGoodID(&ret.AppGoodID, true),
+		WithOrderID(&ret.OrderID, true),
+		WithSelfOrder(&ret.SelfOrder, true),
+		WithPaymentID(&ret.PaymentID, true),
+		WithCoinTypeID(&ret.CoinTypeID, true),
+		WithPaymentCoinTypeID(&ret.PaymentCoinTypeID, true),
+		WithPaymentCoinUSDCurrency(&ret.PaymentCoinUSDCurrency, true),
+		WithUnits(&ret.Units, true),
+		WithAmount(&ret.Amount, true),
+		WithUSDAmount(&ret.USDAmount, true),
+		WithCommission(&ret.Commission, true),
 	)
 	assert.Nil(t, err)
 
@@ -85,7 +85,7 @@ func createStatement(t *testing.T) {
 func getStatement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -128,7 +128,7 @@ func getStatements(t *testing.T) {
 func deleteStatement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

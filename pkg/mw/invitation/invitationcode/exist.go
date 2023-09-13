@@ -2,7 +2,6 @@ package invitationcode
 
 import (
 	"context"
-	"fmt"
 
 	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -11,10 +10,6 @@ import (
 )
 
 func (h *Handler) ExistInvitationCode(ctx context.Context) (bool, error) {
-	if h.ID == nil {
-		return false, fmt.Errorf("invalid id")
-	}
-
 	exist := false
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		_exist, err := cli.

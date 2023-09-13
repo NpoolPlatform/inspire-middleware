@@ -2,7 +2,6 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -13,10 +12,6 @@ import (
 )
 
 func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetCoupon(ctx)
 	if err != nil {
 		return nil, err

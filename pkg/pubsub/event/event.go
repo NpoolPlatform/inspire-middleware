@@ -24,13 +24,13 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithAppID(&_req.AppID),
-		event1.WithUserID(&_req.UserID),
-		event1.WithEventType(&_req.EventType),
-		event1.WithGoodID(_req.GoodID),
-		event1.WithAppGoodID(_req.AppGoodID),
-		event1.WithConsecutive(&_req.Consecutive),
-		event1.WithAmount(&_req.Amount),
+		event1.WithAppID(&_req.AppID, true),
+		event1.WithUserID(&_req.UserID, true),
+		event1.WithEventType(&_req.EventType, true),
+		event1.WithGoodID(_req.GoodID, true),
+		event1.WithAppGoodID(_req.AppGoodID, true),
+		event1.WithConsecutive(&_req.Consecutive, true),
+		event1.WithAmount(&_req.Amount, true),
 	)
 	if err != nil {
 		return err

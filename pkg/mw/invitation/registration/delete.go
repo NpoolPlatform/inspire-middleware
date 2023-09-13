@@ -2,7 +2,6 @@ package registration
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -13,10 +12,6 @@ import (
 )
 
 func (h *Handler) DeleteRegistration(ctx context.Context) (*npool.Registration, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetRegistration(ctx)
 	if err != nil {
 		return nil, err

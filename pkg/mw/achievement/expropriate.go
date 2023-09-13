@@ -204,10 +204,6 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 }
 
 func (h *Handler) ExpropriateAchievement(ctx context.Context) error {
-	if h.OrderID == nil {
-		return fmt.Errorf("invalid orderid")
-	}
-
 	handler := &expropriateHandler{
 		Handler:      h,
 		achievements: map[string]*npool.Achievement{},

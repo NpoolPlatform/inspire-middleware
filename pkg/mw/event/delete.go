@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
@@ -12,10 +11,6 @@ import (
 )
 
 func (h *Handler) DeleteEvent(ctx context.Context) (*npool.Event, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetEvent(ctx)
 	if err != nil {
 		return nil, err

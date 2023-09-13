@@ -18,13 +18,6 @@ import (
 )
 
 func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.UserID == nil {
-		return nil, fmt.Errorf("invalid userid")
-	}
-
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInvitationCode, *h.AppID, *h.UserID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err

@@ -2,7 +2,6 @@ package registration
 
 import (
 	"context"
-	"fmt"
 
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -11,10 +10,6 @@ import (
 )
 
 func (h *Handler) ExistRegistration(ctx context.Context) (bool, error) {
-	if h.ID == nil {
-		return false, fmt.Errorf("invalid id")
-	}
-
 	exist := false
 	var err error
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

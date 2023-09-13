@@ -23,18 +23,18 @@ func (s *Server) CreateCommission(ctx context.Context, in *npool.CreateCommissio
 	}
 	handler, err := commission1.NewHandler(
 		ctx,
-		commission1.WithID(req.ID),
-		commission1.WithAppID(req.AppID),
-		commission1.WithUserID(req.UserID),
-		commission1.WithGoodID(req.GoodID),
-		commission1.WithAppGoodID(req.AppGoodID),
-		commission1.WithSettleType(req.SettleType),
-		commission1.WithSettleMode(req.SettleMode),
-		commission1.WithSettleAmountType(req.SettleAmountType),
-		commission1.WithSettleInterval(req.SettleInterval),
-		commission1.WithAmountOrPercent(req.AmountOrPercent),
-		commission1.WithStartAt(req.StartAt),
-		commission1.WithThreshold(req.Threshold),
+		commission1.WithID(req.ID, false),
+		commission1.WithAppID(req.AppID, true),
+		commission1.WithUserID(req.UserID, true),
+		commission1.WithGoodID(req.GoodID, true),
+		commission1.WithAppGoodID(req.AppGoodID, true),
+		commission1.WithSettleType(req.SettleType, true),
+		commission1.WithSettleMode(req.SettleMode, true),
+		commission1.WithSettleAmountType(req.SettleAmountType, true),
+		commission1.WithSettleInterval(req.SettleInterval, true),
+		commission1.WithAmountOrPercent(req.AmountOrPercent, true),
+		commission1.WithStartAt(req.StartAt, true),
+		commission1.WithThreshold(req.Threshold, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

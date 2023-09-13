@@ -5,17 +5,14 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
-
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
-
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
 	"github.com/shopspring/decimal"
 )
@@ -69,7 +66,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 		_id := id
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(&_id),
+			coupon1.WithID(&_id, true),
 		)
 		if err != nil {
 			return err
@@ -90,10 +87,10 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 
 		handler, err := allocated1.NewHandler(
 			ctx,
-			allocated1.WithAppID(&coup.AppID),
-			allocated1.WithUserID(&userID),
-			allocated1.WithCouponID(&coup.ID),
-			allocated1.WithCouponType(&coup.CouponType),
+			allocated1.WithAppID(&coup.AppID, true),
+			allocated1.WithUserID(&userID, true),
+			allocated1.WithCouponID(&coup.ID, true),
+			allocated1.WithCouponType(&coup.CouponType, true),
 		)
 		if err != nil {
 			return err
@@ -186,12 +183,12 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 	for ; i < ev.InviterLayers && j >= 0; i++ {
 		handler, err := NewHandler(
 			ctx,
-			WithAppID(&appID),
-			WithUserID(&inviterIDs[j]),
-			WithEventType(h.EventType),
-			WithGoodID(&goodID),
-			WithConsecutive(h.Consecutive),
-			WithAmount(&amount),
+			WithAppID(&appID, true),
+			WithUserID(&inviterIDs[j], true),
+			WithEventType(h.EventType, true),
+			WithGoodID(&goodID, true),
+			WithConsecutive(h.Consecutive, true),
+			WithAmount(&amount, true),
 		)
 		if err != nil {
 			return nil, err
@@ -218,22 +215,6 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 }
 
 func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.UserID == nil {
-		return nil, fmt.Errorf("invalid userid")
-	}
-	if h.EventType == nil {
-		return nil, fmt.Errorf("invalid eventtype")
-	}
-	if h.Consecutive == nil {
-		return nil, fmt.Errorf("invalid consecutive")
-	}
-	if h.Amount == nil {
-		return nil, fmt.Errorf("invalid amount")
-	}
-
 	handler := &rewardHandler{
 		Handler: h,
 	}

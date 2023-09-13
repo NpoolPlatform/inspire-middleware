@@ -23,9 +23,9 @@ func (s *Server) CreateInvitationCode(ctx context.Context, in *npool.CreateInvit
 	}
 	handler, err := invitationcode1.NewHandler(
 		ctx,
-		invitationcode1.WithID(req.ID),
-		invitationcode1.WithAppID(req.AppID),
-		invitationcode1.WithUserID(req.UserID),
+		invitationcode1.WithID(req.ID, false),
+		invitationcode1.WithAppID(req.AppID, true),
+		invitationcode1.WithUserID(req.UserID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

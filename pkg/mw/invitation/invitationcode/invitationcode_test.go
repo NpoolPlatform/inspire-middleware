@@ -42,9 +42,9 @@ func setup(t *testing.T) func(*testing.T) {
 func createInvitationCode(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithUserID(&ret.UserID),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithUserID(&ret.UserID, true),
 	)
 	assert.Nil(t, err)
 
@@ -62,8 +62,8 @@ func updateInvitationCode(t *testing.T) {
 	ret.Disabled = true
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithDisabled(&ret.Disabled),
+		WithID(&ret.ID, true),
+		WithDisabled(&ret.Disabled, true),
 	)
 	assert.Nil(t, err)
 
@@ -77,7 +77,7 @@ func updateInvitationCode(t *testing.T) {
 func getInvitationCode(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -115,7 +115,7 @@ func getInvitationCodes(t *testing.T) {
 func deleteInvitationCode(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

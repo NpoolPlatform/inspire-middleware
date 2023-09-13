@@ -2,7 +2,6 @@ package achievement
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -59,10 +58,6 @@ func (h *deleteHandler) getStatementIDs(ctx context.Context) error {
 }
 
 func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &deleteHandler{
 		Handler:      h,
 		statementIDs: []uuid.UUID{},

@@ -2,7 +2,6 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -12,10 +11,6 @@ import (
 )
 
 func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		info, err := cli.
 			Coupon.

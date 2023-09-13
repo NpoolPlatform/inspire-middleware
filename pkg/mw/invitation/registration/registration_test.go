@@ -38,8 +38,8 @@ var updateInviterID = uuid.NewString()
 func setup(t *testing.T) func(*testing.T) {
 	h, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(&ret.AppID),
-		invitationcode1.WithUserID(&ret.InviterID),
+		invitationcode1.WithAppID(&ret.AppID, true),
+		invitationcode1.WithUserID(&ret.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -49,8 +49,8 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h1, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(&ret.AppID),
-		invitationcode1.WithUserID(&updateInviterID),
+		invitationcode1.WithAppID(&ret.AppID, true),
+		invitationcode1.WithUserID(&updateInviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -67,10 +67,10 @@ func setup(t *testing.T) func(*testing.T) {
 func createRegistration(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithInviterID(&ret.InviterID),
-		WithInviteeID(&ret.InviteeID),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithInviterID(&ret.InviterID, true),
+		WithInviteeID(&ret.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -86,9 +86,9 @@ func updateRegistration(t *testing.T) {
 	ret.InviterID = updateInviterID
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithInviterID(&ret.InviterID),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithInviterID(&ret.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -102,7 +102,7 @@ func updateRegistration(t *testing.T) {
 func getRegistration(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -140,7 +140,7 @@ func getRegistrations(t *testing.T) {
 func deleteRegistration(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

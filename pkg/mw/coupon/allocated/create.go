@@ -25,17 +25,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		h.ID = &id1
 	}
 
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.CouponID == nil {
-		return nil, fmt.Errorf("invalid couponid")
-	}
-	if h.UserID == nil {
-		return nil, fmt.Errorf("invalid userid")
-	}
 	now := uint32(time.Now().Unix())
-
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		coup, err := tx.
 			Coupon.

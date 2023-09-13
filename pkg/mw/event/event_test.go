@@ -60,14 +60,14 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithID(&ret.CouponIDs[0]),
-		coupon1.WithCouponType(&couponType),
-		coupon1.WithAppID(&ret.AppID),
-		coupon1.WithDenomination(&denomination),
-		coupon1.WithCirculation(&circulation),
-		coupon1.WithIssuedBy(&userID),
-		coupon1.WithMessage(&message),
-		coupon1.WithName(&name),
+		coupon1.WithID(&ret.CouponIDs[0], true),
+		coupon1.WithCouponType(&couponType, true),
+		coupon1.WithAppID(&ret.AppID, true),
+		coupon1.WithDenomination(&denomination, true),
+		coupon1.WithCirculation(&circulation, true),
+		coupon1.WithIssuedBy(&userID, true),
+		coupon1.WithMessage(&message, true),
+		coupon1.WithName(&name, true),
 	)
 	assert.Nil(t, err)
 
@@ -81,15 +81,15 @@ func setup(t *testing.T) func(*testing.T) {
 func createEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithEventType(&ret.EventType),
-		WithCouponIDs(ret.CouponIDs),
-		WithCredits(&ret.Credits),
-		WithCreditsPerUSD(&ret.CreditsPerUSD),
-		WithMaxConsecutive(&ret.MaxConsecutive),
-		WithGoodID(ret.GoodID),
-		WithInviterLayers(&ret.InviterLayers),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithEventType(&ret.EventType, true),
+		WithCouponIDs(ret.CouponIDs, true),
+		WithCredits(&ret.Credits, true),
+		WithCreditsPerUSD(&ret.CreditsPerUSD, true),
+		WithMaxConsecutive(&ret.MaxConsecutive, true),
+		WithGoodID(ret.GoodID, true),
+		WithInviterLayers(&ret.InviterLayers, true),
 	)
 	assert.Nil(t, err)
 
@@ -104,12 +104,12 @@ func createEvent(t *testing.T) {
 func updateEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithCouponIDs(ret.CouponIDs),
-		WithCredits(&ret.Credits),
-		WithCreditsPerUSD(&ret.CreditsPerUSD),
-		WithMaxConsecutive(&ret.MaxConsecutive),
-		WithInviterLayers(&ret.InviterLayers),
+		WithID(&ret.ID, true),
+		WithCouponIDs(ret.CouponIDs, true),
+		WithCredits(&ret.Credits, true),
+		WithCreditsPerUSD(&ret.CreditsPerUSD, true),
+		WithMaxConsecutive(&ret.MaxConsecutive, true),
+		WithInviterLayers(&ret.InviterLayers, true),
 	)
 	assert.Nil(t, err)
 
@@ -123,7 +123,7 @@ func updateEvent(t *testing.T) {
 func getEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -160,7 +160,7 @@ func getEvents(t *testing.T) {
 func deleteEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

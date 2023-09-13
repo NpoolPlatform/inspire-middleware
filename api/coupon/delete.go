@@ -23,7 +23,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 	}
 	handler, err := coupon1.NewHandler(
 		ctx,
-		coupon1.WithID(req.ID),
+		coupon1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

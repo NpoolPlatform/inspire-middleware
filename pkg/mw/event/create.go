@@ -16,13 +16,6 @@ import (
 )
 
 func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.EventType == nil {
-		return nil, fmt.Errorf("invalid eventtype")
-	}
-
 	if err := h.validateCoupons(ctx); err != nil {
 		return nil, err
 	}

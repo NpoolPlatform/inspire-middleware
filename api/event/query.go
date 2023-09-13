@@ -15,7 +15,7 @@ import (
 func (s *Server) GetEvent(ctx context.Context, in *npool.GetEventRequest) (*npool.GetEventResponse, error) {
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(&in.ID),
+		event1.WithID(&in.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

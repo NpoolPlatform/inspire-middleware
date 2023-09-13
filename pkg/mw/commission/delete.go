@@ -2,7 +2,6 @@ package commission
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
@@ -12,10 +11,6 @@ import (
 )
 
 func (h *Handler) DeleteCommission(ctx context.Context) (*npool.Commission, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	info, err := h.GetCommission(ctx)
 	if err != nil {
 		return nil, err

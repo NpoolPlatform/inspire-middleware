@@ -58,16 +58,16 @@ func setup(t *testing.T) func(*testing.T) {
 func createCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithCouponType(&ret.CouponType),
-		WithAppID(&ret.AppID),
-		WithDenomination(&ret.Denomination),
-		WithCirculation(&ret.Circulation),
-		WithIssuedBy(&ret.IssuedBy),
-		WithStartAt(&ret.StartAt),
-		WithDurationDays(&ret.DurationDays),
-		WithMessage(&ret.Message),
-		WithName(&ret.Name),
+		WithID(&ret.ID, true),
+		WithCouponType(&ret.CouponType, true),
+		WithAppID(&ret.AppID, true),
+		WithDenomination(&ret.Denomination, true),
+		WithCirculation(&ret.Circulation, true),
+		WithIssuedBy(&ret.IssuedBy, true),
+		WithStartAt(&ret.StartAt, true),
+		WithDurationDays(&ret.DurationDays, true),
+		WithMessage(&ret.Message, true),
+		WithName(&ret.Name, true),
 	)
 	assert.Nil(t, err)
 
@@ -82,13 +82,13 @@ func createCoupon(t *testing.T) {
 func updateCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithDenomination(&ret.Denomination),
-		WithCirculation(&ret.Circulation),
-		WithStartAt(&ret.StartAt),
-		WithDurationDays(&ret.DurationDays),
-		WithMessage(&ret.Message),
-		WithName(&ret.Name),
+		WithID(&ret.ID, true),
+		WithDenomination(&ret.Denomination, true),
+		WithCirculation(&ret.Circulation, true),
+		WithStartAt(&ret.StartAt, true),
+		WithDurationDays(&ret.DurationDays, true),
+		WithMessage(&ret.Message, true),
+		WithName(&ret.Name, true),
 	)
 	assert.Nil(t, err)
 
@@ -102,7 +102,7 @@ func updateCoupon(t *testing.T) {
 func getCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -138,7 +138,7 @@ func getCoupons(t *testing.T) {
 func deleteCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

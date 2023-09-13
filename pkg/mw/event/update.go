@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"fmt"
 
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -11,10 +10,6 @@ import (
 )
 
 func (h *Handler) UpdateEvent(ctx context.Context) (*npool.Event, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	if err := h.validateCoupons(ctx); err != nil {
 		return nil, err
 	}

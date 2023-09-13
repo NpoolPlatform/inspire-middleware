@@ -66,22 +66,22 @@ var ret1 = &npool.Achievement{
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := statement1.NewHandler(
 		context.Background(),
-		statement1.WithID(&ret.ID),
-		statement1.WithAppID(&ret.AppID),
-		statement1.WithUserID(&ret.UserID),
-		statement1.WithDirectContributorID(&ret.DirectContributorID),
-		statement1.WithGoodID(&ret.GoodID),
-		statement1.WithAppGoodID(&ret.AppGoodID),
-		statement1.WithOrderID(&ret.OrderID),
-		statement1.WithSelfOrder(&ret.SelfOrder),
-		statement1.WithPaymentID(&ret.PaymentID),
-		statement1.WithCoinTypeID(&ret.CoinTypeID),
-		statement1.WithPaymentCoinTypeID(&ret.PaymentCoinTypeID),
-		statement1.WithPaymentCoinUSDCurrency(&ret.PaymentCoinUSDCurrency),
-		statement1.WithUnits(&ret.Units),
-		statement1.WithAmount(&ret.Amount),
-		statement1.WithUSDAmount(&ret.USDAmount),
-		statement1.WithCommission(&ret.Commission),
+		statement1.WithID(&ret.ID, true),
+		statement1.WithAppID(&ret.AppID, true),
+		statement1.WithUserID(&ret.UserID, true),
+		statement1.WithDirectContributorID(&ret.DirectContributorID, true),
+		statement1.WithGoodID(&ret.GoodID, true),
+		statement1.WithAppGoodID(&ret.AppGoodID, true),
+		statement1.WithOrderID(&ret.OrderID, true),
+		statement1.WithSelfOrder(&ret.SelfOrder, true),
+		statement1.WithPaymentID(&ret.PaymentID, true),
+		statement1.WithCoinTypeID(&ret.CoinTypeID, true),
+		statement1.WithPaymentCoinTypeID(&ret.PaymentCoinTypeID, true),
+		statement1.WithPaymentCoinUSDCurrency(&ret.PaymentCoinUSDCurrency, true),
+		statement1.WithUnits(&ret.Units, true),
+		statement1.WithAmount(&ret.Amount, true),
+		statement1.WithUSDAmount(&ret.USDAmount, true),
+		statement1.WithCommission(&ret.Commission, true),
 	)
 	assert.Nil(t, err)
 
@@ -124,7 +124,7 @@ func getAchievements(t *testing.T) {
 func expropriateAchievement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithOrderID(&ret.OrderID),
+		WithOrderID(&ret.OrderID, true),
 	)
 	assert.Nil(t, err)
 
@@ -133,7 +133,7 @@ func expropriateAchievement(t *testing.T) {
 
 	h1, err := statement1.NewHandler(
 		context.Background(),
-		statement1.WithID(&ret.ID),
+		statement1.WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

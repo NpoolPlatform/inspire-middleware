@@ -17,22 +17,6 @@ import (
 )
 
 func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.UserID == nil {
-		return nil, fmt.Errorf("invalid userid")
-	}
-	if h.SettleType == nil {
-		return nil, fmt.Errorf("invalid settletype")
-	}
-	if h.GoodID == nil {
-		return nil, fmt.Errorf("invalid goodid")
-	}
-	if h.AppGoodID == nil {
-		return nil, fmt.Errorf("invalid appgoodid")
-	}
-
 	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID, *h.AppGoodID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err

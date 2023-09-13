@@ -17,16 +17,6 @@ import (
 )
 
 func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.InviterID == nil {
-		return nil, fmt.Errorf("invalid inviterid")
-	}
-	if h.InviteeID == nil {
-		return nil, fmt.Errorf("invalid inviteeid")
-	}
-
 	if err := h.validateInvitationCode(ctx); err != nil {
 		return nil, err
 	}

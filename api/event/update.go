@@ -24,12 +24,12 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(req.ID),
-		event1.WithCouponIDs(req.CouponIDs),
-		event1.WithCredits(req.Credits),
-		event1.WithCreditsPerUSD(req.CreditsPerUSD),
-		event1.WithMaxConsecutive(req.MaxConsecutive),
-		event1.WithInviterLayers(req.InviterLayers),
+		event1.WithID(req.ID, true),
+		event1.WithCouponIDs(req.CouponIDs, false),
+		event1.WithCredits(req.Credits, false),
+		event1.WithCreditsPerUSD(req.CreditsPerUSD, false),
+		event1.WithMaxConsecutive(req.MaxConsecutive, false),
+		event1.WithInviterLayers(req.InviterLayers, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

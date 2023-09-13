@@ -47,9 +47,12 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string) func(context.Context, *Handler) error {
+func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid id")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -61,9 +64,12 @@ func WithID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(id *string) func(context.Context, *Handler) error {
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -75,9 +81,12 @@ func WithAppID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUserID(id *string) func(context.Context, *Handler) error {
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid userid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -89,9 +98,12 @@ func WithUserID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithGoodID(id *string) func(context.Context, *Handler) error {
+func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid goodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -103,9 +115,12 @@ func WithGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppGoodID(id *string) func(context.Context, *Handler) error {
+func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appgoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -117,9 +132,12 @@ func WithAppGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFromGoodID(id *string) func(context.Context, *Handler) error {
+func WithFromGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid fromgoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -131,9 +149,12 @@ func WithFromGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithToGoodID(id *string) func(context.Context, *Handler) error {
+func WithToGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid togoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -145,9 +166,12 @@ func WithToGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithFromAppGoodID(id *string) func(context.Context, *Handler) error {
+func WithFromAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid fromappgoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -159,9 +183,12 @@ func WithFromAppGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithToAppGoodID(id *string) func(context.Context, *Handler) error {
+func WithToAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
+			if must {
+				return fmt.Errorf("invalid toappgoodid")
+			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
@@ -173,9 +200,12 @@ func WithToAppGoodID(id *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithSettleType(settleType *types.SettleType) func(context.Context, *Handler) error {
+func WithSettleType(settleType *types.SettleType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleType == nil {
+			if must {
+				return fmt.Errorf("invalid settletype")
+			}
 			return nil
 		}
 		switch *settleType {
@@ -189,9 +219,12 @@ func WithSettleType(settleType *types.SettleType) func(context.Context, *Handler
 	}
 }
 
-func WithSettleMode(settleMode *types.SettleMode) func(context.Context, *Handler) error {
+func WithSettleMode(settleMode *types.SettleMode, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleMode == nil {
+			if must {
+				return fmt.Errorf("invalid settlemode")
+			}
 			return nil
 		}
 		switch *settleMode {
@@ -205,9 +238,12 @@ func WithSettleMode(settleMode *types.SettleMode) func(context.Context, *Handler
 	}
 }
 
-func WithSettleAmountType(settleAmount *types.SettleAmountType) func(context.Context, *Handler) error {
+func WithSettleAmountType(settleAmount *types.SettleAmountType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleAmount == nil {
+			if must {
+				return fmt.Errorf("invalid settleamounttype")
+			}
 			return nil
 		}
 		switch *settleAmount {
@@ -221,9 +257,12 @@ func WithSettleAmountType(settleAmount *types.SettleAmountType) func(context.Con
 	}
 }
 
-func WithSettleInterval(settleInterval *types.SettleInterval) func(context.Context, *Handler) error {
+func WithSettleInterval(settleInterval *types.SettleInterval, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleInterval == nil {
+			if must {
+				return fmt.Errorf("invalid settleinterval")
+			}
 			return nil
 		}
 		switch *settleInterval {
@@ -239,9 +278,12 @@ func WithSettleInterval(settleInterval *types.SettleInterval) func(context.Conte
 	}
 }
 
-func WithAmountOrPercent(value *string) func(context.Context, *Handler) error {
+func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid amountorpercent")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
@@ -253,16 +295,19 @@ func WithAmountOrPercent(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithStartAt(at *uint32) func(context.Context, *Handler) error {
+func WithStartAt(at *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.StartAt = at
 		return nil
 	}
 }
 
-func WithThreshold(value *string) func(context.Context, *Handler) error {
+func WithThreshold(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid threshold")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
@@ -274,14 +319,20 @@ func WithThreshold(value *string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithScalePercent(value *string) func(context.Context, *Handler) error {
+func WithScalePercent(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
+			if must {
+				return fmt.Errorf("invalid scalepercent")
+			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+			return fmt.Errorf("invalid scalepercent")
 		}
 		h.ScalePercent = &_amount
 		return nil

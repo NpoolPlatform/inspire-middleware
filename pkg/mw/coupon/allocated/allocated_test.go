@@ -55,16 +55,16 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithID(&ret.CouponID),
-		coupon1.WithCouponType(&ret.CouponType),
-		coupon1.WithAppID(&ret.AppID),
-		coupon1.WithDenomination(&ret.Denomination),
-		coupon1.WithCirculation(&ret.Circulation),
-		coupon1.WithIssuedBy(&ret.UserID),
-		coupon1.WithStartAt(&ret.StartAt),
-		coupon1.WithDurationDays(&ret.DurationDays),
-		coupon1.WithMessage(&ret.Message),
-		coupon1.WithName(&ret.CouponName),
+		coupon1.WithID(&ret.CouponID, true),
+		coupon1.WithCouponType(&ret.CouponType, true),
+		coupon1.WithAppID(&ret.AppID, true),
+		coupon1.WithDenomination(&ret.Denomination, true),
+		coupon1.WithCirculation(&ret.Circulation, true),
+		coupon1.WithIssuedBy(&ret.UserID, true),
+		coupon1.WithStartAt(&ret.StartAt, true),
+		coupon1.WithDurationDays(&ret.DurationDays, true),
+		coupon1.WithMessage(&ret.Message, true),
+		coupon1.WithName(&ret.CouponName, true),
 	)
 	assert.Nil(t, err)
 
@@ -80,10 +80,10 @@ func setup(t *testing.T) func(*testing.T) {
 func creatCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithAppID(&ret.AppID),
-		WithCouponID(&ret.CouponID),
-		WithUserID(&ret.UserID),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithCouponID(&ret.CouponID, true),
+		WithUserID(&ret.UserID, true),
 	)
 	assert.Nil(t, err)
 
@@ -104,9 +104,9 @@ func updateCoupon(t *testing.T) {
 
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
-		WithUsed(&ret.Used),
-		WithUsedByOrderID(ret.UsedByOrderID),
+		WithID(&ret.ID, true),
+		WithUsed(&ret.Used, true),
+		WithUsedByOrderID(ret.UsedByOrderID, true),
 	)
 	assert.Nil(t, err)
 
@@ -121,7 +121,7 @@ func updateCoupon(t *testing.T) {
 func getCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -160,7 +160,7 @@ func getCoupons(t *testing.T) {
 func deleteCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID),
+		WithID(&ret.ID, true),
 	)
 	assert.Nil(t, err)
 

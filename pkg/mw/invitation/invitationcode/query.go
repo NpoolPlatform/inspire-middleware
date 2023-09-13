@@ -48,10 +48,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 }
 
 func (h *Handler) GetInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 		infos:   []*npool.InvitationCode{},

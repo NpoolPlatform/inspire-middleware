@@ -23,22 +23,22 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 	}
 	handler, err := statement1.NewHandler(
 		ctx,
-		statement1.WithID(req.ID),
-		statement1.WithAppID(req.AppID),
-		statement1.WithUserID(req.UserID),
-		statement1.WithDirectContributorID(req.DirectContributorID),
-		statement1.WithGoodID(req.GoodID),
-		statement1.WithAppGoodID(req.AppGoodID),
-		statement1.WithOrderID(req.OrderID),
-		statement1.WithSelfOrder(req.SelfOrder),
-		statement1.WithPaymentID(req.PaymentID),
-		statement1.WithCoinTypeID(req.CoinTypeID),
-		statement1.WithPaymentCoinTypeID(req.PaymentCoinTypeID),
-		statement1.WithPaymentCoinUSDCurrency(req.PaymentCoinUSDCurrency),
-		statement1.WithUnits(req.Units),
-		statement1.WithAmount(req.Amount),
-		statement1.WithUSDAmount(req.USDAmount),
-		statement1.WithCommission(req.Commission),
+		statement1.WithID(req.ID, false),
+		statement1.WithAppID(req.AppID, true),
+		statement1.WithUserID(req.UserID, true),
+		statement1.WithDirectContributorID(req.DirectContributorID, true),
+		statement1.WithGoodID(req.GoodID, true),
+		statement1.WithAppGoodID(req.AppGoodID, true),
+		statement1.WithOrderID(req.OrderID, true),
+		statement1.WithSelfOrder(req.SelfOrder, false),
+		statement1.WithPaymentID(req.PaymentID, false),
+		statement1.WithCoinTypeID(req.CoinTypeID, true),
+		statement1.WithPaymentCoinTypeID(req.PaymentCoinTypeID, true),
+		statement1.WithPaymentCoinUSDCurrency(req.PaymentCoinUSDCurrency, true),
+		statement1.WithUnits(req.Units, true),
+		statement1.WithAmount(req.Amount, true),
+		statement1.WithUSDAmount(req.USDAmount, true),
+		statement1.WithCommission(req.Commission, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -75,7 +75,7 @@ func (s *Server) CreateStatements(ctx context.Context, in *npool.CreateStatement
 	}
 	handler, err := statement1.NewHandler(
 		ctx,
-		statement1.WithReqs(reqs),
+		statement1.WithReqs(reqs, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -23,8 +23,8 @@ func (s *Server) UpdateInvitationCode(ctx context.Context, in *npool.UpdateInvit
 	}
 	handler, err := invitationcode1.NewHandler(
 		ctx,
-		invitationcode1.WithID(req.ID),
-		invitationcode1.WithDisabled(req.Disabled),
+		invitationcode1.WithID(req.ID, true),
+		invitationcode1.WithDisabled(req.Disabled, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

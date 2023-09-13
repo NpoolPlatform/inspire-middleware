@@ -23,10 +23,10 @@ func (s *Server) UpdateCommission(ctx context.Context, in *npool.UpdateCommissio
 	}
 	handler, err := commission1.NewHandler(
 		ctx,
-		commission1.WithID(req.ID),
-		commission1.WithAmountOrPercent(req.AmountOrPercent),
-		commission1.WithStartAt(req.StartAt),
-		commission1.WithThreshold(req.Threshold),
+		commission1.WithID(req.ID, true),
+		commission1.WithAmountOrPercent(req.AmountOrPercent, false),
+		commission1.WithStartAt(req.StartAt, false),
+		commission1.WithThreshold(req.Threshold, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -246,8 +246,8 @@ var _comm6 = commmwpb.CommissionReq{
 func setup(t *testing.T) func(*testing.T) { //nolint
 	_h1, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg1.AppID),
-		invitationcode1.WithUserID(_reg1.InviterID),
+		invitationcode1.WithAppID(_reg1.AppID, true),
+		invitationcode1.WithUserID(_reg1.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -257,9 +257,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h1, err := registration1.NewHandler(
 		context.Background(),
-		registration1.WithAppID(_reg1.AppID),
-		registration1.WithInviterID(_reg1.InviterID),
-		registration1.WithInviteeID(_reg1.InviteeID),
+		registration1.WithAppID(_reg1.AppID, true),
+		registration1.WithInviterID(_reg1.InviterID, true),
+		registration1.WithInviteeID(_reg1.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -269,8 +269,8 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	_h2, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg2.AppID),
-		invitationcode1.WithUserID(_reg2.InviterID),
+		invitationcode1.WithAppID(_reg2.AppID, true),
+		invitationcode1.WithUserID(_reg2.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -280,9 +280,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h2, err := registration1.NewHandler(
 		context.Background(),
-		registration1.WithAppID(_reg2.AppID),
-		registration1.WithInviterID(_reg2.InviterID),
-		registration1.WithInviteeID(_reg2.InviteeID),
+		registration1.WithAppID(_reg2.AppID, true),
+		registration1.WithInviterID(_reg2.InviterID, true),
+		registration1.WithInviteeID(_reg2.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -292,8 +292,8 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	_h3, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg3.AppID),
-		invitationcode1.WithUserID(_reg3.InviterID),
+		invitationcode1.WithAppID(_reg3.AppID, true),
+		invitationcode1.WithUserID(_reg3.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -303,9 +303,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h3, err := registration1.NewHandler(
 		context.Background(),
-		registration1.WithAppID(_reg3.AppID),
-		registration1.WithInviterID(_reg3.InviterID),
-		registration1.WithInviteeID(_reg3.InviteeID),
+		registration1.WithAppID(_reg3.AppID, true),
+		registration1.WithInviterID(_reg3.InviterID, true),
+		registration1.WithInviteeID(_reg3.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -315,8 +315,8 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	_h4, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg4.AppID),
-		invitationcode1.WithUserID(_reg4.InviterID),
+		invitationcode1.WithAppID(_reg4.AppID, true),
+		invitationcode1.WithUserID(_reg4.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -326,9 +326,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h4, err := registration1.NewHandler(
 		context.Background(),
-		registration1.WithAppID(_reg4.AppID),
-		registration1.WithInviterID(_reg4.InviterID),
-		registration1.WithInviteeID(_reg4.InviteeID),
+		registration1.WithAppID(_reg4.AppID, true),
+		registration1.WithInviterID(_reg4.InviterID, true),
+		registration1.WithInviteeID(_reg4.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -338,8 +338,8 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	_h5, err := invitationcode1.NewHandler(
 		context.Background(),
-		invitationcode1.WithAppID(_reg5.AppID),
-		invitationcode1.WithUserID(_reg5.InviterID),
+		invitationcode1.WithAppID(_reg5.AppID, true),
+		invitationcode1.WithUserID(_reg5.InviterID, true),
 	)
 	assert.Nil(t, err)
 
@@ -349,9 +349,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h5, err := registration1.NewHandler(
 		context.Background(),
-		registration1.WithAppID(_reg5.AppID),
-		registration1.WithInviterID(_reg5.InviterID),
-		registration1.WithInviteeID(_reg5.InviteeID),
+		registration1.WithAppID(_reg5.AppID, true),
+		registration1.WithInviterID(_reg5.InviterID, true),
+		registration1.WithInviteeID(_reg5.InviteeID, true),
 	)
 	assert.Nil(t, err)
 
@@ -361,15 +361,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h6, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm1.AppID),
-		commission1.WithUserID(_comm1.UserID),
-		commission1.WithGoodID(_comm1.GoodID),
-		commission1.WithAppGoodID(_comm1.AppGoodID),
-		commission1.WithSettleType(_comm1.SettleType),
-		commission1.WithSettleMode(_comm1.SettleMode),
-		commission1.WithSettleAmountType(_comm1.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm1.AmountOrPercent),
-		commission1.WithStartAt(_comm1.StartAt),
+		commission1.WithAppID(_comm1.AppID, true),
+		commission1.WithUserID(_comm1.UserID, true),
+		commission1.WithGoodID(_comm1.GoodID, true),
+		commission1.WithAppGoodID(_comm1.AppGoodID, true),
+		commission1.WithSettleType(_comm1.SettleType, true),
+		commission1.WithSettleMode(_comm1.SettleMode, true),
+		commission1.WithSettleAmountType(_comm1.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm1.AmountOrPercent, true),
+		commission1.WithStartAt(_comm1.StartAt, true),
 	)
 	assert.Nil(t, err)
 
@@ -379,15 +379,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h7, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm2.AppID),
-		commission1.WithUserID(_comm2.UserID),
-		commission1.WithGoodID(_comm2.GoodID),
-		commission1.WithAppGoodID(_comm2.AppGoodID),
-		commission1.WithSettleType(_comm2.SettleType),
-		commission1.WithSettleMode(_comm2.SettleMode),
-		commission1.WithSettleAmountType(_comm2.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm2.AmountOrPercent),
-		commission1.WithStartAt(_comm2.StartAt),
+		commission1.WithAppID(_comm2.AppID, true),
+		commission1.WithUserID(_comm2.UserID, true),
+		commission1.WithGoodID(_comm2.GoodID, true),
+		commission1.WithAppGoodID(_comm2.AppGoodID, true),
+		commission1.WithSettleType(_comm2.SettleType, true),
+		commission1.WithSettleMode(_comm2.SettleMode, true),
+		commission1.WithSettleAmountType(_comm2.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm2.AmountOrPercent, true),
+		commission1.WithStartAt(_comm2.StartAt, true),
 	)
 	assert.Nil(t, err)
 
@@ -397,15 +397,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h8, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm3.AppID),
-		commission1.WithUserID(_comm3.UserID),
-		commission1.WithGoodID(_comm3.GoodID),
-		commission1.WithAppGoodID(_comm3.AppGoodID),
-		commission1.WithSettleType(_comm3.SettleType),
-		commission1.WithSettleMode(_comm3.SettleMode),
-		commission1.WithSettleAmountType(_comm3.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm3.AmountOrPercent),
-		commission1.WithStartAt(_comm3.StartAt),
+		commission1.WithAppID(_comm3.AppID, true),
+		commission1.WithUserID(_comm3.UserID, true),
+		commission1.WithGoodID(_comm3.GoodID, true),
+		commission1.WithAppGoodID(_comm3.AppGoodID, true),
+		commission1.WithSettleType(_comm3.SettleType, true),
+		commission1.WithSettleMode(_comm3.SettleMode, true),
+		commission1.WithSettleAmountType(_comm3.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm3.AmountOrPercent, true),
+		commission1.WithStartAt(_comm3.StartAt, true),
 	)
 	assert.Nil(t, err)
 
@@ -415,15 +415,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h9, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm4.AppID),
-		commission1.WithUserID(_comm4.UserID),
-		commission1.WithGoodID(_comm4.GoodID),
-		commission1.WithAppGoodID(_comm4.AppGoodID),
-		commission1.WithSettleType(_comm4.SettleType),
-		commission1.WithSettleMode(_comm4.SettleMode),
-		commission1.WithSettleAmountType(_comm4.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm4.AmountOrPercent),
-		commission1.WithStartAt(_comm4.StartAt),
+		commission1.WithAppID(_comm4.AppID, true),
+		commission1.WithUserID(_comm4.UserID, true),
+		commission1.WithGoodID(_comm4.GoodID, true),
+		commission1.WithAppGoodID(_comm4.AppGoodID, true),
+		commission1.WithSettleType(_comm4.SettleType, true),
+		commission1.WithSettleMode(_comm4.SettleMode, true),
+		commission1.WithSettleAmountType(_comm4.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm4.AmountOrPercent, true),
+		commission1.WithStartAt(_comm4.StartAt, true),
 	)
 	assert.Nil(t, err)
 
@@ -433,15 +433,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h10, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm5.AppID),
-		commission1.WithUserID(_comm5.UserID),
-		commission1.WithGoodID(_comm5.GoodID),
-		commission1.WithAppGoodID(_comm5.AppGoodID),
-		commission1.WithSettleType(_comm5.SettleType),
-		commission1.WithSettleMode(_comm5.SettleMode),
-		commission1.WithSettleAmountType(_comm5.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm5.AmountOrPercent),
-		commission1.WithStartAt(_comm5.StartAt),
+		commission1.WithAppID(_comm5.AppID, true),
+		commission1.WithUserID(_comm5.UserID, true),
+		commission1.WithGoodID(_comm5.GoodID, true),
+		commission1.WithAppGoodID(_comm5.AppGoodID, true),
+		commission1.WithSettleType(_comm5.SettleType, true),
+		commission1.WithSettleMode(_comm5.SettleMode, true),
+		commission1.WithSettleAmountType(_comm5.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm5.AmountOrPercent, true),
+		commission1.WithStartAt(_comm5.StartAt, true),
 	)
 	assert.Nil(t, err)
 
@@ -451,15 +451,15 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 
 	h11, err := commission1.NewHandler(
 		context.Background(),
-		commission1.WithAppID(_comm6.AppID),
-		commission1.WithUserID(_comm6.UserID),
-		commission1.WithGoodID(_comm6.GoodID),
-		commission1.WithAppGoodID(_comm6.AppGoodID),
-		commission1.WithSettleType(_comm6.SettleType),
-		commission1.WithSettleMode(_comm6.SettleMode),
-		commission1.WithSettleAmountType(_comm6.SettleAmountType),
-		commission1.WithAmountOrPercent(_comm6.AmountOrPercent),
-		commission1.WithStartAt(_comm6.StartAt),
+		commission1.WithAppID(_comm6.AppID, true),
+		commission1.WithUserID(_comm6.UserID, true),
+		commission1.WithGoodID(_comm6.GoodID, true),
+		commission1.WithAppGoodID(_comm6.AppGoodID, true),
+		commission1.WithSettleType(_comm6.SettleType, true),
+		commission1.WithSettleMode(_comm6.SettleMode, true),
+		commission1.WithSettleAmountType(_comm6.SettleAmountType, true),
+		commission1.WithAmountOrPercent(_comm6.AmountOrPercent, true),
+		commission1.WithStartAt(_comm6.StartAt, true),
 	)
 	assert.Nil(t, err)
 

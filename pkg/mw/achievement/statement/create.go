@@ -145,40 +145,6 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 }
 
 func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error) {
-	if h.AppID == nil {
-		return nil, fmt.Errorf("invalid appid")
-	}
-	if h.UserID == nil {
-		return nil, fmt.Errorf("invalid userid")
-	}
-	if h.GoodID == nil {
-		return nil, fmt.Errorf("invalid goodid")
-	}
-	if h.AppGoodID == nil {
-		return nil, fmt.Errorf("invalid appgoodid")
-	}
-	if h.OrderID == nil {
-		return nil, fmt.Errorf("invalid orderid")
-	}
-	if h.PaymentID == nil {
-		return nil, fmt.Errorf("invalid paymentid")
-	}
-	if h.CoinTypeID == nil {
-		return nil, fmt.Errorf("invalid cointypeid")
-	}
-	if h.PaymentCoinTypeID == nil {
-		return nil, fmt.Errorf("invalid paymentcointypeid")
-	}
-	if h.Amount == nil {
-		return nil, fmt.Errorf("invalid amount")
-	}
-	if h.Units == nil {
-		return nil, fmt.Errorf("invalid units")
-	}
-	if h.Commission == nil {
-		return nil, fmt.Errorf("invalid commission")
-	}
-
 	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *h.AppID, *h.UserID, *h.OrderID)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return nil, err

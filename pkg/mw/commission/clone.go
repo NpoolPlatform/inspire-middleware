@@ -14,20 +14,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-//nolint:funlen
 func (h *Handler) CloneCommissions(ctx context.Context) error {
-	if h.AppID == nil {
-		return fmt.Errorf("invalid appid")
-	}
-	if h.FromAppGoodID == nil {
-		return fmt.Errorf("invalid fromappgoodid")
-	}
-	if h.ToAppGoodID == nil {
-		return fmt.Errorf("invalid toappgoodid")
-	}
-	if h.ScalePercent != nil && h.ScalePercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return nil
-	}
 	if *h.FromAppGoodID == *h.ToAppGoodID {
 		return nil
 	}

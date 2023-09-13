@@ -23,7 +23,7 @@ func (s *Server) DeleteRegistration(ctx context.Context, in *npool.DeleteRegistr
 	}
 	handler, err := registration1.NewHandler(
 		ctx,
-		registration1.WithID(req.ID),
+		registration1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

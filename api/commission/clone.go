@@ -15,12 +15,12 @@ import (
 func (s *Server) CloneCommissions(ctx context.Context, in *npool.CloneCommissionsRequest) (*npool.CloneCommissionsResponse, error) {
 	handler, err := commission1.NewHandler(
 		ctx,
-		commission1.WithAppID(&in.AppID),
-		commission1.WithFromGoodID(&in.FromGoodID),
-		commission1.WithToGoodID(&in.ToGoodID),
-		commission1.WithFromAppGoodID(&in.FromAppGoodID),
-		commission1.WithToAppGoodID(&in.ToAppGoodID),
-		commission1.WithScalePercent(&in.ScalePercent),
+		commission1.WithAppID(&in.AppID, true),
+		commission1.WithFromGoodID(&in.FromGoodID, true),
+		commission1.WithToGoodID(&in.ToGoodID, true),
+		commission1.WithFromAppGoodID(&in.FromAppGoodID, true),
+		commission1.WithToAppGoodID(&in.ToAppGoodID, true),
+		commission1.WithScalePercent(&in.ScalePercent, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

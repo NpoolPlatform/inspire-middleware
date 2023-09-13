@@ -14,12 +14,12 @@ import (
 func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) (*npool.RewardEventResponse, error) {
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithAppID(&in.AppID),
-		event1.WithUserID(&in.UserID),
-		event1.WithEventType(&in.EventType),
-		event1.WithGoodID(in.GoodID),
-		event1.WithConsecutive(&in.Consecutive),
-		event1.WithAmount(&in.Amount),
+		event1.WithAppID(&in.AppID, true),
+		event1.WithUserID(&in.UserID, true),
+		event1.WithEventType(&in.EventType, true),
+		event1.WithGoodID(in.GoodID, true),
+		event1.WithConsecutive(&in.Consecutive, true),
+		event1.WithAmount(&in.Amount, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

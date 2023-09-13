@@ -111,6 +111,8 @@ var comm1 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent1,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -122,6 +124,8 @@ var _comm1 = commmwpb.CommissionReq{
 	SettleType:       &comm1.SettleType,
 	AmountOrPercent:  &comm1.AmountOrPercent,
 	SettleAmountType: &comm1.SettleAmountType,
+	SettleMode:       &comm1.SettleMode,
+	SettleInterval:   &comm1.SettleInterval,
 	StartAt:          &comm1.StartAt,
 }
 
@@ -134,6 +138,8 @@ var comm2 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent2,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -145,6 +151,8 @@ var _comm2 = commmwpb.CommissionReq{
 	SettleType:       &comm2.SettleType,
 	AmountOrPercent:  &comm2.AmountOrPercent,
 	SettleAmountType: &comm2.SettleAmountType,
+	SettleMode:       &comm2.SettleMode,
+	SettleInterval:   &comm2.SettleInterval,
 	StartAt:          &comm2.StartAt,
 }
 
@@ -157,6 +165,8 @@ var comm3 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent3,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -168,6 +178,8 @@ var _comm3 = commmwpb.CommissionReq{
 	SettleType:       &comm3.SettleType,
 	AmountOrPercent:  &comm3.AmountOrPercent,
 	SettleAmountType: &comm3.SettleAmountType,
+	SettleMode:       &comm3.SettleMode,
+	SettleInterval:   &comm3.SettleInterval,
 	StartAt:          &comm3.StartAt,
 }
 
@@ -180,6 +192,8 @@ var comm4 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent4,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -191,6 +205,8 @@ var _comm4 = commmwpb.CommissionReq{
 	SettleType:       &comm4.SettleType,
 	AmountOrPercent:  &comm4.AmountOrPercent,
 	SettleAmountType: &comm4.SettleAmountType,
+	SettleMode:       &comm4.SettleMode,
+	SettleInterval:   &comm4.SettleInterval,
 	StartAt:          &comm4.StartAt,
 }
 
@@ -203,6 +219,8 @@ var comm5 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent5,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -214,6 +232,8 @@ var _comm5 = commmwpb.CommissionReq{
 	SettleType:       &comm5.SettleType,
 	AmountOrPercent:  &comm5.AmountOrPercent,
 	SettleAmountType: &comm5.SettleAmountType,
+	SettleMode:       &comm5.SettleMode,
+	SettleInterval:   &comm5.SettleInterval,
 	StartAt:          &comm5.StartAt,
 }
 
@@ -226,6 +246,8 @@ var comm6 = commmwpb.Commission{
 	SettleType:       types.SettleType_GoodOrderPayment,
 	AmountOrPercent:  percent6,
 	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	StartAt:          uint32(time.Now().Unix()),
 }
 
@@ -237,6 +259,8 @@ var _comm6 = commmwpb.CommissionReq{
 	SettleType:       &comm6.SettleType,
 	AmountOrPercent:  &comm6.AmountOrPercent,
 	SettleAmountType: &comm6.SettleAmountType,
+	SettleMode:       &comm6.SettleMode,
+	SettleInterval:   &comm6.SettleInterval,
 	StartAt:          &comm6.StartAt,
 }
 

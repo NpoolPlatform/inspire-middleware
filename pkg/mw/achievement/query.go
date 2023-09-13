@@ -111,10 +111,6 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetAchievement(ctx context.Context) (*npool.Achievement, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 	}

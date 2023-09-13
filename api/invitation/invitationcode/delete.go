@@ -23,7 +23,7 @@ func (s *Server) DeleteInvitationCode(ctx context.Context, in *npool.DeleteInvit
 	}
 	handler, err := invitationcode1.NewHandler(
 		ctx,
-		invitationcode1.WithID(req.ID),
+		invitationcode1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

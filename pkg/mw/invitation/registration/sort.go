@@ -13,13 +13,6 @@ import (
 )
 
 func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration, []string, error) {
-	if h.AppID == nil {
-		return nil, nil, fmt.Errorf("invalid appid")
-	}
-	if h.InviteeID == nil {
-		return nil, nil, fmt.Errorf("invalid inviteeid")
-	}
-
 	h.Limit = constant.DefaultRowLimit
 	h.Offset = 0
 	h.Conds = &registrationcrud.Conds{

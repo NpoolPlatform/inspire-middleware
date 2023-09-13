@@ -12,10 +12,6 @@ import (
 )
 
 func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	if h.Used != nil && *h.Used && h.UsedByOrderID == nil {
 		return nil, fmt.Errorf("invalid usedbyorderid")
 	}

@@ -72,10 +72,6 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetCommission(ctx context.Context) (*npool.Commission, error) {
-	if h.ID == nil {
-		return nil, fmt.Errorf("invalid id")
-	}
-
 	handler := &queryHandler{
 		Handler: h,
 		infos:   []*npool.Commission{},

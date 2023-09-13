@@ -24,7 +24,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 
 	handler, err := allocated1.NewHandler(
 		ctx,
-		allocated1.WithID(req.ID),
+		allocated1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
