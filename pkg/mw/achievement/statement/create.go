@@ -190,7 +190,7 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	return h.GetStatement(ctx)
 }
 
-func (h *createHandler) tryUpdateExistStatement(ctx context.Context, req *statementcrud.Req, tx *ent.Tx) (string, error) {
+func (h *createHandler) updateExistStatement(ctx context.Context, req *statementcrud.Req, tx *ent.Tx) (string, error) {
 	h.Conds = &statementcrud.Conds{
 		AppID:   &cruder.Cond{Op: cruder.EQ, Val: *req.AppID},
 		UserID:  &cruder.Cond{Op: cruder.EQ, Val: *req.UserID},
@@ -246,9 +246,14 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 	handler := &createHandler{
 		Handler: h,
 	}
+	statements := map[uuid.UUID]struct{}{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			_f := func() error {
+				if _, ok := statements[*req.OrderID]; ok {
+					return fmt.Errorf("duplicate orderid")
+				}
+
 				id := uuid.New()
 				if req.ID == nil {
 					req.ID = &id
@@ -261,7 +266,9 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 					_ = redis2.Unlock(key)
 				}()
 
-				updatedID, err := handler.tryUpdateExistStatement(ctx, req, tx)
+				statements[*req.OrderID] = struct{}{}
+
+				updatedID, err := handler.updateExistStatement(ctx, req, tx)
 				if err != nil {
 					return err
 				}
