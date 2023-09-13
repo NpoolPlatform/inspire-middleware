@@ -98,6 +98,7 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 		sql.As(t.C(entcoupon.FieldDurationDays), "duration_days"),
 		sql.As(t.C(entcoupon.FieldMessage), "coupon_message"),
 		sql.As(t.C(entcoupon.FieldGoodID), "good_id"),
+		sql.As(t.C(entcoupon.FieldAppGoodID), "app_good_id"),
 		sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
 		sql.As(t.C(entcoupon.FieldAllocated), "allocated"),
 		sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
@@ -139,11 +140,14 @@ func (h *queryHandler) formalize() {
 		if info.CouponName == "" {
 			continue
 		}
-		if *info.GoodID == uuid.Nil.String() {
+		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
-		if *info.UsedByOrderID == uuid.Nil.String() {
+		if info.UsedByOrderID != nil && *info.UsedByOrderID == uuid.Nil.String() {
 			info.UsedByOrderID = nil
+		}
+		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
+			info.AppGoodID = nil
 		}
 		amount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
