@@ -246,27 +246,26 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 	handler := &createHandler{
 		Handler: h,
 	}
-	statements := map[uuid.UUID]struct{}{}
+	statements := map[string]struct{}{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			_f := func() error {
-				if _, ok := statements[*req.OrderID]; ok {
-					return fmt.Errorf("duplicate orderid")
-				}
-
 				id := uuid.New()
 				if req.ID == nil {
 					req.ID = &id
 				}
 				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *req.AppID, *req.UserID, *req.OrderID)
+				if _, ok := statements[key]; ok {
+					return fmt.Errorf("duplicate order")
+				}
+				statements[key] = struct{}{}
+
 				if err := redis2.TryLock(key, 0); err != nil {
 					return err
 				}
 				defer func() {
 					_ = redis2.Unlock(key)
 				}()
-
-				statements[*req.OrderID] = struct{}{}
 
 				updatedID, err := handler.updateExistStatement(ctx, req, tx)
 				if err != nil {
