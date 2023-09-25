@@ -71,6 +71,7 @@ func (h *expropriateHandler) getAchievements(ctx context.Context) error {
 	h.Conds = &achievementcrud.Conds{
 		AppID:      &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].AppID)},
 		GoodID:     &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].GoodID)},
+		AppGoodID:  &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].AppGoodID)},
 		CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: uuid.MustParse(h.statements[0].CoinTypeID)},
 	}
 	ids := []uuid.UUID{}
