@@ -56,6 +56,8 @@ var (
 		AppID:              coupon.AppID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           coupon.ID,
+		CouponType:         coupon.CouponType,
+		CouponTypeStr:      coupon.CouponTypeStr,
 		CouponScope:        coupon.CouponScope,
 		CouponScopeStr:     coupon.CouponScopeStr,
 		CouponName:         coupon.Name,
