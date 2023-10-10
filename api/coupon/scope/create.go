@@ -24,9 +24,8 @@ func (s *Server) CreateScope(ctx context.Context, in *npool.CreateScopeRequest) 
 		ctx,
 		scope1.WithID(req.ID, false),
 		scope1.WithAppID(req.AppID, true),
-		scope1.WithAppGoodID(req.AppGoodID, true),
+		scope1.WithAppGoodID(req.AppGoodID, false),
 		scope1.WithCouponID(req.CouponID, true),
-		scope1.WithCouponScope(req.CouponScope, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
