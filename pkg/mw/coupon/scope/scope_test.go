@@ -33,17 +33,20 @@ func init() {
 
 var (
 	coupon = couponmwpb.Coupon{
-		ID:            uuid.NewString(),
-		AppID:         uuid.NewString(),
-		Name:          uuid.NewString(),
-		Message:       uuid.NewString(),
-		CouponType:    types.CouponType_FixAmount,
-		CouponTypeStr: types.CouponType_FixAmount.String(),
-		Denomination:  decimal.RequireFromString("100").String(),
-		Circulation:   decimal.RequireFromString("10").String(),
-		DurationDays:  365,
-		IssuedBy:      uuid.NewString(),
-		StartAt:       uint32(time.Now().Unix()),
+		ID:                  uuid.NewString(),
+		AppID:               uuid.NewString(),
+		Name:                uuid.NewString(),
+		Message:             uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		Denomination:        decimal.RequireFromString("100").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		DurationDays:        365,
+		IssuedBy:            uuid.NewString(),
+		StartAt:             uint32(time.Now().Unix()),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		Allocated:           "0",
 	}
 
 	ret = npool.Scope{
@@ -77,8 +80,11 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 
 	coup, err := h1.CreateCoupon(context.Background())
-	assert.Nil(t, err)
-	assert.Equal(t, &coupon, coup)
+	if assert.Nil(t, err) {
+		coupon.CreatedAt = coup.CreatedAt
+		coupon.UpdatedAt = coup.UpdatedAt
+		assert.Equal(t, &coupon, coup)
+	}
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
