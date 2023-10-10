@@ -8,12 +8,17 @@ import (
 	"testing"
 	"time"
 
+	"bou.ke/monkey"
+	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
 
+	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
@@ -152,6 +157,14 @@ func TestScope(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
+	gport := config.GetIntValueWithNameSpace("", config.KeyGRPCPort)
+
+	monkey.Patch(grpc2.GetGRPCConn, func(service string, tags ...string) (*grpc.ClientConn, error) {
+		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	})
+	monkey.Patch(grpc2.GetGRPCConnV1, func(service string, recvMsgBytes int, tags ...string) (*grpc.ClientConn, error) {
+		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	})
 
 	teardown := setup(t)
 	defer teardown(t)
