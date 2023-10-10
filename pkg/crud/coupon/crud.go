@@ -26,6 +26,7 @@ type Req struct {
 	Message          *string
 	Name             *string
 	CouponConstraint *types.CouponConstraint
+	CouponScope      *types.CouponScope
 	Threshold        *decimal.Decimal
 	Allocated        *decimal.Decimal
 	Random           *bool
@@ -78,6 +79,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.CouponConstraint != nil {
 		c.SetCouponConstraint(req.CouponConstraint.String())
 	}
+	if req.CouponScope != nil {
+		c.SetCouponScope(req.CouponScope.String())
+	}
 	if req.Allocated != nil {
 		c.SetAllocated(*req.Allocated)
 	}
@@ -120,6 +124,9 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	}
 	if req.Allocated != nil {
 		u.SetAllocated(*req.Allocated)
+	}
+	if req.CouponScope != nil {
+		u.SetCouponScope(req.CouponScope.String())
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

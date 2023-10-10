@@ -36,6 +36,7 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			AppGoodID:    h.AppGoodID,
 			Random:       h.Random,
 			Threshold:    h.Threshold,
+			CouponScope:  h.CouponScope,
 		}
 		if h.Allocated != nil {
 			allocated := info.Allocated.Add(*h.Allocated)

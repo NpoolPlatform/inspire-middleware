@@ -33,6 +33,7 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 		coupon1.WithAppGoodID(req.AppGoodID, false),
 		coupon1.WithName(req.Name, false),
 		coupon1.WithRandom(req.Random, false),
+		coupon1.WithCouponScope(req.CouponScope, false),
 		coupon1.WithThreshold(req.Threshold, false),
 		coupon1.WithAllocated(req.Allocated, false),
 	)
