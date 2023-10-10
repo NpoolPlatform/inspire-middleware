@@ -67,7 +67,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		)
 }
 
-func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
+func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
 	t := sql.Table(entcoupon.Table)
 	s.LeftJoin(t).
 		On(
@@ -79,14 +79,13 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 			sql.As(entcoupon.FieldCouponType, "coupon_type"),
 			sql.As(entcoupon.FieldDenomination, "coupon_denomination"),
 		)
-	return nil
 }
 
 func (h *queryHandler) queryJoin() error {
 	var err error
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		err = h.queryJoinCoupon(s)
+		h.queryJoinCoupon(s)
 	})
 	if err != nil {
 		return err
@@ -95,7 +94,7 @@ func (h *queryHandler) queryJoin() error {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
-		err = h.queryJoinCoupon(s)
+		h.queryJoinCoupon(s)
 	})
 	return err
 }
