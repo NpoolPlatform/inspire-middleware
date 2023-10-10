@@ -106,9 +106,7 @@ func (h *queryHandler) scan(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
-		if info.CouponName == "" {
-			continue
-		}
+		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
 		denomination, err := decimal.NewFromString(info.CouponDenomination)
 		if err != nil {
 			info.CouponDenomination = decimal.NewFromInt(0).String()
