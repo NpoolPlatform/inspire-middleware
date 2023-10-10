@@ -56,6 +56,8 @@ var (
 		AppID:              coupon.AppID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           coupon.ID,
+		CouponType:         coupon.CouponType,
+		CouponTypeStr:      coupon.CouponTypeStr,
 		CouponScope:        coupon.CouponScope,
 		CouponScopeStr:     coupon.CouponScopeStr,
 		CouponName:         coupon.Name,
@@ -77,6 +79,8 @@ func setup(t *testing.T) func(*testing.T) {
 		StartAt:      &coupon.StartAt,
 	})
 	if assert.Nil(t, err) {
+		coupon.CreatedAt = info.CreatedAt
+		coupon.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &coupon, info)
 	}
 
