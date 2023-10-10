@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
@@ -21,7 +22,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 9)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 10)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -136,6 +137,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   couponscope.Table,
+			Columns: couponscope.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: couponscope.FieldID,
+			},
+		},
+		Type: "CouponScope",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			couponscope.FieldCreatedAt:   {Type: field.TypeUint32, Column: couponscope.FieldCreatedAt},
+			couponscope.FieldUpdatedAt:   {Type: field.TypeUint32, Column: couponscope.FieldUpdatedAt},
+			couponscope.FieldDeletedAt:   {Type: field.TypeUint32, Column: couponscope.FieldDeletedAt},
+			couponscope.FieldAppID:       {Type: field.TypeUUID, Column: couponscope.FieldAppID},
+			couponscope.FieldCouponID:    {Type: field.TypeUUID, Column: couponscope.FieldCouponID},
+			couponscope.FieldAppGoodID:   {Type: field.TypeUUID, Column: couponscope.FieldAppGoodID},
+			couponscope.FieldCouponScope: {Type: field.TypeString, Column: couponscope.FieldCouponScope},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   event.Table,
 			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -159,7 +180,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldInviterLayers:  {Type: field.TypeUint32, Column: event.FieldInviterLayers},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
@@ -179,7 +200,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -200,7 +221,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -219,7 +240,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   statement.Table,
 			Columns: statement.Columns,
@@ -721,6 +742,81 @@ func (f *CouponAllocatedFilter) WhereStartAt(p entql.Uint32P) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (csq *CouponScopeQuery) addPredicate(pred func(s *sql.Selector)) {
+	csq.predicates = append(csq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CouponScopeQuery builder.
+func (csq *CouponScopeQuery) Filter() *CouponScopeFilter {
+	return &CouponScopeFilter{config: csq.config, predicateAdder: csq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CouponScopeMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CouponScopeMutation builder.
+func (m *CouponScopeMutation) Filter() *CouponScopeFilter {
+	return &CouponScopeFilter{config: m.config, predicateAdder: m}
+}
+
+// CouponScopeFilter provides a generic filtering capability at runtime for CouponScopeQuery.
+type CouponScopeFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CouponScopeFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *CouponScopeFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(couponscope.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CouponScopeFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponscope.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CouponScopeFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponscope.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CouponScopeFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponscope.FieldDeletedAt))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CouponScopeFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(couponscope.FieldAppID))
+}
+
+// WhereCouponID applies the entql [16]byte predicate on the coupon_id field.
+func (f *CouponScopeFilter) WhereCouponID(p entql.ValueP) {
+	f.Where(p.Field(couponscope.FieldCouponID))
+}
+
+// WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
+func (f *CouponScopeFilter) WhereAppGoodID(p entql.ValueP) {
+	f.Where(p.Field(couponscope.FieldAppGoodID))
+}
+
+// WhereCouponScope applies the entql string predicate on the coupon_scope field.
+func (f *CouponScopeFilter) WhereCouponScope(p entql.StringP) {
+	f.Where(p.Field(couponscope.FieldCouponScope))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (eq *EventQuery) addPredicate(pred func(s *sql.Selector)) {
 	eq.predicates = append(eq.predicates, pred)
 }
@@ -749,7 +845,7 @@ type EventFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EventFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -849,7 +945,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -924,7 +1020,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1004,7 +1100,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1074,7 +1170,7 @@ type StatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *StatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

@@ -32,6 +32,7 @@ type hooks struct {
 	Commission      []ent.Hook
 	Coupon          []ent.Hook
 	CouponAllocated []ent.Hook
+	CouponScope     []ent.Hook
 	Event           []ent.Hook
 	InvitationCode  []ent.Hook
 	PubsubMessage   []ent.Hook
