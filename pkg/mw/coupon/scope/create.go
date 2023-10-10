@@ -7,7 +7,6 @@ import (
 	scopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/scope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
 
 	"github.com/google/uuid"
@@ -26,9 +25,8 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 		if coupon == nil {
 			return fmt.Errorf("coupon not found %v", *h.CouponID)
 		}
-		couponScope := types.CouponScope(types.CouponScope_value[coupon.CouponScope])
-		if h.CouponScope != &couponScope {
-			return fmt.Errorf("coupon scope not matched %v -> %v", h.CouponScope, couponScope)
+		if h.CouponScope.String() != coupon.CouponScope {
+			return fmt.Errorf("coupon scope not matched %v -> %v", h.CouponScope, coupon.CouponScope)
 		}
 
 		if _, err := scopecrud.CreateSet(

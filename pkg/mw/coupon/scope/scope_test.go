@@ -47,6 +47,8 @@ var (
 		CouponConstraint:    types.CouponConstraint_Normal,
 		CouponConstraintStr: types.CouponConstraint_Normal.String(),
 		Allocated:           "0",
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	}
 
 	ret = npool.Scope{
@@ -72,6 +74,7 @@ func setup(t *testing.T) func(*testing.T) {
 		coupon1.WithMessage(&coupon.Message, true),
 		coupon1.WithCouponType(&coupon.CouponType, true),
 		coupon1.WithDenomination(&coupon.Denomination, true),
+		coupon1.WithCouponScope(&coupon.CouponScope, true),
 		coupon1.WithCirculation(&coupon.Circulation, true),
 		coupon1.WithDurationDays(&coupon.DurationDays, true),
 		coupon1.WithIssuedBy(&coupon.IssuedBy, true),
