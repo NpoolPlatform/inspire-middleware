@@ -53,6 +53,7 @@ type Conds struct {
 	CouponScope *cruder.Cond
 }
 
+//nolint
 func SetQueryConds(q *ent.CouponScopeQuery, conds *Conds) (*ent.CouponScopeQuery, error) {
 	q.Where(entcouponscope.DeletedAt(0))
 	if conds == nil {
