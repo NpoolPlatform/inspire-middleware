@@ -2990,6 +2990,7 @@ type CouponMutation struct {
 	coupon_type       *string
 	threshold         *decimal.Decimal
 	coupon_constraint *string
+	coupon_scope      *string
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*Coupon, error)
@@ -4081,6 +4082,55 @@ func (m *CouponMutation) ResetCouponConstraint() {
 	delete(m.clearedFields, coupon.FieldCouponConstraint)
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (m *CouponMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
+}
+
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *CouponMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponScope returns the old "coupon_scope" field's value of the Coupon entity.
+// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponMutation) OldCouponScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
+	}
+	return oldValue.CouponScope, nil
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *CouponMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[coupon.FieldCouponScope] = struct{}{}
+}
+
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *CouponMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[coupon.FieldCouponScope]
+	return ok
+}
+
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *CouponMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, coupon.FieldCouponScope)
+}
+
 // Where appends a list predicates to the CouponMutation builder.
 func (m *CouponMutation) Where(ps ...predicate.Coupon) {
 	m.predicates = append(m.predicates, ps...)
@@ -4100,7 +4150,7 @@ func (m *CouponMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, coupon.FieldCreatedAt)
 	}
@@ -4158,6 +4208,9 @@ func (m *CouponMutation) Fields() []string {
 	if m.coupon_constraint != nil {
 		fields = append(fields, coupon.FieldCouponConstraint)
 	}
+	if m.coupon_scope != nil {
+		fields = append(fields, coupon.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -4204,6 +4257,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.Threshold()
 	case coupon.FieldCouponConstraint:
 		return m.CouponConstraint()
+	case coupon.FieldCouponScope:
+		return m.CouponScope()
 	}
 	return nil, false
 }
@@ -4251,6 +4306,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldThreshold(ctx)
 	case coupon.FieldCouponConstraint:
 		return m.OldCouponConstraint(ctx)
+	case coupon.FieldCouponScope:
+		return m.OldCouponScope(ctx)
 	}
 	return nil, fmt.Errorf("unknown Coupon field %s", name)
 }
@@ -4393,6 +4450,13 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCouponConstraint(v)
 		return nil
+	case coupon.FieldCouponScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponScope(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)
 }
@@ -4531,6 +4595,9 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldCouponConstraint) {
 		fields = append(fields, coupon.FieldCouponConstraint)
 	}
+	if m.FieldCleared(coupon.FieldCouponScope) {
+		fields = append(fields, coupon.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -4589,6 +4656,9 @@ func (m *CouponMutation) ClearField(name string) error {
 		return nil
 	case coupon.FieldCouponConstraint:
 		m.ClearCouponConstraint()
+		return nil
+	case coupon.FieldCouponScope:
+		m.ClearCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon nullable field %s", name)
@@ -4654,6 +4724,9 @@ func (m *CouponMutation) ResetField(name string) error {
 		return nil
 	case coupon.FieldCouponConstraint:
 		m.ResetCouponConstraint()
+		return nil
+	case coupon.FieldCouponScope:
+		m.ResetCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)

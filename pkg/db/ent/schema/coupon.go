@@ -114,6 +114,10 @@ func (Coupon) Fields() []ent.Field {
 			String("coupon_constraint").
 			Optional().
 			Default(types.CouponConstraint_Normal.String()),
+		field.
+			String("coupon_scope").
+			Optional().
+			Default(types.CouponScope_Whitelist.String()),
 	}
 }
 

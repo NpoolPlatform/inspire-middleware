@@ -275,6 +275,10 @@ func init() {
 	couponDescCouponConstraint := couponFields[16].Descriptor()
 	// coupon.DefaultCouponConstraint holds the default value on creation for the coupon_constraint field.
 	coupon.DefaultCouponConstraint = couponDescCouponConstraint.Default.(string)
+	// couponDescCouponScope is the schema descriptor for coupon_scope field.
+	couponDescCouponScope := couponFields[17].Descriptor()
+	// coupon.DefaultCouponScope holds the default value on creation for the coupon_scope field.
+	coupon.DefaultCouponScope = couponDescCouponScope.Default.(string)
 	// couponDescID is the schema descriptor for id field.
 	couponDescID := couponFields[0].Descriptor()
 	// coupon.DefaultID holds the default value on creation for the id field.

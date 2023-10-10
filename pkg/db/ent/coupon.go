@@ -55,6 +55,8 @@ type Coupon struct {
 	Threshold decimal.Decimal `json:"threshold,omitempty"`
 	// CouponConstraint holds the value of the "coupon_constraint" field.
 	CouponConstraint string `json:"coupon_constraint,omitempty"`
+	// CouponScope holds the value of the "coupon_scope" field.
+	CouponScope string `json:"coupon_scope,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -68,7 +70,7 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
-		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint:
+		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint, coupon.FieldCouponScope:
 			values[i] = new(sql.NullString)
 		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldGoodID, coupon.FieldAppGoodID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
@@ -207,6 +209,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.CouponConstraint = value.String
 			}
+		case coupon.FieldCouponScope:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field coupon_scope", values[i])
+			} else if value.Valid {
+				c.CouponScope = value.String
+			}
 		}
 	}
 	return nil
@@ -291,6 +299,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coupon_constraint=")
 	builder.WriteString(c.CouponConstraint)
+	builder.WriteString(", ")
+	builder.WriteString("coupon_scope=")
+	builder.WriteString(c.CouponScope)
 	builder.WriteByte(')')
 	return builder.String()
 }

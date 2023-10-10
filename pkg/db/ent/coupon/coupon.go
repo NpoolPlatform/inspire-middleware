@@ -51,6 +51,8 @@ const (
 	FieldThreshold = "threshold"
 	// FieldCouponConstraint holds the string denoting the coupon_constraint field in the database.
 	FieldCouponConstraint = "coupon_constraint"
+	// FieldCouponScope holds the string denoting the coupon_scope field in the database.
+	FieldCouponScope = "coupon_scope"
 	// Table holds the table name of the coupon in the database.
 	Table = "coupons"
 )
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldCouponType,
 	FieldThreshold,
 	FieldCouponConstraint,
+	FieldCouponScope,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -136,6 +139,8 @@ var (
 	DefaultThreshold decimal.Decimal
 	// DefaultCouponConstraint holds the default value on creation for the "coupon_constraint" field.
 	DefaultCouponConstraint string
+	// DefaultCouponScope holds the default value on creation for the "coupon_scope" field.
+	DefaultCouponScope string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -282,6 +282,20 @@ func (cc *CouponCreate) SetNillableCouponConstraint(s *string) *CouponCreate {
 	return cc
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (cc *CouponCreate) SetCouponScope(s string) *CouponCreate {
+	cc.mutation.SetCouponScope(s)
+	return cc
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableCouponScope(s *string) *CouponCreate {
+	if s != nil {
+		cc.SetCouponScope(*s)
+	}
+	return cc
+}
+
 // SetID sets the "id" field.
 func (cc *CouponCreate) SetID(u uuid.UUID) *CouponCreate {
 	cc.mutation.SetID(u)
@@ -467,6 +481,10 @@ func (cc *CouponCreate) defaults() error {
 	if _, ok := cc.mutation.CouponConstraint(); !ok {
 		v := coupon.DefaultCouponConstraint
 		cc.mutation.SetCouponConstraint(v)
+	}
+	if _, ok := cc.mutation.CouponScope(); !ok {
+		v := coupon.DefaultCouponScope
+		cc.mutation.SetCouponScope(v)
 	}
 	if _, ok := cc.mutation.ID(); !ok {
 		if coupon.DefaultID == nil {
@@ -680,6 +698,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldCouponConstraint,
 		})
 		_node.CouponConstraint = value
+	}
+	if value, ok := cc.mutation.CouponScope(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponScope,
+		})
+		_node.CouponScope = value
 	}
 	return _node, _spec
 }
@@ -1080,6 +1106,24 @@ func (u *CouponUpsert) UpdateCouponConstraint() *CouponUpsert {
 // ClearCouponConstraint clears the value of the "coupon_constraint" field.
 func (u *CouponUpsert) ClearCouponConstraint() *CouponUpsert {
 	u.SetNull(coupon.FieldCouponConstraint)
+	return u
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponUpsert) SetCouponScope(v string) *CouponUpsert {
+	u.Set(coupon.FieldCouponScope, v)
+	return u
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateCouponScope() *CouponUpsert {
+	u.SetExcluded(coupon.FieldCouponScope)
+	return u
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponUpsert) ClearCouponScope() *CouponUpsert {
+	u.SetNull(coupon.FieldCouponScope)
 	return u
 }
 
@@ -1536,6 +1580,27 @@ func (u *CouponUpsertOne) UpdateCouponConstraint() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearCouponConstraint() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponConstraint()
+	})
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponUpsertOne) SetCouponScope(v string) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCouponScope(v)
+	})
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateCouponScope() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCouponScope()
+	})
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponUpsertOne) ClearCouponScope() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCouponScope()
 	})
 }
 
@@ -2158,6 +2223,27 @@ func (u *CouponUpsertBulk) UpdateCouponConstraint() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearCouponConstraint() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponConstraint()
+	})
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponUpsertBulk) SetCouponScope(v string) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCouponScope(v)
+	})
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateCouponScope() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCouponScope()
+	})
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponUpsertBulk) ClearCouponScope() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCouponScope()
 	})
 }
 
