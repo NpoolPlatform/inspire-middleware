@@ -38,7 +38,7 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 				AppID:       h.AppID,
 				AppGoodID:   h.AppGoodID,
 				CouponID:    h.CouponID,
-				CouponScope: &couponScope,
+				CouponScope: h.CouponScope,
 			},
 		).Save(_ctx); err != nil {
 			return err
