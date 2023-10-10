@@ -27,6 +27,9 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 			return fmt.Errorf("coupon not found %v", *h.CouponID)
 		}
 		couponScope := types.CouponScope(types.CouponScope_value[coupon.CouponScope])
+		if h.CouponScope != &couponScope {
+			return fmt.Errorf("coupon scope not matched %v -> %v", h.CouponScope, couponScope)
+		}
 
 		if _, err := scopecrud.CreateSet(
 			cli.CouponScope.Create(),
