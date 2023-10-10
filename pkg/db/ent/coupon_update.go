@@ -405,6 +405,26 @@ func (cu *CouponUpdate) ClearCouponConstraint() *CouponUpdate {
 	return cu
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (cu *CouponUpdate) SetCouponScope(s string) *CouponUpdate {
+	cu.mutation.SetCouponScope(s)
+	return cu
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableCouponScope(s *string) *CouponUpdate {
+	if s != nil {
+		cu.SetCouponScope(*s)
+	}
+	return cu
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (cu *CouponUpdate) ClearCouponScope() *CouponUpdate {
+	cu.mutation.ClearCouponScope()
+	return cu
+}
+
 // Mutation returns the CouponMutation object of the builder.
 func (cu *CouponUpdate) Mutation() *CouponMutation {
 	return cu.mutation
@@ -759,6 +779,19 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: coupon.FieldCouponConstraint,
+		})
+	}
+	if value, ok := cu.mutation.CouponScope(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponScope,
+		})
+	}
+	if cu.mutation.CouponScopeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: coupon.FieldCouponScope,
 		})
 	}
 	_spec.Modifiers = cu.modifiers
@@ -1157,6 +1190,26 @@ func (cuo *CouponUpdateOne) ClearCouponConstraint() *CouponUpdateOne {
 	return cuo
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (cuo *CouponUpdateOne) SetCouponScope(s string) *CouponUpdateOne {
+	cuo.mutation.SetCouponScope(s)
+	return cuo
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableCouponScope(s *string) *CouponUpdateOne {
+	if s != nil {
+		cuo.SetCouponScope(*s)
+	}
+	return cuo
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (cuo *CouponUpdateOne) ClearCouponScope() *CouponUpdateOne {
+	cuo.mutation.ClearCouponScope()
+	return cuo
+}
+
 // Mutation returns the CouponMutation object of the builder.
 func (cuo *CouponUpdateOne) Mutation() *CouponMutation {
 	return cuo.mutation
@@ -1541,6 +1594,19 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: coupon.FieldCouponConstraint,
+		})
+	}
+	if value, ok := cuo.mutation.CouponScope(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coupon.FieldCouponScope,
+		})
+	}
+	if cuo.mutation.CouponScopeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: coupon.FieldCouponScope,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers

@@ -109,6 +109,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldCouponType:       {Type: field.TypeString, Column: coupon.FieldCouponType},
 			coupon.FieldThreshold:        {Type: field.TypeOther, Column: coupon.FieldThreshold},
 			coupon.FieldCouponConstraint: {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
+			coupon.FieldCouponScope:      {Type: field.TypeString, Column: coupon.FieldCouponScope},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -644,6 +645,11 @@ func (f *CouponFilter) WhereThreshold(p entql.OtherP) {
 // WhereCouponConstraint applies the entql string predicate on the coupon_constraint field.
 func (f *CouponFilter) WhereCouponConstraint(p entql.StringP) {
 	f.Where(p.Field(coupon.FieldCouponConstraint))
+}
+
+// WhereCouponScope applies the entql string predicate on the coupon_scope field.
+func (f *CouponFilter) WhereCouponScope(p entql.StringP) {
+	f.Where(p.Field(coupon.FieldCouponScope))
 }
 
 // addPredicate implements the predicateAdder interface.
