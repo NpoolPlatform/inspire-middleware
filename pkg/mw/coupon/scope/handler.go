@@ -73,7 +73,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return fmt.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
