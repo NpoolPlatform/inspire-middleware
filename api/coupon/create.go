@@ -38,6 +38,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		coupon1.WithAppGoodID(req.AppGoodID, false),
 		coupon1.WithThreshold(req.Threshold, false),
 		coupon1.WithCouponConstraint(req.CouponConstraint, false),
+		coupon1.WithCouponScope(req.CouponScope, false),
 		coupon1.WithRandom(req.Random, false),
 	)
 	if err != nil {

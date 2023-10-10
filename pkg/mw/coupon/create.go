@@ -72,6 +72,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				Message:          h.Message,
 				Name:             h.Name,
 				CouponConstraint: h.CouponConstraint,
+				CouponScope:      h.CouponScope,
 				Threshold:        h.Threshold,
 				Allocated:        h.Allocated,
 				Random:           h.Random,
