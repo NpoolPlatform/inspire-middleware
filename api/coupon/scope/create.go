@@ -2,6 +2,7 @@ package scope
 
 import (
 	"context"
+
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	scope1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/scope"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
