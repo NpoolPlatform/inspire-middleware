@@ -114,6 +114,8 @@ func SetQueryConds(q *ent.CouponScopeQuery, conds *Conds) (*ent.CouponScopeQuery
 		switch conds.CouponScope.Op {
 		case cruder.EQ:
 			q.Where(entcouponscope.CouponScope(scope.String()))
+		case cruder.NEQ:
+			q.Where(entcouponscope.CouponScopeNEQ(scope.String()))
 		default:
 			return nil, fmt.Errorf("invalid couponscope field")
 		}
