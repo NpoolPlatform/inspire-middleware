@@ -54,6 +54,8 @@ var (
 		CouponConstraint:    types.CouponConstraint_Normal,
 		CouponConstraintStr: types.CouponConstraint_Normal.String(),
 		Allocated:           "0",
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	}
 
 	ret = npool.Scope{
@@ -82,6 +84,7 @@ func setup(t *testing.T) func(*testing.T) {
 		DurationDays: &coupon.DurationDays,
 		IssuedBy:     &coupon.IssuedBy,
 		StartAt:      &coupon.StartAt,
+		CouponScope:  &coupon.CouponScope,
 	})
 	if assert.Nil(t, err) {
 		coupon.CreatedAt = info.CreatedAt
