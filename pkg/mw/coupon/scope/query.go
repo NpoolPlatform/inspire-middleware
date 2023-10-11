@@ -140,7 +140,6 @@ func (h *Handler) GetScope(ctx context.Context) (*npool.Scope, error) {
 	}
 
 	handler.formalize()
-
 	return handler.infos[0], nil
 }
 
@@ -178,6 +177,19 @@ func (h *Handler) GetScopes(ctx context.Context) ([]*npool.Scope, uint32, error)
 	}
 
 	handler.formalize()
-
 	return handler.infos, handler.total, nil
+}
+
+func (h *Handler) GetScopeOnly(ctx context.Context) (*npool.Scope, error) {
+	infos, _, err := h.GetScopes(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(infos) == 0 {
+		return nil, nil
+	}
+	if len(infos) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos[0], nil
 }
