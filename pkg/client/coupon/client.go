@@ -102,3 +102,22 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	}
 	return info.(*npool.Coupon), nil
 }
+
+func ExistCoupon(ctx context.Context, id string) (bool, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	if info == nil {
+		return false, nil
+	}
+	return info.(bool), nil
+}
