@@ -43,7 +43,6 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 		}
 		return nil
 	})
-	fmt.Println("error: ", err)
 	if err != nil {
 		return nil, err
 	}
