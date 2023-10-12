@@ -186,6 +186,20 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: types.CouponScope(conds.GetCouponScope().GetValue()),
 			}
 		}
+		if conds.CouponIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetCouponIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.CouponIDs = &cruder.Cond{
+				Op:  conds.GetCouponIDs().GetOp(),
+				Val: ids,
+			}
+		}
 		return nil
 	}
 }

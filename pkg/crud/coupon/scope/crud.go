@@ -50,6 +50,7 @@ type Conds struct {
 	AppID       *cruder.Cond
 	AppGoodID   *cruder.Cond
 	CouponID    *cruder.Cond
+	CouponIDs   *cruder.Cond
 	CouponScope *cruder.Cond
 }
 
@@ -119,6 +120,18 @@ func SetQueryConds(q *ent.CouponScopeQuery, conds *Conds) (*ent.CouponScopeQuery
 			q.Where(entcouponscope.CouponScopeNEQ(scope.String()))
 		default:
 			return nil, fmt.Errorf("invalid couponscope field")
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponids")
+		}
+		switch conds.CouponIDs.Op {
+		case cruder.IN:
+			q.Where(entcouponscope.CouponIDIn(ids...))
+		default:
+			return nil, fmt.Errorf("invalid couponids field")
 		}
 	}
 	return q, nil
