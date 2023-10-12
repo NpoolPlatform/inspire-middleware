@@ -104,6 +104,7 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 		sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
 		sql.As(t.C(entcoupon.FieldRandom), "random"),
 		sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
+		sql.As(t.C(entcoupon.FieldCouponScope), "coupon_scope"),
 	)
 	return nil
 }
@@ -137,6 +138,7 @@ func (h *queryHandler) formalize() {
 		info.Valid = uint32(time.Now().Unix()) >= info.StartAt && uint32(time.Now().Unix()) <= info.EndAt
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
+		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
 		if info.CouponName == "" {
 			continue
 		}
