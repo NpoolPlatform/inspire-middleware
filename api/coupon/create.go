@@ -34,8 +34,6 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		coupon1.WithMessage(req.Message, true),
 		coupon1.WithName(req.Name, true),
 		coupon1.WithUserID(req.UserID, false),
-		coupon1.WithGoodID(req.GoodID, false),
-		coupon1.WithAppGoodID(req.AppGoodID, false),
 		coupon1.WithThreshold(req.Threshold, false),
 		coupon1.WithCouponConstraint(req.CouponConstraint, false),
 		coupon1.WithCouponScope(req.CouponScope, false),

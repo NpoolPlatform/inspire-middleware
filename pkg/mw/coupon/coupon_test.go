@@ -48,7 +48,6 @@ var (
 		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 		Threshold:           nil,
 		UserID:              nil,
-		GoodID:              nil,
 		Allocated:           decimal.NewFromInt(0).String(),
 	}
 )

@@ -60,12 +60,6 @@ func (h *queryHandler) formalize() {
 		if info.UserID != nil && *info.UserID == uuid.Nil.String() {
 			info.UserID = nil
 		}
-		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
-			info.GoodID = nil
-		}
-		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
-			info.AppGoodID = nil
-		}
 		amount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
 			info.Denomination = decimal.NewFromInt(0).String()

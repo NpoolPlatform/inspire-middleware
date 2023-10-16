@@ -43,10 +43,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		case types.CouponConstraint_GoodThreshold:
 			fallthrough //nolint
 		case types.CouponConstraint_GoodOnly:
-			if h.GoodID == nil || h.AppGoodID == nil {
-				return nil, fmt.Errorf("goodid is must")
-			}
-			fallthrough
+			fallthrough //nolint
 		case types.CouponConstraint_PaymentThreshold:
 			if h.Threshold == nil {
 				return nil, fmt.Errorf("threshold is must")
@@ -62,8 +59,6 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				CouponType:       h.CouponType,
 				AppID:            h.AppID,
 				UserID:           h.UserID,
-				GoodID:           h.GoodID,
-				AppGoodID:        h.AppGoodID,
 				Denomination:     h.Denomination,
 				Circulation:      h.Circulation,
 				IssuedBy:         h.IssuedBy,
