@@ -119,5 +119,5 @@ func ExistCoupon(ctx context.Context, id string) (bool, error) {
 	if info == nil {
 		return false, nil
 	}
-	return info.(bool), nil
+	return true, nil
 }
