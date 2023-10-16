@@ -54,6 +54,8 @@ var ret = &couponmwpb.Coupon{
 	Allocated:           "0",
 	CouponConstraint:    types.CouponConstraint_Normal,
 	CouponConstraintStr: types.CouponConstraint_Normal.String(),
+	CouponScope:         types.CouponScope_Whitelist,
+	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 }
 
 var req = &couponmwpb.CouponReq{
