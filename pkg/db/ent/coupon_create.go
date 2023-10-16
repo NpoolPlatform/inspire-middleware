@@ -94,20 +94,6 @@ func (cc *CouponCreate) SetNillableUserID(u *uuid.UUID) *CouponCreate {
 	return cc
 }
 
-// SetGoodID sets the "good_id" field.
-func (cc *CouponCreate) SetGoodID(u uuid.UUID) *CouponCreate {
-	cc.mutation.SetGoodID(u)
-	return cc
-}
-
-// SetNillableGoodID sets the "good_id" field if the given value is not nil.
-func (cc *CouponCreate) SetNillableGoodID(u *uuid.UUID) *CouponCreate {
-	if u != nil {
-		cc.SetGoodID(*u)
-	}
-	return cc
-}
-
 // SetDenomination sets the "denomination" field.
 func (cc *CouponCreate) SetDenomination(d decimal.Decimal) *CouponCreate {
 	cc.mutation.SetDenomination(d)
@@ -410,13 +396,6 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultUserID()
 		cc.mutation.SetUserID(v)
 	}
-	if _, ok := cc.mutation.GoodID(); !ok {
-		if coupon.DefaultGoodID == nil {
-			return fmt.Errorf("ent: uninitialized coupon.DefaultGoodID (forgotten import ent/runtime?)")
-		}
-		v := coupon.DefaultGoodID()
-		cc.mutation.SetGoodID(v)
-	}
 	if _, ok := cc.mutation.Denomination(); !ok {
 		v := coupon.DefaultDenomination
 		cc.mutation.SetDenomination(v)
@@ -565,14 +544,6 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldUserID,
 		})
 		_node.UserID = value
-	}
-	if value, ok := cc.mutation.GoodID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldGoodID,
-		})
-		_node.GoodID = value
 	}
 	if value, ok := cc.mutation.Denomination(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -819,24 +790,6 @@ func (u *CouponUpsert) UpdateUserID() *CouponUpsert {
 // ClearUserID clears the value of the "user_id" field.
 func (u *CouponUpsert) ClearUserID() *CouponUpsert {
 	u.SetNull(coupon.FieldUserID)
-	return u
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *CouponUpsert) SetGoodID(v uuid.UUID) *CouponUpsert {
-	u.Set(coupon.FieldGoodID, v)
-	return u
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *CouponUpsert) UpdateGoodID() *CouponUpsert {
-	u.SetExcluded(coupon.FieldGoodID)
-	return u
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *CouponUpsert) ClearGoodID() *CouponUpsert {
-	u.SetNull(coupon.FieldGoodID)
 	return u
 }
 
@@ -1232,27 +1185,6 @@ func (u *CouponUpsertOne) UpdateUserID() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearUserID() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearUserID()
-	})
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *CouponUpsertOne) SetGoodID(v uuid.UUID) *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *CouponUpsertOne) UpdateGoodID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *CouponUpsertOne) ClearGoodID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearGoodID()
 	})
 }
 
@@ -1854,27 +1786,6 @@ func (u *CouponUpsertBulk) UpdateUserID() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearUserID() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearUserID()
-	})
-}
-
-// SetGoodID sets the "good_id" field.
-func (u *CouponUpsertBulk) SetGoodID(v uuid.UUID) *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetGoodID(v)
-	})
-}
-
-// UpdateGoodID sets the "good_id" field to the value that was provided on create.
-func (u *CouponUpsertBulk) UpdateGoodID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateGoodID()
-	})
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (u *CouponUpsertBulk) ClearGoodID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearGoodID()
 	})
 }
 
