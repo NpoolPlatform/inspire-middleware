@@ -2975,7 +2975,6 @@ type CouponMutation struct {
 	app_id            *uuid.UUID
 	user_id           *uuid.UUID
 	good_id           *uuid.UUID
-	app_good_id       *uuid.UUID
 	denomination      *decimal.Decimal
 	circulation       *decimal.Decimal
 	random            *bool
@@ -3414,55 +3413,6 @@ func (m *CouponMutation) GoodIDCleared() bool {
 func (m *CouponMutation) ResetGoodID() {
 	m.good_id = nil
 	delete(m.clearedFields, coupon.FieldGoodID)
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (m *CouponMutation) SetAppGoodID(u uuid.UUID) {
-	m.app_good_id = &u
-}
-
-// AppGoodID returns the value of the "app_good_id" field in the mutation.
-func (m *CouponMutation) AppGoodID() (r uuid.UUID, exists bool) {
-	v := m.app_good_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppGoodID returns the old "app_good_id" field's value of the Coupon entity.
-// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
-	}
-	return oldValue.AppGoodID, nil
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (m *CouponMutation) ClearAppGoodID() {
-	m.app_good_id = nil
-	m.clearedFields[coupon.FieldAppGoodID] = struct{}{}
-}
-
-// AppGoodIDCleared returns if the "app_good_id" field was cleared in this mutation.
-func (m *CouponMutation) AppGoodIDCleared() bool {
-	_, ok := m.clearedFields[coupon.FieldAppGoodID]
-	return ok
-}
-
-// ResetAppGoodID resets all changes to the "app_good_id" field.
-func (m *CouponMutation) ResetAppGoodID() {
-	m.app_good_id = nil
-	delete(m.clearedFields, coupon.FieldAppGoodID)
 }
 
 // SetDenomination sets the "denomination" field.
@@ -4150,7 +4100,7 @@ func (m *CouponMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, coupon.FieldCreatedAt)
 	}
@@ -4168,9 +4118,6 @@ func (m *CouponMutation) Fields() []string {
 	}
 	if m.good_id != nil {
 		fields = append(fields, coupon.FieldGoodID)
-	}
-	if m.app_good_id != nil {
-		fields = append(fields, coupon.FieldAppGoodID)
 	}
 	if m.denomination != nil {
 		fields = append(fields, coupon.FieldDenomination)
@@ -4231,8 +4178,6 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case coupon.FieldGoodID:
 		return m.GoodID()
-	case coupon.FieldAppGoodID:
-		return m.AppGoodID()
 	case coupon.FieldDenomination:
 		return m.Denomination()
 	case coupon.FieldCirculation:
@@ -4280,8 +4225,6 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUserID(ctx)
 	case coupon.FieldGoodID:
 		return m.OldGoodID(ctx)
-	case coupon.FieldAppGoodID:
-		return m.OldAppGoodID(ctx)
 	case coupon.FieldDenomination:
 		return m.OldDenomination(ctx)
 	case coupon.FieldCirculation:
@@ -4358,13 +4301,6 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetGoodID(v)
-		return nil
-	case coupon.FieldAppGoodID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppGoodID(v)
 		return nil
 	case coupon.FieldDenomination:
 		v, ok := value.(decimal.Decimal)
@@ -4559,9 +4495,6 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldGoodID) {
 		fields = append(fields, coupon.FieldGoodID)
 	}
-	if m.FieldCleared(coupon.FieldAppGoodID) {
-		fields = append(fields, coupon.FieldAppGoodID)
-	}
 	if m.FieldCleared(coupon.FieldDenomination) {
 		fields = append(fields, coupon.FieldDenomination)
 	}
@@ -4620,9 +4553,6 @@ func (m *CouponMutation) ClearField(name string) error {
 		return nil
 	case coupon.FieldGoodID:
 		m.ClearGoodID()
-		return nil
-	case coupon.FieldAppGoodID:
-		m.ClearAppGoodID()
 		return nil
 	case coupon.FieldDenomination:
 		m.ClearDenomination()
@@ -4685,9 +4615,6 @@ func (m *CouponMutation) ResetField(name string) error {
 		return nil
 	case coupon.FieldGoodID:
 		m.ResetGoodID()
-		return nil
-	case coupon.FieldAppGoodID:
-		m.ResetAppGoodID()
 		return nil
 	case coupon.FieldDenomination:
 		m.ResetDenomination()

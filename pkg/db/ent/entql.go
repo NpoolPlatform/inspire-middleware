@@ -96,7 +96,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
 			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
 			coupon.FieldGoodID:           {Type: field.TypeUUID, Column: coupon.FieldGoodID},
-			coupon.FieldAppGoodID:        {Type: field.TypeUUID, Column: coupon.FieldAppGoodID},
 			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
 			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
 			coupon.FieldRandom:           {Type: field.TypeBool, Column: coupon.FieldRandom},
@@ -580,11 +579,6 @@ func (f *CouponFilter) WhereUserID(p entql.ValueP) {
 // WhereGoodID applies the entql [16]byte predicate on the good_id field.
 func (f *CouponFilter) WhereGoodID(p entql.ValueP) {
 	f.Where(p.Field(coupon.FieldGoodID))
-}
-
-// WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
-func (f *CouponFilter) WhereAppGoodID(p entql.ValueP) {
-	f.Where(p.Field(coupon.FieldAppGoodID))
 }
 
 // WhereDenomination applies the entql other predicate on the denomination field.

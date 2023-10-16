@@ -25,8 +25,6 @@ const (
 	FieldUserID = "user_id"
 	// FieldGoodID holds the string denoting the good_id field in the database.
 	FieldGoodID = "good_id"
-	// FieldAppGoodID holds the string denoting the app_good_id field in the database.
-	FieldAppGoodID = "app_good_id"
 	// FieldDenomination holds the string denoting the denomination field in the database.
 	FieldDenomination = "denomination"
 	// FieldCirculation holds the string denoting the circulation field in the database.
@@ -66,7 +64,6 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldGoodID,
-	FieldAppGoodID,
 	FieldDenomination,
 	FieldCirculation,
 	FieldRandom,
@@ -115,8 +112,6 @@ var (
 	DefaultUserID func() uuid.UUID
 	// DefaultGoodID holds the default value on creation for the "good_id" field.
 	DefaultGoodID func() uuid.UUID
-	// DefaultAppGoodID holds the default value on creation for the "app_good_id" field.
-	DefaultAppGoodID func() uuid.UUID
 	// DefaultDenomination holds the default value on creation for the "denomination" field.
 	DefaultDenomination decimal.Decimal
 	// DefaultCirculation holds the default value on creation for the "circulation" field.

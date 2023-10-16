@@ -108,20 +108,6 @@ func (cc *CouponCreate) SetNillableGoodID(u *uuid.UUID) *CouponCreate {
 	return cc
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (cc *CouponCreate) SetAppGoodID(u uuid.UUID) *CouponCreate {
-	cc.mutation.SetAppGoodID(u)
-	return cc
-}
-
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (cc *CouponCreate) SetNillableAppGoodID(u *uuid.UUID) *CouponCreate {
-	if u != nil {
-		cc.SetAppGoodID(*u)
-	}
-	return cc
-}
-
 // SetDenomination sets the "denomination" field.
 func (cc *CouponCreate) SetDenomination(d decimal.Decimal) *CouponCreate {
 	cc.mutation.SetDenomination(d)
@@ -431,13 +417,6 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultGoodID()
 		cc.mutation.SetGoodID(v)
 	}
-	if _, ok := cc.mutation.AppGoodID(); !ok {
-		if coupon.DefaultAppGoodID == nil {
-			return fmt.Errorf("ent: uninitialized coupon.DefaultAppGoodID (forgotten import ent/runtime?)")
-		}
-		v := coupon.DefaultAppGoodID()
-		cc.mutation.SetAppGoodID(v)
-	}
 	if _, ok := cc.mutation.Denomination(); !ok {
 		v := coupon.DefaultDenomination
 		cc.mutation.SetDenomination(v)
@@ -594,14 +573,6 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldGoodID,
 		})
 		_node.GoodID = value
-	}
-	if value, ok := cc.mutation.AppGoodID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldAppGoodID,
-		})
-		_node.AppGoodID = value
 	}
 	if value, ok := cc.mutation.Denomination(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -866,24 +837,6 @@ func (u *CouponUpsert) UpdateGoodID() *CouponUpsert {
 // ClearGoodID clears the value of the "good_id" field.
 func (u *CouponUpsert) ClearGoodID() *CouponUpsert {
 	u.SetNull(coupon.FieldGoodID)
-	return u
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponUpsert) SetAppGoodID(v uuid.UUID) *CouponUpsert {
-	u.Set(coupon.FieldAppGoodID, v)
-	return u
-}
-
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponUpsert) UpdateAppGoodID() *CouponUpsert {
-	u.SetExcluded(coupon.FieldAppGoodID)
-	return u
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponUpsert) ClearAppGoodID() *CouponUpsert {
-	u.SetNull(coupon.FieldAppGoodID)
 	return u
 }
 
@@ -1300,27 +1253,6 @@ func (u *CouponUpsertOne) UpdateGoodID() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearGoodID() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearGoodID()
-	})
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponUpsertOne) SetAppGoodID(v uuid.UUID) *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetAppGoodID(v)
-	})
-}
-
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponUpsertOne) UpdateAppGoodID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateAppGoodID()
-	})
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponUpsertOne) ClearAppGoodID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearAppGoodID()
 	})
 }
 
@@ -1943,27 +1875,6 @@ func (u *CouponUpsertBulk) UpdateGoodID() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearGoodID() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearGoodID()
-	})
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponUpsertBulk) SetAppGoodID(v uuid.UUID) *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetAppGoodID(v)
-	})
-}
-
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponUpsertBulk) UpdateAppGoodID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateAppGoodID()
-	})
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponUpsertBulk) ClearAppGoodID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearAppGoodID()
 	})
 }
 

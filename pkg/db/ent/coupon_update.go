@@ -145,26 +145,6 @@ func (cu *CouponUpdate) ClearGoodID() *CouponUpdate {
 	return cu
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (cu *CouponUpdate) SetAppGoodID(u uuid.UUID) *CouponUpdate {
-	cu.mutation.SetAppGoodID(u)
-	return cu
-}
-
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (cu *CouponUpdate) SetNillableAppGoodID(u *uuid.UUID) *CouponUpdate {
-	if u != nil {
-		cu.SetAppGoodID(*u)
-	}
-	return cu
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (cu *CouponUpdate) ClearAppGoodID() *CouponUpdate {
-	cu.mutation.ClearAppGoodID()
-	return cu
-}
-
 // SetDenomination sets the "denomination" field.
 func (cu *CouponUpdate) SetDenomination(d decimal.Decimal) *CouponUpdate {
 	cu.mutation.SetDenomination(d)
@@ -604,19 +584,6 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldGoodID,
 		})
 	}
-	if value, ok := cu.mutation.AppGoodID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldAppGoodID,
-		})
-	}
-	if cu.mutation.AppGoodIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coupon.FieldAppGoodID,
-		})
-	}
 	if value, ok := cu.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -927,26 +894,6 @@ func (cuo *CouponUpdateOne) SetNillableGoodID(u *uuid.UUID) *CouponUpdateOne {
 // ClearGoodID clears the value of the "good_id" field.
 func (cuo *CouponUpdateOne) ClearGoodID() *CouponUpdateOne {
 	cuo.mutation.ClearGoodID()
-	return cuo
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (cuo *CouponUpdateOne) SetAppGoodID(u uuid.UUID) *CouponUpdateOne {
-	cuo.mutation.SetAppGoodID(u)
-	return cuo
-}
-
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (cuo *CouponUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *CouponUpdateOne {
-	if u != nil {
-		cuo.SetAppGoodID(*u)
-	}
-	return cuo
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (cuo *CouponUpdateOne) ClearAppGoodID() *CouponUpdateOne {
-	cuo.mutation.ClearAppGoodID()
 	return cuo
 }
 
@@ -1417,19 +1364,6 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: coupon.FieldGoodID,
-		})
-	}
-	if value, ok := cuo.mutation.AppGoodID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldAppGoodID,
-		})
-	}
-	if cuo.mutation.AppGoodIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coupon.FieldAppGoodID,
 		})
 	}
 	if value, ok := cuo.mutation.Denomination(); ok {
