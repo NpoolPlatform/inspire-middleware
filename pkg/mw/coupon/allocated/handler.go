@@ -214,6 +214,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 		}
 		if conds.CouponIDs != nil {
+			fmt.Println("-------------------")
 			ids := []uuid.UUID{}
 			for _, id := range conds.GetCouponIDs().GetValue() {
 				_id, err := uuid.Parse(id)
