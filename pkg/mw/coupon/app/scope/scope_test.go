@@ -12,6 +12,7 @@ import (
 	"github.com/shopspring/decimal"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
+	scope1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/scope"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
 	scopemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
@@ -104,8 +105,25 @@ func setup(t *testing.T) func(*testing.T) {
 		assert.Equal(t, &coupon, coup)
 	}
 
+	h2, err := scope1.NewHandler(
+		context.Background(),
+		scope1.WithID(&scope.ID, true),
+		scope1.WithGoodID(&scope.GoodID, true),
+		scope1.WithCouponID(&coupon.ID, true),
+		scope1.WithCouponScope(&coupon.CouponScope, true),
+	)
+	assert.Nil(t, err)
+
+	info, err := h2.CreateScope(context.Background())
+	if assert.Nil(t, err) {
+		scope.CreatedAt = info.CreatedAt
+		scope.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, &scope, info)
+	}
+
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
+		_, _ = h2.DeleteScope(context.Background())
 	}
 }
 
