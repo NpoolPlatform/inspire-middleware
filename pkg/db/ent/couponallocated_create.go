@@ -154,6 +154,20 @@ func (cac *CouponAllocatedCreate) SetNillableStartAt(u *uint32) *CouponAllocated
 	return cac
 }
 
+// SetScopeID sets the "scope_id" field.
+func (cac *CouponAllocatedCreate) SetScopeID(u uuid.UUID) *CouponAllocatedCreate {
+	cac.mutation.SetScopeID(u)
+	return cac
+}
+
+// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableScopeID(u *uuid.UUID) *CouponAllocatedCreate {
+	if u != nil {
+		cac.SetScopeID(*u)
+	}
+	return cac
+}
+
 // SetID sets the "id" field.
 func (cac *CouponAllocatedCreate) SetID(u uuid.UUID) *CouponAllocatedCreate {
 	cac.mutation.SetID(u)
@@ -290,6 +304,13 @@ func (cac *CouponAllocatedCreate) defaults() error {
 	if _, ok := cac.mutation.StartAt(); !ok {
 		v := couponallocated.DefaultStartAt
 		cac.mutation.SetStartAt(v)
+	}
+	if _, ok := cac.mutation.ScopeID(); !ok {
+		if couponallocated.DefaultScopeID == nil {
+			return fmt.Errorf("ent: uninitialized couponallocated.DefaultScopeID (forgotten import ent/runtime?)")
+		}
+		v := couponallocated.DefaultScopeID()
+		cac.mutation.SetScopeID(v)
 	}
 	if _, ok := cac.mutation.ID(); !ok {
 		if couponallocated.DefaultID == nil {
@@ -445,6 +466,14 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldStartAt,
 		})
 		_node.StartAt = value
+	}
+	if value, ok := cac.mutation.ScopeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponallocated.FieldScopeID,
+		})
+		_node.ScopeID = value
 	}
 	return _node, _spec
 }
@@ -689,6 +718,24 @@ func (u *CouponAllocatedUpsert) AddStartAt(v uint32) *CouponAllocatedUpsert {
 // ClearStartAt clears the value of the "start_at" field.
 func (u *CouponAllocatedUpsert) ClearStartAt() *CouponAllocatedUpsert {
 	u.SetNull(couponallocated.FieldStartAt)
+	return u
+}
+
+// SetScopeID sets the "scope_id" field.
+func (u *CouponAllocatedUpsert) SetScopeID(v uuid.UUID) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldScopeID, v)
+	return u
+}
+
+// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateScopeID() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldScopeID)
+	return u
+}
+
+// ClearScopeID clears the value of the "scope_id" field.
+func (u *CouponAllocatedUpsert) ClearScopeID() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldScopeID)
 	return u
 }
 
@@ -963,6 +1010,27 @@ func (u *CouponAllocatedUpsertOne) UpdateStartAt() *CouponAllocatedUpsertOne {
 func (u *CouponAllocatedUpsertOne) ClearStartAt() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetScopeID sets the "scope_id" field.
+func (u *CouponAllocatedUpsertOne) SetScopeID(v uuid.UUID) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetScopeID(v)
+	})
+}
+
+// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateScopeID() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateScopeID()
+	})
+}
+
+// ClearScopeID clears the value of the "scope_id" field.
+func (u *CouponAllocatedUpsertOne) ClearScopeID() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearScopeID()
 	})
 }
 
@@ -1403,6 +1471,27 @@ func (u *CouponAllocatedUpsertBulk) UpdateStartAt() *CouponAllocatedUpsertBulk {
 func (u *CouponAllocatedUpsertBulk) ClearStartAt() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetScopeID sets the "scope_id" field.
+func (u *CouponAllocatedUpsertBulk) SetScopeID(v uuid.UUID) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetScopeID(v)
+	})
+}
+
+// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateScopeID() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateScopeID()
+	})
+}
+
+// ClearScopeID clears the value of the "scope_id" field.
+func (u *CouponAllocatedUpsertBulk) ClearScopeID() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearScopeID()
 	})
 }
 

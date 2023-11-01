@@ -16,6 +16,8 @@ type Tx struct {
 	config
 	// Achievement is the client for interacting with the Achievement builders.
 	Achievement *AchievementClient
+	// AppGoodScope is the client for interacting with the AppGoodScope builders.
+	AppGoodScope *AppGoodScopeClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -170,6 +172,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Achievement = NewAchievementClient(tx.config)
+	tx.AppGoodScope = NewAppGoodScopeClient(tx.config)
 	tx.Commission = NewCommissionClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)

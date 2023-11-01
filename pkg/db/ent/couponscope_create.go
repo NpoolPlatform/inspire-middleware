@@ -65,28 +65,30 @@ func (csc *CouponScopeCreate) SetNillableDeletedAt(u *uint32) *CouponScopeCreate
 	return csc
 }
 
-// SetAppID sets the "app_id" field.
-func (csc *CouponScopeCreate) SetAppID(u uuid.UUID) *CouponScopeCreate {
-	csc.mutation.SetAppID(u)
-	return csc
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (csc *CouponScopeCreate) SetCouponID(u uuid.UUID) *CouponScopeCreate {
 	csc.mutation.SetCouponID(u)
 	return csc
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (csc *CouponScopeCreate) SetAppGoodID(u uuid.UUID) *CouponScopeCreate {
-	csc.mutation.SetAppGoodID(u)
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (csc *CouponScopeCreate) SetNillableCouponID(u *uuid.UUID) *CouponScopeCreate {
+	if u != nil {
+		csc.SetCouponID(*u)
+	}
 	return csc
 }
 
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (csc *CouponScopeCreate) SetNillableAppGoodID(u *uuid.UUID) *CouponScopeCreate {
+// SetGoodID sets the "good_id" field.
+func (csc *CouponScopeCreate) SetGoodID(u uuid.UUID) *CouponScopeCreate {
+	csc.mutation.SetGoodID(u)
+	return csc
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (csc *CouponScopeCreate) SetNillableGoodID(u *uuid.UUID) *CouponScopeCreate {
 	if u != nil {
-		csc.SetAppGoodID(*u)
+		csc.SetGoodID(*u)
 	}
 	return csc
 }
@@ -219,12 +221,19 @@ func (csc *CouponScopeCreate) defaults() error {
 		v := couponscope.DefaultDeletedAt()
 		csc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := csc.mutation.AppGoodID(); !ok {
-		if couponscope.DefaultAppGoodID == nil {
-			return fmt.Errorf("ent: uninitialized couponscope.DefaultAppGoodID (forgotten import ent/runtime?)")
+	if _, ok := csc.mutation.CouponID(); !ok {
+		if couponscope.DefaultCouponID == nil {
+			return fmt.Errorf("ent: uninitialized couponscope.DefaultCouponID (forgotten import ent/runtime?)")
 		}
-		v := couponscope.DefaultAppGoodID()
-		csc.mutation.SetAppGoodID(v)
+		v := couponscope.DefaultCouponID()
+		csc.mutation.SetCouponID(v)
+	}
+	if _, ok := csc.mutation.GoodID(); !ok {
+		if couponscope.DefaultGoodID == nil {
+			return fmt.Errorf("ent: uninitialized couponscope.DefaultGoodID (forgotten import ent/runtime?)")
+		}
+		v := couponscope.DefaultGoodID()
+		csc.mutation.SetGoodID(v)
 	}
 	if _, ok := csc.mutation.CouponScope(); !ok {
 		v := couponscope.DefaultCouponScope
@@ -250,12 +259,6 @@ func (csc *CouponScopeCreate) check() error {
 	}
 	if _, ok := csc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "CouponScope.deleted_at"`)}
-	}
-	if _, ok := csc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "CouponScope.app_id"`)}
-	}
-	if _, ok := csc.mutation.CouponID(); !ok {
-		return &ValidationError{Name: "coupon_id", err: errors.New(`ent: missing required field "CouponScope.coupon_id"`)}
 	}
 	return nil
 }
@@ -318,14 +321,6 @@ func (csc *CouponScopeCreate) createSpec() (*CouponScope, *sqlgraph.CreateSpec) 
 		})
 		_node.DeletedAt = value
 	}
-	if value, ok := csc.mutation.AppID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponscope.FieldAppID,
-		})
-		_node.AppID = value
-	}
 	if value, ok := csc.mutation.CouponID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -334,13 +329,13 @@ func (csc *CouponScopeCreate) createSpec() (*CouponScope, *sqlgraph.CreateSpec) 
 		})
 		_node.CouponID = value
 	}
-	if value, ok := csc.mutation.AppGoodID(); ok {
+	if value, ok := csc.mutation.GoodID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: couponscope.FieldAppGoodID,
+			Column: couponscope.FieldGoodID,
 		})
-		_node.AppGoodID = value
+		_node.GoodID = value
 	}
 	if value, ok := csc.mutation.CouponScope(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -458,18 +453,6 @@ func (u *CouponScopeUpsert) AddDeletedAt(v uint32) *CouponScopeUpsert {
 	return u
 }
 
-// SetAppID sets the "app_id" field.
-func (u *CouponScopeUpsert) SetAppID(v uuid.UUID) *CouponScopeUpsert {
-	u.Set(couponscope.FieldAppID, v)
-	return u
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *CouponScopeUpsert) UpdateAppID() *CouponScopeUpsert {
-	u.SetExcluded(couponscope.FieldAppID)
-	return u
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (u *CouponScopeUpsert) SetCouponID(v uuid.UUID) *CouponScopeUpsert {
 	u.Set(couponscope.FieldCouponID, v)
@@ -482,21 +465,27 @@ func (u *CouponScopeUpsert) UpdateCouponID() *CouponScopeUpsert {
 	return u
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponScopeUpsert) SetAppGoodID(v uuid.UUID) *CouponScopeUpsert {
-	u.Set(couponscope.FieldAppGoodID, v)
+// ClearCouponID clears the value of the "coupon_id" field.
+func (u *CouponScopeUpsert) ClearCouponID() *CouponScopeUpsert {
+	u.SetNull(couponscope.FieldCouponID)
 	return u
 }
 
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponScopeUpsert) UpdateAppGoodID() *CouponScopeUpsert {
-	u.SetExcluded(couponscope.FieldAppGoodID)
+// SetGoodID sets the "good_id" field.
+func (u *CouponScopeUpsert) SetGoodID(v uuid.UUID) *CouponScopeUpsert {
+	u.Set(couponscope.FieldGoodID, v)
 	return u
 }
 
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponScopeUpsert) ClearAppGoodID() *CouponScopeUpsert {
-	u.SetNull(couponscope.FieldAppGoodID)
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponScopeUpsert) UpdateGoodID() *CouponScopeUpsert {
+	u.SetExcluded(couponscope.FieldGoodID)
+	return u
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponScopeUpsert) ClearGoodID() *CouponScopeUpsert {
+	u.SetNull(couponscope.FieldGoodID)
 	return u
 }
 
@@ -631,20 +620,6 @@ func (u *CouponScopeUpsertOne) UpdateDeletedAt() *CouponScopeUpsertOne {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *CouponScopeUpsertOne) SetAppID(v uuid.UUID) *CouponScopeUpsertOne {
-	return u.Update(func(s *CouponScopeUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *CouponScopeUpsertOne) UpdateAppID() *CouponScopeUpsertOne {
-	return u.Update(func(s *CouponScopeUpsert) {
-		s.UpdateAppID()
-	})
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (u *CouponScopeUpsertOne) SetCouponID(v uuid.UUID) *CouponScopeUpsertOne {
 	return u.Update(func(s *CouponScopeUpsert) {
@@ -659,24 +634,31 @@ func (u *CouponScopeUpsertOne) UpdateCouponID() *CouponScopeUpsertOne {
 	})
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponScopeUpsertOne) SetAppGoodID(v uuid.UUID) *CouponScopeUpsertOne {
+// ClearCouponID clears the value of the "coupon_id" field.
+func (u *CouponScopeUpsertOne) ClearCouponID() *CouponScopeUpsertOne {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.SetAppGoodID(v)
+		s.ClearCouponID()
 	})
 }
 
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponScopeUpsertOne) UpdateAppGoodID() *CouponScopeUpsertOne {
+// SetGoodID sets the "good_id" field.
+func (u *CouponScopeUpsertOne) SetGoodID(v uuid.UUID) *CouponScopeUpsertOne {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.UpdateAppGoodID()
+		s.SetGoodID(v)
 	})
 }
 
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponScopeUpsertOne) ClearAppGoodID() *CouponScopeUpsertOne {
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponScopeUpsertOne) UpdateGoodID() *CouponScopeUpsertOne {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.ClearAppGoodID()
+		s.UpdateGoodID()
+	})
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponScopeUpsertOne) ClearGoodID() *CouponScopeUpsertOne {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.ClearGoodID()
 	})
 }
 
@@ -980,20 +962,6 @@ func (u *CouponScopeUpsertBulk) UpdateDeletedAt() *CouponScopeUpsertBulk {
 	})
 }
 
-// SetAppID sets the "app_id" field.
-func (u *CouponScopeUpsertBulk) SetAppID(v uuid.UUID) *CouponScopeUpsertBulk {
-	return u.Update(func(s *CouponScopeUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *CouponScopeUpsertBulk) UpdateAppID() *CouponScopeUpsertBulk {
-	return u.Update(func(s *CouponScopeUpsert) {
-		s.UpdateAppID()
-	})
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (u *CouponScopeUpsertBulk) SetCouponID(v uuid.UUID) *CouponScopeUpsertBulk {
 	return u.Update(func(s *CouponScopeUpsert) {
@@ -1008,24 +976,31 @@ func (u *CouponScopeUpsertBulk) UpdateCouponID() *CouponScopeUpsertBulk {
 	})
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (u *CouponScopeUpsertBulk) SetAppGoodID(v uuid.UUID) *CouponScopeUpsertBulk {
+// ClearCouponID clears the value of the "coupon_id" field.
+func (u *CouponScopeUpsertBulk) ClearCouponID() *CouponScopeUpsertBulk {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.SetAppGoodID(v)
+		s.ClearCouponID()
 	})
 }
 
-// UpdateAppGoodID sets the "app_good_id" field to the value that was provided on create.
-func (u *CouponScopeUpsertBulk) UpdateAppGoodID() *CouponScopeUpsertBulk {
+// SetGoodID sets the "good_id" field.
+func (u *CouponScopeUpsertBulk) SetGoodID(v uuid.UUID) *CouponScopeUpsertBulk {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.UpdateAppGoodID()
+		s.SetGoodID(v)
 	})
 }
 
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (u *CouponScopeUpsertBulk) ClearAppGoodID() *CouponScopeUpsertBulk {
+// UpdateGoodID sets the "good_id" field to the value that was provided on create.
+func (u *CouponScopeUpsertBulk) UpdateGoodID() *CouponScopeUpsertBulk {
 	return u.Update(func(s *CouponScopeUpsert) {
-		s.ClearAppGoodID()
+		s.UpdateGoodID()
+	})
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (u *CouponScopeUpsertBulk) ClearGoodID() *CouponScopeUpsertBulk {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.ClearGoodID()
 	})
 }
 

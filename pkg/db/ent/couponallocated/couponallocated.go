@@ -35,6 +35,8 @@ const (
 	FieldUsedByOrderID = "used_by_order_id"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
+	// FieldScopeID holds the string denoting the scope_id field in the database.
+	FieldScopeID = "scope_id"
 	// Table holds the table name of the couponallocated in the database.
 	Table = "coupon_allocateds"
 )
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldUsedAt,
 	FieldUsedByOrderID,
 	FieldStartAt,
+	FieldScopeID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -92,6 +95,8 @@ var (
 	DefaultUsedByOrderID func() uuid.UUID
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
+	// DefaultScopeID holds the default value on creation for the "scope_id" field.
+	DefaultScopeID func() uuid.UUID
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

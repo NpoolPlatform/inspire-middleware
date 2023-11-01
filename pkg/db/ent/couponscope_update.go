@@ -84,35 +84,43 @@ func (csu *CouponScopeUpdate) AddDeletedAt(u int32) *CouponScopeUpdate {
 	return csu
 }
 
-// SetAppID sets the "app_id" field.
-func (csu *CouponScopeUpdate) SetAppID(u uuid.UUID) *CouponScopeUpdate {
-	csu.mutation.SetAppID(u)
-	return csu
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (csu *CouponScopeUpdate) SetCouponID(u uuid.UUID) *CouponScopeUpdate {
 	csu.mutation.SetCouponID(u)
 	return csu
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (csu *CouponScopeUpdate) SetAppGoodID(u uuid.UUID) *CouponScopeUpdate {
-	csu.mutation.SetAppGoodID(u)
-	return csu
-}
-
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (csu *CouponScopeUpdate) SetNillableAppGoodID(u *uuid.UUID) *CouponScopeUpdate {
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (csu *CouponScopeUpdate) SetNillableCouponID(u *uuid.UUID) *CouponScopeUpdate {
 	if u != nil {
-		csu.SetAppGoodID(*u)
+		csu.SetCouponID(*u)
 	}
 	return csu
 }
 
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (csu *CouponScopeUpdate) ClearAppGoodID() *CouponScopeUpdate {
-	csu.mutation.ClearAppGoodID()
+// ClearCouponID clears the value of the "coupon_id" field.
+func (csu *CouponScopeUpdate) ClearCouponID() *CouponScopeUpdate {
+	csu.mutation.ClearCouponID()
+	return csu
+}
+
+// SetGoodID sets the "good_id" field.
+func (csu *CouponScopeUpdate) SetGoodID(u uuid.UUID) *CouponScopeUpdate {
+	csu.mutation.SetGoodID(u)
+	return csu
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (csu *CouponScopeUpdate) SetNillableGoodID(u *uuid.UUID) *CouponScopeUpdate {
+	if u != nil {
+		csu.SetGoodID(*u)
+	}
+	return csu
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (csu *CouponScopeUpdate) ClearGoodID() *CouponScopeUpdate {
+	csu.mutation.ClearGoodID()
 	return csu
 }
 
@@ -276,13 +284,6 @@ func (csu *CouponScopeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: couponscope.FieldDeletedAt,
 		})
 	}
-	if value, ok := csu.mutation.AppID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponscope.FieldAppID,
-		})
-	}
 	if value, ok := csu.mutation.CouponID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -290,17 +291,23 @@ func (csu *CouponScopeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: couponscope.FieldCouponID,
 		})
 	}
-	if value, ok := csu.mutation.AppGoodID(); ok {
+	if csu.mutation.CouponIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: couponscope.FieldCouponID,
+		})
+	}
+	if value, ok := csu.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: couponscope.FieldAppGoodID,
+			Column: couponscope.FieldGoodID,
 		})
 	}
-	if csu.mutation.AppGoodIDCleared() {
+	if csu.mutation.GoodIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: couponscope.FieldAppGoodID,
+			Column: couponscope.FieldGoodID,
 		})
 	}
 	if value, ok := csu.mutation.CouponScope(); ok {
@@ -392,35 +399,43 @@ func (csuo *CouponScopeUpdateOne) AddDeletedAt(u int32) *CouponScopeUpdateOne {
 	return csuo
 }
 
-// SetAppID sets the "app_id" field.
-func (csuo *CouponScopeUpdateOne) SetAppID(u uuid.UUID) *CouponScopeUpdateOne {
-	csuo.mutation.SetAppID(u)
-	return csuo
-}
-
 // SetCouponID sets the "coupon_id" field.
 func (csuo *CouponScopeUpdateOne) SetCouponID(u uuid.UUID) *CouponScopeUpdateOne {
 	csuo.mutation.SetCouponID(u)
 	return csuo
 }
 
-// SetAppGoodID sets the "app_good_id" field.
-func (csuo *CouponScopeUpdateOne) SetAppGoodID(u uuid.UUID) *CouponScopeUpdateOne {
-	csuo.mutation.SetAppGoodID(u)
-	return csuo
-}
-
-// SetNillableAppGoodID sets the "app_good_id" field if the given value is not nil.
-func (csuo *CouponScopeUpdateOne) SetNillableAppGoodID(u *uuid.UUID) *CouponScopeUpdateOne {
+// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
+func (csuo *CouponScopeUpdateOne) SetNillableCouponID(u *uuid.UUID) *CouponScopeUpdateOne {
 	if u != nil {
-		csuo.SetAppGoodID(*u)
+		csuo.SetCouponID(*u)
 	}
 	return csuo
 }
 
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (csuo *CouponScopeUpdateOne) ClearAppGoodID() *CouponScopeUpdateOne {
-	csuo.mutation.ClearAppGoodID()
+// ClearCouponID clears the value of the "coupon_id" field.
+func (csuo *CouponScopeUpdateOne) ClearCouponID() *CouponScopeUpdateOne {
+	csuo.mutation.ClearCouponID()
+	return csuo
+}
+
+// SetGoodID sets the "good_id" field.
+func (csuo *CouponScopeUpdateOne) SetGoodID(u uuid.UUID) *CouponScopeUpdateOne {
+	csuo.mutation.SetGoodID(u)
+	return csuo
+}
+
+// SetNillableGoodID sets the "good_id" field if the given value is not nil.
+func (csuo *CouponScopeUpdateOne) SetNillableGoodID(u *uuid.UUID) *CouponScopeUpdateOne {
+	if u != nil {
+		csuo.SetGoodID(*u)
+	}
+	return csuo
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (csuo *CouponScopeUpdateOne) ClearGoodID() *CouponScopeUpdateOne {
+	csuo.mutation.ClearGoodID()
 	return csuo
 }
 
@@ -614,13 +629,6 @@ func (csuo *CouponScopeUpdateOne) sqlSave(ctx context.Context) (_node *CouponSco
 			Column: couponscope.FieldDeletedAt,
 		})
 	}
-	if value, ok := csuo.mutation.AppID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponscope.FieldAppID,
-		})
-	}
 	if value, ok := csuo.mutation.CouponID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -628,17 +636,23 @@ func (csuo *CouponScopeUpdateOne) sqlSave(ctx context.Context) (_node *CouponSco
 			Column: couponscope.FieldCouponID,
 		})
 	}
-	if value, ok := csuo.mutation.AppGoodID(); ok {
+	if csuo.mutation.CouponIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: couponscope.FieldCouponID,
+		})
+	}
+	if value, ok := csuo.mutation.GoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: couponscope.FieldAppGoodID,
+			Column: couponscope.FieldGoodID,
 		})
 	}
-	if csuo.mutation.AppGoodIDCleared() {
+	if csuo.mutation.GoodIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: couponscope.FieldAppGoodID,
+			Column: couponscope.FieldGoodID,
 		})
 	}
 	if value, ok := csuo.mutation.CouponScope(); ok {

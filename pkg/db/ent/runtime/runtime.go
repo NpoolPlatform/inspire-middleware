@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -103,6 +104,58 @@ func init() {
 	achievementDescID := achievementFields[0].Descriptor()
 	// achievement.DefaultID holds the default value on creation for the id field.
 	achievement.DefaultID = achievementDescID.Default.(func() uuid.UUID)
+	appgoodscopeMixin := schema.AppGoodScope{}.Mixin()
+	appgoodscope.Policy = privacy.NewPolicies(appgoodscopeMixin[0], schema.AppGoodScope{})
+	appgoodscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := appgoodscope.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	appgoodscopeMixinFields0 := appgoodscopeMixin[0].Fields()
+	_ = appgoodscopeMixinFields0
+	appgoodscopeFields := schema.AppGoodScope{}.Fields()
+	_ = appgoodscopeFields
+	// appgoodscopeDescCreatedAt is the schema descriptor for created_at field.
+	appgoodscopeDescCreatedAt := appgoodscopeMixinFields0[0].Descriptor()
+	// appgoodscope.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appgoodscope.DefaultCreatedAt = appgoodscopeDescCreatedAt.Default.(func() uint32)
+	// appgoodscopeDescUpdatedAt is the schema descriptor for updated_at field.
+	appgoodscopeDescUpdatedAt := appgoodscopeMixinFields0[1].Descriptor()
+	// appgoodscope.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appgoodscope.DefaultUpdatedAt = appgoodscopeDescUpdatedAt.Default.(func() uint32)
+	// appgoodscope.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appgoodscope.UpdateDefaultUpdatedAt = appgoodscopeDescUpdatedAt.UpdateDefault.(func() uint32)
+	// appgoodscopeDescDeletedAt is the schema descriptor for deleted_at field.
+	appgoodscopeDescDeletedAt := appgoodscopeMixinFields0[2].Descriptor()
+	// appgoodscope.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	appgoodscope.DefaultDeletedAt = appgoodscopeDescDeletedAt.Default.(func() uint32)
+	// appgoodscopeDescAppID is the schema descriptor for app_id field.
+	appgoodscopeDescAppID := appgoodscopeFields[1].Descriptor()
+	// appgoodscope.DefaultAppID holds the default value on creation for the app_id field.
+	appgoodscope.DefaultAppID = appgoodscopeDescAppID.Default.(func() uuid.UUID)
+	// appgoodscopeDescScopeID is the schema descriptor for scope_id field.
+	appgoodscopeDescScopeID := appgoodscopeFields[2].Descriptor()
+	// appgoodscope.DefaultScopeID holds the default value on creation for the scope_id field.
+	appgoodscope.DefaultScopeID = appgoodscopeDescScopeID.Default.(func() uuid.UUID)
+	// appgoodscopeDescAppGoodID is the schema descriptor for app_good_id field.
+	appgoodscopeDescAppGoodID := appgoodscopeFields[3].Descriptor()
+	// appgoodscope.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	appgoodscope.DefaultAppGoodID = appgoodscopeDescAppGoodID.Default.(func() uuid.UUID)
+	// appgoodscopeDescCouponID is the schema descriptor for coupon_id field.
+	appgoodscopeDescCouponID := appgoodscopeFields[4].Descriptor()
+	// appgoodscope.DefaultCouponID holds the default value on creation for the coupon_id field.
+	appgoodscope.DefaultCouponID = appgoodscopeDescCouponID.Default.(func() uuid.UUID)
+	// appgoodscopeDescCouponScope is the schema descriptor for coupon_scope field.
+	appgoodscopeDescCouponScope := appgoodscopeFields[5].Descriptor()
+	// appgoodscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
+	appgoodscope.DefaultCouponScope = appgoodscopeDescCouponScope.Default.(string)
+	// appgoodscopeDescID is the schema descriptor for id field.
+	appgoodscopeDescID := appgoodscopeFields[0].Descriptor()
+	// appgoodscope.DefaultID holds the default value on creation for the id field.
+	appgoodscope.DefaultID = appgoodscopeDescID.Default.(func() uuid.UUID)
 	commissionMixin := schema.Commission{}.Mixin()
 	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
 	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -323,6 +376,10 @@ func init() {
 	couponallocatedDescStartAt := couponallocatedFields[8].Descriptor()
 	// couponallocated.DefaultStartAt holds the default value on creation for the start_at field.
 	couponallocated.DefaultStartAt = couponallocatedDescStartAt.Default.(uint32)
+	// couponallocatedDescScopeID is the schema descriptor for scope_id field.
+	couponallocatedDescScopeID := couponallocatedFields[9].Descriptor()
+	// couponallocated.DefaultScopeID holds the default value on creation for the scope_id field.
+	couponallocated.DefaultScopeID = couponallocatedDescScopeID.Default.(func() uuid.UUID)
 	// couponallocatedDescID is the schema descriptor for id field.
 	couponallocatedDescID := couponallocatedFields[0].Descriptor()
 	// couponallocated.DefaultID holds the default value on creation for the id field.
@@ -355,12 +412,16 @@ func init() {
 	couponscopeDescDeletedAt := couponscopeMixinFields0[2].Descriptor()
 	// couponscope.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	couponscope.DefaultDeletedAt = couponscopeDescDeletedAt.Default.(func() uint32)
-	// couponscopeDescAppGoodID is the schema descriptor for app_good_id field.
-	couponscopeDescAppGoodID := couponscopeFields[3].Descriptor()
-	// couponscope.DefaultAppGoodID holds the default value on creation for the app_good_id field.
-	couponscope.DefaultAppGoodID = couponscopeDescAppGoodID.Default.(func() uuid.UUID)
+	// couponscopeDescCouponID is the schema descriptor for coupon_id field.
+	couponscopeDescCouponID := couponscopeFields[1].Descriptor()
+	// couponscope.DefaultCouponID holds the default value on creation for the coupon_id field.
+	couponscope.DefaultCouponID = couponscopeDescCouponID.Default.(func() uuid.UUID)
+	// couponscopeDescGoodID is the schema descriptor for good_id field.
+	couponscopeDescGoodID := couponscopeFields[2].Descriptor()
+	// couponscope.DefaultGoodID holds the default value on creation for the good_id field.
+	couponscope.DefaultGoodID = couponscopeDescGoodID.Default.(func() uuid.UUID)
 	// couponscopeDescCouponScope is the schema descriptor for coupon_scope field.
-	couponscopeDescCouponScope := couponscopeFields[4].Descriptor()
+	couponscopeDescCouponScope := couponscopeFields[3].Descriptor()
 	// couponscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponscope.DefaultCouponScope = couponscopeDescCouponScope.Default.(string)
 	// couponscopeDescID is the schema descriptor for id field.

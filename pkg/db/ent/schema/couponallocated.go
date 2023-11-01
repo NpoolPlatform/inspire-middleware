@@ -60,6 +60,12 @@ func (CouponAllocated) Fields() []ent.Field {
 			Uint32("start_at").
 			Optional().
 			Default(uint32(time.Now().Unix())),
+		field.
+			UUID("scope_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 	}
 }
 

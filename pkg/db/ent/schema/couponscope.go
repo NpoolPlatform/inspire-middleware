@@ -27,11 +27,13 @@ func (CouponScope) Fields() []ent.Field {
 			Default(uuid.New).
 			Unique(),
 		field.
-			UUID("app_id", uuid.UUID{}),
+			UUID("coupon_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
 		field.
-			UUID("coupon_id", uuid.UUID{}),
-		field.
-			UUID("app_good_id", uuid.UUID{}).
+			UUID("good_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil

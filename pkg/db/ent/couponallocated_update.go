@@ -217,6 +217,26 @@ func (cau *CouponAllocatedUpdate) ClearStartAt() *CouponAllocatedUpdate {
 	return cau
 }
 
+// SetScopeID sets the "scope_id" field.
+func (cau *CouponAllocatedUpdate) SetScopeID(u uuid.UUID) *CouponAllocatedUpdate {
+	cau.mutation.SetScopeID(u)
+	return cau
+}
+
+// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableScopeID(u *uuid.UUID) *CouponAllocatedUpdate {
+	if u != nil {
+		cau.SetScopeID(*u)
+	}
+	return cau
+}
+
+// ClearScopeID clears the value of the "scope_id" field.
+func (cau *CouponAllocatedUpdate) ClearScopeID() *CouponAllocatedUpdate {
+	cau.mutation.ClearScopeID()
+	return cau
+}
+
 // Mutation returns the CouponAllocatedMutation object of the builder.
 func (cau *CouponAllocatedUpdate) Mutation() *CouponAllocatedMutation {
 	return cau.mutation
@@ -457,6 +477,19 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: couponallocated.FieldStartAt,
 		})
 	}
+	if value, ok := cau.mutation.ScopeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponallocated.FieldScopeID,
+		})
+	}
+	if cau.mutation.ScopeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: couponallocated.FieldScopeID,
+		})
+	}
 	_spec.Modifiers = cau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -662,6 +695,26 @@ func (cauo *CouponAllocatedUpdateOne) AddStartAt(u int32) *CouponAllocatedUpdate
 // ClearStartAt clears the value of the "start_at" field.
 func (cauo *CouponAllocatedUpdateOne) ClearStartAt() *CouponAllocatedUpdateOne {
 	cauo.mutation.ClearStartAt()
+	return cauo
+}
+
+// SetScopeID sets the "scope_id" field.
+func (cauo *CouponAllocatedUpdateOne) SetScopeID(u uuid.UUID) *CouponAllocatedUpdateOne {
+	cauo.mutation.SetScopeID(u)
+	return cauo
+}
+
+// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableScopeID(u *uuid.UUID) *CouponAllocatedUpdateOne {
+	if u != nil {
+		cauo.SetScopeID(*u)
+	}
+	return cauo
+}
+
+// ClearScopeID clears the value of the "scope_id" field.
+func (cauo *CouponAllocatedUpdateOne) ClearScopeID() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearScopeID()
 	return cauo
 }
 
@@ -933,6 +986,19 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if value, ok := cauo.mutation.ScopeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponallocated.FieldScopeID,
+		})
+	}
+	if cauo.mutation.ScopeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: couponallocated.FieldScopeID,
 		})
 	}
 	_spec.Modifiers = cauo.modifiers

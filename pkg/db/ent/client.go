@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -33,6 +34,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Achievement is the client for interacting with the Achievement builders.
 	Achievement *AchievementClient
+	// AppGoodScope is the client for interacting with the AppGoodScope builders.
+	AppGoodScope *AppGoodScopeClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -65,6 +68,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Achievement = NewAchievementClient(c.config)
+	c.AppGoodScope = NewAppGoodScopeClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
@@ -108,6 +112,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:             ctx,
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
+		AppGoodScope:    NewAppGoodScopeClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
@@ -137,6 +142,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:             ctx,
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
+		AppGoodScope:    NewAppGoodScopeClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
@@ -176,6 +182,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Achievement.Use(hooks...)
+	c.AppGoodScope.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
@@ -276,6 +283,97 @@ func (c *AchievementClient) GetX(ctx context.Context, id uuid.UUID) *Achievement
 func (c *AchievementClient) Hooks() []Hook {
 	hooks := c.hooks.Achievement
 	return append(hooks[:len(hooks):len(hooks)], achievement.Hooks[:]...)
+}
+
+// AppGoodScopeClient is a client for the AppGoodScope schema.
+type AppGoodScopeClient struct {
+	config
+}
+
+// NewAppGoodScopeClient returns a client for the AppGoodScope from the given config.
+func NewAppGoodScopeClient(c config) *AppGoodScopeClient {
+	return &AppGoodScopeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appgoodscope.Hooks(f(g(h())))`.
+func (c *AppGoodScopeClient) Use(hooks ...Hook) {
+	c.hooks.AppGoodScope = append(c.hooks.AppGoodScope, hooks...)
+}
+
+// Create returns a builder for creating a AppGoodScope entity.
+func (c *AppGoodScopeClient) Create() *AppGoodScopeCreate {
+	mutation := newAppGoodScopeMutation(c.config, OpCreate)
+	return &AppGoodScopeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppGoodScope entities.
+func (c *AppGoodScopeClient) CreateBulk(builders ...*AppGoodScopeCreate) *AppGoodScopeCreateBulk {
+	return &AppGoodScopeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppGoodScope.
+func (c *AppGoodScopeClient) Update() *AppGoodScopeUpdate {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdate)
+	return &AppGoodScopeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppGoodScopeClient) UpdateOne(ags *AppGoodScope) *AppGoodScopeUpdateOne {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdateOne, withAppGoodScope(ags))
+	return &AppGoodScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppGoodScopeClient) UpdateOneID(id uuid.UUID) *AppGoodScopeUpdateOne {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdateOne, withAppGoodScopeID(id))
+	return &AppGoodScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppGoodScope.
+func (c *AppGoodScopeClient) Delete() *AppGoodScopeDelete {
+	mutation := newAppGoodScopeMutation(c.config, OpDelete)
+	return &AppGoodScopeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppGoodScopeClient) DeleteOne(ags *AppGoodScope) *AppGoodScopeDeleteOne {
+	return c.DeleteOneID(ags.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppGoodScopeClient) DeleteOneID(id uuid.UUID) *AppGoodScopeDeleteOne {
+	builder := c.Delete().Where(appgoodscope.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppGoodScopeDeleteOne{builder}
+}
+
+// Query returns a query builder for AppGoodScope.
+func (c *AppGoodScopeClient) Query() *AppGoodScopeQuery {
+	return &AppGoodScopeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppGoodScope entity by its id.
+func (c *AppGoodScopeClient) Get(ctx context.Context, id uuid.UUID) (*AppGoodScope, error) {
+	return c.Query().Where(appgoodscope.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppGoodScopeClient) GetX(ctx context.Context, id uuid.UUID) *AppGoodScope {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppGoodScopeClient) Hooks() []Hook {
+	hooks := c.hooks.AppGoodScope
+	return append(hooks[:len(hooks):len(hooks)], appgoodscope.Hooks[:]...)
 }
 
 // CommissionClient is a client for the Commission schema.

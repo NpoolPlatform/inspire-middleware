@@ -22,12 +22,10 @@ type CouponScope struct {
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
-	// AppID holds the value of the "app_id" field.
-	AppID uuid.UUID `json:"app_id,omitempty"`
 	// CouponID holds the value of the "coupon_id" field.
 	CouponID uuid.UUID `json:"coupon_id,omitempty"`
-	// AppGoodID holds the value of the "app_good_id" field.
-	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
+	// GoodID holds the value of the "good_id" field.
+	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// CouponScope holds the value of the "coupon_scope" field.
 	CouponScope string `json:"coupon_scope,omitempty"`
 }
@@ -41,7 +39,7 @@ func (*CouponScope) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case couponscope.FieldCouponScope:
 			values[i] = new(sql.NullString)
-		case couponscope.FieldID, couponscope.FieldAppID, couponscope.FieldCouponID, couponscope.FieldAppGoodID:
+		case couponscope.FieldID, couponscope.FieldCouponID, couponscope.FieldGoodID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type CouponScope", columns[i])
@@ -82,23 +80,17 @@ func (cs *CouponScope) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				cs.DeletedAt = uint32(value.Int64)
 			}
-		case couponscope.FieldAppID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field app_id", values[i])
-			} else if value != nil {
-				cs.AppID = *value
-			}
 		case couponscope.FieldCouponID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coupon_id", values[i])
 			} else if value != nil {
 				cs.CouponID = *value
 			}
-		case couponscope.FieldAppGoodID:
+		case couponscope.FieldGoodID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
+				return fmt.Errorf("unexpected type %T for field good_id", values[i])
 			} else if value != nil {
-				cs.AppGoodID = *value
+				cs.GoodID = *value
 			}
 		case couponscope.FieldCouponScope:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -143,14 +135,11 @@ func (cs *CouponScope) String() string {
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", cs.DeletedAt))
 	builder.WriteString(", ")
-	builder.WriteString("app_id=")
-	builder.WriteString(fmt.Sprintf("%v", cs.AppID))
-	builder.WriteString(", ")
 	builder.WriteString("coupon_id=")
 	builder.WriteString(fmt.Sprintf("%v", cs.CouponID))
 	builder.WriteString(", ")
-	builder.WriteString("app_good_id=")
-	builder.WriteString(fmt.Sprintf("%v", cs.AppGoodID))
+	builder.WriteString("good_id=")
+	builder.WriteString(fmt.Sprintf("%v", cs.GoodID))
 	builder.WriteString(", ")
 	builder.WriteString("coupon_scope=")
 	builder.WriteString(cs.CouponScope)

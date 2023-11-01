@@ -39,6 +39,8 @@ type CouponAllocated struct {
 	UsedByOrderID uuid.UUID `json:"used_by_order_id,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
+	// ScopeID holds the value of the "scope_id" field.
+	ScopeID uuid.UUID `json:"scope_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*CouponAllocated) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case couponallocated.FieldCreatedAt, couponallocated.FieldUpdatedAt, couponallocated.FieldDeletedAt, couponallocated.FieldUsedAt, couponallocated.FieldStartAt:
 			values[i] = new(sql.NullInt64)
-		case couponallocated.FieldID, couponallocated.FieldAppID, couponallocated.FieldUserID, couponallocated.FieldCouponID, couponallocated.FieldUsedByOrderID:
+		case couponallocated.FieldID, couponallocated.FieldAppID, couponallocated.FieldUserID, couponallocated.FieldCouponID, couponallocated.FieldUsedByOrderID, couponallocated.FieldScopeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type CouponAllocated", columns[i])
@@ -141,6 +143,12 @@ func (ca *CouponAllocated) assignValues(columns []string, values []interface{}) 
 			} else if value.Valid {
 				ca.StartAt = uint32(value.Int64)
 			}
+		case couponallocated.FieldScopeID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field scope_id", values[i])
+			} else if value != nil {
+				ca.ScopeID = *value
+			}
 		}
 	}
 	return nil
@@ -201,6 +209,9 @@ func (ca *CouponAllocated) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", ca.StartAt))
+	builder.WriteString(", ")
+	builder.WriteString("scope_id=")
+	builder.WriteString(fmt.Sprintf("%v", ca.ScopeID))
 	builder.WriteByte(')')
 	return builder.String()
 }
