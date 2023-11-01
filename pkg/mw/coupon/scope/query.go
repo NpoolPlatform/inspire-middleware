@@ -58,8 +58,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entcouponscope.FieldID),
 		).
 		AppendSelect(
-			sql.As(t.C(entcouponscope.FieldAppID), "app_id"),
-			sql.As(t.C(entcouponscope.FieldAppGoodID), "app_good_id"),
+			sql.As(t.C(entcouponscope.FieldGoodID), "good_id"),
 			sql.As(t.C(entcouponscope.FieldCouponID), "coupon_id"),
 			sql.As(t.C(entcouponscope.FieldCouponScope), "coupon_scope"),
 			sql.As(t.C(entcouponscope.FieldCreatedAt), "created_at"),

@@ -53,8 +53,7 @@ var (
 
 	ret = npool.Scope{
 		ID:                 uuid.NewString(),
-		AppID:              coupon.AppID,
-		AppGoodID:          uuid.NewString(),
+		GoodID:             uuid.NewString(),
 		CouponID:           coupon.ID,
 		CouponType:         coupon.CouponType,
 		CouponTypeStr:      coupon.CouponTypeStr,
@@ -98,8 +97,7 @@ func createScope(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithAppID(&ret.AppID, true),
-		WithAppGoodID(&ret.AppGoodID, true),
+		WithGoodID(&ret.GoodID, true),
 		WithCouponID(&ret.CouponID, true),
 		WithCouponScope(&ret.CouponScope, true),
 	)
@@ -129,8 +127,7 @@ func getScope(t *testing.T) {
 func getScopes(t *testing.T) {
 	conds := &npool.Conds{
 		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
+		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}
@@ -152,9 +149,8 @@ func getScopes(t *testing.T) {
 
 func existScopeConds(t *testing.T) {
 	conds := &npool.Conds{
-		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
+		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}
 	handler, err := NewHandler(

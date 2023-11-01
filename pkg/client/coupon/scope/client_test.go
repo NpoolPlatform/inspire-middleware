@@ -60,8 +60,7 @@ var (
 
 	ret = npool.Scope{
 		ID:                 uuid.NewString(),
-		AppID:              coupon.AppID,
-		AppGoodID:          uuid.NewString(),
+		GoodID:             uuid.NewString(),
 		CouponID:           coupon.ID,
 		CouponType:         coupon.CouponType,
 		CouponTypeStr:      coupon.CouponTypeStr,
@@ -98,8 +97,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createScope(t *testing.T) {
 	info, err := CreateScope(context.Background(), &npool.ScopeReq{
 		ID:          &ret.ID,
-		AppID:       &ret.AppID,
-		AppGoodID:   &ret.AppGoodID,
+		GoodID:      &ret.GoodID,
 		CouponID:    &ret.CouponID,
 		CouponScope: &ret.CouponScope,
 	})
@@ -120,8 +118,7 @@ func getScope(t *testing.T) {
 func getScopes(t *testing.T) {
 	infos, total, err := GetScopes(context.Background(), &npool.Conds{
 		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
+		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}, 0, 1)
@@ -134,9 +131,8 @@ func getScopes(t *testing.T) {
 
 func existScopeConds(t *testing.T) {
 	conds := &npool.Conds{
-		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
+		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}
 
