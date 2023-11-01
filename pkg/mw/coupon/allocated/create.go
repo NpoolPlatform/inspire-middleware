@@ -12,7 +12,7 @@ import (
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
 	"github.com/google/uuid"
@@ -27,7 +27,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	now := uint32(time.Now().Unix())
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		coup, err := tx.
+		coupon, err := tx.
 			Coupon.
 			Query().
 			Where(
@@ -40,27 +40,39 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return err
 		}
 
-		if coup.StartAt+coup.DurationDays*timedef.SecondsPerDay < now {
+		if coupon.StartAt+coupon.DurationDays*timedef.SecondsPerDay < now {
 			return fmt.Errorf("coupon expired")
 		}
 		startAt := now
-		if startAt < coup.StartAt {
-			startAt = coup.StartAt
+		if startAt < coupon.StartAt {
+			startAt = coupon.StartAt
 		}
 
-		allocated := coup.Allocated
-		switch coup.CouponType {
-		case types.CouponType_FixAmount.String():
-			allocated = allocated.Add(coup.Denomination)
-		case types.CouponType_Discount.String():
+		allocated := coupon.Allocated
+		switch coupon.CouponType {
+		case inspiretypes.CouponType_FixAmount.String():
+			allocated = allocated.Add(coupon.Denomination)
+		case inspiretypes.CouponType_Discount.String():
 			allocated = allocated.Add(decimal.NewFromInt(1))
-		case types.CouponType_SpecialOffer.String():
-			allocated = allocated.Add(coup.Denomination)
+		case inspiretypes.CouponType_SpecialOffer.String():
+			allocated = allocated.Add(coupon.Denomination)
 		default:
 			return fmt.Errorf("invalid coupontype")
 		}
-		if allocated.Cmp(coup.Circulation) > 0 {
+		if allocated.Cmp(coupon.Circulation) > 0 {
 			return fmt.Errorf("insufficient circulation")
+		}
+
+		scope := inspiretypes.CouponScope_DefaultCouponScope
+		switch coupon.CouponScope {
+		case inspiretypes.CouponScope_AllGood.String():
+			scope = inspiretypes.CouponScope_AllGood
+		case inspiretypes.CouponScope_Whitelist.String():
+			scope = inspiretypes.CouponScope_Whitelist
+		case inspiretypes.CouponScope_Blacklist.String():
+			scope = inspiretypes.CouponScope_Blacklist
+		default:
+			return fmt.Errorf("invalid couponscope")
 		}
 
 		if _, err := allocatedcrud.CreateSet(
@@ -71,14 +83,15 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				CouponID:     h.CouponID,
 				UserID:       h.UserID,
 				StartAt:      &startAt,
-				Denomination: &coup.Denomination,
+				Denomination: &coupon.Denomination,
+				CouponScope:  &scope,
 			},
 		).Save(_ctx); err != nil {
 			return err
 		}
 
 		if _, err := couponcrud.UpdateSet(
-			coup.Update(),
+			coupon.Update(),
 			&couponcrud.Req{
 				Allocated: &allocated,
 			},

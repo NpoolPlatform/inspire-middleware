@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcouponallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -21,7 +22,7 @@ type Req struct {
 	UsedByOrderID *uuid.UUID
 	Denomination  *decimal.Decimal
 	StartAt       *uint32
-	ScopeID       *uuid.UUID
+	CouponScope   *inspiretypes.CouponScope
 	DeletedAt     *uint32
 }
 
@@ -44,8 +45,8 @@ func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreat
 	if req.StartAt != nil {
 		c.SetStartAt(*req.StartAt)
 	}
-	if req.ScopeID != nil {
-		c.SetScopeID(*req.ScopeID)
+	if req.CouponScope != nil {
+		c.SetCouponScope(req.CouponScope.String())
 	}
 	c.SetUsed(false)
 	c.SetUsedAt(0)
