@@ -77,7 +77,7 @@ func (h *queryHandler) queryJoinCouponScope(s *sql.Selector) {
 			s.C(entappgoodscope.FieldScopeID),
 		).
 		AppendSelect(
-			sql.As(entcouponscope.FieldGoodID, "good_id"),
+			sql.As(t.C(entcouponscope.FieldGoodID), "good_id"),
 		)
 }
 
@@ -89,9 +89,9 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
 			t.C(entcoupon.FieldID),
 		).
 		AppendSelect(
-			sql.As(entcoupon.FieldName, "coupon_name"),
-			sql.As(entcoupon.FieldCouponType, "coupon_type"),
-			sql.As(entcoupon.FieldDenomination, "coupon_denomination"),
+			sql.As(t.C(entcoupon.FieldName), "coupon_name"),
+			sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
+			sql.As(t.C(entcoupon.FieldDenomination), "coupon_denomination"),
 		)
 }
 
@@ -110,7 +110,7 @@ func (h *queryHandler) queryJoin() error {
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
 		h.queryJoinCoupon(s)
-		// h.queryJoinCouponScope(s)
+		h.queryJoinCouponScope(s)
 	})
 	return err
 }
