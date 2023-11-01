@@ -5553,7 +5553,7 @@ type CouponAllocatedMutation struct {
 	used_by_order_id *uuid.UUID
 	start_at         *uint32
 	addstart_at      *int32
-	scope_id         *uuid.UUID
+	coupon_scope     *string
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*CouponAllocated, error)
@@ -6227,53 +6227,53 @@ func (m *CouponAllocatedMutation) ResetStartAt() {
 	delete(m.clearedFields, couponallocated.FieldStartAt)
 }
 
-// SetScopeID sets the "scope_id" field.
-func (m *CouponAllocatedMutation) SetScopeID(u uuid.UUID) {
-	m.scope_id = &u
+// SetCouponScope sets the "coupon_scope" field.
+func (m *CouponAllocatedMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
 }
 
-// ScopeID returns the value of the "scope_id" field in the mutation.
-func (m *CouponAllocatedMutation) ScopeID() (r uuid.UUID, exists bool) {
-	v := m.scope_id
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *CouponAllocatedMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldScopeID returns the old "scope_id" field's value of the CouponAllocated entity.
+// OldCouponScope returns the old "coupon_scope" field's value of the CouponAllocated entity.
 // If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponAllocatedMutation) OldScopeID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *CouponAllocatedMutation) OldCouponScope(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldScopeID is only allowed on UpdateOne operations")
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldScopeID requires an ID field in the mutation")
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldScopeID: %w", err)
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
 	}
-	return oldValue.ScopeID, nil
+	return oldValue.CouponScope, nil
 }
 
-// ClearScopeID clears the value of the "scope_id" field.
-func (m *CouponAllocatedMutation) ClearScopeID() {
-	m.scope_id = nil
-	m.clearedFields[couponallocated.FieldScopeID] = struct{}{}
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *CouponAllocatedMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[couponallocated.FieldCouponScope] = struct{}{}
 }
 
-// ScopeIDCleared returns if the "scope_id" field was cleared in this mutation.
-func (m *CouponAllocatedMutation) ScopeIDCleared() bool {
-	_, ok := m.clearedFields[couponallocated.FieldScopeID]
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldCouponScope]
 	return ok
 }
 
-// ResetScopeID resets all changes to the "scope_id" field.
-func (m *CouponAllocatedMutation) ResetScopeID() {
-	m.scope_id = nil
-	delete(m.clearedFields, couponallocated.FieldScopeID)
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *CouponAllocatedMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, couponallocated.FieldCouponScope)
 }
 
 // Where appends a list predicates to the CouponAllocatedMutation builder.
@@ -6329,8 +6329,8 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	if m.start_at != nil {
 		fields = append(fields, couponallocated.FieldStartAt)
 	}
-	if m.scope_id != nil {
-		fields = append(fields, couponallocated.FieldScopeID)
+	if m.coupon_scope != nil {
+		fields = append(fields, couponallocated.FieldCouponScope)
 	}
 	return fields
 }
@@ -6362,8 +6362,8 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.UsedByOrderID()
 	case couponallocated.FieldStartAt:
 		return m.StartAt()
-	case couponallocated.FieldScopeID:
-		return m.ScopeID()
+	case couponallocated.FieldCouponScope:
+		return m.CouponScope()
 	}
 	return nil, false
 }
@@ -6395,8 +6395,8 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUsedByOrderID(ctx)
 	case couponallocated.FieldStartAt:
 		return m.OldStartAt(ctx)
-	case couponallocated.FieldScopeID:
-		return m.OldScopeID(ctx)
+	case couponallocated.FieldCouponScope:
+		return m.OldCouponScope(ctx)
 	}
 	return nil, fmt.Errorf("unknown CouponAllocated field %s", name)
 }
@@ -6483,12 +6483,12 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStartAt(v)
 		return nil
-	case couponallocated.FieldScopeID:
-		v, ok := value.(uuid.UUID)
+	case couponallocated.FieldCouponScope:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetScopeID(v)
+		m.SetCouponScope(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -6598,8 +6598,8 @@ func (m *CouponAllocatedMutation) ClearedFields() []string {
 	if m.FieldCleared(couponallocated.FieldStartAt) {
 		fields = append(fields, couponallocated.FieldStartAt)
 	}
-	if m.FieldCleared(couponallocated.FieldScopeID) {
-		fields = append(fields, couponallocated.FieldScopeID)
+	if m.FieldCleared(couponallocated.FieldCouponScope) {
+		fields = append(fields, couponallocated.FieldCouponScope)
 	}
 	return fields
 }
@@ -6630,8 +6630,8 @@ func (m *CouponAllocatedMutation) ClearField(name string) error {
 	case couponallocated.FieldStartAt:
 		m.ClearStartAt()
 		return nil
-	case couponallocated.FieldScopeID:
-		m.ClearScopeID()
+	case couponallocated.FieldCouponScope:
+		m.ClearCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated nullable field %s", name)
@@ -6674,8 +6674,8 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 	case couponallocated.FieldStartAt:
 		m.ResetStartAt()
 		return nil
-	case couponallocated.FieldScopeID:
-		m.ResetScopeID()
+	case couponallocated.FieldCouponScope:
+		m.ResetCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)

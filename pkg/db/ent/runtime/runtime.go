@@ -376,10 +376,10 @@ func init() {
 	couponallocatedDescStartAt := couponallocatedFields[8].Descriptor()
 	// couponallocated.DefaultStartAt holds the default value on creation for the start_at field.
 	couponallocated.DefaultStartAt = couponallocatedDescStartAt.Default.(uint32)
-	// couponallocatedDescScopeID is the schema descriptor for scope_id field.
-	couponallocatedDescScopeID := couponallocatedFields[9].Descriptor()
-	// couponallocated.DefaultScopeID holds the default value on creation for the scope_id field.
-	couponallocated.DefaultScopeID = couponallocatedDescScopeID.Default.(func() uuid.UUID)
+	// couponallocatedDescCouponScope is the schema descriptor for coupon_scope field.
+	couponallocatedDescCouponScope := couponallocatedFields[9].Descriptor()
+	// couponallocated.DefaultCouponScope holds the default value on creation for the coupon_scope field.
+	couponallocated.DefaultCouponScope = couponallocatedDescCouponScope.Default.(string)
 	// couponallocatedDescID is the schema descriptor for id field.
 	couponallocatedDescID := couponallocatedFields[0].Descriptor()
 	// couponallocated.DefaultID holds the default value on creation for the id field.

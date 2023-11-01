@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -61,11 +62,9 @@ func (CouponAllocated) Fields() []ent.Field {
 			Optional().
 			Default(uint32(time.Now().Unix())),
 		field.
-			UUID("scope_id", uuid.UUID{}).
+			String("coupon_scope").
 			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
+			Default(inspiretypes.CouponScope_Whitelist.String()),
 	}
 }
 

@@ -157,10 +157,10 @@ func StartAt(v uint32) predicate.CouponAllocated {
 	})
 }
 
-// ScopeID applies equality check predicate on the "scope_id" field. It's identical to ScopeIDEQ.
-func ScopeID(v uuid.UUID) predicate.CouponAllocated {
+// CouponScope applies equality check predicate on the "coupon_scope" field. It's identical to CouponScopeEQ.
+func CouponScope(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScopeID), v))
+		s.Where(sql.EQ(s.C(FieldCouponScope), v))
 	})
 }
 
@@ -888,81 +888,116 @@ func StartAtNotNil() predicate.CouponAllocated {
 	})
 }
 
-// ScopeIDEQ applies the EQ predicate on the "scope_id" field.
-func ScopeIDEQ(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeEQ applies the EQ predicate on the "coupon_scope" field.
+func CouponScopeEQ(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScopeID), v))
+		s.Where(sql.EQ(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDNEQ applies the NEQ predicate on the "scope_id" field.
-func ScopeIDNEQ(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeNEQ applies the NEQ predicate on the "coupon_scope" field.
+func CouponScopeNEQ(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldScopeID), v))
+		s.Where(sql.NEQ(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDIn applies the In predicate on the "scope_id" field.
-func ScopeIDIn(vs ...uuid.UUID) predicate.CouponAllocated {
+// CouponScopeIn applies the In predicate on the "coupon_scope" field.
+func CouponScopeIn(vs ...string) predicate.CouponAllocated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldScopeID), v...))
+		s.Where(sql.In(s.C(FieldCouponScope), v...))
 	})
 }
 
-// ScopeIDNotIn applies the NotIn predicate on the "scope_id" field.
-func ScopeIDNotIn(vs ...uuid.UUID) predicate.CouponAllocated {
+// CouponScopeNotIn applies the NotIn predicate on the "coupon_scope" field.
+func CouponScopeNotIn(vs ...string) predicate.CouponAllocated {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldScopeID), v...))
+		s.Where(sql.NotIn(s.C(FieldCouponScope), v...))
 	})
 }
 
-// ScopeIDGT applies the GT predicate on the "scope_id" field.
-func ScopeIDGT(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeGT applies the GT predicate on the "coupon_scope" field.
+func CouponScopeGT(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldScopeID), v))
+		s.Where(sql.GT(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDGTE applies the GTE predicate on the "scope_id" field.
-func ScopeIDGTE(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeGTE applies the GTE predicate on the "coupon_scope" field.
+func CouponScopeGTE(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldScopeID), v))
+		s.Where(sql.GTE(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDLT applies the LT predicate on the "scope_id" field.
-func ScopeIDLT(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeLT applies the LT predicate on the "coupon_scope" field.
+func CouponScopeLT(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldScopeID), v))
+		s.Where(sql.LT(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDLTE applies the LTE predicate on the "scope_id" field.
-func ScopeIDLTE(v uuid.UUID) predicate.CouponAllocated {
+// CouponScopeLTE applies the LTE predicate on the "coupon_scope" field.
+func CouponScopeLTE(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldScopeID), v))
+		s.Where(sql.LTE(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDIsNil applies the IsNil predicate on the "scope_id" field.
-func ScopeIDIsNil() predicate.CouponAllocated {
+// CouponScopeContains applies the Contains predicate on the "coupon_scope" field.
+func CouponScopeContains(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldScopeID)))
+		s.Where(sql.Contains(s.C(FieldCouponScope), v))
 	})
 }
 
-// ScopeIDNotNil applies the NotNil predicate on the "scope_id" field.
-func ScopeIDNotNil() predicate.CouponAllocated {
+// CouponScopeHasPrefix applies the HasPrefix predicate on the "coupon_scope" field.
+func CouponScopeHasPrefix(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldScopeID)))
+		s.Where(sql.HasPrefix(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeHasSuffix applies the HasSuffix predicate on the "coupon_scope" field.
+func CouponScopeHasSuffix(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeIsNil applies the IsNil predicate on the "coupon_scope" field.
+func CouponScopeIsNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCouponScope)))
+	})
+}
+
+// CouponScopeNotNil applies the NotNil predicate on the "coupon_scope" field.
+func CouponScopeNotNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCouponScope)))
+	})
+}
+
+// CouponScopeEqualFold applies the EqualFold predicate on the "coupon_scope" field.
+func CouponScopeEqualFold(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeContainsFold applies the ContainsFold predicate on the "coupon_scope" field.
+func CouponScopeContainsFold(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCouponScope), v))
 	})
 }
 

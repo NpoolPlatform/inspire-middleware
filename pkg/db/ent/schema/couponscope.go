@@ -4,7 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 )
 
@@ -41,7 +41,7 @@ func (CouponScope) Fields() []ent.Field {
 		field.
 			String("coupon_scope").
 			Optional().
-			Default(types.CouponScope_DefaultCouponScope.String()),
+			Default(inspiretypes.CouponScope_DefaultCouponScope.String()),
 	}
 }
 
