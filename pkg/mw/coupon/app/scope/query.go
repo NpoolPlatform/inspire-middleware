@@ -59,6 +59,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entappgoodscope.FieldID),
 		).
 		AppendSelect(
+			sql.As(t.C(entappgoodscope.FieldAppID), "app_id"),
 			sql.As(t.C(entappgoodscope.FieldScopeID), "scope_id"),
 			sql.As(t.C(entappgoodscope.FieldAppGoodID), "app_good_id"),
 			sql.As(t.C(entappgoodscope.FieldCouponID), "coupon_id"),
@@ -72,8 +73,8 @@ func (h *queryHandler) queryJoinCouponScope(s *sql.Selector) {
 	t := sql.Table(entcouponscope.Table)
 	s.LeftJoin(t).
 		On(
+			t.C(entcouponscope.FieldID),
 			s.C(entappgoodscope.FieldScopeID),
-			t.C(entcoupon.FieldID),
 		).
 		AppendSelect(
 			sql.As(entcouponscope.FieldGoodID, "good_id"),
@@ -109,7 +110,7 @@ func (h *queryHandler) queryJoin() error {
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
 		h.queryJoinCoupon(s)
-		h.queryJoinCouponScope(s)
+		// h.queryJoinCouponScope(s)
 	})
 	return err
 }
