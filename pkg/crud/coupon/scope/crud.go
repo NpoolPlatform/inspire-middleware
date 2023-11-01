@@ -12,8 +12,7 @@ import (
 
 type Req struct {
 	ID          *uuid.UUID
-	AppID       *uuid.UUID
-	AppGoodID   *uuid.UUID
+	GoodID      *uuid.UUID
 	CouponID    *uuid.UUID
 	CouponScope *types.CouponScope
 	DeletedAt   *uint32
@@ -23,11 +22,8 @@ func CreateSet(c *ent.CouponScopeCreate, req *Req) *ent.CouponScopeCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
 	}
-	if req.AppID != nil {
-		c.SetAppID(*req.AppID)
-	}
-	if req.AppGoodID != nil {
-		c.SetAppGoodID(*req.AppGoodID)
+	if req.GoodID != nil {
+		c.SetGoodID(*req.GoodID)
 	}
 	if req.CouponID != nil {
 		c.SetCouponID(*req.CouponID)
@@ -47,8 +43,7 @@ func UpdateSet(u *ent.CouponScopeUpdateOne, req *Req) *ent.CouponScopeUpdateOne 
 
 type Conds struct {
 	ID          *cruder.Cond
-	AppID       *cruder.Cond
-	AppGoodID   *cruder.Cond
+	GoodID      *cruder.Cond
 	CouponID    *cruder.Cond
 	CouponIDs   *cruder.Cond
 	CouponScope *cruder.Cond
@@ -72,28 +67,16 @@ func SetQueryConds(q *ent.CouponScopeQuery, conds *Conds) (*ent.CouponScopeQuery
 			return nil, fmt.Errorf("invalid id field")
 		}
 	}
-	if conds.AppID != nil {
-		id, ok := conds.AppID.Val.(uuid.UUID)
+	if conds.GoodID != nil {
+		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, fmt.Errorf("invalid goodid")
 		}
-		switch conds.AppID.Op {
+		switch conds.GoodID.Op {
 		case cruder.EQ:
-			q.Where(entcouponscope.AppID(id))
+			q.Where(entcouponscope.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid couponscope field")
-		}
-	}
-	if conds.AppGoodID != nil {
-		id, ok := conds.AppGoodID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
-		}
-		switch conds.AppGoodID.Op {
-		case cruder.EQ:
-			q.Where(entcouponscope.AppGoodID(id))
-		default:
-			return nil, fmt.Errorf("invalid appgoodid field")
+			return nil, fmt.Errorf("invalid goodid field")
 		}
 	}
 	if conds.CouponID != nil {
