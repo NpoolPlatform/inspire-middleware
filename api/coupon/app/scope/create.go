@@ -23,6 +23,7 @@ func (s *Server) CreateAppGoodScope(ctx context.Context, in *npool.CreateAppGood
 	handler, err := scope1.NewHandler(
 		ctx,
 		scope1.WithID(req.ID, false),
+		scope1.WithAppID(req.AppID, true),
 		scope1.WithAppGoodID(req.AppGoodID, true),
 		scope1.WithScopeID(req.ScopeID, true),
 	)
