@@ -15,13 +15,10 @@ import (
 )
 
 type Handler struct {
-	ID          *uuid.UUID
-	GoodID      *uuid.UUID
-	CouponID    *uuid.UUID
-	CouponScope *types.CouponScope
-	Conds       *scopecrud.Conds
-	Offset      int32
-	Limit       int32
+	scopecrud.Req
+	Conds  *scopecrud.Conds
+	Offset int32
+	Limit  int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
