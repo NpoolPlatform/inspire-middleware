@@ -10,7 +10,6 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
 
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 )
 

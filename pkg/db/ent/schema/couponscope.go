@@ -41,7 +41,7 @@ func (CouponScope) Fields() []ent.Field {
 		field.
 			String("coupon_scope").
 			Optional().
-			Default(inspiretypes.CouponScope_DefaultCouponScope.String()),
+			Default(inspiretypes.CouponScope_Whitelist.String()),
 	}
 }
 
