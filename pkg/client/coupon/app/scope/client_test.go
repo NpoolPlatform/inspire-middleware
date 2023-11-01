@@ -11,11 +11,13 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
+	scopemwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon/scope"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
+	scopemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/scope"
 
 	"bou.ke/monkey"
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -58,7 +60,7 @@ var (
 		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	}
 
-	ret = npool.Scope{
+	scope = scopemwpb.Scope{
 		ID:                 uuid.NewString(),
 		GoodID:             uuid.NewString(),
 		CouponID:           coupon.ID,
@@ -68,6 +70,21 @@ var (
 		CouponScopeStr:     coupon.CouponScopeStr,
 		CouponName:         coupon.Name,
 		CouponDenomination: coupon.Denomination,
+	}
+
+	ret = npool.Scope{
+		ID:                 uuid.NewString(),
+		AppID:              uuid.NewString(),
+		ScopeID:            scope.ID,
+		GoodID:             scope.GoodID,
+		AppGoodID:          uuid.NewString(),
+		CouponID:           scope.CouponID,
+		CouponName:         coupon.Name,
+		CouponType:         scope.CouponType,
+		CouponTypeStr:      scope.CouponType.String(),
+		CouponScope:        scope.CouponScope,
+		CouponScopeStr:     scope.CouponScope.String(),
+		CouponDenomination: scope.CouponDenomination,
 	}
 )
 
@@ -91,17 +108,30 @@ func setup(t *testing.T) func(*testing.T) {
 		assert.Equal(t, &coupon, info)
 	}
 
+	_scope, err := scopemwcli.CreateScope(context.Background(), &scopemwpb.ScopeReq{
+		ID:          &scope.ID,
+		GoodID:      &scope.GoodID,
+		CouponID:    &coupon.ID,
+		CouponScope: &coupon.CouponScope,
+	})
+	if assert.Nil(t, err) {
+		scope.CreatedAt = _scope.CreatedAt
+		scope.UpdatedAt = _scope.UpdatedAt
+		assert.Equal(t, &scope, _scope)
+	}
+
 	return func(*testing.T) {
 		_, _ = couponmwcli.DeleteCoupon(context.Background(), ret.CouponID)
+		_, _ = scopemwcli.DeleteScope(context.Background(), ret.ScopeID)
 	}
 }
 
-func createScope(t *testing.T) {
-	info, err := CreateScope(context.Background(), &npool.ScopeReq{
-		ID:          &ret.ID,
-		GoodID:      &ret.GoodID,
-		CouponID:    &ret.CouponID,
-		CouponScope: &ret.CouponScope,
+func createAppGoodScope(t *testing.T) {
+	info, err := CreateAppGoodScope(context.Background(), &npool.ScopeReq{
+		ID:        &ret.ID,
+		AppID:     &ret.AppID,
+		AppGoodID: &ret.AppGoodID,
+		ScopeID:   &ret.ScopeID,
 	})
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
@@ -110,17 +140,11 @@ func createScope(t *testing.T) {
 	}
 }
 
-func getScope(t *testing.T) {
-	info, err := GetScope(context.Background(), ret.ID)
-	if assert.Nil(t, err) {
-		assert.Equal(t, &ret, info)
-	}
-}
-
-func getScopes(t *testing.T) {
-	infos, total, err := GetScopes(context.Background(), &npool.Conds{
+func getAppGoodScopes(t *testing.T) {
+	infos, total, err := GetAppGoodScopes(context.Background(), &npool.Conds{
 		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
+		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}, 0, 1)
@@ -131,27 +155,23 @@ func getScopes(t *testing.T) {
 	}
 }
 
-func existScopeConds(t *testing.T) {
+func existAppGoodScopeConds(t *testing.T) {
 	conds := &npool.Conds{
+		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
+		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
 	}
-
-	exist, err := ExistScopeConds(context.Background(), conds)
+	exist, err := ExistAppGoodScopeConds(context.Background(), conds)
 	assert.Nil(t, err)
 	assert.True(t, exist)
 }
 
-func deleteScope(t *testing.T) {
-	info, err := DeleteScope(context.Background(), ret.ID)
+func deleteAppGoodScope(t *testing.T) {
+	info, err := DeleteAppGoodScope(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}
-
-	info, err = GetScope(context.Background(), ret.ID)
-	assert.Nil(t, err)
-	assert.Nil(t, info)
 }
 
 func TestScope(t *testing.T) {
@@ -171,9 +191,8 @@ func TestScope(t *testing.T) {
 	teardown := setup(t)
 	defer teardown(t)
 
-	t.Run("createScope", createScope)
-	t.Run("getScope", getScope)
-	t.Run("getScopes", getScopes)
-	t.Run("existScopeConds", existScopeConds)
-	t.Run("deleteScope", deleteScope)
+	t.Run("createAppGoodScope", createAppGoodScope)
+	t.Run("getAppGoodScopes", getAppGoodScopes)
+	t.Run("existAppGoodScopeConds", existAppGoodScopeConds)
+	t.Run("deleteAppGoodScope", deleteAppGoodScope)
 }

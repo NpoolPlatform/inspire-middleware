@@ -121,3 +121,21 @@ func ExistCoupon(ctx context.Context, id string) (bool, error) {
 	}
 	return true, nil
 }
+
+func DeleteCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteCoupon(ctx, &npool.DeleteCouponRequest{
+			Info: &npool.CouponReq{
+				ID: &id,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.Coupon), nil
+}
