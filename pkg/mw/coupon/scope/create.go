@@ -26,12 +26,6 @@ func (h *createHandler) verifyCoupon(ctx context.Context, tx *ent.Tx) error {
 	if coupon == nil {
 		return fmt.Errorf("coupon not found %v", *h.CouponID)
 	}
-	if h.CouponScope.String() != coupon.CouponScope {
-		return fmt.Errorf("coupon scope not matched %v -> %v", h.CouponScope, coupon.CouponScope)
-	}
-	if *h.AppID != coupon.AppID {
-		return fmt.Errorf("appid not matched %v -> %v", *h.AppID, coupon.AppID)
-	}
 	return nil
 }
 
@@ -40,8 +34,7 @@ func (h *createHandler) createScope(ctx context.Context, tx *ent.Tx) error {
 		tx.CouponScope.Create(),
 		&scopecrud.Req{
 			ID:          h.ID,
-			AppID:       h.AppID,
-			AppGoodID:   h.AppGoodID,
+			GoodID:      h.GoodID,
 			CouponID:    h.CouponID,
 			CouponScope: h.CouponScope,
 		},
@@ -52,21 +45,8 @@ func (h *createHandler) createScope(ctx context.Context, tx *ent.Tx) error {
 }
 
 func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
-	if h.AppGoodID == nil {
-		switch *h.CouponScope {
-		case types.CouponScope_Blacklist:
-			fallthrough //nolint
-		case types.CouponScope_Whitelist:
-			return nil, fmt.Errorf("appgoodid is must")
-		}
-	}
-	if *h.CouponScope == types.CouponScope_AllGood {
-		h.AppGoodID = &uuid.Nil
-	}
-
 	h.Conds = &scopecrud.Conds{
-		AppID:       &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
-		AppGoodID:   &cruder.Cond{Op: cruder.EQ, Val: *h.AppGoodID},
+		GoodID:      &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID},
 		CouponID:    &cruder.Cond{Op: cruder.EQ, Val: *h.CouponID},
 		CouponScope: &cruder.Cond{Op: cruder.EQ, Val: *h.CouponScope},
 	}

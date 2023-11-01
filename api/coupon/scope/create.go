@@ -23,8 +23,7 @@ func (s *Server) CreateScope(ctx context.Context, in *npool.CreateScopeRequest) 
 	handler, err := scope1.NewHandler(
 		ctx,
 		scope1.WithID(req.ID, false),
-		scope1.WithAppID(req.AppID, true),
-		scope1.WithAppGoodID(req.AppGoodID, false),
+		scope1.WithGoodID(req.GoodID, true),
 		scope1.WithCouponID(req.CouponID, true),
 		scope1.WithCouponScope(req.CouponScope, true),
 	)

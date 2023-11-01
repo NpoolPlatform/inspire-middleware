@@ -16,8 +16,7 @@ import (
 
 type Handler struct {
 	ID          *uuid.UUID
-	AppID       *uuid.UUID
-	AppGoodID   *uuid.UUID
+	GoodID      *uuid.UUID
 	CouponID    *uuid.UUID
 	CouponScope *types.CouponScope
 	Conds       *scopecrud.Conds
@@ -52,24 +51,7 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid appid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.AppID = &_id
-		return nil
-	}
-}
-
-func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
+func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
@@ -81,7 +63,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 		if err != nil {
 			return err
 		}
-		h.AppGoodID = &_id
+		h.GoodID = &_id
 		return nil
 	}
 }
@@ -123,7 +105,6 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 			return nil
 		}
 		switch *couponScope {
-		case types.CouponScope_AllGood:
 		case types.CouponScope_Blacklist:
 		case types.CouponScope_Whitelist:
 		default:
@@ -150,23 +131,13 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: id,
 			}
 		}
-		if conds.AppID != nil {
-			id, err := uuid.Parse(conds.GetAppID().GetValue())
+		if conds.GoodID != nil {
+			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.AppGoodID != nil {
-			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op:  conds.GetAppGoodID().GetOp(),
+			h.Conds.GoodID = &cruder.Cond{
+				Op:  conds.GetGoodID().GetOp(),
 				Val: id,
 			}
 		}
