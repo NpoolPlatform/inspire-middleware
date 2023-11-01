@@ -140,32 +140,24 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			if err != nil {
 				return err
 			}
-			h.Conds.ID = &cruder.Cond{
-				Op: conds.GetID().GetOp(), Val: id,
-			}
+			h.Conds.ID = &cruder.Cond{Op: conds.GetID().GetOp(), Val: id}
 		}
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op: conds.GetAppGoodID().GetOp(), Val: id,
-			}
+			h.Conds.AppGoodID = &cruder.Cond{Op: conds.GetAppGoodID().GetOp(), Val: id}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.CouponID = &cruder.Cond{
-				Op: conds.GetCouponID().GetOp(), Val: id,
-			}
+			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
 		}
 		if conds.CouponScope != nil {
-			h.Conds.CouponScope = &cruder.Cond{
-				Op: conds.GetCouponScope().GetOp(), Val: types.CouponScope(conds.GetCouponScope().GetValue()),
-			}
+			h.Conds.CouponScope = &cruder.Cond{Op: conds.GetCouponScope().GetOp(), Val: types.CouponScope(conds.GetCouponScope().GetValue())}
 		}
 		if conds.CouponIDs != nil {
 			ids := []uuid.UUID{}
@@ -176,9 +168,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.CouponIDs = &cruder.Cond{
-				Op: conds.GetCouponIDs().GetOp(), Val: ids,
-			}
+			h.Conds.CouponIDs = &cruder.Cond{Op: conds.GetCouponIDs().GetOp(), Val: ids}
 		}
 		return nil
 	}
