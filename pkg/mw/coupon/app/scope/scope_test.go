@@ -206,6 +206,7 @@ func verifyCouponScope(t *testing.T) {
 		WithAppID(&ret.AppID, true),
 		WithGoodID(&ret.GoodID, true),
 		WithAppGoodID(&ret.AppGoodID, true),
+		WithCouponID(&ret.CouponID, true),
 		WithCouponScope(&ret.CouponScope, true),
 	)
 	assert.Nil(t, err)

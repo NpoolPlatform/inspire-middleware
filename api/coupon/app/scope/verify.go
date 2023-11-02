@@ -30,7 +30,7 @@ func (s *Server) VerifyCouponScope(ctx context.Context, in *npool.VerifyCouponSc
 		return &npool.VerifyCouponScopeResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.ExistAppGoodScopeConds(ctx)
+	info, err := handler.VerifyCouponScope(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"VerifyCouponScope",
