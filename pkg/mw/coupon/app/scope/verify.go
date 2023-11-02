@@ -3,20 +3,20 @@ package scope
 import (
 	"context"
 
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappgoodscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	entcouponscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 )
 
 type verifyHandler struct {
 	*Handler
 }
 
-func (h *verifyHandler) verifyWhitelist(ctx context.Context) (bool, error) {
-    err := db.WithClient(ctx, fn func(_ctx context.Context, cli *ent.Client) error {
-	_, err := cli.
+func (h *verifyHandler) verifyWhitelist(ctx context.Context, tx *ent.Tx) (bool, error) {
+	_, err := tx.
 		CouponScope.
 		Query().
 		Where(
@@ -30,17 +30,16 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context) (bool, error) {
 		if ent.IsNotFound(err) {
 			return false, nil
 		}
-		return err
+		return false, err
 	}
-    })
 
 	_, err = tx.
 		AppGoodScope.
 		Query().
 		Where(
+			entappgoodscope.AppID(*h.AppID),
 			entappgoodscope.AppGoodID(*h.AppGoodID),
 			entappgoodscope.CouponID(*h.CouponID),
-			entappgoodscope.AppID(*h.AppID),
 			entappgoodscope.CouponScope(types.CouponScope_Whitelist.String()),
 			entappgoodscope.DeletedAt(0),
 		).
@@ -54,11 +53,8 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx) error {
-	if *h.CouponScope != types.CouponScope_Blacklist {
-		return nil
-	}
-	_, err := tx.
+func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx) (bool, error) {
+	info, err := tx.
 		CouponScope.
 		Query().
 		Where(
@@ -69,34 +65,54 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx) error {
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		if !ent.IsNotFound(err) {
+			return false, err
+		}
+	}
+	if info != nil {
+		return false, nil
 	}
 
-	_, err = tx.
+	info1, err := tx.
 		AppGoodScope.
 		Query().
 		Where(
+			entappgoodscope.AppID(*h.AppID),
 			entappgoodscope.AppGoodID(*h.AppGoodID),
 			entappgoodscope.CouponID(*h.CouponID),
-			entappgoodscope.AppID(*h.AppID),
 			entappgoodscope.CouponScope(types.CouponScope_Blacklist.String()),
 			entappgoodscope.DeletedAt(0),
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		if !ent.IsNotFound(err) {
+			return false, err
+		}
 	}
-	return nil
+	if info1 != nil {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func (h *Handler) VerifyCouponScope(ctx context.Context) (bool, error) {
 	handler := &verifyHandler{
 		Handler: h,
 	}
-	case types.CouponScope_Whitelist:
-		return handler.verifyWhitelist(ctx)
-	case types.CouponScope_Blacklist:
-		return handler.verifyBlacklist(ctx)
-	}
-	return false, nil
+	valid := false
+	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		if *h.CouponScope == types.CouponScope_Whitelist {
+			valid1, err := handler.verifyWhitelist(ctx, tx)
+			valid = valid1
+			return err
+		}
+		if *h.CouponScope == types.CouponScope_Blacklist {
+			valid2, err := handler.verifyBlacklist(ctx, tx)
+			valid = valid2
+			return err
+		}
+		return nil
+	})
+	return valid, err
 }

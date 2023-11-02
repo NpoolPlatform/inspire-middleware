@@ -167,6 +167,19 @@ func existAppGoodScopeConds(t *testing.T) {
 	assert.True(t, exist)
 }
 
+func verifyCouponScope(t *testing.T) {
+	exist, err := VerifyCouponScope(context.Background(), &npool.VerifyCouponScopeRequest{
+		AppID:       ret.AppID,
+		GoodID:      ret.GoodID,
+		AppGoodID:   ret.AppGoodID,
+		CouponID:    ret.CouponID,
+		CouponScope: ret.CouponScope,
+	})
+	if assert.Nil(t, err) {
+		assert.True(t, exist)
+	}
+}
+
 func deleteAppGoodScope(t *testing.T) {
 	info, err := DeleteAppGoodScope(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
@@ -194,5 +207,6 @@ func TestScope(t *testing.T) {
 	t.Run("createAppGoodScope", createAppGoodScope)
 	t.Run("getAppGoodScopes", getAppGoodScopes)
 	t.Run("existAppGoodScopeConds", existAppGoodScopeConds)
+	t.Run("verifyCouponScope", verifyCouponScope)
 	t.Run("deleteAppGoodScope", deleteAppGoodScope)
 }
