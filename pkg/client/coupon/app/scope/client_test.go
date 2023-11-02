@@ -140,6 +140,13 @@ func createAppGoodScope(t *testing.T) {
 	}
 }
 
+func getAppGoodScope(t *testing.T) {
+	info, err := GetAppGoodScope(context.Background(), ret.ID)
+	if assert.Nil(t, err) {
+		assert.Equal(t, &ret, info)
+	}
+}
+
 func getAppGoodScopes(t *testing.T) {
 	infos, total, err := GetAppGoodScopes(context.Background(), &npool.Conds{
 		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
@@ -185,6 +192,10 @@ func deleteAppGoodScope(t *testing.T) {
 	if assert.Nil(t, err) {
 		assert.Equal(t, info, &ret)
 	}
+
+	info, err = GetAppGoodScope(context.Background(), ret.ID)
+	assert.Nil(t, err)
+	assert.Nil(t, info)
 }
 
 func TestScope(t *testing.T) {
@@ -205,6 +216,7 @@ func TestScope(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createAppGoodScope", createAppGoodScope)
+	t.Run("getAppGoodScope", getAppGoodScope)
 	t.Run("getAppGoodScopes", getAppGoodScopes)
 	t.Run("existAppGoodScopeConds", existAppGoodScopeConds)
 	t.Run("verifyCouponScope", verifyCouponScope)

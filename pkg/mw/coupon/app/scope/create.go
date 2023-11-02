@@ -16,7 +16,6 @@ import (
 
 type createHandler struct {
 	*Handler
-	scope *ent.CouponScope
 }
 
 func (h *createHandler) verifyCoupon(ctx context.Context, tx *ent.Tx) error {
