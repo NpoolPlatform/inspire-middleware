@@ -2,6 +2,7 @@ package scope
 
 import (
 	"context"
+	"fmt"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
