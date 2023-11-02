@@ -19,6 +19,7 @@ func (s *Server) VerifyCouponScope(ctx context.Context, in *npool.VerifyCouponSc
 		scope1.WithGoodID(&in.GoodID, true),
 		scope1.WithAppGoodID(&in.AppGoodID, true),
 		scope1.WithCouponScope(&in.CouponScope, true),
+		scope1.WithCouponID(&in.CouponID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
