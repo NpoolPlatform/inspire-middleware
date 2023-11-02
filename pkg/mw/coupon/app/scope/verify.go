@@ -105,14 +105,14 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			_fn := func() error {
-				if *h.CouponScope == types.CouponScope_Whitelist {
+				if *req.CouponScope == types.CouponScope_Whitelist {
 					valid, err := handler.verifyWhitelist(ctx, tx, req)
 					availables = append(availables, valid)
 					if err != nil {
 						return err
 					}
 				}
-				if *h.CouponScope == types.CouponScope_Blacklist {
+				if *req.CouponScope == types.CouponScope_Blacklist {
 					valid, err := handler.verifyBlacklist(ctx, tx, req)
 					availables = append(availables, valid)
 					if err != nil {
