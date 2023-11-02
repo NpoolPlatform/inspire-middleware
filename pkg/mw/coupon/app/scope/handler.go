@@ -17,6 +17,7 @@ import (
 
 type Handler struct {
 	appgoodscopecrud.Req
+	GoodID *uuid.UUID
 	Conds  *appgoodscopecrud.Conds
 	Offset int32
 	Limit  int32
@@ -62,6 +63,23 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.AppID = &_id
+		return nil
+	}
+}
+
+func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid goodid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.GoodID = &_id
 		return nil
 	}
 }
