@@ -120,9 +120,11 @@ func ExistAppGoodScopeConds(ctx context.Context, conds *npool.Conds) (bool, erro
 	return info.(bool), nil
 }
 
-func VerifyCouponScopes(ctx context.Context, in *npool.VerifyCouponScopesRequest) (bool, error) {
+func VerifyCouponScopes(ctx context.Context, in []*npool.ScopeReq) (bool, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		resp, err := cli.VerifyCouponScopes(ctx, in)
+		resp, err := cli.VerifyCouponScopes(ctx, &npool.VerifyCouponScopesRequest{
+			Infos: in,
+		})
 		if err != nil {
 			return nil, err
 		}
