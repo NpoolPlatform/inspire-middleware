@@ -1,4 +1,4 @@
-package role
+package scope
 
 import (
 	"fmt"
@@ -18,6 +18,7 @@ type Req struct {
 	ScopeID     *uuid.UUID
 	CouponScope *types.CouponScope
 	DeletedAt   *uint32
+	GoodID      *uuid.UUID
 }
 
 func CreateSet(c *ent.AppGoodScopeCreate, req *Req) *ent.AppGoodScopeCreate {

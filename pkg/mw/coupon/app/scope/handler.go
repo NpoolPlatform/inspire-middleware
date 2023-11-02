@@ -17,7 +17,7 @@ import (
 
 type Handler struct {
 	appgoodscopecrud.Req
-	GoodID *uuid.UUID
+	Reqs   []*appgoodscopecrud.Req
 	Conds  *appgoodscopecrud.Conds
 	Offset int32
 	Limit  int32
@@ -182,6 +182,72 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 	}
 }
 
+func WithReqs(reqs []*npool.ScopeReq, must bool) func(context.Context, *Handler) error { //nolint
+	return func(ctx context.Context, h *Handler) error {
+		_reqs := []*appgoodscopecrud.Req{}
+
+		for _, req := range reqs {
+			_req := &appgoodscopecrud.Req{}
+			if must {
+				if req.AppID == nil {
+					return fmt.Errorf("invalid appid")
+				}
+				if req.GoodID == nil {
+					return fmt.Errorf("invalid goodid")
+				}
+				if req.AppGoodID == nil {
+					return fmt.Errorf("invalid appgoodid")
+				}
+				if req.CouponID == nil {
+					return fmt.Errorf("invalid couponid")
+				}
+				if req.CouponScope == nil {
+					return fmt.Errorf("invalid couponscope")
+				}
+			}
+			if req.AppID != nil {
+				id, err := uuid.Parse(*req.AppID)
+				if err != nil {
+					return err
+				}
+				_req.AppID = &id
+			}
+			if req.GoodID != nil {
+				id, err := uuid.Parse(*req.GoodID)
+				if err != nil {
+					return err
+				}
+				_req.GoodID = &id
+			}
+			if req.AppGoodID != nil {
+				id, err := uuid.Parse(*req.AppGoodID)
+				if err != nil {
+					return err
+				}
+				_req.AppGoodID = &id
+			}
+			if req.CouponID != nil {
+				id, err := uuid.Parse(*req.CouponID)
+				if err != nil {
+					return err
+				}
+				_req.CouponID = &id
+			}
+			if req.CouponScope != nil {
+				switch *req.CouponScope {
+				case types.CouponScope_Blacklist:
+				case types.CouponScope_Whitelist:
+				default:
+					return fmt.Errorf("invalid couponscope")
+				}
+				_req.CouponScope = req.CouponScope
+			}
+			_reqs = append(_reqs, _req)
+		}
+		h.Reqs = _reqs
+		return nil
+	}
+}
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &appgoodscopecrud.Conds{}

@@ -201,17 +201,20 @@ func existAppGoodScopeConds(t *testing.T) {
 }
 
 func verifyCouponScope(t *testing.T) {
+	reqs := []*npool.ScopeReq{{
+		AppID:       &ret.AppID,
+		GoodID:      &ret.GoodID,
+		AppGoodID:   &ret.AppGoodID,
+		CouponID:    &ret.CouponID,
+		CouponScope: &ret.CouponScope,
+	}}
 	handler, err := NewHandler(
 		context.Background(),
-		WithAppID(&ret.AppID, true),
-		WithGoodID(&ret.GoodID, true),
-		WithAppGoodID(&ret.AppGoodID, true),
-		WithCouponID(&ret.CouponID, true),
-		WithCouponScope(&ret.CouponScope, true),
+		WithReqs(reqs, true),
 	)
 	assert.Nil(t, err)
 
-	exist, err := handler.VerifyCouponScope(context.Background())
+	exist, err := handler.VerifyCouponScopes(context.Background())
 	if assert.Nil(t, err) {
 		assert.True(t, exist)
 	}

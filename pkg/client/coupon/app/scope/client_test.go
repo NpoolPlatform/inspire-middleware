@@ -175,12 +175,15 @@ func existAppGoodScopeConds(t *testing.T) {
 }
 
 func verifyCouponScope(t *testing.T) {
-	exist, err := VerifyCouponScope(context.Background(), &npool.VerifyCouponScopeRequest{
-		AppID:       ret.AppID,
-		GoodID:      ret.GoodID,
-		AppGoodID:   ret.AppGoodID,
-		CouponID:    ret.CouponID,
-		CouponScope: ret.CouponScope,
+	exist, err := VerifyCouponScopes(context.Background(), &npool.VerifyCouponScopesRequest{
+		Infos: []*npool.ScopeReq{{
+			AppID:       &ret.AppID,
+			GoodID:      &ret.GoodID,
+			AppGoodID:   &ret.AppGoodID,
+			CouponID:    &ret.CouponID,
+			CouponScope: &ret.CouponScope,
+		},
+		},
 	})
 	if assert.Nil(t, err) {
 		assert.True(t, exist)

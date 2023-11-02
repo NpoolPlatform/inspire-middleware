@@ -12,35 +12,31 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) VerifyCouponScope(ctx context.Context, in *npool.VerifyCouponScopeRequest) (*npool.VerifyCouponScopeResponse, error) {
+func (s *Server) VerifyCouponScopes(ctx context.Context, in *npool.VerifyCouponScopesRequest) (*npool.VerifyCouponScopesResponse, error) {
 	handler, err := scope1.NewHandler(
 		ctx,
-		scope1.WithAppID(&in.AppID, true),
-		scope1.WithGoodID(&in.GoodID, true),
-		scope1.WithAppGoodID(&in.AppGoodID, true),
-		scope1.WithCouponScope(&in.CouponScope, true),
-		scope1.WithCouponID(&in.CouponID, true),
+		scope1.WithReqs(in.GetInfos(), true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"VerifyCouponScope",
+			"VerifyCouponScopes",
 			"In", in,
 			"Err", err,
 		)
-		return &npool.VerifyCouponScopeResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.VerifyCouponScopesResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.VerifyCouponScope(ctx)
+	info, err := handler.VerifyCouponScopes(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"VerifyCouponScope",
+			"VerifyCouponScopes",
 			"In", in,
 			"Err", err,
 		)
-		return &npool.VerifyCouponScopeResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.VerifyCouponScopesResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.VerifyCouponScopeResponse{
+	return &npool.VerifyCouponScopesResponse{
 		Info: info,
 	}, nil
 }
