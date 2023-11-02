@@ -197,6 +197,7 @@ func (h *Handler) GetAppGoodScopes(ctx context.Context) ([]*npool.Scope, uint32,
 }
 
 func (h *Handler) GetAppGoodScopeOnly(ctx context.Context) (*npool.Scope, error) {
+	h.Limit = 1
 	infos, _, err := h.GetAppGoodScopes(ctx)
 	if err != nil {
 		return nil, err
