@@ -180,6 +180,7 @@ func (h *Handler) GetScopes(ctx context.Context) ([]*npool.Scope, uint32, error)
 }
 
 func (h *Handler) GetScopeOnly(ctx context.Context) (*npool.Scope, error) {
+	h.Limit = 1
 	infos, _, err := h.GetScopes(ctx)
 	if err != nil {
 		return nil, err
