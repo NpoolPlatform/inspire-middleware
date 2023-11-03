@@ -70,6 +70,7 @@ var (
 		CouponScopeStr:     coupon.CouponScopeStr,
 		CouponName:         coupon.Name,
 		CouponDenomination: coupon.Denomination,
+		CouponCirculation:  coupon.Circulation,
 	}
 
 	ret = npool.Scope{

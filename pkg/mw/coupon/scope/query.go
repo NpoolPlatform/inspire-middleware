@@ -113,6 +113,12 @@ func (h *queryHandler) formalize() {
 		} else {
 			info.CouponDenomination = denomination.String()
 		}
+		amount, err := decimal.NewFromString(info.CouponCirculation)
+		if err != nil {
+			info.CouponCirculation = decimal.NewFromInt(0).String()
+		} else {
+			info.CouponCirculation = amount.String()
+		}
 	}
 }
 
