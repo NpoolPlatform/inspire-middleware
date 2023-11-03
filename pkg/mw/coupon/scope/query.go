@@ -74,9 +74,10 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
 			t.C(entcoupon.FieldID),
 		).
 		AppendSelect(
-			sql.As(entcoupon.FieldName, "coupon_name"),
-			sql.As(entcoupon.FieldCouponType, "coupon_type"),
-			sql.As(entcoupon.FieldDenomination, "coupon_denomination"),
+			sql.As(t.C(entcoupon.FieldName), "coupon_name"),
+			sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
+			sql.As(t.C(entcoupon.FieldDenomination), "coupon_denomination"),
+			sql.As(t.C(entcoupon.FieldCirculation), "coupon_circulation"),
 		)
 }
 
