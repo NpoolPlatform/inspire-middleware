@@ -182,10 +182,9 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 	}
 }
 
-func WithReqs(reqs []*npool.ScopeReq, must bool) func(context.Context, *Handler) error { //nolint
+func WithReqs(reqs []*npool.ScopeReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*appgoodscopecrud.Req{}
-
 		for _, req := range reqs {
 			_req := &appgoodscopecrud.Req{}
 			if must {
