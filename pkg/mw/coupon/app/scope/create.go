@@ -57,11 +57,10 @@ func (h *createHandler) getScope(ctx context.Context) error {
 		}
 
 		h.CouponID = &scope.CouponID
-		if h.CouponScope != nil {
-			return nil
+		if h.CouponScope == nil {
+			couponScope := types.CouponScope(types.CouponScope_value[scope.CouponScope])
+			h.CouponScope = &couponScope
 		}
-		couponScope := types.CouponScope(types.CouponScope_value[scope.CouponScope])
-		h.CouponScope = &couponScope
 		return nil
 	})
 }
