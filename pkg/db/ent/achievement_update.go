@@ -85,6 +85,20 @@ func (au *AchievementUpdate) AddDeletedAt(u int32) *AchievementUpdate {
 	return au
 }
 
+// SetEntID sets the "ent_id" field.
+func (au *AchievementUpdate) SetEntID(u uuid.UUID) *AchievementUpdate {
+	au.mutation.SetEntID(u)
+	return au
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (au *AchievementUpdate) SetNillableEntID(u *uuid.UUID) *AchievementUpdate {
+	if u != nil {
+		au.SetEntID(*u)
+	}
+	return au
+}
+
 // SetAppID sets the "app_id" field.
 func (au *AchievementUpdate) SetAppID(u uuid.UUID) *AchievementUpdate {
 	au.mutation.SetAppID(u)
@@ -391,7 +405,7 @@ func (au *AchievementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   achievement.Table,
 			Columns: achievement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: achievement.FieldID,
 			},
 		},
@@ -443,6 +457,13 @@ func (au *AchievementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: achievement.FieldDeletedAt,
+		})
+	}
+	if value, ok := au.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldEntID,
 		})
 	}
 	if value, ok := au.mutation.AppID(); ok {
@@ -661,6 +682,20 @@ func (auo *AchievementUpdateOne) SetNillableDeletedAt(u *uint32) *AchievementUpd
 // AddDeletedAt adds u to the "deleted_at" field.
 func (auo *AchievementUpdateOne) AddDeletedAt(u int32) *AchievementUpdateOne {
 	auo.mutation.AddDeletedAt(u)
+	return auo
+}
+
+// SetEntID sets the "ent_id" field.
+func (auo *AchievementUpdateOne) SetEntID(u uuid.UUID) *AchievementUpdateOne {
+	auo.mutation.SetEntID(u)
+	return auo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (auo *AchievementUpdateOne) SetNillableEntID(u *uuid.UUID) *AchievementUpdateOne {
+	if u != nil {
+		auo.SetEntID(*u)
+	}
 	return auo
 }
 
@@ -983,7 +1018,7 @@ func (auo *AchievementUpdateOne) sqlSave(ctx context.Context) (_node *Achievemen
 			Table:   achievement.Table,
 			Columns: achievement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: achievement.FieldID,
 			},
 		},
@@ -1052,6 +1087,13 @@ func (auo *AchievementUpdateOne) sqlSave(ctx context.Context) (_node *Achievemen
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: achievement.FieldDeletedAt,
+		})
+	}
+	if value, ok := auo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldEntID,
 		})
 	}
 	if value, ok := auo.mutation.AppID(); ok {

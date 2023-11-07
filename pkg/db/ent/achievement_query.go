@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // AchievementQuery is the builder for querying Achievement entities.
@@ -87,8 +86,8 @@ func (aq *AchievementQuery) FirstX(ctx context.Context) *Achievement {
 
 // FirstID returns the first Achievement ID from the query.
 // Returns a *NotFoundError when no Achievement ID was found.
-func (aq *AchievementQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (aq *AchievementQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = aq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (aq *AchievementQuery) FirstID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (aq *AchievementQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (aq *AchievementQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := aq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (aq *AchievementQuery) OnlyX(ctx context.Context) *Achievement {
 // OnlyID is like Only, but returns the only Achievement ID in the query.
 // Returns a *NotSingularError when more than one Achievement ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (aq *AchievementQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (aq *AchievementQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = aq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (aq *AchievementQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (aq *AchievementQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (aq *AchievementQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := aq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (aq *AchievementQuery) AllX(ctx context.Context) []*Achievement {
 }
 
 // IDs executes the query and returns a list of Achievement IDs.
-func (aq *AchievementQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (aq *AchievementQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := aq.Select(achievement.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (aq *AchievementQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (aq *AchievementQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (aq *AchievementQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := aq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (aq *AchievementQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   achievement.Table,
 			Columns: achievement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: achievement.FieldID,
 			},
 		},

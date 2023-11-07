@@ -220,7 +220,7 @@ func (c *AchievementClient) UpdateOne(a *Achievement) *AchievementUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AchievementClient) UpdateOneID(id uuid.UUID) *AchievementUpdateOne {
+func (c *AchievementClient) UpdateOneID(id uint32) *AchievementUpdateOne {
 	mutation := newAchievementMutation(c.config, OpUpdateOne, withAchievementID(id))
 	return &AchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -237,7 +237,7 @@ func (c *AchievementClient) DeleteOne(a *Achievement) *AchievementDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *AchievementClient) DeleteOneID(id uuid.UUID) *AchievementDeleteOne {
+func (c *AchievementClient) DeleteOneID(id uint32) *AchievementDeleteOne {
 	builder := c.Delete().Where(achievement.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -252,12 +252,12 @@ func (c *AchievementClient) Query() *AchievementQuery {
 }
 
 // Get returns a Achievement entity by its id.
-func (c *AchievementClient) Get(ctx context.Context, id uuid.UUID) (*Achievement, error) {
+func (c *AchievementClient) Get(ctx context.Context, id uint32) (*Achievement, error) {
 	return c.Query().Where(achievement.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AchievementClient) GetX(ctx context.Context, id uuid.UUID) *Achievement {
+func (c *AchievementClient) GetX(ctx context.Context, id uint32) *Achievement {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -311,7 +311,7 @@ func (c *CommissionClient) UpdateOne(co *Commission) *CommissionUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CommissionClient) UpdateOneID(id uuid.UUID) *CommissionUpdateOne {
+func (c *CommissionClient) UpdateOneID(id uint32) *CommissionUpdateOne {
 	mutation := newCommissionMutation(c.config, OpUpdateOne, withCommissionID(id))
 	return &CommissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -328,7 +328,7 @@ func (c *CommissionClient) DeleteOne(co *Commission) *CommissionDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *CommissionClient) DeleteOneID(id uuid.UUID) *CommissionDeleteOne {
+func (c *CommissionClient) DeleteOneID(id uint32) *CommissionDeleteOne {
 	builder := c.Delete().Where(commission.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -343,12 +343,12 @@ func (c *CommissionClient) Query() *CommissionQuery {
 }
 
 // Get returns a Commission entity by its id.
-func (c *CommissionClient) Get(ctx context.Context, id uuid.UUID) (*Commission, error) {
+func (c *CommissionClient) Get(ctx context.Context, id uint32) (*Commission, error) {
 	return c.Query().Where(commission.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CommissionClient) GetX(ctx context.Context, id uuid.UUID) *Commission {
+func (c *CommissionClient) GetX(ctx context.Context, id uint32) *Commission {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -948,7 +948,7 @@ func (c *StatementClient) UpdateOne(s *Statement) *StatementUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *StatementClient) UpdateOneID(id uuid.UUID) *StatementUpdateOne {
+func (c *StatementClient) UpdateOneID(id uint32) *StatementUpdateOne {
 	mutation := newStatementMutation(c.config, OpUpdateOne, withStatementID(id))
 	return &StatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -965,7 +965,7 @@ func (c *StatementClient) DeleteOne(s *Statement) *StatementDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *StatementClient) DeleteOneID(id uuid.UUID) *StatementDeleteOne {
+func (c *StatementClient) DeleteOneID(id uint32) *StatementDeleteOne {
 	builder := c.Delete().Where(statement.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -980,12 +980,12 @@ func (c *StatementClient) Query() *StatementQuery {
 }
 
 // Get returns a Statement entity by its id.
-func (c *StatementClient) Get(ctx context.Context, id uuid.UUID) (*Statement, error) {
+func (c *StatementClient) Get(ctx context.Context, id uint32) (*Statement, error) {
 	return c.Query().Where(statement.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *StatementClient) GetX(ctx context.Context, id uuid.UUID) *Statement {
+func (c *StatementClient) GetX(ctx context.Context, id uint32) *Statement {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

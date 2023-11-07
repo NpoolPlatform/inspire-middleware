@@ -84,9 +84,37 @@ func (ru *RegistrationUpdate) AddDeletedAt(u int32) *RegistrationUpdate {
 	return ru
 }
 
+// SetEntID sets the "ent_id" field.
+func (ru *RegistrationUpdate) SetEntID(u uuid.UUID) *RegistrationUpdate {
+	ru.mutation.SetEntID(u)
+	return ru
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ru *RegistrationUpdate) SetNillableEntID(u *uuid.UUID) *RegistrationUpdate {
+	if u != nil {
+		ru.SetEntID(*u)
+	}
+	return ru
+}
+
 // SetAppID sets the "app_id" field.
 func (ru *RegistrationUpdate) SetAppID(u uuid.UUID) *RegistrationUpdate {
 	ru.mutation.SetAppID(u)
+	return ru
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ru *RegistrationUpdate) SetNillableAppID(u *uuid.UUID) *RegistrationUpdate {
+	if u != nil {
+		ru.SetAppID(*u)
+	}
+	return ru
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ru *RegistrationUpdate) ClearAppID() *RegistrationUpdate {
+	ru.mutation.ClearAppID()
 	return ru
 }
 
@@ -96,9 +124,37 @@ func (ru *RegistrationUpdate) SetInviterID(u uuid.UUID) *RegistrationUpdate {
 	return ru
 }
 
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (ru *RegistrationUpdate) SetNillableInviterID(u *uuid.UUID) *RegistrationUpdate {
+	if u != nil {
+		ru.SetInviterID(*u)
+	}
+	return ru
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (ru *RegistrationUpdate) ClearInviterID() *RegistrationUpdate {
+	ru.mutation.ClearInviterID()
+	return ru
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (ru *RegistrationUpdate) SetInviteeID(u uuid.UUID) *RegistrationUpdate {
 	ru.mutation.SetInviteeID(u)
+	return ru
+}
+
+// SetNillableInviteeID sets the "invitee_id" field if the given value is not nil.
+func (ru *RegistrationUpdate) SetNillableInviteeID(u *uuid.UUID) *RegistrationUpdate {
+	if u != nil {
+		ru.SetInviteeID(*u)
+	}
+	return ru
+}
+
+// ClearInviteeID clears the value of the "invitee_id" field.
+func (ru *RegistrationUpdate) ClearInviteeID() *RegistrationUpdate {
+	ru.mutation.ClearInviteeID()
 	return ru
 }
 
@@ -242,10 +298,23 @@ func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: registration.FieldDeletedAt,
 		})
 	}
+	if value, ok := ru.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: registration.FieldEntID,
+		})
+	}
 	if value, ok := ru.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: registration.FieldAppID,
+		})
+	}
+	if ru.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: registration.FieldAppID,
 		})
 	}
@@ -256,10 +325,22 @@ func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: registration.FieldInviterID,
 		})
 	}
+	if ru.mutation.InviterIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: registration.FieldInviterID,
+		})
+	}
 	if value, ok := ru.mutation.InviteeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: registration.FieldInviteeID,
+		})
+	}
+	if ru.mutation.InviteeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: registration.FieldInviteeID,
 		})
 	}
@@ -339,9 +420,37 @@ func (ruo *RegistrationUpdateOne) AddDeletedAt(u int32) *RegistrationUpdateOne {
 	return ruo
 }
 
+// SetEntID sets the "ent_id" field.
+func (ruo *RegistrationUpdateOne) SetEntID(u uuid.UUID) *RegistrationUpdateOne {
+	ruo.mutation.SetEntID(u)
+	return ruo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ruo *RegistrationUpdateOne) SetNillableEntID(u *uuid.UUID) *RegistrationUpdateOne {
+	if u != nil {
+		ruo.SetEntID(*u)
+	}
+	return ruo
+}
+
 // SetAppID sets the "app_id" field.
 func (ruo *RegistrationUpdateOne) SetAppID(u uuid.UUID) *RegistrationUpdateOne {
 	ruo.mutation.SetAppID(u)
+	return ruo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ruo *RegistrationUpdateOne) SetNillableAppID(u *uuid.UUID) *RegistrationUpdateOne {
+	if u != nil {
+		ruo.SetAppID(*u)
+	}
+	return ruo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ruo *RegistrationUpdateOne) ClearAppID() *RegistrationUpdateOne {
+	ruo.mutation.ClearAppID()
 	return ruo
 }
 
@@ -351,9 +460,37 @@ func (ruo *RegistrationUpdateOne) SetInviterID(u uuid.UUID) *RegistrationUpdateO
 	return ruo
 }
 
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (ruo *RegistrationUpdateOne) SetNillableInviterID(u *uuid.UUID) *RegistrationUpdateOne {
+	if u != nil {
+		ruo.SetInviterID(*u)
+	}
+	return ruo
+}
+
+// ClearInviterID clears the value of the "inviter_id" field.
+func (ruo *RegistrationUpdateOne) ClearInviterID() *RegistrationUpdateOne {
+	ruo.mutation.ClearInviterID()
+	return ruo
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (ruo *RegistrationUpdateOne) SetInviteeID(u uuid.UUID) *RegistrationUpdateOne {
 	ruo.mutation.SetInviteeID(u)
+	return ruo
+}
+
+// SetNillableInviteeID sets the "invitee_id" field if the given value is not nil.
+func (ruo *RegistrationUpdateOne) SetNillableInviteeID(u *uuid.UUID) *RegistrationUpdateOne {
+	if u != nil {
+		ruo.SetInviteeID(*u)
+	}
+	return ruo
+}
+
+// ClearInviteeID clears the value of the "invitee_id" field.
+func (ruo *RegistrationUpdateOne) ClearInviteeID() *RegistrationUpdateOne {
+	ruo.mutation.ClearInviteeID()
 	return ruo
 }
 
@@ -527,10 +664,23 @@ func (ruo *RegistrationUpdateOne) sqlSave(ctx context.Context) (_node *Registrat
 			Column: registration.FieldDeletedAt,
 		})
 	}
+	if value, ok := ruo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: registration.FieldEntID,
+		})
+	}
 	if value, ok := ruo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: registration.FieldAppID,
+		})
+	}
+	if ruo.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: registration.FieldAppID,
 		})
 	}
@@ -541,10 +691,22 @@ func (ruo *RegistrationUpdateOne) sqlSave(ctx context.Context) (_node *Registrat
 			Column: registration.FieldInviterID,
 		})
 	}
+	if ruo.mutation.InviterIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: registration.FieldInviterID,
+		})
+	}
 	if value, ok := ruo.mutation.InviteeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: registration.FieldInviteeID,
+		})
+	}
+	if ruo.mutation.InviteeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: registration.FieldInviteeID,
 		})
 	}

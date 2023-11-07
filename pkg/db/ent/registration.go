@@ -22,6 +22,8 @@ type Registration struct {
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// InviterID holds the value of the "inviter_id" field.
@@ -37,7 +39,7 @@ func (*Registration) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case registration.FieldCreatedAt, registration.FieldUpdatedAt, registration.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case registration.FieldID, registration.FieldAppID, registration.FieldInviterID, registration.FieldInviteeID:
+		case registration.FieldID, registration.FieldEntID, registration.FieldAppID, registration.FieldInviterID, registration.FieldInviteeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Registration", columns[i])
@@ -77,6 +79,12 @@ func (r *Registration) assignValues(columns []string, values []interface{}) erro
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				r.DeletedAt = uint32(value.Int64)
+			}
+		case registration.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				r.EntID = *value
 			}
 		case registration.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -132,6 +140,9 @@ func (r *Registration) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", r.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", r.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", r.AppID))

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,6 +61,20 @@ func (cc *CommissionCreate) SetDeletedAt(u uint32) *CommissionCreate {
 func (cc *CommissionCreate) SetNillableDeletedAt(u *uint32) *CommissionCreate {
 	if u != nil {
 		cc.SetDeletedAt(*u)
+	}
+	return cc
+}
+
+// SetEntID sets the "ent_id" field.
+func (cc *CommissionCreate) SetEntID(u uuid.UUID) *CommissionCreate {
+	cc.mutation.SetEntID(u)
+	return cc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cc *CommissionCreate) SetNillableEntID(u *uuid.UUID) *CommissionCreate {
+	if u != nil {
+		cc.SetEntID(*u)
 	}
 	return cc
 }
@@ -249,16 +262,8 @@ func (cc *CommissionCreate) SetNillableOrderLimit(u *uint32) *CommissionCreate {
 }
 
 // SetID sets the "id" field.
-func (cc *CommissionCreate) SetID(u uuid.UUID) *CommissionCreate {
+func (cc *CommissionCreate) SetID(u uint32) *CommissionCreate {
 	cc.mutation.SetID(u)
-	return cc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (cc *CommissionCreate) SetNillableID(u *uuid.UUID) *CommissionCreate {
-	if u != nil {
-		cc.SetID(*u)
-	}
 	return cc
 }
 
@@ -362,6 +367,13 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultDeletedAt()
 		cc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		if commission.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized commission.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := commission.DefaultEntID()
+		cc.mutation.SetEntID(v)
+	}
 	if _, ok := cc.mutation.AppID(); !ok {
 		if commission.DefaultAppID == nil {
 			return fmt.Errorf("ent: uninitialized commission.DefaultAppID (forgotten import ent/runtime?)")
@@ -426,13 +438,6 @@ func (cc *CommissionCreate) defaults() error {
 		v := commission.DefaultOrderLimit
 		cc.mutation.SetOrderLimit(v)
 	}
-	if _, ok := cc.mutation.ID(); !ok {
-		if commission.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized commission.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := commission.DefaultID()
-		cc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -447,6 +452,9 @@ func (cc *CommissionCreate) check() error {
 	if _, ok := cc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Commission.deleted_at"`)}
 	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Commission.ent_id"`)}
+	}
 	return nil
 }
 
@@ -458,12 +466,9 @@ func (cc *CommissionCreate) sqlSave(ctx context.Context) (*Commission, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -474,7 +479,7 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: commission.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: commission.FieldID,
 			},
 		}
@@ -482,7 +487,7 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = cc.conflict
 	if id, ok := cc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := cc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -507,6 +512,14 @@ func (cc *CommissionCreate) createSpec() (*Commission, *sqlgraph.CreateSpec) {
 			Column: commission.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := cc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := cc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -717,6 +730,18 @@ func (u *CommissionUpsert) UpdateDeletedAt() *CommissionUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *CommissionUpsert) AddDeletedAt(v uint32) *CommissionUpsert {
 	u.Add(commission.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CommissionUpsert) SetEntID(v uuid.UUID) *CommissionUpsert {
+	u.Set(commission.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CommissionUpsert) UpdateEntID() *CommissionUpsert {
+	u.SetExcluded(commission.FieldEntID)
 	return u
 }
 
@@ -1085,6 +1110,20 @@ func (u *CommissionUpsertOne) UpdateDeletedAt() *CommissionUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *CommissionUpsertOne) SetEntID(v uuid.UUID) *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CommissionUpsertOne) UpdateEntID() *CommissionUpsertOne {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *CommissionUpsertOne) SetAppID(v uuid.UUID) *CommissionUpsertOne {
 	return u.Update(func(s *CommissionUpsert) {
@@ -1395,12 +1434,7 @@ func (u *CommissionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CommissionUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: CommissionUpsertOne.ID is not supported by MySQL driver. Use CommissionUpsertOne.Exec instead")
-	}
+func (u *CommissionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1409,7 +1443,7 @@ func (u *CommissionUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CommissionUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *CommissionUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1460,6 +1494,10 @@ func (ccb *CommissionCreateBulk) Save(ctx context.Context) ([]*Commission, error
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1655,6 +1693,20 @@ func (u *CommissionUpsertBulk) AddDeletedAt(v uint32) *CommissionUpsertBulk {
 func (u *CommissionUpsertBulk) UpdateDeletedAt() *CommissionUpsertBulk {
 	return u.Update(func(s *CommissionUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CommissionUpsertBulk) SetEntID(v uuid.UUID) *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CommissionUpsertBulk) UpdateEntID() *CommissionUpsertBulk {
+	return u.Update(func(s *CommissionUpsert) {
+		s.UpdateEntID()
 	})
 }
 

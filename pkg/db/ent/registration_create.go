@@ -65,9 +65,31 @@ func (rc *RegistrationCreate) SetNillableDeletedAt(u *uint32) *RegistrationCreat
 	return rc
 }
 
+// SetEntID sets the "ent_id" field.
+func (rc *RegistrationCreate) SetEntID(u uuid.UUID) *RegistrationCreate {
+	rc.mutation.SetEntID(u)
+	return rc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (rc *RegistrationCreate) SetNillableEntID(u *uuid.UUID) *RegistrationCreate {
+	if u != nil {
+		rc.SetEntID(*u)
+	}
+	return rc
+}
+
 // SetAppID sets the "app_id" field.
 func (rc *RegistrationCreate) SetAppID(u uuid.UUID) *RegistrationCreate {
 	rc.mutation.SetAppID(u)
+	return rc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (rc *RegistrationCreate) SetNillableAppID(u *uuid.UUID) *RegistrationCreate {
+	if u != nil {
+		rc.SetAppID(*u)
+	}
 	return rc
 }
 
@@ -77,9 +99,25 @@ func (rc *RegistrationCreate) SetInviterID(u uuid.UUID) *RegistrationCreate {
 	return rc
 }
 
+// SetNillableInviterID sets the "inviter_id" field if the given value is not nil.
+func (rc *RegistrationCreate) SetNillableInviterID(u *uuid.UUID) *RegistrationCreate {
+	if u != nil {
+		rc.SetInviterID(*u)
+	}
+	return rc
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (rc *RegistrationCreate) SetInviteeID(u uuid.UUID) *RegistrationCreate {
 	rc.mutation.SetInviteeID(u)
+	return rc
+}
+
+// SetNillableInviteeID sets the "invitee_id" field if the given value is not nil.
+func (rc *RegistrationCreate) SetNillableInviteeID(u *uuid.UUID) *RegistrationCreate {
+	if u != nil {
+		rc.SetInviteeID(*u)
+	}
 	return rc
 }
 
@@ -197,6 +235,34 @@ func (rc *RegistrationCreate) defaults() error {
 		v := registration.DefaultDeletedAt()
 		rc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := rc.mutation.EntID(); !ok {
+		if registration.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized registration.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := registration.DefaultEntID()
+		rc.mutation.SetEntID(v)
+	}
+	if _, ok := rc.mutation.AppID(); !ok {
+		if registration.DefaultAppID == nil {
+			return fmt.Errorf("ent: uninitialized registration.DefaultAppID (forgotten import ent/runtime?)")
+		}
+		v := registration.DefaultAppID()
+		rc.mutation.SetAppID(v)
+	}
+	if _, ok := rc.mutation.InviterID(); !ok {
+		if registration.DefaultInviterID == nil {
+			return fmt.Errorf("ent: uninitialized registration.DefaultInviterID (forgotten import ent/runtime?)")
+		}
+		v := registration.DefaultInviterID()
+		rc.mutation.SetInviterID(v)
+	}
+	if _, ok := rc.mutation.InviteeID(); !ok {
+		if registration.DefaultInviteeID == nil {
+			return fmt.Errorf("ent: uninitialized registration.DefaultInviteeID (forgotten import ent/runtime?)")
+		}
+		v := registration.DefaultInviteeID()
+		rc.mutation.SetInviteeID(v)
+	}
 	if _, ok := rc.mutation.ID(); !ok {
 		if registration.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized registration.DefaultID (forgotten import ent/runtime?)")
@@ -218,14 +284,8 @@ func (rc *RegistrationCreate) check() error {
 	if _, ok := rc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Registration.deleted_at"`)}
 	}
-	if _, ok := rc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Registration.app_id"`)}
-	}
-	if _, ok := rc.mutation.InviterID(); !ok {
-		return &ValidationError{Name: "inviter_id", err: errors.New(`ent: missing required field "Registration.inviter_id"`)}
-	}
-	if _, ok := rc.mutation.InviteeID(); !ok {
-		return &ValidationError{Name: "invitee_id", err: errors.New(`ent: missing required field "Registration.invitee_id"`)}
+	if _, ok := rc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Registration.ent_id"`)}
 	}
 	return nil
 }
@@ -287,6 +347,14 @@ func (rc *RegistrationCreate) createSpec() (*Registration, *sqlgraph.CreateSpec)
 			Column: registration.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := rc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: registration.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := rc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -420,6 +488,18 @@ func (u *RegistrationUpsert) AddDeletedAt(v uint32) *RegistrationUpsert {
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *RegistrationUpsert) SetEntID(v uuid.UUID) *RegistrationUpsert {
+	u.Set(registration.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *RegistrationUpsert) UpdateEntID() *RegistrationUpsert {
+	u.SetExcluded(registration.FieldEntID)
+	return u
+}
+
 // SetAppID sets the "app_id" field.
 func (u *RegistrationUpsert) SetAppID(v uuid.UUID) *RegistrationUpsert {
 	u.Set(registration.FieldAppID, v)
@@ -429,6 +509,12 @@ func (u *RegistrationUpsert) SetAppID(v uuid.UUID) *RegistrationUpsert {
 // UpdateAppID sets the "app_id" field to the value that was provided on create.
 func (u *RegistrationUpsert) UpdateAppID() *RegistrationUpsert {
 	u.SetExcluded(registration.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *RegistrationUpsert) ClearAppID() *RegistrationUpsert {
+	u.SetNull(registration.FieldAppID)
 	return u
 }
 
@@ -444,6 +530,12 @@ func (u *RegistrationUpsert) UpdateInviterID() *RegistrationUpsert {
 	return u
 }
 
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *RegistrationUpsert) ClearInviterID() *RegistrationUpsert {
+	u.SetNull(registration.FieldInviterID)
+	return u
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (u *RegistrationUpsert) SetInviteeID(v uuid.UUID) *RegistrationUpsert {
 	u.Set(registration.FieldInviteeID, v)
@@ -453,6 +545,12 @@ func (u *RegistrationUpsert) SetInviteeID(v uuid.UUID) *RegistrationUpsert {
 // UpdateInviteeID sets the "invitee_id" field to the value that was provided on create.
 func (u *RegistrationUpsert) UpdateInviteeID() *RegistrationUpsert {
 	u.SetExcluded(registration.FieldInviteeID)
+	return u
+}
+
+// ClearInviteeID clears the value of the "invitee_id" field.
+func (u *RegistrationUpsert) ClearInviteeID() *RegistrationUpsert {
+	u.SetNull(registration.FieldInviteeID)
 	return u
 }
 
@@ -569,6 +667,20 @@ func (u *RegistrationUpsertOne) UpdateDeletedAt() *RegistrationUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *RegistrationUpsertOne) SetEntID(v uuid.UUID) *RegistrationUpsertOne {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *RegistrationUpsertOne) UpdateEntID() *RegistrationUpsertOne {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *RegistrationUpsertOne) SetAppID(v uuid.UUID) *RegistrationUpsertOne {
 	return u.Update(func(s *RegistrationUpsert) {
@@ -580,6 +692,13 @@ func (u *RegistrationUpsertOne) SetAppID(v uuid.UUID) *RegistrationUpsertOne {
 func (u *RegistrationUpsertOne) UpdateAppID() *RegistrationUpsertOne {
 	return u.Update(func(s *RegistrationUpsert) {
 		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *RegistrationUpsertOne) ClearAppID() *RegistrationUpsertOne {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -597,6 +716,13 @@ func (u *RegistrationUpsertOne) UpdateInviterID() *RegistrationUpsertOne {
 	})
 }
 
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *RegistrationUpsertOne) ClearInviterID() *RegistrationUpsertOne {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearInviterID()
+	})
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (u *RegistrationUpsertOne) SetInviteeID(v uuid.UUID) *RegistrationUpsertOne {
 	return u.Update(func(s *RegistrationUpsert) {
@@ -608,6 +734,13 @@ func (u *RegistrationUpsertOne) SetInviteeID(v uuid.UUID) *RegistrationUpsertOne
 func (u *RegistrationUpsertOne) UpdateInviteeID() *RegistrationUpsertOne {
 	return u.Update(func(s *RegistrationUpsert) {
 		s.UpdateInviteeID()
+	})
+}
+
+// ClearInviteeID clears the value of the "invitee_id" field.
+func (u *RegistrationUpsertOne) ClearInviteeID() *RegistrationUpsertOne {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearInviteeID()
 	})
 }
 
@@ -890,6 +1023,20 @@ func (u *RegistrationUpsertBulk) UpdateDeletedAt() *RegistrationUpsertBulk {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *RegistrationUpsertBulk) SetEntID(v uuid.UUID) *RegistrationUpsertBulk {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *RegistrationUpsertBulk) UpdateEntID() *RegistrationUpsertBulk {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *RegistrationUpsertBulk) SetAppID(v uuid.UUID) *RegistrationUpsertBulk {
 	return u.Update(func(s *RegistrationUpsert) {
@@ -901,6 +1048,13 @@ func (u *RegistrationUpsertBulk) SetAppID(v uuid.UUID) *RegistrationUpsertBulk {
 func (u *RegistrationUpsertBulk) UpdateAppID() *RegistrationUpsertBulk {
 	return u.Update(func(s *RegistrationUpsert) {
 		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *RegistrationUpsertBulk) ClearAppID() *RegistrationUpsertBulk {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -918,6 +1072,13 @@ func (u *RegistrationUpsertBulk) UpdateInviterID() *RegistrationUpsertBulk {
 	})
 }
 
+// ClearInviterID clears the value of the "inviter_id" field.
+func (u *RegistrationUpsertBulk) ClearInviterID() *RegistrationUpsertBulk {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearInviterID()
+	})
+}
+
 // SetInviteeID sets the "invitee_id" field.
 func (u *RegistrationUpsertBulk) SetInviteeID(v uuid.UUID) *RegistrationUpsertBulk {
 	return u.Update(func(s *RegistrationUpsert) {
@@ -929,6 +1090,13 @@ func (u *RegistrationUpsertBulk) SetInviteeID(v uuid.UUID) *RegistrationUpsertBu
 func (u *RegistrationUpsertBulk) UpdateInviteeID() *RegistrationUpsertBulk {
 	return u.Update(func(s *RegistrationUpsert) {
 		s.UpdateInviteeID()
+	})
+}
+
+// ClearInviteeID clears the value of the "invitee_id" field.
+func (u *RegistrationUpsertBulk) ClearInviteeID() *RegistrationUpsertBulk {
+	return u.Update(func(s *RegistrationUpsert) {
+		s.ClearInviteeID()
 	})
 }
 

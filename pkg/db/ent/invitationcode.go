@@ -22,6 +22,8 @@ type InvitationCode struct {
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
@@ -43,7 +45,7 @@ func (*InvitationCode) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case invitationcode.FieldInvitationCode:
 			values[i] = new(sql.NullString)
-		case invitationcode.FieldID, invitationcode.FieldAppID, invitationcode.FieldUserID:
+		case invitationcode.FieldID, invitationcode.FieldEntID, invitationcode.FieldAppID, invitationcode.FieldUserID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type InvitationCode", columns[i])
@@ -83,6 +85,12 @@ func (ic *InvitationCode) assignValues(columns []string, values []interface{}) e
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				ic.DeletedAt = uint32(value.Int64)
+			}
+		case invitationcode.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				ic.EntID = *value
 			}
 		case invitationcode.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -144,6 +152,9 @@ func (ic *InvitationCode) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", ic.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", ic.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", ic.AppID))

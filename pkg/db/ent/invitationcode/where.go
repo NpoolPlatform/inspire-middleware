@@ -100,6 +100,13 @@ func DeletedAt(v uint32) predicate.InvitationCode {
 	})
 }
 
+// EntID applies equality check predicate on the "ent_id" field. It's identical to EntIDEQ.
+func EntID(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
 // AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
 func AppID(v uuid.UUID) predicate.InvitationCode {
 	return predicate.InvitationCode(func(s *sql.Selector) {
@@ -320,6 +327,70 @@ func DeletedAtLTE(v uint32) predicate.InvitationCode {
 	})
 }
 
+// EntIDEQ applies the EQ predicate on the "ent_id" field.
+func EntIDEQ(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDNEQ applies the NEQ predicate on the "ent_id" field.
+func EntIDNEQ(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDIn applies the In predicate on the "ent_id" field.
+func EntIDIn(vs ...uuid.UUID) predicate.InvitationCode {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDNotIn applies the NotIn predicate on the "ent_id" field.
+func EntIDNotIn(vs ...uuid.UUID) predicate.InvitationCode {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDGT applies the GT predicate on the "ent_id" field.
+func EntIDGT(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDGTE applies the GTE predicate on the "ent_id" field.
+func EntIDGTE(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLT applies the LT predicate on the "ent_id" field.
+func EntIDLT(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLTE applies the LTE predicate on the "ent_id" field.
+func EntIDLTE(v uuid.UUID) predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntID), v))
+	})
+}
+
 // AppIDEQ applies the EQ predicate on the "app_id" field.
 func AppIDEQ(v uuid.UUID) predicate.InvitationCode {
 	return predicate.InvitationCode(func(s *sql.Selector) {
@@ -384,6 +455,20 @@ func AppIDLTE(v uuid.UUID) predicate.InvitationCode {
 	})
 }
 
+// AppIDIsNil applies the IsNil predicate on the "app_id" field.
+func AppIDIsNil() predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppID)))
+	})
+}
+
+// AppIDNotNil applies the NotNil predicate on the "app_id" field.
+func AppIDNotNil() predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppID)))
+	})
+}
+
 // UserIDEQ applies the EQ predicate on the "user_id" field.
 func UserIDEQ(v uuid.UUID) predicate.InvitationCode {
 	return predicate.InvitationCode(func(s *sql.Selector) {
@@ -445,6 +530,20 @@ func UserIDLT(v uuid.UUID) predicate.InvitationCode {
 func UserIDLTE(v uuid.UUID) predicate.InvitationCode {
 	return predicate.InvitationCode(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUserID), v))
+	})
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldUserID)))
+	})
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.InvitationCode {
+	return predicate.InvitationCode(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldUserID)))
 	})
 }
 

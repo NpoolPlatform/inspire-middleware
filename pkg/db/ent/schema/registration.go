@@ -5,6 +5,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
 
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+
 	"github.com/google/uuid"
 )
 
@@ -16,6 +18,7 @@ type Registration struct {
 func (Registration) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
 	}
 }
 
@@ -27,11 +30,23 @@ func (Registration) Fields() []ent.Field {
 			Default(uuid.New).
 			Unique(),
 		field.
-			UUID("app_id", uuid.UUID{}),
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
-			UUID("inviter_id", uuid.UUID{}),
+			UUID("inviter_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
-			UUID("invitee_id", uuid.UUID{}),
+			UUID("invitee_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 	}
 }
 

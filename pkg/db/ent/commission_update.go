@@ -85,6 +85,20 @@ func (cu *CommissionUpdate) AddDeletedAt(u int32) *CommissionUpdate {
 	return cu
 }
 
+// SetEntID sets the "ent_id" field.
+func (cu *CommissionUpdate) SetEntID(u uuid.UUID) *CommissionUpdate {
+	cu.mutation.SetEntID(u)
+	return cu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cu *CommissionUpdate) SetNillableEntID(u *uuid.UUID) *CommissionUpdate {
+	if u != nil {
+		cu.SetEntID(*u)
+	}
+	return cu
+}
+
 // SetAppID sets the "app_id" field.
 func (cu *CommissionUpdate) SetAppID(u uuid.UUID) *CommissionUpdate {
 	cu.mutation.SetAppID(u)
@@ -452,7 +466,7 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   commission.Table,
 			Columns: commission.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: commission.FieldID,
 			},
 		},
@@ -504,6 +518,13 @@ func (cu *CommissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: commission.FieldDeletedAt,
+		})
+	}
+	if value, ok := cu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldEntID,
 		})
 	}
 	if value, ok := cu.mutation.AppID(); ok {
@@ -769,6 +790,20 @@ func (cuo *CommissionUpdateOne) SetNillableDeletedAt(u *uint32) *CommissionUpdat
 // AddDeletedAt adds u to the "deleted_at" field.
 func (cuo *CommissionUpdateOne) AddDeletedAt(u int32) *CommissionUpdateOne {
 	cuo.mutation.AddDeletedAt(u)
+	return cuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (cuo *CommissionUpdateOne) SetEntID(u uuid.UUID) *CommissionUpdateOne {
+	cuo.mutation.SetEntID(u)
+	return cuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cuo *CommissionUpdateOne) SetNillableEntID(u *uuid.UUID) *CommissionUpdateOne {
+	if u != nil {
+		cuo.SetEntID(*u)
+	}
 	return cuo
 }
 
@@ -1152,7 +1187,7 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 			Table:   commission.Table,
 			Columns: commission.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: commission.FieldID,
 			},
 		},
@@ -1221,6 +1256,13 @@ func (cuo *CommissionUpdateOne) sqlSave(ctx context.Context) (_node *Commission,
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: commission.FieldDeletedAt,
+		})
+	}
+	if value, ok := cuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: commission.FieldEntID,
 		})
 	}
 	if value, ok := cuo.mutation.AppID(); ok {

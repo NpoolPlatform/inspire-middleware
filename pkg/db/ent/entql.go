@@ -27,7 +27,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   achievement.Table,
 			Columns: achievement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: achievement.FieldID,
 			},
 		},
@@ -36,6 +36,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			achievement.FieldCreatedAt:       {Type: field.TypeUint32, Column: achievement.FieldCreatedAt},
 			achievement.FieldUpdatedAt:       {Type: field.TypeUint32, Column: achievement.FieldUpdatedAt},
 			achievement.FieldDeletedAt:       {Type: field.TypeUint32, Column: achievement.FieldDeletedAt},
+			achievement.FieldEntID:           {Type: field.TypeUUID, Column: achievement.FieldEntID},
 			achievement.FieldAppID:           {Type: field.TypeUUID, Column: achievement.FieldAppID},
 			achievement.FieldUserID:          {Type: field.TypeUUID, Column: achievement.FieldUserID},
 			achievement.FieldGoodID:          {Type: field.TypeUUID, Column: achievement.FieldGoodID},
@@ -54,7 +55,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   commission.Table,
 			Columns: commission.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: commission.FieldID,
 			},
 		},
@@ -63,6 +64,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldCreatedAt:        {Type: field.TypeUint32, Column: commission.FieldCreatedAt},
 			commission.FieldUpdatedAt:        {Type: field.TypeUint32, Column: commission.FieldUpdatedAt},
 			commission.FieldDeletedAt:        {Type: field.TypeUint32, Column: commission.FieldDeletedAt},
+			commission.FieldEntID:            {Type: field.TypeUUID, Column: commission.FieldEntID},
 			commission.FieldAppID:            {Type: field.TypeUUID, Column: commission.FieldAppID},
 			commission.FieldUserID:           {Type: field.TypeUUID, Column: commission.FieldUserID},
 			commission.FieldGoodID:           {Type: field.TypeUUID, Column: commission.FieldGoodID},
@@ -173,6 +175,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldCreatedAt:      {Type: field.TypeUint32, Column: invitationcode.FieldCreatedAt},
 			invitationcode.FieldUpdatedAt:      {Type: field.TypeUint32, Column: invitationcode.FieldUpdatedAt},
 			invitationcode.FieldDeletedAt:      {Type: field.TypeUint32, Column: invitationcode.FieldDeletedAt},
+			invitationcode.FieldEntID:          {Type: field.TypeUUID, Column: invitationcode.FieldEntID},
 			invitationcode.FieldAppID:          {Type: field.TypeUUID, Column: invitationcode.FieldAppID},
 			invitationcode.FieldUserID:         {Type: field.TypeUUID, Column: invitationcode.FieldUserID},
 			invitationcode.FieldInvitationCode: {Type: field.TypeString, Column: invitationcode.FieldInvitationCode},
@@ -214,6 +217,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldCreatedAt: {Type: field.TypeUint32, Column: registration.FieldCreatedAt},
 			registration.FieldUpdatedAt: {Type: field.TypeUint32, Column: registration.FieldUpdatedAt},
 			registration.FieldDeletedAt: {Type: field.TypeUint32, Column: registration.FieldDeletedAt},
+			registration.FieldEntID:     {Type: field.TypeUUID, Column: registration.FieldEntID},
 			registration.FieldAppID:     {Type: field.TypeUUID, Column: registration.FieldAppID},
 			registration.FieldInviterID: {Type: field.TypeUUID, Column: registration.FieldInviterID},
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
@@ -224,7 +228,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   statement.Table,
 			Columns: statement.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: statement.FieldID,
 			},
 		},
@@ -233,6 +237,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			statement.FieldCreatedAt:              {Type: field.TypeUint32, Column: statement.FieldCreatedAt},
 			statement.FieldUpdatedAt:              {Type: field.TypeUint32, Column: statement.FieldUpdatedAt},
 			statement.FieldDeletedAt:              {Type: field.TypeUint32, Column: statement.FieldDeletedAt},
+			statement.FieldEntID:                  {Type: field.TypeUUID, Column: statement.FieldEntID},
 			statement.FieldAppID:                  {Type: field.TypeUUID, Column: statement.FieldAppID},
 			statement.FieldUserID:                 {Type: field.TypeUUID, Column: statement.FieldUserID},
 			statement.FieldDirectContributorID:    {Type: field.TypeUUID, Column: statement.FieldDirectContributorID},
@@ -295,8 +300,8 @@ func (f *AchievementFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *AchievementFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *AchievementFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(achievement.FieldID))
 }
 
@@ -313,6 +318,11 @@ func (f *AchievementFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *AchievementFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(achievement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *AchievementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(achievement.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
@@ -405,8 +415,8 @@ func (f *CommissionFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *CommissionFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CommissionFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(commission.FieldID))
 }
 
@@ -423,6 +433,11 @@ func (f *CommissionFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *CommissionFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(commission.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CommissionFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(commission.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
@@ -875,6 +890,11 @@ func (f *InvitationCodeFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(invitationcode.FieldDeletedAt))
 }
 
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *InvitationCodeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(invitationcode.FieldEntID))
+}
+
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
 func (f *InvitationCodeFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(invitationcode.FieldAppID))
@@ -1030,6 +1050,11 @@ func (f *RegistrationFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(registration.FieldDeletedAt))
 }
 
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *RegistrationFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(registration.FieldEntID))
+}
+
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
 func (f *RegistrationFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(registration.FieldAppID))
@@ -1080,8 +1105,8 @@ func (f *StatementFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *StatementFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *StatementFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(statement.FieldID))
 }
 
@@ -1098,6 +1123,11 @@ func (f *StatementFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *StatementFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(statement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *StatementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(statement.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.

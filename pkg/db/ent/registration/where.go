@@ -100,6 +100,13 @@ func DeletedAt(v uint32) predicate.Registration {
 	})
 }
 
+// EntID applies equality check predicate on the "ent_id" field. It's identical to EntIDEQ.
+func EntID(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
 // AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
 func AppID(v uuid.UUID) predicate.Registration {
 	return predicate.Registration(func(s *sql.Selector) {
@@ -313,6 +320,70 @@ func DeletedAtLTE(v uint32) predicate.Registration {
 	})
 }
 
+// EntIDEQ applies the EQ predicate on the "ent_id" field.
+func EntIDEQ(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDNEQ applies the NEQ predicate on the "ent_id" field.
+func EntIDNEQ(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDIn applies the In predicate on the "ent_id" field.
+func EntIDIn(vs ...uuid.UUID) predicate.Registration {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDNotIn applies the NotIn predicate on the "ent_id" field.
+func EntIDNotIn(vs ...uuid.UUID) predicate.Registration {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDGT applies the GT predicate on the "ent_id" field.
+func EntIDGT(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDGTE applies the GTE predicate on the "ent_id" field.
+func EntIDGTE(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLT applies the LT predicate on the "ent_id" field.
+func EntIDLT(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLTE applies the LTE predicate on the "ent_id" field.
+func EntIDLTE(v uuid.UUID) predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntID), v))
+	})
+}
+
 // AppIDEQ applies the EQ predicate on the "app_id" field.
 func AppIDEQ(v uuid.UUID) predicate.Registration {
 	return predicate.Registration(func(s *sql.Selector) {
@@ -374,6 +445,20 @@ func AppIDLT(v uuid.UUID) predicate.Registration {
 func AppIDLTE(v uuid.UUID) predicate.Registration {
 	return predicate.Registration(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldAppID), v))
+	})
+}
+
+// AppIDIsNil applies the IsNil predicate on the "app_id" field.
+func AppIDIsNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppID)))
+	})
+}
+
+// AppIDNotNil applies the NotNil predicate on the "app_id" field.
+func AppIDNotNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppID)))
 	})
 }
 
@@ -441,6 +526,20 @@ func InviterIDLTE(v uuid.UUID) predicate.Registration {
 	})
 }
 
+// InviterIDIsNil applies the IsNil predicate on the "inviter_id" field.
+func InviterIDIsNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInviterID)))
+	})
+}
+
+// InviterIDNotNil applies the NotNil predicate on the "inviter_id" field.
+func InviterIDNotNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInviterID)))
+	})
+}
+
 // InviteeIDEQ applies the EQ predicate on the "invitee_id" field.
 func InviteeIDEQ(v uuid.UUID) predicate.Registration {
 	return predicate.Registration(func(s *sql.Selector) {
@@ -502,6 +601,20 @@ func InviteeIDLT(v uuid.UUID) predicate.Registration {
 func InviteeIDLTE(v uuid.UUID) predicate.Registration {
 	return predicate.Registration(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldInviteeID), v))
+	})
+}
+
+// InviteeIDIsNil applies the IsNil predicate on the "invitee_id" field.
+func InviteeIDIsNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInviteeID)))
+	})
+}
+
+// InviteeIDNotNil applies the NotNil predicate on the "invitee_id" field.
+func InviteeIDNotNil() predicate.Registration {
+	return predicate.Registration(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInviteeID)))
 	})
 }
 
