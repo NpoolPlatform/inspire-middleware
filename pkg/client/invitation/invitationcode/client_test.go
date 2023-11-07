@@ -35,13 +35,13 @@ func init() {
 }
 
 var ret = &npool.InvitationCode{
-	ID:     uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:  uuid.NewString(),
 	UserID: uuid.NewString(),
 }
 
 var req = &npool.InvitationCodeReq{
-	ID:     &ret.ID,
+	EntID:     &ret.EntID,
 	AppID:  &ret.AppID,
 	UserID: &ret.UserID,
 }
@@ -49,6 +49,7 @@ var req = &npool.InvitationCodeReq{
 func create(t *testing.T) {
 	info, err := CreateInvitationCode(context.Background(), req)
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.InvitationCode = info.InvitationCode
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt

@@ -38,42 +38,42 @@ func init() {
 }
 
 var ret = &npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:        uuid.NewString(),
 	AppID:     uuid.NewString(),
 	InviterID: uuid.NewString(),
 	InviteeID: uuid.NewString(),
 }
 
 var req = &npool.RegistrationReq{
-	ID:        &ret.ID,
+	EntID:        &ret.EntID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviterID,
 	InviteeID: &ret.InviteeID,
 }
 
 var ret1 = &npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:        uuid.NewString(),
 	AppID:     ret.AppID,
 	InviterID: ret.InviterID,
 	InviteeID: uuid.NewString(),
 }
 
 var req1 = &npool.RegistrationReq{
-	ID:        &ret1.ID,
+	EntID:        &ret1.EntID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviterID,
 	InviteeID: &ret1.InviteeID,
 }
 
 var ret2 = &npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:        uuid.NewString(),
 	AppID:     ret.AppID,
 	InviterID: ret.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
 var req2 = &npool.RegistrationReq{
-	ID:        &ret2.ID,
+	EntID:        &ret2.EntID,
 	AppID:     &ret.AppID,
 	InviterID: &ret.InviteeID,
 	InviteeID: &ret2.InviteeID,
@@ -102,6 +102,7 @@ func create(t *testing.T) {
 
 	info, err := CreateRegistration(context.Background(), req1)
 	if assert.Nil(t, err) {
+		ret1.ID = info.ID
 		ret1.CreatedAt = info.CreatedAt
 		ret1.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret1, info)
@@ -109,6 +110,7 @@ func create(t *testing.T) {
 
 	info, err = CreateRegistration(context.Background(), req2)
 	if assert.Nil(t, err) {
+		ret2.ID = info.ID
 		ret2.CreatedAt = info.CreatedAt
 		ret2.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret2, info)
@@ -116,6 +118,7 @@ func create(t *testing.T) {
 
 	info, err = CreateRegistration(context.Background(), req)
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)
@@ -164,7 +167,7 @@ func getSubordinates(t *testing.T) {
 
 		found := false
 		for _, info := range infos {
-			if info.ID == ret.ID {
+			if info.EntID == ret.EntID {
 				found = true
 				break
 			}
@@ -173,7 +176,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == ret1.ID {
+			if info.EntID == ret1.EntID {
 				found = true
 				break
 			}
@@ -182,7 +185,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == ret2.ID {
+			if info.EntID == ret2.EntID {
 				found = true
 				break
 			}
@@ -201,7 +204,7 @@ func getSuperiores(t *testing.T) {
 
 		found := false
 		for _, info := range infos {
-			if info.ID == ret.ID {
+			if info.EntID == ret.EntID {
 				found = true
 				break
 			}
@@ -210,7 +213,7 @@ func getSuperiores(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == ret2.ID {
+			if info.EntID == ret2.EntID {
 				found = true
 				break
 			}

@@ -90,7 +90,7 @@ func UpdateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*np
 func GetInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetInvitationCode(ctx, &npool.GetInvitationCodeRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -126,7 +126,7 @@ func GetInvitationCodes(ctx context.Context, conds *npool.Conds, offset, limit i
 	return infos.([]*npool.InvitationCode), total, nil
 }
 
-func DeleteInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, error) {
+func DeleteInvitationCode(ctx context.Context, id uint32) (*npool.InvitationCode, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteInvitationCode(ctx, &npool.DeleteInvitationCodeRequest{
 			Info: &npool.InvitationCodeReq{

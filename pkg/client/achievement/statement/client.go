@@ -84,7 +84,7 @@ func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32)
 	return infos.([]*npool.Statement), total, nil
 }
 
-func DeleteStatement(ctx context.Context, id string) (*npool.Statement, error) {
+func DeleteStatement(ctx context.Context, id uint32) (*npool.Statement, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteStatement(ctx, &npool.DeleteStatementRequest{
 			Info: &npool.StatementReq{

@@ -40,7 +40,7 @@ func init() {
 var percent = "10"
 
 var ret = &npool.Commission{
-	ID:                  uuid.NewString(),
+	EntID:               uuid.NewString(),
 	AppID:               uuid.NewString(),
 	UserID:              uuid.NewString(),
 	GoodID:              uuid.NewString(),
@@ -59,7 +59,7 @@ var ret = &npool.Commission{
 }
 
 var req = &npool.CommissionReq{
-	ID:               &ret.ID,
+	EntID:            &ret.EntID,
 	AppID:            &ret.AppID,
 	UserID:           &ret.UserID,
 	GoodID:           &ret.GoodID,
@@ -75,6 +75,7 @@ var req = &npool.CommissionReq{
 func create(t *testing.T) {
 	info, err := CreateCommission(context.Background(), req)
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)

@@ -176,7 +176,7 @@ func GetSuperiores(ctx context.Context, conds *npool.Conds, offset, limit int32)
 func GetRegistration(ctx context.Context, id string) (*npool.Registration, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetRegistration(ctx, &npool.GetRegistrationRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
