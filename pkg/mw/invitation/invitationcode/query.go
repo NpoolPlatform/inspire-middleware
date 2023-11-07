@@ -18,15 +18,25 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryInvitationCode(cli *ent.Client) {
+func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
 	h.stmSelect = cli.
 		InvitationCode.
 		Query().
 		Where(
-			entinvitationcode.ID(*h.ID),
 			entinvitationcode.DeletedAt(0),
 		).
 		Select()
+
+	if h.ID != nil {
+		h.stmSelect.Where(entinvitationcode.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		h.stmSelect.Where(entinvitationcode.EntID(*h.EntID))
+	}
+	return nil
 }
 
 func (h *queryHandler) queryInvitationCodes(ctx context.Context, cli *ent.Client) error {
@@ -54,7 +64,9 @@ func (h *Handler) GetInvitationCode(ctx context.Context) (*npool.InvitationCode,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryInvitationCode(cli)
+		if err := handler.queryInvitationCode(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

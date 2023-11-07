@@ -19,15 +19,24 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryRegistration(cli *ent.Client) {
+func (h *queryHandler) queryRegistration(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
 	h.stmSelect = cli.
 		Registration.
 		Query().
 		Where(
-			entregistration.ID(*h.ID),
 			entregistration.DeletedAt(0),
 		).
 		Select()
+	if h.ID != nil {
+		h.stmSelect.Where(entregistration.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		h.stmSelect.Where(entregistration.EntID(*h.EntID))
+	}
+	return nil
 }
 
 func (h *queryHandler) queryRegistrations(ctx context.Context, cli *ent.Client) error {

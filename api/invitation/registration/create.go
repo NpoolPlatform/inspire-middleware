@@ -23,7 +23,7 @@ func (s *Server) CreateRegistration(ctx context.Context, in *npool.CreateRegistr
 	}
 	handler, err := registration1.NewHandler(
 		ctx,
-		registration1.WithID(req.ID, false),
+		registration1.WithEntID(req.EntID, false),
 		registration1.WithAppID(req.AppID, true),
 		registration1.WithInviterID(req.InviterID, true),
 		registration1.WithInviteeID(req.InviteeID, true),

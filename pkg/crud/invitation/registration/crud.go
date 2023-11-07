@@ -11,6 +11,7 @@ import (
 )
 
 type Req struct {
+	ID        *uint32
 	EntID     *uuid.UUID
 	AppID     *uuid.UUID
 	InviterID *uuid.UUID
@@ -19,6 +20,9 @@ type Req struct {
 }
 
 func CreateSet(c *ent.RegistrationCreate, req *Req) *ent.RegistrationCreate {
+	if req.ID != nil {
+		c.SetID(*req.ID)
+	}
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
