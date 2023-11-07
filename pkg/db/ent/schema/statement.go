@@ -25,7 +25,6 @@ func (Statement) Mixin() []ent.Mixin {
 }
 
 // Fields of the Statement.
-//nolint:funlen
 func (Statement) Fields() []ent.Field {
 	return []ent.Field{
 		field.
