@@ -346,6 +346,8 @@ func init() {
 	}
 	eventMixinFields0 := eventMixin[0].Fields()
 	_ = eventMixinFields0
+	eventMixinFields1 := eventMixin[1].Fields()
+	_ = eventMixinFields1
 	eventFields := schema.Event{}.Fields()
 	_ = eventFields
 	// eventDescCreatedAt is the schema descriptor for created_at field.
@@ -362,42 +364,46 @@ func init() {
 	eventDescDeletedAt := eventMixinFields0[2].Descriptor()
 	// event.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	event.DefaultDeletedAt = eventDescDeletedAt.Default.(func() uint32)
+	// eventDescEntID is the schema descriptor for ent_id field.
+	eventDescEntID := eventMixinFields1[1].Descriptor()
+	// event.DefaultEntID holds the default value on creation for the ent_id field.
+	event.DefaultEntID = eventDescEntID.Default.(func() uuid.UUID)
+	// eventDescAppID is the schema descriptor for app_id field.
+	eventDescAppID := eventFields[0].Descriptor()
+	// event.DefaultAppID holds the default value on creation for the app_id field.
+	event.DefaultAppID = eventDescAppID.Default.(func() uuid.UUID)
 	// eventDescEventType is the schema descriptor for event_type field.
-	eventDescEventType := eventFields[2].Descriptor()
+	eventDescEventType := eventFields[1].Descriptor()
 	// event.DefaultEventType holds the default value on creation for the event_type field.
 	event.DefaultEventType = eventDescEventType.Default.(string)
 	// eventDescCouponIds is the schema descriptor for coupon_ids field.
-	eventDescCouponIds := eventFields[3].Descriptor()
+	eventDescCouponIds := eventFields[2].Descriptor()
 	// event.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	event.DefaultCouponIds = eventDescCouponIds.Default.([]uuid.UUID)
 	// eventDescCredits is the schema descriptor for credits field.
-	eventDescCredits := eventFields[4].Descriptor()
+	eventDescCredits := eventFields[3].Descriptor()
 	// event.DefaultCredits holds the default value on creation for the credits field.
 	event.DefaultCredits = eventDescCredits.Default.(decimal.Decimal)
 	// eventDescCreditsPerUsd is the schema descriptor for credits_per_usd field.
-	eventDescCreditsPerUsd := eventFields[5].Descriptor()
+	eventDescCreditsPerUsd := eventFields[4].Descriptor()
 	// event.DefaultCreditsPerUsd holds the default value on creation for the credits_per_usd field.
 	event.DefaultCreditsPerUsd = eventDescCreditsPerUsd.Default.(decimal.Decimal)
 	// eventDescMaxConsecutive is the schema descriptor for max_consecutive field.
-	eventDescMaxConsecutive := eventFields[6].Descriptor()
+	eventDescMaxConsecutive := eventFields[5].Descriptor()
 	// event.DefaultMaxConsecutive holds the default value on creation for the max_consecutive field.
 	event.DefaultMaxConsecutive = eventDescMaxConsecutive.Default.(uint32)
 	// eventDescGoodID is the schema descriptor for good_id field.
-	eventDescGoodID := eventFields[7].Descriptor()
+	eventDescGoodID := eventFields[6].Descriptor()
 	// event.DefaultGoodID holds the default value on creation for the good_id field.
 	event.DefaultGoodID = eventDescGoodID.Default.(func() uuid.UUID)
 	// eventDescAppGoodID is the schema descriptor for app_good_id field.
-	eventDescAppGoodID := eventFields[8].Descriptor()
+	eventDescAppGoodID := eventFields[7].Descriptor()
 	// event.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	event.DefaultAppGoodID = eventDescAppGoodID.Default.(func() uuid.UUID)
 	// eventDescInviterLayers is the schema descriptor for inviter_layers field.
-	eventDescInviterLayers := eventFields[9].Descriptor()
+	eventDescInviterLayers := eventFields[8].Descriptor()
 	// event.DefaultInviterLayers holds the default value on creation for the inviter_layers field.
 	event.DefaultInviterLayers = eventDescInviterLayers.Default.(uint32)
-	// eventDescID is the schema descriptor for id field.
-	eventDescID := eventFields[0].Descriptor()
-	// event.DefaultID holds the default value on creation for the id field.
-	event.DefaultID = eventDescID.Default.(func() uuid.UUID)
 	invitationcodeMixin := schema.InvitationCode{}.Mixin()
 	invitationcode.Policy = privacy.NewPolicies(invitationcodeMixin[0], schema.InvitationCode{})
 	invitationcode.Hooks[0] = func(next ent.Mutator) ent.Mutator {

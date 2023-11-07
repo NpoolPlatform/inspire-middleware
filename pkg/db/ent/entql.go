@@ -141,7 +141,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   event.Table,
 			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: event.FieldID,
 			},
 		},
@@ -150,6 +150,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldCreatedAt:      {Type: field.TypeUint32, Column: event.FieldCreatedAt},
 			event.FieldUpdatedAt:      {Type: field.TypeUint32, Column: event.FieldUpdatedAt},
 			event.FieldDeletedAt:      {Type: field.TypeUint32, Column: event.FieldDeletedAt},
+			event.FieldEntID:          {Type: field.TypeUUID, Column: event.FieldEntID},
 			event.FieldAppID:          {Type: field.TypeUUID, Column: event.FieldAppID},
 			event.FieldEventType:      {Type: field.TypeString, Column: event.FieldEventType},
 			event.FieldCouponIds:      {Type: field.TypeJSON, Column: event.FieldCouponIds},
@@ -770,8 +771,8 @@ func (f *EventFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *EventFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *EventFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(event.FieldID))
 }
 
@@ -788,6 +789,11 @@ func (f *EventFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *EventFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(event.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *EventFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(event.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.

@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // EventQuery is the builder for querying Event entities.
@@ -87,8 +86,8 @@ func (eq *EventQuery) FirstX(ctx context.Context) *Event {
 
 // FirstID returns the first Event ID from the query.
 // Returns a *NotFoundError when no Event ID was found.
-func (eq *EventQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (eq *EventQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = eq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (eq *EventQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (eq *EventQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (eq *EventQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := eq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (eq *EventQuery) OnlyX(ctx context.Context) *Event {
 // OnlyID is like Only, but returns the only Event ID in the query.
 // Returns a *NotSingularError when more than one Event ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (eq *EventQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (eq *EventQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = eq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (eq *EventQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (eq *EventQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (eq *EventQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := eq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (eq *EventQuery) AllX(ctx context.Context) []*Event {
 }
 
 // IDs executes the query and returns a list of Event IDs.
-func (eq *EventQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (eq *EventQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := eq.Select(event.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (eq *EventQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (eq *EventQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (eq *EventQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := eq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (eq *EventQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   event.Table,
 			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: event.FieldID,
 			},
 		},

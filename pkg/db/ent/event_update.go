@@ -85,9 +85,37 @@ func (eu *EventUpdate) AddDeletedAt(u int32) *EventUpdate {
 	return eu
 }
 
+// SetEntID sets the "ent_id" field.
+func (eu *EventUpdate) SetEntID(u uuid.UUID) *EventUpdate {
+	eu.mutation.SetEntID(u)
+	return eu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableEntID(u *uuid.UUID) *EventUpdate {
+	if u != nil {
+		eu.SetEntID(*u)
+	}
+	return eu
+}
+
 // SetAppID sets the "app_id" field.
 func (eu *EventUpdate) SetAppID(u uuid.UUID) *EventUpdate {
 	eu.mutation.SetAppID(u)
+	return eu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableAppID(u *uuid.UUID) *EventUpdate {
+	if u != nil {
+		eu.SetAppID(*u)
+	}
+	return eu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (eu *EventUpdate) ClearAppID() *EventUpdate {
+	eu.mutation.ClearAppID()
 	return eu
 }
 
@@ -343,7 +371,7 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   event.Table,
 			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: event.FieldID,
 			},
 		},
@@ -397,10 +425,23 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: event.FieldDeletedAt,
 		})
 	}
+	if value, ok := eu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldEntID,
+		})
+	}
 	if value, ok := eu.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: event.FieldAppID,
+		})
+	}
+	if eu.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: event.FieldAppID,
 		})
 	}
@@ -598,9 +639,37 @@ func (euo *EventUpdateOne) AddDeletedAt(u int32) *EventUpdateOne {
 	return euo
 }
 
+// SetEntID sets the "ent_id" field.
+func (euo *EventUpdateOne) SetEntID(u uuid.UUID) *EventUpdateOne {
+	euo.mutation.SetEntID(u)
+	return euo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableEntID(u *uuid.UUID) *EventUpdateOne {
+	if u != nil {
+		euo.SetEntID(*u)
+	}
+	return euo
+}
+
 // SetAppID sets the "app_id" field.
 func (euo *EventUpdateOne) SetAppID(u uuid.UUID) *EventUpdateOne {
 	euo.mutation.SetAppID(u)
+	return euo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableAppID(u *uuid.UUID) *EventUpdateOne {
+	if u != nil {
+		euo.SetAppID(*u)
+	}
+	return euo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (euo *EventUpdateOne) ClearAppID() *EventUpdateOne {
+	euo.mutation.ClearAppID()
 	return euo
 }
 
@@ -869,7 +938,7 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 			Table:   event.Table,
 			Columns: event.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: event.FieldID,
 			},
 		},
@@ -940,10 +1009,23 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 			Column: event.FieldDeletedAt,
 		})
 	}
+	if value, ok := euo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldEntID,
+		})
+	}
 	if value, ok := euo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: event.FieldAppID,
+		})
+	}
+	if euo.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: event.FieldAppID,
 		})
 	}
