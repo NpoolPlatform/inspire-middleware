@@ -29,7 +29,7 @@ func init() {
 
 var (
 	ret = npool.Statement{
-		ID:                     uuid.NewString(),
+		EntID:                  uuid.NewString(),
 		AppID:                  uuid.NewString(),
 		UserID:                 uuid.NewString(),
 		GoodID:                 uuid.NewString(),
@@ -76,6 +76,7 @@ func createStatement(t *testing.T) {
 
 	info, err := handler.CreateStatement(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, info, &ret)
@@ -97,7 +98,7 @@ func getStatement(t *testing.T) {
 
 func getStatements(t *testing.T) {
 	conds := &npool.Conds{
-		ID:                  &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		EntID:               &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:               &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:              &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		DirectContributorID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.DirectContributorID},

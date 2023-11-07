@@ -29,70 +29,70 @@ func init() {
 }
 
 var reg1 = npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:     uuid.NewString(),
 	InviterID: uuid.NewString(),
 	InviteeID: uuid.NewString(),
 }
 
 var _reg1 = npool.RegistrationReq{
-	ID:        &reg1.ID,
+	EntID:     &reg1.EntID,
 	AppID:     &reg1.AppID,
 	InviterID: &reg1.InviterID,
 	InviteeID: &reg1.InviteeID,
 }
 
 var reg2 = npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:     reg1.AppID,
 	InviterID: reg1.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
 var _reg2 = npool.RegistrationReq{
-	ID:        &reg2.ID,
+	EntID:     &reg2.EntID,
 	AppID:     &reg2.AppID,
 	InviterID: &reg2.InviterID,
 	InviteeID: &reg2.InviteeID,
 }
 
 var reg3 = npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:     reg1.AppID,
 	InviterID: reg2.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
 var _reg3 = npool.RegistrationReq{
-	ID:        &reg3.ID,
+	EntID:     &reg3.EntID,
 	AppID:     &reg3.AppID,
 	InviterID: &reg3.InviterID,
 	InviteeID: &reg3.InviteeID,
 }
 
 var reg4 = npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:     reg1.AppID,
 	InviterID: reg3.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
 var _reg4 = npool.RegistrationReq{
-	ID:        &reg4.ID,
+	EntID:     &reg4.EntID,
 	AppID:     &reg4.AppID,
 	InviterID: &reg4.InviterID,
 	InviteeID: &reg4.InviteeID,
 }
 
 var reg5 = npool.Registration{
-	ID:        uuid.NewString(),
+	EntID:     uuid.NewString(),
 	AppID:     reg1.AppID,
 	InviterID: reg4.InviteeID,
 	InviteeID: uuid.NewString(),
 }
 
 var _reg5 = npool.RegistrationReq{
-	ID:        &reg5.ID,
+	EntID:     &reg5.EntID,
 	AppID:     &reg5.AppID,
 	InviterID: &reg5.InviterID,
 	InviteeID: &reg5.InviteeID,
@@ -112,7 +112,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h1, err := NewHandler(
 		context.Background(),
-		WithID(_reg1.ID, true),
+		WithEntID(_reg1.EntID, true),
 		WithAppID(_reg1.AppID, true),
 		WithInviterID(_reg1.InviterID, true),
 		WithInviteeID(_reg1.InviteeID, true),
@@ -122,6 +122,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info1, err := h1.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info1)
+	reg1.ID = info1.ID
 	reg1.CreatedAt = info1.CreatedAt
 	reg1.UpdatedAt = info1.UpdatedAt
 
@@ -138,7 +139,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h2, err := NewHandler(
 		context.Background(),
-		WithID(_reg2.ID, true),
+		WithEntID(_reg2.EntID, true),
 		WithAppID(_reg2.AppID, true),
 		WithInviterID(_reg2.InviterID, true),
 		WithInviteeID(_reg2.InviteeID, true),
@@ -148,6 +149,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info2, err := h2.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info2)
+	reg2.ID = info2.ID
 	reg2.CreatedAt = info2.CreatedAt
 	reg2.UpdatedAt = info2.UpdatedAt
 
@@ -164,7 +166,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h3, err := NewHandler(
 		context.Background(),
-		WithID(_reg3.ID, true),
+		WithEntID(_reg3.EntID, true),
 		WithAppID(_reg3.AppID, true),
 		WithInviterID(_reg3.InviterID, true),
 		WithInviteeID(_reg3.InviteeID, true),
@@ -174,6 +176,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info3, err := h3.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info3)
+	reg3.ID = info3.ID
 	reg3.CreatedAt = info3.CreatedAt
 	reg3.UpdatedAt = info3.UpdatedAt
 
@@ -190,7 +193,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h4, err := NewHandler(
 		context.Background(),
-		WithID(_reg4.ID, true),
+		WithEntID(_reg4.EntID, true),
 		WithAppID(_reg4.AppID, true),
 		WithInviterID(_reg4.InviterID, true),
 		WithInviteeID(_reg4.InviteeID, true),
@@ -200,6 +203,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info4, err := h4.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info4)
+	reg4.ID = info4.ID
 	reg4.CreatedAt = info4.CreatedAt
 	reg4.UpdatedAt = info4.UpdatedAt
 
@@ -216,7 +220,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 
 	h5, err := NewHandler(
 		context.Background(),
-		WithID(_reg5.ID, true),
+		WithEntID(_reg5.EntID, true),
 		WithAppID(_reg5.AppID, true),
 		WithInviterID(_reg5.InviterID, true),
 		WithInviteeID(_reg5.InviteeID, true),
@@ -226,6 +230,7 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info5, err := h5.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info5)
+	reg5.ID = info5.ID
 	reg5.CreatedAt = info5.CreatedAt
 	reg5.UpdatedAt = info5.UpdatedAt
 
@@ -262,7 +267,7 @@ func getSuperiores(t *testing.T) {
 
 		found := false
 		for _, info := range infos {
-			if info.ID == reg1.ID {
+			if info.EntID == reg1.EntID {
 				assert.Equal(t, &reg1, info)
 				found = true
 				break
@@ -272,7 +277,7 @@ func getSuperiores(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg2.ID {
+			if info.EntID == reg2.EntID {
 				assert.Equal(t, &reg2, info)
 				found = true
 				break
@@ -282,7 +287,7 @@ func getSuperiores(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg3.ID {
+			if info.EntID == reg3.EntID {
 				assert.Equal(t, &reg3, info)
 				found = true
 				break
@@ -292,7 +297,7 @@ func getSuperiores(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg4.ID {
+			if info.EntID == reg4.EntID {
 				assert.Equal(t, &reg4, info)
 				found = true
 				break
@@ -302,7 +307,7 @@ func getSuperiores(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg5.ID {
+			if info.EntID == reg5.EntID {
 				assert.Equal(t, &reg5, info)
 				found = true
 				break
@@ -330,7 +335,7 @@ func getSubordinates(t *testing.T) {
 
 		found := false
 		for _, info := range infos {
-			if info.ID == reg1.ID {
+			if info.EntID == reg1.EntID {
 				assert.Equal(t, &reg1, info)
 				found = true
 				break
@@ -340,7 +345,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg2.ID {
+			if info.EntID == reg2.EntID {
 				assert.Equal(t, &reg2, info)
 				found = true
 				break
@@ -350,7 +355,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg3.ID {
+			if info.EntID == reg3.EntID {
 				assert.Equal(t, &reg3, info)
 				found = true
 				break
@@ -360,7 +365,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg4.ID {
+			if info.EntID == reg4.EntID {
 				assert.Equal(t, &reg4, info)
 				found = true
 				break
@@ -370,7 +375,7 @@ func getSubordinates(t *testing.T) {
 
 		found = false
 		for _, info := range infos {
-			if info.ID == reg5.ID {
+			if info.EntID == reg5.EntID {
 				assert.Equal(t, &reg5, info)
 				found = true
 				break

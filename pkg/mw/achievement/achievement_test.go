@@ -31,7 +31,7 @@ func init() {
 }
 
 var ret = &statementmwpb.Statement{
-	ID:                     uuid.NewString(),
+	EntID:                     uuid.NewString(),
 	AppID:                  uuid.NewString(),
 	UserID:                 uuid.NewString(),
 	DirectContributorID:    uuid.NewString(),

@@ -29,7 +29,7 @@ func init() {
 
 var (
 	ret = npool.InvitationCode{
-		ID:     uuid.NewString(),
+		EntID:  uuid.NewString(),
 		AppID:  uuid.NewString(),
 		UserID: uuid.NewString(),
 	}
@@ -50,6 +50,7 @@ func createInvitationCode(t *testing.T) {
 
 	info, err := handler.CreateInvitationCode(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, len(info.InvitationCode), codegenerator.InvitationCodeLen)
@@ -89,12 +90,12 @@ func getInvitationCode(t *testing.T) {
 
 func getInvitationCodes(t *testing.T) {
 	conds := &npool.Conds{
-		ID:             &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		EntID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		InvitationCode: &basetypes.StringVal{Op: cruder.EQ, Value: ret.InvitationCode},
 		Disabled:       &basetypes.BoolVal{Op: cruder.EQ, Value: ret.Disabled},
-		UserIDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		UserIDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},
 	}
 
 	handler, err := NewHandler(

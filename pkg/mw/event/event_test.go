@@ -32,7 +32,7 @@ func init() {
 
 var (
 	ret = npool.Event{
-		ID:             uuid.NewString(),
+		EntID:          uuid.NewString(),
 		AppID:          uuid.NewString(),
 		EventType:      basetypes.UsedFor_Signup,
 		EventTypeStr:   basetypes.UsedFor_Signup.String(),
@@ -95,6 +95,7 @@ func createEvent(t *testing.T) {
 
 	info, err := handler.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, info, &ret)
@@ -123,7 +124,7 @@ func updateEvent(t *testing.T) {
 func getEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 	)
 	assert.Nil(t, err)
 
@@ -135,8 +136,8 @@ func getEvent(t *testing.T) {
 
 func getEvents(t *testing.T) {
 	conds := &npool.Conds{
-		ID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		IDs:       &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		EntID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		EntIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.EventType)},
 		GoodID:    &basetypes.StringVal{Op: cruder.EQ, Value: *ret.GoodID},
