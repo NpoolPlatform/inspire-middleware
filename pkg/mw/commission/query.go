@@ -21,15 +21,26 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryCommission(cli *ent.Client) {
+func (h *queryHandler) queryCommission(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+
 	h.stmSelect = cli.
 		Commission.
 		Query().
 		Where(
-			entcommission.ID(*h.ID),
 			entcommission.DeletedAt(0),
 		).
 		Select()
+
+	if h.ID != nil {
+		h.stmSelect.Where(entcommission.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		h.stmSelect.Where(entcommission.EntID(*h.EntID))
+	}
+	return nil
 }
 
 func (h *queryHandler) queryCommissions(ctx context.Context, cli *ent.Client) error {
@@ -78,7 +89,9 @@ func (h *Handler) GetCommission(ctx context.Context) (*npool.Commission, error) 
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCommission(cli)
+		if err := handler.queryCommission(cli); err != nil {
+			return err
+		}
 		return handler.scan(ctx)
 	})
 	if err != nil {

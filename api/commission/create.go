@@ -23,7 +23,7 @@ func (s *Server) CreateCommission(ctx context.Context, in *npool.CreateCommissio
 	}
 	handler, err := commission1.NewHandler(
 		ctx,
-		commission1.WithID(req.ID, false),
+		commission1.WithEntID(req.EntID, false),
 		commission1.WithAppID(req.AppID, true),
 		commission1.WithUserID(req.UserID, true),
 		commission1.WithGoodID(req.GoodID, true),
