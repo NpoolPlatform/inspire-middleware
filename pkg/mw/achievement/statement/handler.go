@@ -31,11 +31,11 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string, must bool) func(context.Context, *Handler) error {
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return fmt.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -43,7 +43,7 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
-		h.ID = &_id
+		h.EntID = &_id
 		return nil
 	}
 }
@@ -345,12 +345,12 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 			}
 			var err error
 
-			if req.ID != nil {
-				id, err := uuid.Parse(*req.ID)
+			if req.EntID != nil {
+				id, err := uuid.Parse(*req.EntID)
 				if err != nil {
 					return err
 				}
-				_req.ID = &id
+				_req.EntID = &id
 			}
 
 			id1, err := uuid.Parse(*req.AppID)
@@ -463,35 +463,26 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nol
 		if conds == nil {
 			return nil
 		}
-		if conds.ID != nil {
-			id, err := uuid.Parse(conds.GetID().GetValue())
+		if conds.EntID != nil {
+			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.ID = &cruder.Cond{
-				Op:  conds.GetID().GetOp(),
-				Val: id,
-			}
+			h.Conds.EntID = &cruder.Cond{Op: conds.GetEntID().GetOp(), Val: id}
 		}
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
+			h.Conds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
 		}
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.UserID = &cruder.Cond{
-				Op:  conds.GetUserID().GetOp(),
-				Val: id,
-			}
+			h.Conds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 		}
 		if conds.UserIDs != nil {
 			ids := []uuid.UUID{}
@@ -502,86 +493,59 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nol
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.UserIDs = &cruder.Cond{
-				Op:  conds.GetUserIDs().GetOp(),
-				Val: ids,
-			}
+			h.Conds.UserIDs = &cruder.Cond{Op: conds.GetUserIDs().GetOp(), Val: ids}
 		}
 		if conds.DirectContributorID != nil {
 			id, err := uuid.Parse(conds.GetDirectContributorID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.DirectContributorID = &cruder.Cond{
-				Op:  conds.GetDirectContributorID().GetOp(),
-				Val: id,
-			}
+			h.Conds.DirectContributorID = &cruder.Cond{Op: conds.GetDirectContributorID().GetOp(), Val: id}
 		}
 		if conds.GoodID != nil {
 			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.GoodID = &cruder.Cond{
-				Op:  conds.GetGoodID().GetOp(),
-				Val: id,
-			}
+			h.Conds.GoodID = &cruder.Cond{Op: conds.GetGoodID().GetOp(), Val: id}
 		}
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op:  conds.GetAppGoodID().GetOp(),
-				Val: id,
-			}
+			h.Conds.AppGoodID = &cruder.Cond{Op: conds.GetAppGoodID().GetOp(), Val: id}
 		}
 		if conds.OrderID != nil {
 			id, err := uuid.Parse(conds.GetOrderID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.OrderID = &cruder.Cond{
-				Op:  conds.GetOrderID().GetOp(),
-				Val: id,
-			}
+			h.Conds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
 		}
 		if conds.SelfOrder != nil {
-			h.Conds.SelfOrder = &cruder.Cond{
-				Op:  conds.GetSelfOrder().GetOp(),
-				Val: conds.GetSelfOrder().GetValue(),
-			}
+			h.Conds.SelfOrder = &cruder.Cond{Op: conds.GetSelfOrder().GetOp(), Val: conds.GetSelfOrder().GetValue()}
 		}
 		if conds.PaymentID != nil {
 			id, err := uuid.Parse(conds.GetPaymentID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.PaymentID = &cruder.Cond{
-				Op:  conds.GetPaymentID().GetOp(),
-				Val: id,
-			}
+			h.Conds.PaymentID = &cruder.Cond{Op: conds.GetPaymentID().GetOp(), Val: id}
 		}
 		if conds.CoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.CoinTypeID = &cruder.Cond{
-				Op:  conds.GetCoinTypeID().GetOp(),
-				Val: id,
-			}
+			h.Conds.CoinTypeID = &cruder.Cond{Op: conds.GetCoinTypeID().GetOp(), Val: id}
 		}
 		if conds.PaymentCoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetPaymentCoinTypeID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.PaymentCoinTypeID = &cruder.Cond{
-				Op:  conds.GetPaymentCoinTypeID().GetOp(),
-				Val: id,
-			}
+			h.Conds.PaymentCoinTypeID = &cruder.Cond{Op: conds.GetPaymentCoinTypeID().GetOp(), Val: id}
 		}
 		return nil
 	}

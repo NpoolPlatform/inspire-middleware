@@ -167,8 +167,8 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	handler := &createHandler{
@@ -211,7 +211,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 	if req.Amount.Cmp(amount) != 0 {
-		return "", fmt.Errorf("mismatch statement")
+		return "", fmt.Errorf("mismatch amount")
 	}
 
 	commission, err := decimal.NewFromString(info.Commission)
@@ -219,7 +219,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 	if req.Commission.Cmp(commission) == 0 {
-		return info.ID, nil
+		return info.EntID, nil
 	}
 	if commission.Cmp(decimal.NewFromInt(0)) != 0 {
 		return "", fmt.Errorf("permission denied")
@@ -227,7 +227,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 
 	if _, err := tx.
 		Statement.
-		UpdateOneID(uuid.MustParse(info.ID)).
+		UpdateOneID(info.ID).
 		SetCommission(*req.Commission).
 		Save(ctx); err != nil {
 		return "", err
@@ -237,7 +237,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 
-	return info.ID, nil
+	return info.EntID, nil
 }
 
 func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, error) {
@@ -251,8 +251,8 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 		for _, req := range h.Reqs {
 			_f := func() error {
 				id := uuid.New()
-				if req.ID == nil {
-					req.ID = &id
+				if req.EntID == nil {
+					req.EntID = &id
 				}
 				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *req.AppID, *req.UserID, *req.OrderID)
 				if _, ok := statements[key]; ok {
@@ -296,7 +296,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 	}
 
 	h.Conds = &statementcrud.Conds{
-		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
+		EntIDs: &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	h.Limit = int32(len(ids))
 	infos, _, err := h.GetStatements(ctx)
