@@ -15,7 +15,7 @@ import (
 func (s *Server) GetCommission(ctx context.Context, in *npool.GetCommissionRequest) (*npool.GetCommissionResponse, error) {
 	handler, err := commission1.NewHandler(
 		ctx,
-		commission1.WithID(&in.ID, true),
+		commission1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
