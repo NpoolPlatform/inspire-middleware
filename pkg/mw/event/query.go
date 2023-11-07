@@ -23,7 +23,11 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryEvent(cli *ent.Client) {
+func (h *queryHandler) queryEvent(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+
 	h.stmSelect = cli.
 		Event.
 		Query().
@@ -32,6 +36,13 @@ func (h *queryHandler) queryEvent(cli *ent.Client) {
 			entevent.DeletedAt(0),
 		).
 		Select()
+	if h.ID != nil {
+		h.stmSelect.Where(entevent.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		h.stmSelect.Where(entevent.EntID(*h.EntID))
+	}
+	return nil
 }
 
 func (h *queryHandler) queryEvents(ctx context.Context, cli *ent.Client) error {
@@ -84,7 +95,9 @@ func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryEvent(cli)
+		if err := handler.queryEvent(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

@@ -14,6 +14,7 @@ import (
 )
 
 type Req struct {
+	ID             *uint32
 	EntID          *uuid.UUID
 	AppID          *uuid.UUID
 	EventType      *basetypes.UsedFor
@@ -28,6 +29,9 @@ type Req struct {
 }
 
 func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
+	if req.ID != nil {
+		c.SetID(*req.ID)
+	}
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}

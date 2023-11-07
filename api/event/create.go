@@ -24,7 +24,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(req.ID, false),
+		event1.WithEntID(req.EntID, false),
 		event1.WithAppID(req.AppID, true),
 		event1.WithEventType(req.EventType, true),
 		event1.WithCouponIDs(req.CouponIDs, false),

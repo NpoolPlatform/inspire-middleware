@@ -41,15 +41,15 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := eventcrud.CreateSet(
 			cli.Event.Create(),
 			&eventcrud.Req{
-				ID:             h.ID,
+				EntID:          h.EntID,
 				AppID:          h.AppID,
 				EventType:      h.EventType,
 				CouponIDs:      h.CouponIDs,
