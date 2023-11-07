@@ -264,7 +264,7 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},
@@ -646,7 +646,7 @@ func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},

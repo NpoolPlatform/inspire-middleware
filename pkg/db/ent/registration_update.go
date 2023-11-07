@@ -244,7 +244,7 @@ func (ru *RegistrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   registration.Table,
 			Columns: registration.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: registration.FieldID,
 			},
 		},
@@ -593,7 +593,7 @@ func (ruo *RegistrationUpdateOne) sqlSave(ctx context.Context) (_node *Registrat
 			Table:   registration.Table,
 			Columns: registration.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: registration.FieldID,
 			},
 		},

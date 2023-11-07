@@ -77,6 +77,4 @@ var (
 	DefaultInviterID func() uuid.UUID
 	// DefaultInviteeID holds the default value on creation for the "invitee_id" field.
 	DefaultInviteeID func() uuid.UUID
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )

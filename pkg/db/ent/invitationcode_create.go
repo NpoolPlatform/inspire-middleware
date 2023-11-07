@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -136,16 +135,8 @@ func (icc *InvitationCodeCreate) SetNillableDisabled(b *bool) *InvitationCodeCre
 }
 
 // SetID sets the "id" field.
-func (icc *InvitationCodeCreate) SetID(u uuid.UUID) *InvitationCodeCreate {
+func (icc *InvitationCodeCreate) SetID(u uint32) *InvitationCodeCreate {
 	icc.mutation.SetID(u)
-	return icc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (icc *InvitationCodeCreate) SetNillableID(u *uuid.UUID) *InvitationCodeCreate {
-	if u != nil {
-		icc.SetID(*u)
-	}
 	return icc
 }
 
@@ -278,13 +269,6 @@ func (icc *InvitationCodeCreate) defaults() error {
 		v := invitationcode.DefaultDisabled
 		icc.mutation.SetDisabled(v)
 	}
-	if _, ok := icc.mutation.ID(); !ok {
-		if invitationcode.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized invitationcode.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := invitationcode.DefaultID()
-		icc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -313,12 +297,9 @@ func (icc *InvitationCodeCreate) sqlSave(ctx context.Context) (*InvitationCode, 
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -329,7 +310,7 @@ func (icc *InvitationCodeCreate) createSpec() (*InvitationCode, *sqlgraph.Create
 		_spec = &sqlgraph.CreateSpec{
 			Table: invitationcode.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		}
@@ -337,7 +318,7 @@ func (icc *InvitationCodeCreate) createSpec() (*InvitationCode, *sqlgraph.Create
 	_spec.OnConflict = icc.conflict
 	if id, ok := icc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := icc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -822,12 +803,7 @@ func (u *InvitationCodeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: InvitationCodeUpsertOne.ID is not supported by MySQL driver. Use InvitationCodeUpsertOne.Exec instead")
-	}
+func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -836,7 +812,7 @@ func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *InvitationCodeUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *InvitationCodeUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -887,6 +863,10 @@ func (iccb *InvitationCodeCreateBulk) Save(ctx context.Context) ([]*InvitationCo
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

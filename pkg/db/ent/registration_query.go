@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
-	"github.com/google/uuid"
 )
 
 // RegistrationQuery is the builder for querying Registration entities.
@@ -87,8 +86,8 @@ func (rq *RegistrationQuery) FirstX(ctx context.Context) *Registration {
 
 // FirstID returns the first Registration ID from the query.
 // Returns a *NotFoundError when no Registration ID was found.
-func (rq *RegistrationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (rq *RegistrationQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = rq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (rq *RegistrationQuery) FirstID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (rq *RegistrationQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (rq *RegistrationQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := rq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (rq *RegistrationQuery) OnlyX(ctx context.Context) *Registration {
 // OnlyID is like Only, but returns the only Registration ID in the query.
 // Returns a *NotSingularError when more than one Registration ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (rq *RegistrationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (rq *RegistrationQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = rq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (rq *RegistrationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (rq *RegistrationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (rq *RegistrationQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := rq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (rq *RegistrationQuery) AllX(ctx context.Context) []*Registration {
 }
 
 // IDs executes the query and returns a list of Registration IDs.
-func (rq *RegistrationQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (rq *RegistrationQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := rq.Select(registration.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (rq *RegistrationQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (rq *RegistrationQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (rq *RegistrationQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := rq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (rq *RegistrationQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   registration.Table,
 			Columns: registration.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: registration.FieldID,
 			},
 		},

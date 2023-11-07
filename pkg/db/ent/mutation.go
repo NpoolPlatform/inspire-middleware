@@ -7252,7 +7252,7 @@ type InvitationCodeMutation struct {
 	config
 	op              Op
 	typ             string
-	id              *uuid.UUID
+	id              *uint32
 	created_at      *uint32
 	addcreated_at   *int32
 	updated_at      *uint32
@@ -7290,7 +7290,7 @@ func newInvitationCodeMutation(c config, op Op, opts ...invitationcodeOption) *I
 }
 
 // withInvitationCodeID sets the ID field of the mutation.
-func withInvitationCodeID(id uuid.UUID) invitationcodeOption {
+func withInvitationCodeID(id uint32) invitationcodeOption {
 	return func(m *InvitationCodeMutation) {
 		var (
 			err   error
@@ -7342,13 +7342,13 @@ func (m InvitationCodeMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of InvitationCode entities.
-func (m *InvitationCodeMutation) SetID(id uuid.UUID) {
+func (m *InvitationCodeMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *InvitationCodeMutation) ID() (id uuid.UUID, exists bool) {
+func (m *InvitationCodeMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -7359,12 +7359,12 @@ func (m *InvitationCodeMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *InvitationCodeMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *InvitationCodeMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -9023,7 +9023,7 @@ type RegistrationMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *uint32
 	created_at    *uint32
 	addcreated_at *int32
 	updated_at    *uint32
@@ -9060,7 +9060,7 @@ func newRegistrationMutation(c config, op Op, opts ...registrationOption) *Regis
 }
 
 // withRegistrationID sets the ID field of the mutation.
-func withRegistrationID(id uuid.UUID) registrationOption {
+func withRegistrationID(id uint32) registrationOption {
 	return func(m *RegistrationMutation) {
 		var (
 			err   error
@@ -9112,13 +9112,13 @@ func (m RegistrationMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Registration entities.
-func (m *RegistrationMutation) SetID(id uuid.UUID) {
+func (m *RegistrationMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *RegistrationMutation) ID() (id uuid.UUID, exists bool) {
+func (m *RegistrationMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -9129,12 +9129,12 @@ func (m *RegistrationMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *RegistrationMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *RegistrationMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

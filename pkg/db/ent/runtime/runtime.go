@@ -439,25 +439,21 @@ func init() {
 	// invitationcode.DefaultEntID holds the default value on creation for the ent_id field.
 	invitationcode.DefaultEntID = invitationcodeDescEntID.Default.(func() uuid.UUID)
 	// invitationcodeDescAppID is the schema descriptor for app_id field.
-	invitationcodeDescAppID := invitationcodeFields[1].Descriptor()
+	invitationcodeDescAppID := invitationcodeFields[0].Descriptor()
 	// invitationcode.DefaultAppID holds the default value on creation for the app_id field.
 	invitationcode.DefaultAppID = invitationcodeDescAppID.Default.(func() uuid.UUID)
 	// invitationcodeDescUserID is the schema descriptor for user_id field.
-	invitationcodeDescUserID := invitationcodeFields[2].Descriptor()
+	invitationcodeDescUserID := invitationcodeFields[1].Descriptor()
 	// invitationcode.DefaultUserID holds the default value on creation for the user_id field.
 	invitationcode.DefaultUserID = invitationcodeDescUserID.Default.(func() uuid.UUID)
 	// invitationcodeDescInvitationCode is the schema descriptor for invitation_code field.
-	invitationcodeDescInvitationCode := invitationcodeFields[3].Descriptor()
+	invitationcodeDescInvitationCode := invitationcodeFields[2].Descriptor()
 	// invitationcode.DefaultInvitationCode holds the default value on creation for the invitation_code field.
 	invitationcode.DefaultInvitationCode = invitationcodeDescInvitationCode.Default.(string)
 	// invitationcodeDescDisabled is the schema descriptor for disabled field.
-	invitationcodeDescDisabled := invitationcodeFields[4].Descriptor()
+	invitationcodeDescDisabled := invitationcodeFields[3].Descriptor()
 	// invitationcode.DefaultDisabled holds the default value on creation for the disabled field.
 	invitationcode.DefaultDisabled = invitationcodeDescDisabled.Default.(bool)
-	// invitationcodeDescID is the schema descriptor for id field.
-	invitationcodeDescID := invitationcodeFields[0].Descriptor()
-	// invitationcode.DefaultID holds the default value on creation for the id field.
-	invitationcode.DefaultID = invitationcodeDescID.Default.(func() uuid.UUID)
 	pubsubmessageMixin := schema.PubsubMessage{}.Mixin()
 	pubsubmessage.Policy = privacy.NewPolicies(pubsubmessageMixin[0], schema.PubsubMessage{})
 	pubsubmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -541,21 +537,17 @@ func init() {
 	// registration.DefaultEntID holds the default value on creation for the ent_id field.
 	registration.DefaultEntID = registrationDescEntID.Default.(func() uuid.UUID)
 	// registrationDescAppID is the schema descriptor for app_id field.
-	registrationDescAppID := registrationFields[1].Descriptor()
+	registrationDescAppID := registrationFields[0].Descriptor()
 	// registration.DefaultAppID holds the default value on creation for the app_id field.
 	registration.DefaultAppID = registrationDescAppID.Default.(func() uuid.UUID)
 	// registrationDescInviterID is the schema descriptor for inviter_id field.
-	registrationDescInviterID := registrationFields[2].Descriptor()
+	registrationDescInviterID := registrationFields[1].Descriptor()
 	// registration.DefaultInviterID holds the default value on creation for the inviter_id field.
 	registration.DefaultInviterID = registrationDescInviterID.Default.(func() uuid.UUID)
 	// registrationDescInviteeID is the schema descriptor for invitee_id field.
-	registrationDescInviteeID := registrationFields[3].Descriptor()
+	registrationDescInviteeID := registrationFields[2].Descriptor()
 	// registration.DefaultInviteeID holds the default value on creation for the invitee_id field.
 	registration.DefaultInviteeID = registrationDescInviteeID.Default.(func() uuid.UUID)
-	// registrationDescID is the schema descriptor for id field.
-	registrationDescID := registrationFields[0].Descriptor()
-	// registration.DefaultID holds the default value on creation for the id field.
-	registration.DefaultID = registrationDescID.Default.(func() uuid.UUID)
 	statementMixin := schema.Statement{}.Mixin()
 	statement.Policy = privacy.NewPolicies(statementMixin[0], schema.Statement{})
 	statement.Hooks[0] = func(next ent.Mutator) ent.Mutator {

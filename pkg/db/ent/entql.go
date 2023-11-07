@@ -167,7 +167,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},
@@ -209,7 +209,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   registration.Table,
 			Columns: registration.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: registration.FieldID,
 			},
 		},
@@ -876,8 +876,8 @@ func (f *InvitationCodeFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *InvitationCodeFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *InvitationCodeFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(invitationcode.FieldID))
 }
 
@@ -1036,8 +1036,8 @@ func (f *RegistrationFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *RegistrationFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *RegistrationFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(registration.FieldID))
 }
 

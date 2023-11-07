@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -122,16 +121,8 @@ func (rc *RegistrationCreate) SetNillableInviteeID(u *uuid.UUID) *RegistrationCr
 }
 
 // SetID sets the "id" field.
-func (rc *RegistrationCreate) SetID(u uuid.UUID) *RegistrationCreate {
+func (rc *RegistrationCreate) SetID(u uint32) *RegistrationCreate {
 	rc.mutation.SetID(u)
-	return rc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (rc *RegistrationCreate) SetNillableID(u *uuid.UUID) *RegistrationCreate {
-	if u != nil {
-		rc.SetID(*u)
-	}
 	return rc
 }
 
@@ -263,13 +254,6 @@ func (rc *RegistrationCreate) defaults() error {
 		v := registration.DefaultInviteeID()
 		rc.mutation.SetInviteeID(v)
 	}
-	if _, ok := rc.mutation.ID(); !ok {
-		if registration.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized registration.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := registration.DefaultID()
-		rc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -298,12 +282,9 @@ func (rc *RegistrationCreate) sqlSave(ctx context.Context) (*Registration, error
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -314,7 +295,7 @@ func (rc *RegistrationCreate) createSpec() (*Registration, *sqlgraph.CreateSpec)
 		_spec = &sqlgraph.CreateSpec{
 			Table: registration.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: registration.FieldID,
 			},
 		}
@@ -322,7 +303,7 @@ func (rc *RegistrationCreate) createSpec() (*Registration, *sqlgraph.CreateSpec)
 	_spec.OnConflict = rc.conflict
 	if id, ok := rc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -760,12 +741,7 @@ func (u *RegistrationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *RegistrationUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: RegistrationUpsertOne.ID is not supported by MySQL driver. Use RegistrationUpsertOne.Exec instead")
-	}
+func (u *RegistrationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -774,7 +750,7 @@ func (u *RegistrationUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *RegistrationUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *RegistrationUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -825,6 +801,10 @@ func (rcb *RegistrationCreateBulk) Save(ctx context.Context) ([]*Registration, e
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

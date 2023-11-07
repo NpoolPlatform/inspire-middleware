@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // InvitationCodeQuery is the builder for querying InvitationCode entities.
@@ -87,8 +86,8 @@ func (icq *InvitationCodeQuery) FirstX(ctx context.Context) *InvitationCode {
 
 // FirstID returns the first InvitationCode ID from the query.
 // Returns a *NotFoundError when no InvitationCode ID was found.
-func (icq *InvitationCodeQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (icq *InvitationCodeQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = icq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (icq *InvitationCodeQuery) FirstID(ctx context.Context) (id uuid.UUID, err 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (icq *InvitationCodeQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (icq *InvitationCodeQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := icq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (icq *InvitationCodeQuery) OnlyX(ctx context.Context) *InvitationCode {
 // OnlyID is like Only, but returns the only InvitationCode ID in the query.
 // Returns a *NotSingularError when more than one InvitationCode ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (icq *InvitationCodeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (icq *InvitationCodeQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = icq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (icq *InvitationCodeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err e
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (icq *InvitationCodeQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (icq *InvitationCodeQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := icq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (icq *InvitationCodeQuery) AllX(ctx context.Context) []*InvitationCode {
 }
 
 // IDs executes the query and returns a list of InvitationCode IDs.
-func (icq *InvitationCodeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (icq *InvitationCodeQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := icq.Select(invitationcode.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (icq *InvitationCodeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (icq *InvitationCodeQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (icq *InvitationCodeQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := icq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (icq *InvitationCodeQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},

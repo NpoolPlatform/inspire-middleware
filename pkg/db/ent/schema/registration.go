@@ -26,10 +26,6 @@ func (Registration) Mixin() []ent.Mixin {
 func (Registration) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("id", uuid.UUID{}).
-			Default(uuid.New).
-			Unique(),
-		field.
 			UUID("app_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

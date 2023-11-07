@@ -675,7 +675,7 @@ func (c *InvitationCodeClient) UpdateOne(ic *InvitationCode) *InvitationCodeUpda
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *InvitationCodeClient) UpdateOneID(id uuid.UUID) *InvitationCodeUpdateOne {
+func (c *InvitationCodeClient) UpdateOneID(id uint32) *InvitationCodeUpdateOne {
 	mutation := newInvitationCodeMutation(c.config, OpUpdateOne, withInvitationCodeID(id))
 	return &InvitationCodeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -692,7 +692,7 @@ func (c *InvitationCodeClient) DeleteOne(ic *InvitationCode) *InvitationCodeDele
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *InvitationCodeClient) DeleteOneID(id uuid.UUID) *InvitationCodeDeleteOne {
+func (c *InvitationCodeClient) DeleteOneID(id uint32) *InvitationCodeDeleteOne {
 	builder := c.Delete().Where(invitationcode.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -707,12 +707,12 @@ func (c *InvitationCodeClient) Query() *InvitationCodeQuery {
 }
 
 // Get returns a InvitationCode entity by its id.
-func (c *InvitationCodeClient) Get(ctx context.Context, id uuid.UUID) (*InvitationCode, error) {
+func (c *InvitationCodeClient) Get(ctx context.Context, id uint32) (*InvitationCode, error) {
 	return c.Query().Where(invitationcode.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *InvitationCodeClient) GetX(ctx context.Context, id uuid.UUID) *InvitationCode {
+func (c *InvitationCodeClient) GetX(ctx context.Context, id uint32) *InvitationCode {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -857,7 +857,7 @@ func (c *RegistrationClient) UpdateOne(r *Registration) *RegistrationUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *RegistrationClient) UpdateOneID(id uuid.UUID) *RegistrationUpdateOne {
+func (c *RegistrationClient) UpdateOneID(id uint32) *RegistrationUpdateOne {
 	mutation := newRegistrationMutation(c.config, OpUpdateOne, withRegistrationID(id))
 	return &RegistrationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -874,7 +874,7 @@ func (c *RegistrationClient) DeleteOne(r *Registration) *RegistrationDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *RegistrationClient) DeleteOneID(id uuid.UUID) *RegistrationDeleteOne {
+func (c *RegistrationClient) DeleteOneID(id uint32) *RegistrationDeleteOne {
 	builder := c.Delete().Where(registration.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -889,12 +889,12 @@ func (c *RegistrationClient) Query() *RegistrationQuery {
 }
 
 // Get returns a Registration entity by its id.
-func (c *RegistrationClient) Get(ctx context.Context, id uuid.UUID) (*Registration, error) {
+func (c *RegistrationClient) Get(ctx context.Context, id uint32) (*Registration, error) {
 	return c.Query().Where(registration.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *RegistrationClient) GetX(ctx context.Context, id uuid.UUID) *Registration {
+func (c *RegistrationClient) GetX(ctx context.Context, id uint32) *Registration {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

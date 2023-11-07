@@ -82,6 +82,4 @@ var (
 	DefaultInvitationCode string
 	// DefaultDisabled holds the default value on creation for the "disabled" field.
 	DefaultDisabled bool
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )
