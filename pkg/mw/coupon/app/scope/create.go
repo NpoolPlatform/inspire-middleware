@@ -18,17 +18,6 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) verifyCoupon(ctx context.Context, tx *ent.Tx) error {
-	coupon, err := tx.Coupon.Get(ctx, *h.CouponID)
-	if err != nil {
-		return err
-	}
-	if coupon == nil {
-		return fmt.Errorf("coupon not found %v", *h.CouponID)
-	}
-	return nil
-}
-
 func (h *createHandler) createAppGoodScope(ctx context.Context, tx *ent.Tx) error {
 	if _, err := appgoodscopecrud.CreateSet(
 		tx.AppGoodScope.Create(),
@@ -91,9 +80,6 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.verifyCoupon(ctx, tx); err != nil {
-			return err
-		}
 		if err := handler.createAppGoodScope(ctx, tx); err != nil {
 			return err
 		}
