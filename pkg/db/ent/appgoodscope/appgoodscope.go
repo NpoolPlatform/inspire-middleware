@@ -20,8 +20,6 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
-	// FieldScopeID holds the string denoting the scope_id field in the database.
-	FieldScopeID = "scope_id"
 	// FieldAppGoodID holds the string denoting the app_good_id field in the database.
 	FieldAppGoodID = "app_good_id"
 	// FieldCouponID holds the string denoting the coupon_id field in the database.
@@ -39,7 +37,6 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldAppID,
-	FieldScopeID,
 	FieldAppGoodID,
 	FieldCouponID,
 	FieldCouponScope,
@@ -74,8 +71,6 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
-	// DefaultScopeID holds the default value on creation for the "scope_id" field.
-	DefaultScopeID func() uuid.UUID
 	// DefaultAppGoodID holds the default value on creation for the "app_good_id" field.
 	DefaultAppGoodID func() uuid.UUID
 	// DefaultCouponID holds the default value on creation for the "coupon_id" field.

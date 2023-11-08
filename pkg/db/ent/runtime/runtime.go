@@ -136,20 +136,16 @@ func init() {
 	appgoodscopeDescAppID := appgoodscopeFields[1].Descriptor()
 	// appgoodscope.DefaultAppID holds the default value on creation for the app_id field.
 	appgoodscope.DefaultAppID = appgoodscopeDescAppID.Default.(func() uuid.UUID)
-	// appgoodscopeDescScopeID is the schema descriptor for scope_id field.
-	appgoodscopeDescScopeID := appgoodscopeFields[2].Descriptor()
-	// appgoodscope.DefaultScopeID holds the default value on creation for the scope_id field.
-	appgoodscope.DefaultScopeID = appgoodscopeDescScopeID.Default.(func() uuid.UUID)
 	// appgoodscopeDescAppGoodID is the schema descriptor for app_good_id field.
-	appgoodscopeDescAppGoodID := appgoodscopeFields[3].Descriptor()
+	appgoodscopeDescAppGoodID := appgoodscopeFields[2].Descriptor()
 	// appgoodscope.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	appgoodscope.DefaultAppGoodID = appgoodscopeDescAppGoodID.Default.(func() uuid.UUID)
 	// appgoodscopeDescCouponID is the schema descriptor for coupon_id field.
-	appgoodscopeDescCouponID := appgoodscopeFields[4].Descriptor()
+	appgoodscopeDescCouponID := appgoodscopeFields[3].Descriptor()
 	// appgoodscope.DefaultCouponID holds the default value on creation for the coupon_id field.
 	appgoodscope.DefaultCouponID = appgoodscopeDescCouponID.Default.(func() uuid.UUID)
 	// appgoodscopeDescCouponScope is the schema descriptor for coupon_scope field.
-	appgoodscopeDescCouponScope := appgoodscopeFields[5].Descriptor()
+	appgoodscopeDescCouponScope := appgoodscopeFields[4].Descriptor()
 	// appgoodscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	appgoodscope.DefaultCouponScope = appgoodscopeDescCouponScope.Default.(string)
 	// appgoodscopeDescID is the schema descriptor for id field.

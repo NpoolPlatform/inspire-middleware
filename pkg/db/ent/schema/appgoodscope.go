@@ -33,12 +33,6 @@ func (AppGoodScope) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
-			UUID("scope_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
 			UUID("app_good_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

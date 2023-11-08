@@ -79,20 +79,6 @@ func (agsc *AppGoodScopeCreate) SetNillableAppID(u *uuid.UUID) *AppGoodScopeCrea
 	return agsc
 }
 
-// SetScopeID sets the "scope_id" field.
-func (agsc *AppGoodScopeCreate) SetScopeID(u uuid.UUID) *AppGoodScopeCreate {
-	agsc.mutation.SetScopeID(u)
-	return agsc
-}
-
-// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
-func (agsc *AppGoodScopeCreate) SetNillableScopeID(u *uuid.UUID) *AppGoodScopeCreate {
-	if u != nil {
-		agsc.SetScopeID(*u)
-	}
-	return agsc
-}
-
 // SetAppGoodID sets the "app_good_id" field.
 func (agsc *AppGoodScopeCreate) SetAppGoodID(u uuid.UUID) *AppGoodScopeCreate {
 	agsc.mutation.SetAppGoodID(u)
@@ -256,13 +242,6 @@ func (agsc *AppGoodScopeCreate) defaults() error {
 		v := appgoodscope.DefaultAppID()
 		agsc.mutation.SetAppID(v)
 	}
-	if _, ok := agsc.mutation.ScopeID(); !ok {
-		if appgoodscope.DefaultScopeID == nil {
-			return fmt.Errorf("ent: uninitialized appgoodscope.DefaultScopeID (forgotten import ent/runtime?)")
-		}
-		v := appgoodscope.DefaultScopeID()
-		agsc.mutation.SetScopeID(v)
-	}
 	if _, ok := agsc.mutation.AppGoodID(); !ok {
 		if appgoodscope.DefaultAppGoodID == nil {
 			return fmt.Errorf("ent: uninitialized appgoodscope.DefaultAppGoodID (forgotten import ent/runtime?)")
@@ -370,14 +349,6 @@ func (agsc *AppGoodScopeCreate) createSpec() (*AppGoodScope, *sqlgraph.CreateSpe
 			Column: appgoodscope.FieldAppID,
 		})
 		_node.AppID = value
-	}
-	if value, ok := agsc.mutation.ScopeID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: appgoodscope.FieldScopeID,
-		})
-		_node.ScopeID = value
 	}
 	if value, ok := agsc.mutation.AppGoodID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -526,24 +497,6 @@ func (u *AppGoodScopeUpsert) UpdateAppID() *AppGoodScopeUpsert {
 // ClearAppID clears the value of the "app_id" field.
 func (u *AppGoodScopeUpsert) ClearAppID() *AppGoodScopeUpsert {
 	u.SetNull(appgoodscope.FieldAppID)
-	return u
-}
-
-// SetScopeID sets the "scope_id" field.
-func (u *AppGoodScopeUpsert) SetScopeID(v uuid.UUID) *AppGoodScopeUpsert {
-	u.Set(appgoodscope.FieldScopeID, v)
-	return u
-}
-
-// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
-func (u *AppGoodScopeUpsert) UpdateScopeID() *AppGoodScopeUpsert {
-	u.SetExcluded(appgoodscope.FieldScopeID)
-	return u
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (u *AppGoodScopeUpsert) ClearScopeID() *AppGoodScopeUpsert {
-	u.SetNull(appgoodscope.FieldScopeID)
 	return u
 }
 
@@ -732,27 +685,6 @@ func (u *AppGoodScopeUpsertOne) UpdateAppID() *AppGoodScopeUpsertOne {
 func (u *AppGoodScopeUpsertOne) ClearAppID() *AppGoodScopeUpsertOne {
 	return u.Update(func(s *AppGoodScopeUpsert) {
 		s.ClearAppID()
-	})
-}
-
-// SetScopeID sets the "scope_id" field.
-func (u *AppGoodScopeUpsertOne) SetScopeID(v uuid.UUID) *AppGoodScopeUpsertOne {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.SetScopeID(v)
-	})
-}
-
-// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
-func (u *AppGoodScopeUpsertOne) UpdateScopeID() *AppGoodScopeUpsertOne {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.UpdateScopeID()
-	})
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (u *AppGoodScopeUpsertOne) ClearScopeID() *AppGoodScopeUpsertOne {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.ClearScopeID()
 	})
 }
 
@@ -1116,27 +1048,6 @@ func (u *AppGoodScopeUpsertBulk) UpdateAppID() *AppGoodScopeUpsertBulk {
 func (u *AppGoodScopeUpsertBulk) ClearAppID() *AppGoodScopeUpsertBulk {
 	return u.Update(func(s *AppGoodScopeUpsert) {
 		s.ClearAppID()
-	})
-}
-
-// SetScopeID sets the "scope_id" field.
-func (u *AppGoodScopeUpsertBulk) SetScopeID(v uuid.UUID) *AppGoodScopeUpsertBulk {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.SetScopeID(v)
-	})
-}
-
-// UpdateScopeID sets the "scope_id" field to the value that was provided on create.
-func (u *AppGoodScopeUpsertBulk) UpdateScopeID() *AppGoodScopeUpsertBulk {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.UpdateScopeID()
-	})
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (u *AppGoodScopeUpsertBulk) ClearScopeID() *AppGoodScopeUpsertBulk {
-	return u.Update(func(s *AppGoodScopeUpsert) {
-		s.ClearScopeID()
 	})
 }
 

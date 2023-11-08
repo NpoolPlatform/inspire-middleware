@@ -66,7 +66,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appgoodscope.FieldUpdatedAt:   {Type: field.TypeUint32, Column: appgoodscope.FieldUpdatedAt},
 			appgoodscope.FieldDeletedAt:   {Type: field.TypeUint32, Column: appgoodscope.FieldDeletedAt},
 			appgoodscope.FieldAppID:       {Type: field.TypeUUID, Column: appgoodscope.FieldAppID},
-			appgoodscope.FieldScopeID:     {Type: field.TypeUUID, Column: appgoodscope.FieldScopeID},
 			appgoodscope.FieldAppGoodID:   {Type: field.TypeUUID, Column: appgoodscope.FieldAppGoodID},
 			appgoodscope.FieldCouponID:    {Type: field.TypeUUID, Column: appgoodscope.FieldCouponID},
 			appgoodscope.FieldCouponScope: {Type: field.TypeString, Column: appgoodscope.FieldCouponScope},
@@ -470,11 +469,6 @@ func (f *AppGoodScopeFilter) WhereDeletedAt(p entql.Uint32P) {
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
 func (f *AppGoodScopeFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(appgoodscope.FieldAppID))
-}
-
-// WhereScopeID applies the entql [16]byte predicate on the scope_id field.
-func (f *AppGoodScopeFilter) WhereScopeID(p entql.ValueP) {
-	f.Where(p.Field(appgoodscope.FieldScopeID))
 }
 
 // WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.

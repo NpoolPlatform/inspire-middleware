@@ -107,13 +107,6 @@ func AppID(v uuid.UUID) predicate.AppGoodScope {
 	})
 }
 
-// ScopeID applies equality check predicate on the "scope_id" field. It's identical to ScopeIDEQ.
-func ScopeID(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScopeID), v))
-	})
-}
-
 // AppGoodID applies equality check predicate on the "app_good_id" field. It's identical to AppGoodIDEQ.
 func AppGoodID(v uuid.UUID) predicate.AppGoodScope {
 	return predicate.AppGoodScope(func(s *sql.Selector) {
@@ -402,84 +395,6 @@ func AppIDIsNil() predicate.AppGoodScope {
 func AppIDNotNil() predicate.AppGoodScope {
 	return predicate.AppGoodScope(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldAppID)))
-	})
-}
-
-// ScopeIDEQ applies the EQ predicate on the "scope_id" field.
-func ScopeIDEQ(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDNEQ applies the NEQ predicate on the "scope_id" field.
-func ScopeIDNEQ(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDIn applies the In predicate on the "scope_id" field.
-func ScopeIDIn(vs ...uuid.UUID) predicate.AppGoodScope {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldScopeID), v...))
-	})
-}
-
-// ScopeIDNotIn applies the NotIn predicate on the "scope_id" field.
-func ScopeIDNotIn(vs ...uuid.UUID) predicate.AppGoodScope {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldScopeID), v...))
-	})
-}
-
-// ScopeIDGT applies the GT predicate on the "scope_id" field.
-func ScopeIDGT(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDGTE applies the GTE predicate on the "scope_id" field.
-func ScopeIDGTE(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDLT applies the LT predicate on the "scope_id" field.
-func ScopeIDLT(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDLTE applies the LTE predicate on the "scope_id" field.
-func ScopeIDLTE(v uuid.UUID) predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldScopeID), v))
-	})
-}
-
-// ScopeIDIsNil applies the IsNil predicate on the "scope_id" field.
-func ScopeIDIsNil() predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldScopeID)))
-	})
-}
-
-// ScopeIDNotNil applies the NotNil predicate on the "scope_id" field.
-func ScopeIDNotNil() predicate.AppGoodScope {
-	return predicate.AppGoodScope(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldScopeID)))
 	})
 }
 

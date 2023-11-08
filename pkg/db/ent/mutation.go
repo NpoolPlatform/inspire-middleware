@@ -1394,7 +1394,6 @@ type AppGoodScopeMutation struct {
 	deleted_at    *uint32
 	adddeleted_at *int32
 	app_id        *uuid.UUID
-	scope_id      *uuid.UUID
 	app_good_id   *uuid.UUID
 	coupon_id     *uuid.UUID
 	coupon_scope  *string
@@ -1725,55 +1724,6 @@ func (m *AppGoodScopeMutation) ResetAppID() {
 	delete(m.clearedFields, appgoodscope.FieldAppID)
 }
 
-// SetScopeID sets the "scope_id" field.
-func (m *AppGoodScopeMutation) SetScopeID(u uuid.UUID) {
-	m.scope_id = &u
-}
-
-// ScopeID returns the value of the "scope_id" field in the mutation.
-func (m *AppGoodScopeMutation) ScopeID() (r uuid.UUID, exists bool) {
-	v := m.scope_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldScopeID returns the old "scope_id" field's value of the AppGoodScope entity.
-// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppGoodScopeMutation) OldScopeID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldScopeID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldScopeID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldScopeID: %w", err)
-	}
-	return oldValue.ScopeID, nil
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (m *AppGoodScopeMutation) ClearScopeID() {
-	m.scope_id = nil
-	m.clearedFields[appgoodscope.FieldScopeID] = struct{}{}
-}
-
-// ScopeIDCleared returns if the "scope_id" field was cleared in this mutation.
-func (m *AppGoodScopeMutation) ScopeIDCleared() bool {
-	_, ok := m.clearedFields[appgoodscope.FieldScopeID]
-	return ok
-}
-
-// ResetScopeID resets all changes to the "scope_id" field.
-func (m *AppGoodScopeMutation) ResetScopeID() {
-	m.scope_id = nil
-	delete(m.clearedFields, appgoodscope.FieldScopeID)
-}
-
 // SetAppGoodID sets the "app_good_id" field.
 func (m *AppGoodScopeMutation) SetAppGoodID(u uuid.UUID) {
 	m.app_good_id = &u
@@ -1940,7 +1890,7 @@ func (m *AppGoodScopeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppGoodScopeMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, appgoodscope.FieldCreatedAt)
 	}
@@ -1952,9 +1902,6 @@ func (m *AppGoodScopeMutation) Fields() []string {
 	}
 	if m.app_id != nil {
 		fields = append(fields, appgoodscope.FieldAppID)
-	}
-	if m.scope_id != nil {
-		fields = append(fields, appgoodscope.FieldScopeID)
 	}
 	if m.app_good_id != nil {
 		fields = append(fields, appgoodscope.FieldAppGoodID)
@@ -1981,8 +1928,6 @@ func (m *AppGoodScopeMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case appgoodscope.FieldAppID:
 		return m.AppID()
-	case appgoodscope.FieldScopeID:
-		return m.ScopeID()
 	case appgoodscope.FieldAppGoodID:
 		return m.AppGoodID()
 	case appgoodscope.FieldCouponID:
@@ -2006,8 +1951,6 @@ func (m *AppGoodScopeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDeletedAt(ctx)
 	case appgoodscope.FieldAppID:
 		return m.OldAppID(ctx)
-	case appgoodscope.FieldScopeID:
-		return m.OldScopeID(ctx)
 	case appgoodscope.FieldAppGoodID:
 		return m.OldAppGoodID(ctx)
 	case appgoodscope.FieldCouponID:
@@ -2050,13 +1993,6 @@ func (m *AppGoodScopeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
-		return nil
-	case appgoodscope.FieldScopeID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetScopeID(v)
 		return nil
 	case appgoodscope.FieldAppGoodID:
 		v, ok := value.(uuid.UUID)
@@ -2151,9 +2087,6 @@ func (m *AppGoodScopeMutation) ClearedFields() []string {
 	if m.FieldCleared(appgoodscope.FieldAppID) {
 		fields = append(fields, appgoodscope.FieldAppID)
 	}
-	if m.FieldCleared(appgoodscope.FieldScopeID) {
-		fields = append(fields, appgoodscope.FieldScopeID)
-	}
 	if m.FieldCleared(appgoodscope.FieldAppGoodID) {
 		fields = append(fields, appgoodscope.FieldAppGoodID)
 	}
@@ -2179,9 +2112,6 @@ func (m *AppGoodScopeMutation) ClearField(name string) error {
 	switch name {
 	case appgoodscope.FieldAppID:
 		m.ClearAppID()
-		return nil
-	case appgoodscope.FieldScopeID:
-		m.ClearScopeID()
 		return nil
 	case appgoodscope.FieldAppGoodID:
 		m.ClearAppGoodID()
@@ -2211,9 +2141,6 @@ func (m *AppGoodScopeMutation) ResetField(name string) error {
 		return nil
 	case appgoodscope.FieldAppID:
 		m.ResetAppID()
-		return nil
-	case appgoodscope.FieldScopeID:
-		m.ResetScopeID()
 		return nil
 	case appgoodscope.FieldAppGoodID:
 		m.ResetAppGoodID()

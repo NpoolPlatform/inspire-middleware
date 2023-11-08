@@ -104,26 +104,6 @@ func (agsu *AppGoodScopeUpdate) ClearAppID() *AppGoodScopeUpdate {
 	return agsu
 }
 
-// SetScopeID sets the "scope_id" field.
-func (agsu *AppGoodScopeUpdate) SetScopeID(u uuid.UUID) *AppGoodScopeUpdate {
-	agsu.mutation.SetScopeID(u)
-	return agsu
-}
-
-// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
-func (agsu *AppGoodScopeUpdate) SetNillableScopeID(u *uuid.UUID) *AppGoodScopeUpdate {
-	if u != nil {
-		agsu.SetScopeID(*u)
-	}
-	return agsu
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (agsu *AppGoodScopeUpdate) ClearScopeID() *AppGoodScopeUpdate {
-	agsu.mutation.ClearScopeID()
-	return agsu
-}
-
 // SetAppGoodID sets the "app_good_id" field.
 func (agsu *AppGoodScopeUpdate) SetAppGoodID(u uuid.UUID) *AppGoodScopeUpdate {
 	agsu.mutation.SetAppGoodID(u)
@@ -337,19 +317,6 @@ func (agsu *AppGoodScopeUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: appgoodscope.FieldAppID,
 		})
 	}
-	if value, ok := agsu.mutation.ScopeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: appgoodscope.FieldScopeID,
-		})
-	}
-	if agsu.mutation.ScopeIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: appgoodscope.FieldScopeID,
-		})
-	}
 	if value, ok := agsu.mutation.AppGoodID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -482,26 +449,6 @@ func (agsuo *AppGoodScopeUpdateOne) SetNillableAppID(u *uuid.UUID) *AppGoodScope
 // ClearAppID clears the value of the "app_id" field.
 func (agsuo *AppGoodScopeUpdateOne) ClearAppID() *AppGoodScopeUpdateOne {
 	agsuo.mutation.ClearAppID()
-	return agsuo
-}
-
-// SetScopeID sets the "scope_id" field.
-func (agsuo *AppGoodScopeUpdateOne) SetScopeID(u uuid.UUID) *AppGoodScopeUpdateOne {
-	agsuo.mutation.SetScopeID(u)
-	return agsuo
-}
-
-// SetNillableScopeID sets the "scope_id" field if the given value is not nil.
-func (agsuo *AppGoodScopeUpdateOne) SetNillableScopeID(u *uuid.UUID) *AppGoodScopeUpdateOne {
-	if u != nil {
-		agsuo.SetScopeID(*u)
-	}
-	return agsuo
-}
-
-// ClearScopeID clears the value of the "scope_id" field.
-func (agsuo *AppGoodScopeUpdateOne) ClearScopeID() *AppGoodScopeUpdateOne {
-	agsuo.mutation.ClearScopeID()
 	return agsuo
 }
 
@@ -746,19 +693,6 @@ func (agsuo *AppGoodScopeUpdateOne) sqlSave(ctx context.Context) (_node *AppGood
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: appgoodscope.FieldAppID,
-		})
-	}
-	if value, ok := agsuo.mutation.ScopeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: appgoodscope.FieldScopeID,
-		})
-	}
-	if agsuo.mutation.ScopeIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: appgoodscope.FieldScopeID,
 		})
 	}
 	if value, ok := agsuo.mutation.AppGoodID(); ok {

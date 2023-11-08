@@ -24,8 +24,6 @@ type AppGoodScope struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
-	// ScopeID holds the value of the "scope_id" field.
-	ScopeID uuid.UUID `json:"scope_id,omitempty"`
 	// AppGoodID holds the value of the "app_good_id" field.
 	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// CouponID holds the value of the "coupon_id" field.
@@ -43,7 +41,7 @@ func (*AppGoodScope) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case appgoodscope.FieldCouponScope:
 			values[i] = new(sql.NullString)
-		case appgoodscope.FieldID, appgoodscope.FieldAppID, appgoodscope.FieldScopeID, appgoodscope.FieldAppGoodID, appgoodscope.FieldCouponID:
+		case appgoodscope.FieldID, appgoodscope.FieldAppID, appgoodscope.FieldAppGoodID, appgoodscope.FieldCouponID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type AppGoodScope", columns[i])
@@ -89,12 +87,6 @@ func (ags *AppGoodScope) assignValues(columns []string, values []interface{}) er
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value != nil {
 				ags.AppID = *value
-			}
-		case appgoodscope.FieldScopeID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field scope_id", values[i])
-			} else if value != nil {
-				ags.ScopeID = *value
 			}
 		case appgoodscope.FieldAppGoodID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -153,9 +145,6 @@ func (ags *AppGoodScope) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", ags.AppID))
-	builder.WriteString(", ")
-	builder.WriteString("scope_id=")
-	builder.WriteString(fmt.Sprintf("%v", ags.ScopeID))
 	builder.WriteString(", ")
 	builder.WriteString("app_good_id=")
 	builder.WriteString(fmt.Sprintf("%v", ags.AppGoodID))
