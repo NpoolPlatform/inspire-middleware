@@ -98,26 +98,33 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 }
 
 func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
+	if len(h.Reqs) == 0 {
+		return false, nil
+	}
+
 	handler := &verifyHandler{
 		Handler: h,
 	}
-	availables := []bool{}
+	available := []bool{}
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
 			_fn := func() error {
 				if *req.CouponScope == types.CouponScope_Whitelist {
 					valid, err := handler.verifyWhitelist(ctx, tx, req)
-					availables = append(availables, valid)
+					available = append(available, valid)
 					if err != nil {
 						return err
 					}
 				}
 				if *req.CouponScope == types.CouponScope_Blacklist {
 					valid, err := handler.verifyBlacklist(ctx, tx, req)
-					availables = append(availables, valid)
+					available = append(available, valid)
 					if err != nil {
 						return err
 					}
+				}
+				if *req.CouponScope == types.CouponScope_AllGood {
+					available = append(available, true)
 				}
 				return nil
 			}
@@ -128,9 +135,9 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 		return nil
 	})
 
-	available := true
-	for _, val := range availables {
-		available = available && val
+	_available := true
+	for _, val := range available {
+		_available = _available && val
 	}
-	return available, err
+	return _available, err
 }

@@ -201,6 +201,7 @@ func WithReqs(reqs []*npool.ScopeReq, must bool) func(context.Context, *Handler)
 				switch *req.CouponScope {
 				case types.CouponScope_Blacklist:
 				case types.CouponScope_Whitelist:
+				case types.CouponScope_AllGood:
 				default:
 					return fmt.Errorf("invalid couponscope")
 				}
@@ -212,6 +213,7 @@ func WithReqs(reqs []*npool.ScopeReq, must bool) func(context.Context, *Handler)
 		return nil
 	}
 }
+
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &appgoodscopecrud.Conds{}
