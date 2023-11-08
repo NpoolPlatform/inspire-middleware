@@ -76,8 +76,6 @@ var (
 	ret = npool.Scope{
 		ID:                 uuid.NewString(),
 		AppID:              uuid.NewString(),
-		ScopeID:            scope.ID,
-		GoodID:             scope.GoodID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           scope.CouponID,
 		CouponName:         coupon.Name,
@@ -123,16 +121,16 @@ func setup(t *testing.T) func(*testing.T) {
 
 	return func(*testing.T) {
 		_, _ = couponmwcli.DeleteCoupon(context.Background(), ret.CouponID)
-		_, _ = scopemwcli.DeleteScope(context.Background(), ret.ScopeID)
 	}
 }
 
 func createAppGoodScope(t *testing.T) {
 	info, err := CreateAppGoodScope(context.Background(), &npool.ScopeReq{
-		ID:        &ret.ID,
-		AppID:     &ret.AppID,
-		AppGoodID: &ret.AppGoodID,
-		ScopeID:   &ret.ScopeID,
+		ID:          &ret.ID,
+		AppID:       &ret.AppID,
+		AppGoodID:   &ret.AppGoodID,
+		CouponID:    &ret.CouponID,
+		CouponScope: &ret.CouponScope,
 	})
 	if assert.Nil(t, err) {
 		ret.CreatedAt = info.CreatedAt
@@ -178,7 +176,7 @@ func existAppGoodScopeConds(t *testing.T) {
 func verifyCouponScope(t *testing.T) {
 	valid, err := VerifyCouponScopes(context.Background(), []*npool.ScopeReq{{
 		AppID:       &ret.AppID,
-		GoodID:      &ret.GoodID,
+		GoodID:      &scope.GoodID,
 		AppGoodID:   &ret.AppGoodID,
 		CouponID:    &ret.CouponID,
 		CouponScope: &ret.CouponScope,

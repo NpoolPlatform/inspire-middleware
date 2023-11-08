@@ -69,8 +69,6 @@ var (
 	ret = npool.Scope{
 		ID:                 uuid.NewString(),
 		AppID:              uuid.NewString(),
-		ScopeID:            scope.ID,
-		GoodID:             scope.GoodID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           scope.CouponID,
 		CouponName:         coupon.Name,
@@ -135,6 +133,7 @@ func createAppGoodScope(t *testing.T) {
 		WithAppID(&ret.AppID, true),
 		WithAppGoodID(&ret.AppGoodID, true),
 		WithCouponID(&ret.CouponID, true),
+		WithCouponScope(&ret.CouponScope, true),
 	)
 	assert.Nil(t, err)
 
@@ -204,7 +203,7 @@ func existAppGoodScopeConds(t *testing.T) {
 func verifyCouponScope(t *testing.T) {
 	reqs := []*npool.ScopeReq{{
 		AppID:       &ret.AppID,
-		GoodID:      &ret.GoodID,
+		GoodID:      &scope.GoodID,
 		AppGoodID:   &ret.AppGoodID,
 		CouponID:    &ret.CouponID,
 		CouponScope: &ret.CouponScope,
