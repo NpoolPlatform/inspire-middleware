@@ -103,7 +103,6 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 		sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
 		sql.As(t.C(entcoupon.FieldRandom), "random"),
 		sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
-		sql.As(t.C(entcoupon.FieldCouponScope), "coupon_scope"),
 	)
 	return nil
 }
