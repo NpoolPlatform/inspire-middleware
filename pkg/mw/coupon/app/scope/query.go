@@ -11,7 +11,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappgoodscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
-	entcouponscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
 
@@ -60,24 +59,11 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		).
 		AppendSelect(
 			sql.As(t.C(entappgoodscope.FieldAppID), "app_id"),
-			sql.As(t.C(entappgoodscope.FieldScopeID), "scope_id"),
 			sql.As(t.C(entappgoodscope.FieldAppGoodID), "app_good_id"),
 			sql.As(t.C(entappgoodscope.FieldCouponID), "coupon_id"),
 			sql.As(t.C(entappgoodscope.FieldCouponScope), "coupon_scope"),
 			sql.As(t.C(entappgoodscope.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entappgoodscope.FieldUpdatedAt), "updated_at"),
-		)
-}
-
-func (h *queryHandler) queryJoinCouponScope(s *sql.Selector) {
-	t := sql.Table(entcouponscope.Table)
-	s.LeftJoin(t).
-		On(
-			t.C(entcouponscope.FieldID),
-			s.C(entappgoodscope.FieldScopeID),
-		).
-		AppendSelect(
-			sql.As(t.C(entcouponscope.FieldGoodID), "good_id"),
 		)
 }
 
@@ -100,7 +86,6 @@ func (h *queryHandler) queryJoin() error {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
 		h.queryJoinCoupon(s)
-		h.queryJoinCouponScope(s)
 	})
 	if err != nil {
 		return err
@@ -110,7 +95,6 @@ func (h *queryHandler) queryJoin() error {
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {
 		h.queryJoinCoupon(s)
-		h.queryJoinCouponScope(s)
 	})
 	return err
 }

@@ -7,7 +7,6 @@ import (
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	appgoodscopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/scope"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
-	scope1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/scope"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
@@ -97,40 +96,6 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 			return err
 		}
 		h.AppGoodID = &_id
-		return nil
-	}
-}
-
-func WithScopeID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid scopeid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-
-		handler, err := scope1.NewHandler(
-			ctx,
-			scope1.WithID(id, true),
-		)
-		if err != nil {
-			return err
-		}
-
-		info, err := handler.GetScope(ctx)
-		if err != nil {
-			return err
-		}
-		if info == nil {
-			return fmt.Errorf("scopeid not exist")
-		}
-
-		h.ScopeID = &_id
 		return nil
 	}
 }

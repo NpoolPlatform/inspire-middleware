@@ -134,7 +134,7 @@ func createAppGoodScope(t *testing.T) {
 		WithID(&ret.ID, true),
 		WithAppID(&ret.AppID, true),
 		WithAppGoodID(&ret.AppGoodID, true),
-		WithScopeID(&ret.ScopeID, true),
+		WithCouponID(&ret.CouponID, true),
 	)
 	assert.Nil(t, err)
 

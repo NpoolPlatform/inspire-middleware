@@ -35,7 +35,6 @@ func (h *createHandler) createAppGoodScope(ctx context.Context, tx *ent.Tx) erro
 		&appgoodscopecrud.Req{
 			ID:          h.ID,
 			AppID:       h.AppID,
-			ScopeID:     h.ScopeID,
 			AppGoodID:   h.AppGoodID,
 			CouponID:    h.CouponID,
 			CouponScope: h.CouponScope,
@@ -46,19 +45,18 @@ func (h *createHandler) createAppGoodScope(ctx context.Context, tx *ent.Tx) erro
 	return nil
 }
 
-func (h *createHandler) getScope(ctx context.Context) error {
+func (h *createHandler) getCoupon(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		scope, err := cli.CouponScope.Get(ctx, *h.ScopeID)
+		coupon, err := cli.Coupon.Get(ctx, *h.CouponID)
 		if err != nil {
 			return err
 		}
-		if scope == nil {
-			return fmt.Errorf("scope not found %v", *h.ScopeID)
+		if coupon == nil {
+			return fmt.Errorf("coupon not found %v", *h.CouponID)
 		}
 
-		h.CouponID = &scope.CouponID
 		if h.CouponScope == nil {
-			couponScope := types.CouponScope(types.CouponScope_value[scope.CouponScope])
+			couponScope := types.CouponScope(types.CouponScope_value[coupon.CouponScope])
 			h.CouponScope = &couponScope
 		}
 		return nil
@@ -70,7 +68,7 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 		Handler: h,
 	}
 
-	if err := handler.getScope(ctx); err != nil {
+	if err := handler.getCoupon(ctx); err != nil {
 		return nil, err
 	}
 

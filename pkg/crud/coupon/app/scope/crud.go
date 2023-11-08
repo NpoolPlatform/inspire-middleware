@@ -15,7 +15,6 @@ type Req struct {
 	AppID       *uuid.UUID
 	AppGoodID   *uuid.UUID
 	CouponID    *uuid.UUID
-	ScopeID     *uuid.UUID
 	CouponScope *types.CouponScope
 	DeletedAt   *uint32
 	GoodID      *uuid.UUID
@@ -33,9 +32,6 @@ func CreateSet(c *ent.AppGoodScopeCreate, req *Req) *ent.AppGoodScopeCreate {
 	}
 	if req.CouponID != nil {
 		c.SetCouponID(*req.CouponID)
-	}
-	if req.ScopeID != nil {
-		c.SetScopeID(*req.ScopeID)
 	}
 	if req.CouponScope != nil {
 		c.SetCouponScope(req.CouponScope.String())
