@@ -152,6 +152,9 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 		}
 		return nil
 	})
+	if err != nil {
+		return false, err
+	}
 
 	_available := true
 	for _, val := range available {
