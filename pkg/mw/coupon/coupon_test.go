@@ -44,9 +44,10 @@ var (
 		Name:                uuid.NewString(),
 		CouponConstraint:    types.CouponConstraint_Normal,
 		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 		Threshold:           nil,
 		UserID:              nil,
-		GoodID:              nil,
 		Allocated:           decimal.NewFromInt(0).String(),
 	}
 )
@@ -68,6 +69,7 @@ func createCoupon(t *testing.T) {
 		WithDurationDays(&ret.DurationDays, true),
 		WithMessage(&ret.Message, true),
 		WithName(&ret.Name, true),
+		WithCouponScope(&ret.CouponScope, true),
 	)
 	assert.Nil(t, err)
 
@@ -80,6 +82,8 @@ func createCoupon(t *testing.T) {
 }
 
 func updateCoupon(t *testing.T) {
+	ret.CouponScope = types.CouponScope_AllGood
+	ret.CouponScopeStr = types.CouponScope_AllGood.String()
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -89,6 +93,7 @@ func updateCoupon(t *testing.T) {
 		WithDurationDays(&ret.DurationDays, true),
 		WithMessage(&ret.Message, true),
 		WithName(&ret.Name, true),
+		WithCouponScope(&ret.CouponScope, true),
 	)
 	assert.Nil(t, err)
 

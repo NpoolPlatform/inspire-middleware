@@ -29,10 +29,9 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 		coupon1.WithStartAt(req.StartAt, false),
 		coupon1.WithDurationDays(req.DurationDays, false),
 		coupon1.WithMessage(req.Message, false),
-		coupon1.WithGoodID(req.GoodID, false),
-		coupon1.WithAppGoodID(req.AppGoodID, false),
 		coupon1.WithName(req.Name, false),
 		coupon1.WithRandom(req.Random, false),
+		coupon1.WithCouponScope(req.CouponScope, false),
 		coupon1.WithThreshold(req.Threshold, false),
 		coupon1.WithAllocated(req.Allocated, false),
 	)

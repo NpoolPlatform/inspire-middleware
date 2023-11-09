@@ -174,6 +174,30 @@ func (f AchievementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchievementMutation", m)
 }
 
+// The AppGoodScopeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppGoodScopeQueryRuleFunc func(context.Context, *ent.AppGoodScopeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppGoodScopeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppGoodScopeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppGoodScopeQuery", q)
+}
+
+// The AppGoodScopeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppGoodScopeMutationRuleFunc func(context.Context, *ent.AppGoodScopeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppGoodScopeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppGoodScopeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppGoodScopeMutation", m)
+}
+
 // The CommissionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommissionQueryRuleFunc func(context.Context, *ent.CommissionQuery) error
@@ -244,6 +268,30 @@ func (f CouponAllocatedMutationRuleFunc) EvalMutation(ctx context.Context, m ent
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponAllocatedMutation", m)
+}
+
+// The CouponScopeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CouponScopeQueryRuleFunc func(context.Context, *ent.CouponScopeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CouponScopeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CouponScopeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CouponScopeQuery", q)
+}
+
+// The CouponScopeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CouponScopeMutationRuleFunc func(context.Context, *ent.CouponScopeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CouponScopeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CouponScopeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponScopeMutation", m)
 }
 
 // The EventQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -403,11 +451,15 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AchievementQuery:
 		return q.Filter(), nil
+	case *ent.AppGoodScopeQuery:
+		return q.Filter(), nil
 	case *ent.CommissionQuery:
 		return q.Filter(), nil
 	case *ent.CouponQuery:
 		return q.Filter(), nil
 	case *ent.CouponAllocatedQuery:
+		return q.Filter(), nil
+	case *ent.CouponScopeQuery:
 		return q.Filter(), nil
 	case *ent.EventQuery:
 		return q.Filter(), nil
@@ -428,11 +480,15 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AchievementMutation:
 		return m.Filter(), nil
+	case *ent.AppGoodScopeMutation:
+		return m.Filter(), nil
 	case *ent.CommissionMutation:
 		return m.Filter(), nil
 	case *ent.CouponMutation:
 		return m.Filter(), nil
 	case *ent.CouponAllocatedMutation:
+		return m.Filter(), nil
+	case *ent.CouponScopeMutation:
 		return m.Filter(), nil
 	case *ent.EventMutation:
 		return m.Filter(), nil

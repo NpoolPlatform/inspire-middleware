@@ -27,10 +27,6 @@ type Coupon struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
-	// GoodID holds the value of the "good_id" field.
-	GoodID uuid.UUID `json:"good_id,omitempty"`
-	// AppGoodID holds the value of the "app_good_id" field.
-	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
 	// Denomination holds the value of the "denomination" field.
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
@@ -55,6 +51,8 @@ type Coupon struct {
 	Threshold decimal.Decimal `json:"threshold,omitempty"`
 	// CouponConstraint holds the value of the "coupon_constraint" field.
 	CouponConstraint string `json:"coupon_constraint,omitempty"`
+	// CouponScope holds the value of the "coupon_scope" field.
+	CouponScope string `json:"coupon_scope,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -68,9 +66,9 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
-		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint:
+		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint, coupon.FieldCouponScope:
 			values[i] = new(sql.NullString)
-		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldGoodID, coupon.FieldAppGoodID, coupon.FieldIssuedBy:
+		case coupon.FieldID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Coupon", columns[i])
@@ -122,18 +120,6 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
 				c.UserID = *value
-			}
-		case coupon.FieldGoodID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field good_id", values[i])
-			} else if value != nil {
-				c.GoodID = *value
-			}
-		case coupon.FieldAppGoodID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
-			} else if value != nil {
-				c.AppGoodID = *value
 			}
 		case coupon.FieldDenomination:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -207,6 +193,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.CouponConstraint = value.String
 			}
+		case coupon.FieldCouponScope:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field coupon_scope", values[i])
+			} else if value.Valid {
+				c.CouponScope = value.String
+			}
 		}
 	}
 	return nil
@@ -250,12 +242,6 @@ func (c *Coupon) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("good_id=")
-	builder.WriteString(fmt.Sprintf("%v", c.GoodID))
-	builder.WriteString(", ")
-	builder.WriteString("app_good_id=")
-	builder.WriteString(fmt.Sprintf("%v", c.AppGoodID))
-	builder.WriteString(", ")
 	builder.WriteString("denomination=")
 	builder.WriteString(fmt.Sprintf("%v", c.Denomination))
 	builder.WriteString(", ")
@@ -291,6 +277,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coupon_constraint=")
 	builder.WriteString(c.CouponConstraint)
+	builder.WriteString(", ")
+	builder.WriteString("coupon_scope=")
+	builder.WriteString(c.CouponScope)
 	builder.WriteByte(')')
 	return builder.String()
 }

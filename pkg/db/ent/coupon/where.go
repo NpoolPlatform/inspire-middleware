@@ -115,20 +115,6 @@ func UserID(v uuid.UUID) predicate.Coupon {
 	})
 }
 
-// GoodID applies equality check predicate on the "good_id" field. It's identical to GoodIDEQ.
-func GoodID(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldGoodID), v))
-	})
-}
-
-// AppGoodID applies equality check predicate on the "app_good_id" field. It's identical to AppGoodIDEQ.
-func AppGoodID(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppGoodID), v))
-	})
-}
-
 // Denomination applies equality check predicate on the "denomination" field. It's identical to DenominationEQ.
 func Denomination(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
@@ -210,6 +196,13 @@ func Threshold(v decimal.Decimal) predicate.Coupon {
 func CouponConstraint(v string) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCouponConstraint), v))
+	})
+}
+
+// CouponScope applies equality check predicate on the "coupon_scope" field. It's identical to CouponScopeEQ.
+func CouponScope(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCouponScope), v))
 	})
 }
 
@@ -558,162 +551,6 @@ func UserIDIsNil() predicate.Coupon {
 func UserIDNotNil() predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUserID)))
-	})
-}
-
-// GoodIDEQ applies the EQ predicate on the "good_id" field.
-func GoodIDEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDNEQ applies the NEQ predicate on the "good_id" field.
-func GoodIDNEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDIn applies the In predicate on the "good_id" field.
-func GoodIDIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldGoodID), v...))
-	})
-}
-
-// GoodIDNotIn applies the NotIn predicate on the "good_id" field.
-func GoodIDNotIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldGoodID), v...))
-	})
-}
-
-// GoodIDGT applies the GT predicate on the "good_id" field.
-func GoodIDGT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDGTE applies the GTE predicate on the "good_id" field.
-func GoodIDGTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDLT applies the LT predicate on the "good_id" field.
-func GoodIDLT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDLTE applies the LTE predicate on the "good_id" field.
-func GoodIDLTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldGoodID), v))
-	})
-}
-
-// GoodIDIsNil applies the IsNil predicate on the "good_id" field.
-func GoodIDIsNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldGoodID)))
-	})
-}
-
-// GoodIDNotNil applies the NotNil predicate on the "good_id" field.
-func GoodIDNotNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldGoodID)))
-	})
-}
-
-// AppGoodIDEQ applies the EQ predicate on the "app_good_id" field.
-func AppGoodIDEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDNEQ applies the NEQ predicate on the "app_good_id" field.
-func AppGoodIDNEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDIn applies the In predicate on the "app_good_id" field.
-func AppGoodIDIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldAppGoodID), v...))
-	})
-}
-
-// AppGoodIDNotIn applies the NotIn predicate on the "app_good_id" field.
-func AppGoodIDNotIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldAppGoodID), v...))
-	})
-}
-
-// AppGoodIDGT applies the GT predicate on the "app_good_id" field.
-func AppGoodIDGT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDGTE applies the GTE predicate on the "app_good_id" field.
-func AppGoodIDGTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDLT applies the LT predicate on the "app_good_id" field.
-func AppGoodIDLT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDLTE applies the LTE predicate on the "app_good_id" field.
-func AppGoodIDLTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldAppGoodID), v))
-	})
-}
-
-// AppGoodIDIsNil applies the IsNil predicate on the "app_good_id" field.
-func AppGoodIDIsNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldAppGoodID)))
-	})
-}
-
-// AppGoodIDNotNil applies the NotNil predicate on the "app_good_id" field.
-func AppGoodIDNotNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldAppGoodID)))
 	})
 }
 
@@ -1726,6 +1563,119 @@ func CouponConstraintEqualFold(v string) predicate.Coupon {
 func CouponConstraintContainsFold(v string) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCouponConstraint), v))
+	})
+}
+
+// CouponScopeEQ applies the EQ predicate on the "coupon_scope" field.
+func CouponScopeEQ(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeNEQ applies the NEQ predicate on the "coupon_scope" field.
+func CouponScopeNEQ(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeIn applies the In predicate on the "coupon_scope" field.
+func CouponScopeIn(vs ...string) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCouponScope), v...))
+	})
+}
+
+// CouponScopeNotIn applies the NotIn predicate on the "coupon_scope" field.
+func CouponScopeNotIn(vs ...string) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCouponScope), v...))
+	})
+}
+
+// CouponScopeGT applies the GT predicate on the "coupon_scope" field.
+func CouponScopeGT(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeGTE applies the GTE predicate on the "coupon_scope" field.
+func CouponScopeGTE(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeLT applies the LT predicate on the "coupon_scope" field.
+func CouponScopeLT(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeLTE applies the LTE predicate on the "coupon_scope" field.
+func CouponScopeLTE(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeContains applies the Contains predicate on the "coupon_scope" field.
+func CouponScopeContains(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeHasPrefix applies the HasPrefix predicate on the "coupon_scope" field.
+func CouponScopeHasPrefix(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeHasSuffix applies the HasSuffix predicate on the "coupon_scope" field.
+func CouponScopeHasSuffix(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeIsNil applies the IsNil predicate on the "coupon_scope" field.
+func CouponScopeIsNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCouponScope)))
+	})
+}
+
+// CouponScopeNotNil applies the NotNil predicate on the "coupon_scope" field.
+func CouponScopeNotNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCouponScope)))
+	})
+}
+
+// CouponScopeEqualFold applies the EqualFold predicate on the "coupon_scope" field.
+func CouponScopeEqualFold(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCouponScope), v))
+	})
+}
+
+// CouponScopeContainsFold applies the ContainsFold predicate on the "coupon_scope" field.
+func CouponScopeContainsFold(v string) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCouponScope), v))
 	})
 }
 

@@ -45,18 +45,6 @@ func (Coupon) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
-			UUID("good_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
-			UUID("app_good_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
 			Other("denomination", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
@@ -114,6 +102,10 @@ func (Coupon) Fields() []ent.Field {
 			String("coupon_constraint").
 			Optional().
 			Default(types.CouponConstraint_Normal.String()),
+		field.
+			String("coupon_scope").
+			Optional().
+			Default(types.CouponScope_Whitelist.String()),
 	}
 }
 

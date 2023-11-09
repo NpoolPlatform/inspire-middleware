@@ -71,6 +71,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcouponallocated.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entcouponallocated.FieldUpdatedAt), "updated_at"),
 			sql.As(t.C(entcouponallocated.FieldDenomination), "denomination"),
+			sql.As(t.C(entcouponallocated.FieldCouponScope), "coupon_scope"),
 		)
 }
 
@@ -97,8 +98,6 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 		sql.As(t.C(entcoupon.FieldCirculation), "circulation"),
 		sql.As(t.C(entcoupon.FieldDurationDays), "duration_days"),
 		sql.As(t.C(entcoupon.FieldMessage), "coupon_message"),
-		sql.As(t.C(entcoupon.FieldGoodID), "good_id"),
-		sql.As(t.C(entcoupon.FieldAppGoodID), "app_good_id"),
 		sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
 		sql.As(t.C(entcoupon.FieldAllocated), "allocated"),
 		sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
@@ -137,6 +136,7 @@ func (h *queryHandler) formalize() {
 		info.Valid = uint32(time.Now().Unix()) >= info.StartAt && uint32(time.Now().Unix()) <= info.EndAt
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
+		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
 		if info.CouponName == "" {
 			continue
 		}

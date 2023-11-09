@@ -12,9 +12,11 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
@@ -32,12 +34,16 @@ type Client struct {
 	Schema *migrate.Schema
 	// Achievement is the client for interacting with the Achievement builders.
 	Achievement *AchievementClient
+	// AppGoodScope is the client for interacting with the AppGoodScope builders.
+	AppGoodScope *AppGoodScopeClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
 	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
+	// CouponScope is the client for interacting with the CouponScope builders.
+	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// InvitationCode is the client for interacting with the InvitationCode builders.
@@ -62,9 +68,11 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Achievement = NewAchievementClient(c.config)
+	c.AppGoodScope = NewAppGoodScopeClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
+	c.CouponScope = NewCouponScopeClient(c.config)
 	c.Event = NewEventClient(c.config)
 	c.InvitationCode = NewInvitationCodeClient(c.config)
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
@@ -104,9 +112,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:             ctx,
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
+		AppGoodScope:    NewAppGoodScopeClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
+		CouponScope:     NewCouponScopeClient(cfg),
 		Event:           NewEventClient(cfg),
 		InvitationCode:  NewInvitationCodeClient(cfg),
 		PubsubMessage:   NewPubsubMessageClient(cfg),
@@ -132,9 +142,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:             ctx,
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
+		AppGoodScope:    NewAppGoodScopeClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
+		CouponScope:     NewCouponScopeClient(cfg),
 		Event:           NewEventClient(cfg),
 		InvitationCode:  NewInvitationCodeClient(cfg),
 		PubsubMessage:   NewPubsubMessageClient(cfg),
@@ -170,9 +182,11 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Achievement.Use(hooks...)
+	c.AppGoodScope.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
+	c.CouponScope.Use(hooks...)
 	c.Event.Use(hooks...)
 	c.InvitationCode.Use(hooks...)
 	c.PubsubMessage.Use(hooks...)
@@ -269,6 +283,97 @@ func (c *AchievementClient) GetX(ctx context.Context, id uint32) *Achievement {
 func (c *AchievementClient) Hooks() []Hook {
 	hooks := c.hooks.Achievement
 	return append(hooks[:len(hooks):len(hooks)], achievement.Hooks[:]...)
+}
+
+// AppGoodScopeClient is a client for the AppGoodScope schema.
+type AppGoodScopeClient struct {
+	config
+}
+
+// NewAppGoodScopeClient returns a client for the AppGoodScope from the given config.
+func NewAppGoodScopeClient(c config) *AppGoodScopeClient {
+	return &AppGoodScopeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appgoodscope.Hooks(f(g(h())))`.
+func (c *AppGoodScopeClient) Use(hooks ...Hook) {
+	c.hooks.AppGoodScope = append(c.hooks.AppGoodScope, hooks...)
+}
+
+// Create returns a builder for creating a AppGoodScope entity.
+func (c *AppGoodScopeClient) Create() *AppGoodScopeCreate {
+	mutation := newAppGoodScopeMutation(c.config, OpCreate)
+	return &AppGoodScopeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppGoodScope entities.
+func (c *AppGoodScopeClient) CreateBulk(builders ...*AppGoodScopeCreate) *AppGoodScopeCreateBulk {
+	return &AppGoodScopeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppGoodScope.
+func (c *AppGoodScopeClient) Update() *AppGoodScopeUpdate {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdate)
+	return &AppGoodScopeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppGoodScopeClient) UpdateOne(ags *AppGoodScope) *AppGoodScopeUpdateOne {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdateOne, withAppGoodScope(ags))
+	return &AppGoodScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppGoodScopeClient) UpdateOneID(id uuid.UUID) *AppGoodScopeUpdateOne {
+	mutation := newAppGoodScopeMutation(c.config, OpUpdateOne, withAppGoodScopeID(id))
+	return &AppGoodScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppGoodScope.
+func (c *AppGoodScopeClient) Delete() *AppGoodScopeDelete {
+	mutation := newAppGoodScopeMutation(c.config, OpDelete)
+	return &AppGoodScopeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppGoodScopeClient) DeleteOne(ags *AppGoodScope) *AppGoodScopeDeleteOne {
+	return c.DeleteOneID(ags.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppGoodScopeClient) DeleteOneID(id uuid.UUID) *AppGoodScopeDeleteOne {
+	builder := c.Delete().Where(appgoodscope.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppGoodScopeDeleteOne{builder}
+}
+
+// Query returns a query builder for AppGoodScope.
+func (c *AppGoodScopeClient) Query() *AppGoodScopeQuery {
+	return &AppGoodScopeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppGoodScope entity by its id.
+func (c *AppGoodScopeClient) Get(ctx context.Context, id uuid.UUID) (*AppGoodScope, error) {
+	return c.Query().Where(appgoodscope.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppGoodScopeClient) GetX(ctx context.Context, id uuid.UUID) *AppGoodScope {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppGoodScopeClient) Hooks() []Hook {
+	hooks := c.hooks.AppGoodScope
+	return append(hooks[:len(hooks):len(hooks)], appgoodscope.Hooks[:]...)
 }
 
 // CommissionClient is a client for the Commission schema.
@@ -542,6 +647,97 @@ func (c *CouponAllocatedClient) GetX(ctx context.Context, id uuid.UUID) *CouponA
 func (c *CouponAllocatedClient) Hooks() []Hook {
 	hooks := c.hooks.CouponAllocated
 	return append(hooks[:len(hooks):len(hooks)], couponallocated.Hooks[:]...)
+}
+
+// CouponScopeClient is a client for the CouponScope schema.
+type CouponScopeClient struct {
+	config
+}
+
+// NewCouponScopeClient returns a client for the CouponScope from the given config.
+func NewCouponScopeClient(c config) *CouponScopeClient {
+	return &CouponScopeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `couponscope.Hooks(f(g(h())))`.
+func (c *CouponScopeClient) Use(hooks ...Hook) {
+	c.hooks.CouponScope = append(c.hooks.CouponScope, hooks...)
+}
+
+// Create returns a builder for creating a CouponScope entity.
+func (c *CouponScopeClient) Create() *CouponScopeCreate {
+	mutation := newCouponScopeMutation(c.config, OpCreate)
+	return &CouponScopeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CouponScope entities.
+func (c *CouponScopeClient) CreateBulk(builders ...*CouponScopeCreate) *CouponScopeCreateBulk {
+	return &CouponScopeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CouponScope.
+func (c *CouponScopeClient) Update() *CouponScopeUpdate {
+	mutation := newCouponScopeMutation(c.config, OpUpdate)
+	return &CouponScopeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponScopeClient) UpdateOne(cs *CouponScope) *CouponScopeUpdateOne {
+	mutation := newCouponScopeMutation(c.config, OpUpdateOne, withCouponScope(cs))
+	return &CouponScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponScopeClient) UpdateOneID(id uuid.UUID) *CouponScopeUpdateOne {
+	mutation := newCouponScopeMutation(c.config, OpUpdateOne, withCouponScopeID(id))
+	return &CouponScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CouponScope.
+func (c *CouponScopeClient) Delete() *CouponScopeDelete {
+	mutation := newCouponScopeMutation(c.config, OpDelete)
+	return &CouponScopeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponScopeClient) DeleteOne(cs *CouponScope) *CouponScopeDeleteOne {
+	return c.DeleteOneID(cs.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CouponScopeClient) DeleteOneID(id uuid.UUID) *CouponScopeDeleteOne {
+	builder := c.Delete().Where(couponscope.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponScopeDeleteOne{builder}
+}
+
+// Query returns a query builder for CouponScope.
+func (c *CouponScopeClient) Query() *CouponScopeQuery {
+	return &CouponScopeQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CouponScope entity by its id.
+func (c *CouponScopeClient) Get(ctx context.Context, id uuid.UUID) (*CouponScope, error) {
+	return c.Query().Where(couponscope.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponScopeClient) GetX(ctx context.Context, id uuid.UUID) *CouponScope {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponScopeClient) Hooks() []Hook {
+	hooks := c.hooks.CouponScope
+	return append(hooks[:len(hooks):len(hooks)], couponscope.Hooks[:]...)
 }
 
 // EventClient is a client for the Event schema.

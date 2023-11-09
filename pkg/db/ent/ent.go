@@ -11,9 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
@@ -40,9 +42,11 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		achievement.Table:     achievement.ValidColumn,
+		appgoodscope.Table:    appgoodscope.ValidColumn,
 		commission.Table:      commission.ValidColumn,
 		coupon.Table:          coupon.ValidColumn,
 		couponallocated.Table: couponallocated.ValidColumn,
+		couponscope.Table:     couponscope.ValidColumn,
 		event.Table:           event.ValidColumn,
 		invitationcode.Table:  invitationcode.ValidColumn,
 		pubsubmessage.Table:   pubsubmessage.ValidColumn,

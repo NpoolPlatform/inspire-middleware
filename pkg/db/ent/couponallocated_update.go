@@ -217,6 +217,26 @@ func (cau *CouponAllocatedUpdate) ClearStartAt() *CouponAllocatedUpdate {
 	return cau
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (cau *CouponAllocatedUpdate) SetCouponScope(s string) *CouponAllocatedUpdate {
+	cau.mutation.SetCouponScope(s)
+	return cau
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableCouponScope(s *string) *CouponAllocatedUpdate {
+	if s != nil {
+		cau.SetCouponScope(*s)
+	}
+	return cau
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (cau *CouponAllocatedUpdate) ClearCouponScope() *CouponAllocatedUpdate {
+	cau.mutation.ClearCouponScope()
+	return cau
+}
+
 // Mutation returns the CouponAllocatedMutation object of the builder.
 func (cau *CouponAllocatedUpdate) Mutation() *CouponAllocatedMutation {
 	return cau.mutation
@@ -457,6 +477,19 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: couponallocated.FieldStartAt,
 		})
 	}
+	if value, ok := cau.mutation.CouponScope(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldCouponScope,
+		})
+	}
+	if cau.mutation.CouponScopeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: couponallocated.FieldCouponScope,
+		})
+	}
 	_spec.Modifiers = cau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -662,6 +695,26 @@ func (cauo *CouponAllocatedUpdateOne) AddStartAt(u int32) *CouponAllocatedUpdate
 // ClearStartAt clears the value of the "start_at" field.
 func (cauo *CouponAllocatedUpdateOne) ClearStartAt() *CouponAllocatedUpdateOne {
 	cauo.mutation.ClearStartAt()
+	return cauo
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (cauo *CouponAllocatedUpdateOne) SetCouponScope(s string) *CouponAllocatedUpdateOne {
+	cauo.mutation.SetCouponScope(s)
+	return cauo
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableCouponScope(s *string) *CouponAllocatedUpdateOne {
+	if s != nil {
+		cauo.SetCouponScope(*s)
+	}
+	return cauo
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (cauo *CouponAllocatedUpdateOne) ClearCouponScope() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearCouponScope()
 	return cauo
 }
 
@@ -933,6 +986,19 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: couponallocated.FieldStartAt,
+		})
+	}
+	if value, ok := cauo.mutation.CouponScope(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldCouponScope,
+		})
+	}
+	if cauo.mutation.CouponScopeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: couponallocated.FieldCouponScope,
 		})
 	}
 	_spec.Modifiers = cauo.modifiers

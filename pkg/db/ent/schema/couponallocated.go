@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -60,6 +61,10 @@ func (CouponAllocated) Fields() []ent.Field {
 			Uint32("start_at").
 			Optional().
 			Default(uint32(time.Now().Unix())),
+		field.
+			String("coupon_scope").
+			Optional().
+			Default(inspiretypes.CouponScope_Whitelist.String()),
 	}
 }
 

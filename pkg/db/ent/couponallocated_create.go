@@ -154,6 +154,20 @@ func (cac *CouponAllocatedCreate) SetNillableStartAt(u *uint32) *CouponAllocated
 	return cac
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (cac *CouponAllocatedCreate) SetCouponScope(s string) *CouponAllocatedCreate {
+	cac.mutation.SetCouponScope(s)
+	return cac
+}
+
+// SetNillableCouponScope sets the "coupon_scope" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableCouponScope(s *string) *CouponAllocatedCreate {
+	if s != nil {
+		cac.SetCouponScope(*s)
+	}
+	return cac
+}
+
 // SetID sets the "id" field.
 func (cac *CouponAllocatedCreate) SetID(u uuid.UUID) *CouponAllocatedCreate {
 	cac.mutation.SetID(u)
@@ -290,6 +304,10 @@ func (cac *CouponAllocatedCreate) defaults() error {
 	if _, ok := cac.mutation.StartAt(); !ok {
 		v := couponallocated.DefaultStartAt
 		cac.mutation.SetStartAt(v)
+	}
+	if _, ok := cac.mutation.CouponScope(); !ok {
+		v := couponallocated.DefaultCouponScope
+		cac.mutation.SetCouponScope(v)
 	}
 	if _, ok := cac.mutation.ID(); !ok {
 		if couponallocated.DefaultID == nil {
@@ -445,6 +463,14 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldStartAt,
 		})
 		_node.StartAt = value
+	}
+	if value, ok := cac.mutation.CouponScope(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldCouponScope,
+		})
+		_node.CouponScope = value
 	}
 	return _node, _spec
 }
@@ -689,6 +715,24 @@ func (u *CouponAllocatedUpsert) AddStartAt(v uint32) *CouponAllocatedUpsert {
 // ClearStartAt clears the value of the "start_at" field.
 func (u *CouponAllocatedUpsert) ClearStartAt() *CouponAllocatedUpsert {
 	u.SetNull(couponallocated.FieldStartAt)
+	return u
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponAllocatedUpsert) SetCouponScope(v string) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldCouponScope, v)
+	return u
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateCouponScope() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldCouponScope)
+	return u
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponAllocatedUpsert) ClearCouponScope() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldCouponScope)
 	return u
 }
 
@@ -963,6 +1007,27 @@ func (u *CouponAllocatedUpsertOne) UpdateStartAt() *CouponAllocatedUpsertOne {
 func (u *CouponAllocatedUpsertOne) ClearStartAt() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponAllocatedUpsertOne) SetCouponScope(v string) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetCouponScope(v)
+	})
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateCouponScope() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateCouponScope()
+	})
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponAllocatedUpsertOne) ClearCouponScope() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearCouponScope()
 	})
 }
 
@@ -1403,6 +1468,27 @@ func (u *CouponAllocatedUpsertBulk) UpdateStartAt() *CouponAllocatedUpsertBulk {
 func (u *CouponAllocatedUpsertBulk) ClearStartAt() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (u *CouponAllocatedUpsertBulk) SetCouponScope(v string) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetCouponScope(v)
+	})
+}
+
+// UpdateCouponScope sets the "coupon_scope" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateCouponScope() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateCouponScope()
+	})
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (u *CouponAllocatedUpsertBulk) ClearCouponScope() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearCouponScope()
 	})
 }
 

@@ -22,6 +22,19 @@ func (f AchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
+// The AppGoodScopeFunc type is an adapter to allow the use of ordinary
+// function as AppGoodScope mutator.
+type AppGoodScopeFunc func(context.Context, *ent.AppGoodScopeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppGoodScopeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppGoodScopeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppGoodScopeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CommissionFunc type is an adapter to allow the use of ordinary
 // function as Commission mutator.
 type CommissionFunc func(context.Context, *ent.CommissionMutation) (ent.Value, error)
@@ -57,6 +70,19 @@ func (f CouponAllocatedFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	mv, ok := m.(*ent.CouponAllocatedMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponAllocatedMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The CouponScopeFunc type is an adapter to allow the use of ordinary
+// function as CouponScope mutator.
+type CouponScopeFunc func(context.Context, *ent.CouponScopeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CouponScopeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CouponScopeMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponScopeMutation", m)
 	}
 	return f(ctx, mv)
 }
