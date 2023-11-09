@@ -113,7 +113,7 @@ func (h *verifyHandler) getCoupons(ctx context.Context) (bool, error) {
 	}
 
 	handler.Conds = &couponcrud.Conds{
-		AppID: &cruder.Cond{Op: cruder.EQ, Val: h.Reqs[0].AppID},
+		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.Reqs[0].AppID},
 		IDs:   &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	coupons, _, err := handler.GetCoupons(ctx)
