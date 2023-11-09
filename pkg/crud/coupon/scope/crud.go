@@ -1,4 +1,4 @@
-package role
+package scope
 
 import (
 	"fmt"
