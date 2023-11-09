@@ -102,7 +102,7 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 	return true, nil
 }
 
-func (h *verifyHandler) getCoupons(ctx context.Context) (bool, error) {
+func (h *verifyHandler) checkCoupons(ctx context.Context) (bool, error) {
 	handler, err := coupon1.NewHandler(ctx)
 	if err != nil {
 		return false, err
@@ -130,7 +130,7 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	handler := &verifyHandler{
 		Handler: h,
 	}
-	if exist, err := handler.getCoupons(ctx); !exist || err != nil {
+	if exist, err := handler.checkCoupons(ctx); !exist || err != nil {
 		return false, err
 	}
 
