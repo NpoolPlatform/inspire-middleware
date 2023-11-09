@@ -56,7 +56,6 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 	handler := &createHandler{
 		Handler: h,
 	}
-
 	if err := handler.getCoupon(ctx); err != nil {
 		return nil, err
 	}
