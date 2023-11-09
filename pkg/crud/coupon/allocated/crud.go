@@ -14,7 +14,8 @@ import (
 )
 
 type Req struct {
-	ID            *uuid.UUID
+	ID            *uint32
+	EntID         *uuid.UUID
 	AppID         *uuid.UUID
 	UserID        *uuid.UUID
 	CouponID      *uuid.UUID
@@ -29,6 +30,9 @@ type Req struct {
 func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
+	}
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
@@ -66,8 +70,8 @@ func UpdateSet(u *ent.CouponAllocatedUpdateOne, req *Req) *ent.CouponAllocatedUp
 }
 
 type Conds struct {
-	ID             *cruder.Cond
-	IDs            *cruder.Cond
+	EntID          *cruder.Cond
+	EntIDs         *cruder.Cond
 	AppID          *cruder.Cond
 	UserID         *cruder.Cond
 	CouponType     *cruder.Cond
@@ -83,26 +87,26 @@ func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAlloca
 	if conds == nil {
 		return q, nil
 	}
-	if conds.ID != nil {
-		id, ok := conds.ID.Val.(uuid.UUID)
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
 			return nil, fmt.Errorf("invalid id")
 		}
-		switch conds.ID.Op {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(entcouponallocated.ID(id))
+			q.Where(entcouponallocated.EntID(id))
 		default:
 			return nil, fmt.Errorf("invalid allocated field")
 		}
 	}
-	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uuid.UUID)
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
 			return nil, fmt.Errorf("invalid ids")
 		}
-		switch conds.IDs.Op {
+		switch conds.EntIDs.Op {
 		case cruder.IN:
-			q.Where(entcouponallocated.IDIn(ids...))
+			q.Where(entcouponallocated.EntIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid allocated ids")
 		}
