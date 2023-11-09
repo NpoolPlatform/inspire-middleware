@@ -26,7 +26,7 @@ func (s *Server) VerifyCouponScopes(ctx context.Context, in *npool.VerifyCouponS
 		return &npool.VerifyCouponScopesResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.VerifyCouponScopes(ctx)
+	err = handler.VerifyCouponScopes(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"VerifyCouponScopes",
@@ -36,7 +36,5 @@ func (s *Server) VerifyCouponScopes(ctx context.Context, in *npool.VerifyCouponS
 		return &npool.VerifyCouponScopesResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.VerifyCouponScopesResponse{
-		Info: info,
-	}, nil
+	return &npool.VerifyCouponScopesResponse{}, nil
 }

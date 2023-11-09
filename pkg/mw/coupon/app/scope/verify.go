@@ -2,6 +2,7 @@ package scope
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
@@ -21,8 +22,11 @@ type verifyHandler struct {
 	*Handler
 }
 
-func (h *verifyHandler) verifyWhitelist(ctx context.Context, tx *ent.Tx, req *appgoodscopecrud.Req) (bool, error) {
-	_, err := tx.
+func (h *verifyHandler) verifyWhitelist(ctx context.Context, cli *ent.Client, req *appgoodscopecrud.Req) error {
+	if *req.CouponScope != types.CouponScope_Whitelist {
+		return nil
+	}
+	_, err := cli.
 		CouponScope.
 		Query().
 		Where(
@@ -33,13 +37,10 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context, tx *ent.Tx, req *ap
 		).
 		Only(ctx)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return false, nil
-		}
-		return false, err
+		return err
 	}
 
-	_, err = tx.
+	_, err = cli.
 		AppGoodScope.
 		Query().
 		Where(
@@ -51,16 +52,16 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context, tx *ent.Tx, req *ap
 		).
 		Only(ctx)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return false, nil
-		}
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }
 
-func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *appgoodscopecrud.Req) (bool, error) {
-	info, err := tx.
+func (h *verifyHandler) verifyBlacklist(ctx context.Context, cli *ent.Client, req *appgoodscopecrud.Req) error {
+	if *req.CouponScope != types.CouponScope_Blacklist {
+		return nil
+	}
+	info, err := cli.
 		CouponScope.
 		Query().
 		Where(
@@ -72,14 +73,14 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 		Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return false, err
+			return err
 		}
 	}
 	if info != nil {
-		return false, nil
+		return fmt.Errorf("couponid in blacklist(good)")
 	}
 
-	info1, err := tx.
+	info1, err := cli.
 		AppGoodScope.
 		Query().
 		Where(
@@ -92,20 +93,20 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 		Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return false, err
+			return err
 		}
 	}
 	if info1 != nil {
-		return false, nil
+		return fmt.Errorf("couponid in blacklist(appgood)")
 	}
 
-	return true, nil
+	return nil
 }
 
-func (h *verifyHandler) checkCoupons(ctx context.Context) (bool, error) {
+func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	handler, err := coupon1.NewHandler(ctx)
 	if err != nil {
-		return false, err
+		return err
 	}
 	ids := []uuid.UUID{}
 	for _, req := range h.Reqs {
@@ -118,57 +119,39 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) (bool, error) {
 	}
 	coupons, _, err := handler.GetCoupons(ctx)
 	if err != nil {
-		return false, err
+		return err
 	}
-	return len(coupons) == len(h.Reqs), nil
+
+	if len(coupons) != len(h.Reqs) {
+		return fmt.Errorf("invalid couponid")
+	}
+	return nil
 }
 
-func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
+func (h *Handler) VerifyCouponScopes(ctx context.Context) error {
 	if len(h.Reqs) == 0 {
-		return false, nil
+		return fmt.Errorf("invalid infos")
 	}
 	handler := &verifyHandler{
 		Handler: h,
 	}
-	if exist, err := handler.checkCoupons(ctx); !exist || err != nil {
-		return false, err
+	if err := handler.checkCoupons(ctx); err != nil {
+		return err
 	}
 
-	available := []bool{}
-	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		for _, req := range h.Reqs {
-			var err error
-			var valid bool
-			_fn := func() error {
-				if *req.CouponScope == types.CouponScope_Whitelist {
-					valid, err = handler.verifyWhitelist(ctx, tx, req)
-					available = append(available, valid)
-				}
-				if *req.CouponScope == types.CouponScope_Blacklist {
-					valid, err = handler.verifyBlacklist(ctx, tx, req)
-					available = append(available, valid)
-				}
-				if *req.CouponScope == types.CouponScope_AllGood {
-					available = append(available, true)
-				}
-				if err != nil {
-					return err
-				}
-				return nil
-			}
-			if err := _fn(); err != nil {
+			if err := handler.verifyWhitelist(ctx, cli, req); err != nil {
 				return err
+			}
+			if err := handler.verifyBlacklist(ctx, cli, req); err != nil {
+				return err
+			}
+			if *req.CouponScope == types.CouponScope_AllGood {
+				continue
 			}
 		}
 		return nil
 	})
-	if err != nil {
-		return false, err
-	}
-
-	_available := true
-	for _, val := range available {
-		_available = _available && val
-	}
-	return _available, err
+	return err
 }

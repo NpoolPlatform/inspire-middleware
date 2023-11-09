@@ -174,17 +174,14 @@ func existAppGoodScopeConds(t *testing.T) {
 }
 
 func verifyCouponScope(t *testing.T) {
-	valid, err := VerifyCouponScopes(context.Background(), []*npool.ScopeReq{{
+	err := VerifyCouponScopes(context.Background(), []*npool.ScopeReq{{
 		AppID:       &ret.AppID,
 		GoodID:      &scope.GoodID,
 		AppGoodID:   &ret.AppGoodID,
 		CouponID:    &ret.CouponID,
 		CouponScope: &ret.CouponScope,
-	},
-	})
-	if assert.Nil(t, err) {
-		assert.True(t, valid)
-	}
+	}})
+	assert.Nil(t, err)
 }
 
 func deleteAppGoodScope(t *testing.T) {

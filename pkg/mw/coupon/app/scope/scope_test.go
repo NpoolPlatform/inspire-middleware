@@ -214,10 +214,8 @@ func verifyCouponScope(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	exist, err := handler.VerifyCouponScopes(context.Background())
-	if assert.Nil(t, err) {
-		assert.True(t, exist)
-	}
+	err = handler.VerifyCouponScopes(context.Background())
+	assert.Nil(t, err)
 }
 
 func deleteAppGoodScope(t *testing.T) {
