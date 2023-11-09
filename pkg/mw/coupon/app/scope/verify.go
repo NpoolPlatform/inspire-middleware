@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappgoodscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
+	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	entcouponscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 )
 
@@ -97,6 +98,23 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 	return true, nil
 }
 
+func (h *verifyHandler) verifyAllGood(ctx context.Context, tx *ent.Tx, req *appgoodscopecrud.Req) (bool, error) {
+	_, err := tx.
+		Coupon.
+		Query().
+		Where(
+			entcoupon.ID(*req.CouponID),
+			entcoupon.DeletedAt(0),
+		).Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
 func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	if len(h.Reqs) == 0 {
 		return false, nil
@@ -108,23 +126,23 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	available := []bool{}
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
+			var err error
+			var valid bool
 			_fn := func() error {
 				if *req.CouponScope == types.CouponScope_Whitelist {
-					valid, err := handler.verifyWhitelist(ctx, tx, req)
+					valid, err = handler.verifyWhitelist(ctx, tx, req)
 					available = append(available, valid)
-					if err != nil {
-						return err
-					}
 				}
 				if *req.CouponScope == types.CouponScope_Blacklist {
-					valid, err := handler.verifyBlacklist(ctx, tx, req)
+					valid, err = handler.verifyBlacklist(ctx, tx, req)
 					available = append(available, valid)
-					if err != nil {
-						return err
-					}
 				}
 				if *req.CouponScope == types.CouponScope_AllGood {
-					available = append(available, true)
+					valid, err = handler.verifyAllGood(ctx, tx, req)
+					available = append(available, valid)
+				}
+				if err != nil {
+					return err
 				}
 				return nil
 			}
