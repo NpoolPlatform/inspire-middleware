@@ -63,18 +63,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return fmt.Errorf("insufficient circulation")
 		}
 
-		scope := inspiretypes.CouponScope_DefaultCouponScope
-		switch coupon.CouponScope {
-		case inspiretypes.CouponScope_AllGood.String():
-			scope = inspiretypes.CouponScope_AllGood
-		case inspiretypes.CouponScope_Whitelist.String():
-			scope = inspiretypes.CouponScope_Whitelist
-		case inspiretypes.CouponScope_Blacklist.String():
-			scope = inspiretypes.CouponScope_Blacklist
-		default:
-			return fmt.Errorf("invalid couponscope")
-		}
-
+		couponScope := inspiretypes.CouponScope(inspiretypes.CouponScope_value[coupon.CouponScope])
 		if _, err := allocatedcrud.CreateSet(
 			tx.CouponAllocated.Create(),
 			&allocatedcrud.Req{
@@ -84,7 +73,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				UserID:       h.UserID,
 				StartAt:      &startAt,
 				Denomination: &coupon.Denomination,
-				CouponScope:  &scope,
+				CouponScope:  &couponScope,
 			},
 		).Save(_ctx); err != nil {
 			return err
