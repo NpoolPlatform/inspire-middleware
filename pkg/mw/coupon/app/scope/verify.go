@@ -3,14 +3,18 @@ package scope
 import (
 	"context"
 
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	"github.com/google/uuid"
 
+	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	appgoodscopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/scope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappgoodscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
-	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	entcouponscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+
+	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 )
 
 type verifyHandler struct {
@@ -98,32 +102,38 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 	return true, nil
 }
 
-func (h *verifyHandler) verifyAllGood(ctx context.Context, tx *ent.Tx, req *appgoodscopecrud.Req) (bool, error) {
-	_, err := tx.
-		Coupon.
-		Query().
-		Where(
-			entcoupon.ID(*req.CouponID),
-			entcoupon.AppID(*req.AppID),
-			entcoupon.DeletedAt(0),
-		).Only(ctx)
+func (h *verifyHandler) getCoupons(ctx context.Context) (bool, error) {
+	handler, err := coupon1.NewHandler(ctx)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return false, nil
-		}
 		return false, err
 	}
-	return true, nil
+	ids := []uuid.UUID{}
+	for _, req := range h.Reqs {
+		ids = append(ids, *req.CouponID)
+	}
+
+	handler.Conds = &couponcrud.Conds{
+		AppID: &cruder.Cond{Op: cruder.EQ, Val: h.Reqs[0].AppID},
+		IDs:   &cruder.Cond{Op: cruder.IN, Val: ids},
+	}
+	coupons, _, err := handler.GetCoupons(ctx)
+	if err != nil {
+		return false, err
+	}
+	return len(coupons) == len(h.Reqs), nil
 }
 
 func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	if len(h.Reqs) == 0 {
 		return false, nil
 	}
-
 	handler := &verifyHandler{
 		Handler: h,
 	}
+	if exist, err := handler.getCoupons(ctx); !exist || err != nil {
+		return false, err
+	}
+
 	available := []bool{}
 	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
@@ -139,8 +149,7 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 					available = append(available, valid)
 				}
 				if *req.CouponScope == types.CouponScope_AllGood {
-					valid, err = handler.verifyAllGood(ctx, tx, req)
-					available = append(available, valid)
+					available = append(available, true)
 				}
 				if err != nil {
 					return err
