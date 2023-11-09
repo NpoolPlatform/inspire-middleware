@@ -17,8 +17,8 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) verifyCoupon(ctx context.Context, tx *ent.Tx) error {
-	coupon, err := tx.Coupon.Get(ctx, *h.CouponID)
+func (h *createHandler) verifyCoupon(ctx context.Context, cli *ent.Client) error {
+	coupon, err := cli.Coupon.Get(ctx, *h.CouponID)
 	if err != nil {
 		return err
 	}
@@ -28,9 +28,9 @@ func (h *createHandler) verifyCoupon(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *createHandler) createScope(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createScope(ctx context.Context, cli *ent.Client) error {
 	if _, err := scopecrud.CreateSet(
-		tx.CouponScope.Create(),
+		cli.CouponScope.Create(),
 		&scopecrud.Req{
 			ID:          h.ID,
 			GoodID:      h.GoodID,
@@ -65,11 +65,11 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 		h.ID = &id
 	}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.verifyCoupon(ctx, tx); err != nil {
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.verifyCoupon(ctx, cli); err != nil {
 			return err
 		}
-		if err := handler.createScope(ctx, tx); err != nil {
+		if err := handler.createScope(ctx, cli); err != nil {
 			return err
 		}
 		return nil

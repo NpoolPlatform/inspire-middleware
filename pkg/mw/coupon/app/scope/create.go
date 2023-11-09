@@ -18,9 +18,9 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) createAppGoodScope(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createAppGoodScope(ctx context.Context, cli *ent.Client) error {
 	if _, err := appgoodscopecrud.CreateSet(
-		tx.AppGoodScope.Create(),
+		cli.AppGoodScope.Create(),
 		&appgoodscopecrud.Req{
 			ID:          h.ID,
 			AppID:       h.AppID,
@@ -79,8 +79,8 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 		h.ID = &id
 	}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createAppGoodScope(ctx, tx); err != nil {
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		if err := handler.createAppGoodScope(ctx, cli); err != nil {
 			return err
 		}
 		return nil
