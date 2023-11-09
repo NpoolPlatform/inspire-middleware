@@ -1,4 +1,4 @@
-package role
+package coupon
 
 import (
 	"fmt"
@@ -16,8 +16,6 @@ type Req struct {
 	CouponType       *types.CouponType
 	AppID            *uuid.UUID
 	UserID           *uuid.UUID
-	GoodID           *uuid.UUID
-	AppGoodID        *uuid.UUID
 	Denomination     *decimal.Decimal
 	Circulation      *decimal.Decimal
 	IssuedBy         *uuid.UUID
@@ -26,6 +24,7 @@ type Req struct {
 	Message          *string
 	Name             *string
 	CouponConstraint *types.CouponConstraint
+	CouponScope      *types.CouponScope
 	Threshold        *decimal.Decimal
 	Allocated        *decimal.Decimal
 	Random           *bool
@@ -44,12 +43,6 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	}
 	if req.UserID != nil {
 		c.SetUserID(*req.UserID)
-	}
-	if req.GoodID != nil {
-		c.SetGoodID(*req.GoodID)
-	}
-	if req.AppGoodID != nil {
-		c.SetAppGoodID(*req.AppGoodID)
 	}
 	if req.Denomination != nil {
 		c.SetDenomination(*req.Denomination)
@@ -78,6 +71,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.CouponConstraint != nil {
 		c.SetCouponConstraint(req.CouponConstraint.String())
 	}
+	if req.CouponScope != nil {
+		c.SetCouponScope(req.CouponScope.String())
+	}
 	if req.Allocated != nil {
 		c.SetAllocated(*req.Allocated)
 	}
@@ -100,12 +96,6 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	if req.DurationDays != nil {
 		u.SetDurationDays(*req.DurationDays)
 	}
-	if req.GoodID != nil {
-		u.SetGoodID(*req.GoodID)
-	}
-	if req.AppGoodID != nil {
-		u.SetAppGoodID(*req.AppGoodID)
-	}
 	if req.Message != nil {
 		u.SetMessage(*req.Message)
 	}
@@ -120,6 +110,9 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	}
 	if req.Allocated != nil {
 		u.SetAllocated(*req.Allocated)
+	}
+	if req.CouponScope != nil {
+		u.SetCouponScope(req.CouponScope.String())
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -137,7 +130,6 @@ type Conds struct {
 	AppGoodID  *cruder.Cond
 }
 
-//nolint
 func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 	q.Where(entcoupon.DeletedAt(0))
 	if conds == nil {
@@ -152,7 +144,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 		case cruder.EQ:
 			q.Where(entcoupon.ID(id))
 		default:
-			return nil, fmt.Errorf("invalid coupon field")
+			return nil, fmt.Errorf("invalid id field")
 		}
 	}
 	if conds.IDs != nil {
@@ -164,7 +156,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 		case cruder.IN:
 			q.Where(entcoupon.IDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid coupon field")
+			return nil, fmt.Errorf("invalid ids field")
 		}
 	}
 	if conds.CouponType != nil {
@@ -176,7 +168,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 		case cruder.EQ:
 			q.Where(entcoupon.CouponType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid coupon field")
+			return nil, fmt.Errorf("invalid coupontype field")
 		}
 	}
 	if conds.AppID != nil {
@@ -188,7 +180,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 		case cruder.EQ:
 			q.Where(entcoupon.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid coupon field")
+			return nil, fmt.Errorf("invalid appid field")
 		}
 	}
 	if conds.UserID != nil {
@@ -200,31 +192,7 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 		case cruder.EQ:
 			q.Where(entcoupon.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid coupon field")
-		}
-	}
-	if conds.GoodID != nil {
-		id, ok := conds.GoodID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
-		}
-		switch conds.GoodID.Op {
-		case cruder.EQ:
-			q.Where(entcoupon.GoodID(id))
-		default:
-			return nil, fmt.Errorf("invalid coupon field")
-		}
-	}
-	if conds.AppGoodID != nil {
-		id, ok := conds.AppGoodID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
-		}
-		switch conds.AppGoodID.Op {
-		case cruder.EQ:
-			q.Where(entcoupon.AppGoodID(id))
-		default:
-			return nil, fmt.Errorf("invalid coupon field")
+			return nil, fmt.Errorf("invalid userid field")
 		}
 	}
 	return q, nil

@@ -160,6 +160,7 @@ func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) er
 	}
 }
 
+//nolint
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &allocatedcrud.Conds{}
@@ -210,6 +211,20 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.CouponID = &cruder.Cond{
 				Op:  conds.GetCouponID().GetOp(),
 				Val: id,
+			}
+		}
+		if conds.CouponIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetCouponIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.CouponIDs = &cruder.Cond{
+				Op:  conds.GetCouponIDs().GetOp(),
+				Val: ids,
 			}
 		}
 		if conds.Used != nil {

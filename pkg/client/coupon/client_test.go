@@ -51,6 +51,8 @@ var ret = &npool.Coupon{
 	Allocated:           "0",
 	CouponConstraint:    types.CouponConstraint_Normal,
 	CouponConstraintStr: types.CouponConstraint_Normal.String(),
+	CouponScope:         types.CouponScope_Whitelist,
+	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 }
 
 var req = &npool.CouponReq{
@@ -65,6 +67,7 @@ var req = &npool.CouponReq{
 	Message:          &ret.Message,
 	Name:             &ret.Name,
 	CouponConstraint: &ret.CouponConstraint,
+	CouponScope:      &ret.CouponScope,
 }
 
 func createDiscount(t *testing.T) {
@@ -85,6 +88,10 @@ func updateDiscount(t *testing.T) {
 
 	ret.Denomination = denomination
 	ret.Circulation = circulation
+
+	ret.CouponScope = types.CouponScope_AllGood
+	ret.CouponScopeStr = types.CouponScope_AllGood.String()
+
 	info, err := UpdateCoupon(context.Background(), req)
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt

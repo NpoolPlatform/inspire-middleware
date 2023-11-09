@@ -26,11 +26,10 @@ type Handler struct {
 	Message          *string
 	Name             *string
 	UserID           *uuid.UUID
-	GoodID           *uuid.UUID
-	AppGoodID        *uuid.UUID
 	Threshold        *decimal.Decimal
 	Allocated        *decimal.Decimal
 	CouponConstraint *types.CouponConstraint
+	CouponScope      *types.CouponScope
 	Random           *bool
 	Conds            *couponcrud.Conds
 	Offset           int32
@@ -215,40 +214,6 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid goodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.GoodID = &_id
-		return nil
-	}
-}
-
-func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid appgoodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.AppGoodID = &_id
-		return nil
-	}
-}
-
 func WithThreshold(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -304,6 +269,26 @@ func WithCouponConstraint(constraint *types.CouponConstraint, must bool) func(co
 	}
 }
 
+func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if couponScope == nil {
+			if must {
+				return fmt.Errorf("invalid couponscope")
+			}
+			return nil
+		}
+		switch *couponScope {
+		case types.CouponScope_AllGood:
+		case types.CouponScope_Blacklist:
+		case types.CouponScope_Whitelist:
+		default:
+			return fmt.Errorf("invalid couponscope")
+		}
+		h.CouponScope = couponScope
+		return nil
+	}
+}
+
 func WithRandom(value *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Random = value
@@ -340,26 +325,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.GoodID != nil {
-			id, err := uuid.Parse(conds.GetGoodID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.GoodID = &cruder.Cond{
-				Op:  conds.GetGoodID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.AppGoodID != nil {
-			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op:  conds.GetAppGoodID().GetOp(),
 				Val: id,
 			}
 		}

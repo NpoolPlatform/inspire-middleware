@@ -11,6 +11,8 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
+	scope1 "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/scope"
+	"github.com/NpoolPlatform/inspire-middleware/api/coupon/scope"
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
@@ -29,6 +31,8 @@ func Register(server grpc.ServiceRegistrar) {
 	registration.Register(server)
 	coupon.Register(server)
 	allocated.Register(server)
+	scope.Register(server)
+	scope1.Register(server)
 	commission.Register(server)
 	achievement.Register(server)
 	calculate.Register(server)

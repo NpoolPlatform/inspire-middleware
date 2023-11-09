@@ -33,6 +33,23 @@ var (
 		Columns:    ArchivementGeneralsColumns,
 		PrimaryKey: []*schema.Column{ArchivementGeneralsColumns[0]},
 	}
+	// AppGoodScopesColumns holds the columns for the "app_good_scopes" table.
+	AppGoodScopesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
+	}
+	// AppGoodScopesTable holds the schema information for the "app_good_scopes" table.
+	AppGoodScopesTable = &schema.Table{
+		Name:       "app_good_scopes",
+		Columns:    AppGoodScopesColumns,
+		PrimaryKey: []*schema.Column{AppGoodScopesColumns[0]},
+	}
 	// CommissionsColumns holds the columns for the "commissions" table.
 	CommissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -44,7 +61,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1695475313},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699434240},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -67,13 +84,11 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1695475313},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699434240},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
@@ -81,6 +96,7 @@ var (
 		{Name: "coupon_type", Type: field.TypeString, Nullable: true, Default: "DefaultCouponType"},
 		{Name: "threshold", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "coupon_constraint", Type: field.TypeString, Nullable: true, Default: "Normal"},
+		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 	}
 	// CouponsTable holds the schema information for the "coupons" table.
 	CouponsTable = &schema.Table{
@@ -101,13 +117,30 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1695475313},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699434240},
+		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 	}
 	// CouponAllocatedsTable holds the schema information for the "coupon_allocateds" table.
 	CouponAllocatedsTable = &schema.Table{
 		Name:       "coupon_allocateds",
 		Columns:    CouponAllocatedsColumns,
 		PrimaryKey: []*schema.Column{CouponAllocatedsColumns[0]},
+	}
+	// CouponScopesColumns holds the columns for the "coupon_scopes" table.
+	CouponScopesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
+	}
+	// CouponScopesTable holds the schema information for the "coupon_scopes" table.
+	CouponScopesTable = &schema.Table{
+		Name:       "coupon_scopes",
+		Columns:    CouponScopesColumns,
+		PrimaryKey: []*schema.Column{CouponScopesColumns[0]},
 	}
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{
@@ -226,9 +259,11 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ArchivementGeneralsTable,
+		AppGoodScopesTable,
 		CommissionsTable,
 		CouponsTable,
 		CouponAllocatedsTable,
+		CouponScopesTable,
 		EventsTable,
 		InvitationCodesTable,
 		PubsubMessagesTable,

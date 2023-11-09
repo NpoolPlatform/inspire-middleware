@@ -55,15 +55,10 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
+		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
 
 		if info.UserID != nil && *info.UserID == uuid.Nil.String() {
 			info.UserID = nil
-		}
-		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
-			info.GoodID = nil
-		}
-		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
-			info.AppGoodID = nil
 		}
 		amount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {

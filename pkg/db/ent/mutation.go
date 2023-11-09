@@ -9,9 +9,11 @@ import (
 	"sync"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
@@ -34,9 +36,11 @@ const (
 
 	// Node types.
 	TypeAchievement     = "Achievement"
+	TypeAppGoodScope    = "AppGoodScope"
 	TypeCommission      = "Commission"
 	TypeCoupon          = "Coupon"
 	TypeCouponAllocated = "CouponAllocated"
+	TypeCouponScope     = "CouponScope"
 	TypeEvent           = "Event"
 	TypeInvitationCode  = "InvitationCode"
 	TypePubsubMessage   = "PubsubMessage"
@@ -1375,6 +1379,828 @@ func (m *AchievementMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AchievementMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Achievement edge %s", name)
+}
+
+// AppGoodScopeMutation represents an operation that mutates the AppGoodScope nodes in the graph.
+type AppGoodScopeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	app_id        *uuid.UUID
+	app_good_id   *uuid.UUID
+	coupon_id     *uuid.UUID
+	coupon_scope  *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*AppGoodScope, error)
+	predicates    []predicate.AppGoodScope
+}
+
+var _ ent.Mutation = (*AppGoodScopeMutation)(nil)
+
+// appgoodscopeOption allows management of the mutation configuration using functional options.
+type appgoodscopeOption func(*AppGoodScopeMutation)
+
+// newAppGoodScopeMutation creates new mutation for the AppGoodScope entity.
+func newAppGoodScopeMutation(c config, op Op, opts ...appgoodscopeOption) *AppGoodScopeMutation {
+	m := &AppGoodScopeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppGoodScope,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppGoodScopeID sets the ID field of the mutation.
+func withAppGoodScopeID(id uuid.UUID) appgoodscopeOption {
+	return func(m *AppGoodScopeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppGoodScope
+		)
+		m.oldValue = func(ctx context.Context) (*AppGoodScope, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppGoodScope.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppGoodScope sets the old AppGoodScope of the mutation.
+func withAppGoodScope(node *AppGoodScope) appgoodscopeOption {
+	return func(m *AppGoodScopeMutation) {
+		m.oldValue = func(context.Context) (*AppGoodScope, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppGoodScopeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppGoodScopeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppGoodScope entities.
+func (m *AppGoodScopeMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppGoodScopeMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppGoodScopeMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppGoodScope.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppGoodScopeMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppGoodScopeMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *AppGoodScopeMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *AppGoodScopeMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppGoodScopeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppGoodScopeMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppGoodScopeMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *AppGoodScopeMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *AppGoodScopeMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppGoodScopeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *AppGoodScopeMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *AppGoodScopeMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *AppGoodScopeMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *AppGoodScopeMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *AppGoodScopeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AppGoodScopeMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AppGoodScopeMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *AppGoodScopeMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[appgoodscope.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *AppGoodScopeMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[appgoodscope.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AppGoodScopeMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, appgoodscope.FieldAppID)
+}
+
+// SetAppGoodID sets the "app_good_id" field.
+func (m *AppGoodScopeMutation) SetAppGoodID(u uuid.UUID) {
+	m.app_good_id = &u
+}
+
+// AppGoodID returns the value of the "app_good_id" field in the mutation.
+func (m *AppGoodScopeMutation) AppGoodID() (r uuid.UUID, exists bool) {
+	v := m.app_good_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppGoodID returns the old "app_good_id" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
+	}
+	return oldValue.AppGoodID, nil
+}
+
+// ClearAppGoodID clears the value of the "app_good_id" field.
+func (m *AppGoodScopeMutation) ClearAppGoodID() {
+	m.app_good_id = nil
+	m.clearedFields[appgoodscope.FieldAppGoodID] = struct{}{}
+}
+
+// AppGoodIDCleared returns if the "app_good_id" field was cleared in this mutation.
+func (m *AppGoodScopeMutation) AppGoodIDCleared() bool {
+	_, ok := m.clearedFields[appgoodscope.FieldAppGoodID]
+	return ok
+}
+
+// ResetAppGoodID resets all changes to the "app_good_id" field.
+func (m *AppGoodScopeMutation) ResetAppGoodID() {
+	m.app_good_id = nil
+	delete(m.clearedFields, appgoodscope.FieldAppGoodID)
+}
+
+// SetCouponID sets the "coupon_id" field.
+func (m *AppGoodScopeMutation) SetCouponID(u uuid.UUID) {
+	m.coupon_id = &u
+}
+
+// CouponID returns the value of the "coupon_id" field in the mutation.
+func (m *AppGoodScopeMutation) CouponID() (r uuid.UUID, exists bool) {
+	v := m.coupon_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponID returns the old "coupon_id" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldCouponID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponID: %w", err)
+	}
+	return oldValue.CouponID, nil
+}
+
+// ClearCouponID clears the value of the "coupon_id" field.
+func (m *AppGoodScopeMutation) ClearCouponID() {
+	m.coupon_id = nil
+	m.clearedFields[appgoodscope.FieldCouponID] = struct{}{}
+}
+
+// CouponIDCleared returns if the "coupon_id" field was cleared in this mutation.
+func (m *AppGoodScopeMutation) CouponIDCleared() bool {
+	_, ok := m.clearedFields[appgoodscope.FieldCouponID]
+	return ok
+}
+
+// ResetCouponID resets all changes to the "coupon_id" field.
+func (m *AppGoodScopeMutation) ResetCouponID() {
+	m.coupon_id = nil
+	delete(m.clearedFields, appgoodscope.FieldCouponID)
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (m *AppGoodScopeMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
+}
+
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *AppGoodScopeMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponScope returns the old "coupon_scope" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldCouponScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
+	}
+	return oldValue.CouponScope, nil
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *AppGoodScopeMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[appgoodscope.FieldCouponScope] = struct{}{}
+}
+
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *AppGoodScopeMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[appgoodscope.FieldCouponScope]
+	return ok
+}
+
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *AppGoodScopeMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, appgoodscope.FieldCouponScope)
+}
+
+// Where appends a list predicates to the AppGoodScopeMutation builder.
+func (m *AppGoodScopeMutation) Where(ps ...predicate.AppGoodScope) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *AppGoodScopeMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (AppGoodScope).
+func (m *AppGoodScopeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppGoodScopeMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, appgoodscope.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, appgoodscope.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, appgoodscope.FieldDeletedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, appgoodscope.FieldAppID)
+	}
+	if m.app_good_id != nil {
+		fields = append(fields, appgoodscope.FieldAppGoodID)
+	}
+	if m.coupon_id != nil {
+		fields = append(fields, appgoodscope.FieldCouponID)
+	}
+	if m.coupon_scope != nil {
+		fields = append(fields, appgoodscope.FieldCouponScope)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppGoodScopeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		return m.CreatedAt()
+	case appgoodscope.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case appgoodscope.FieldDeletedAt:
+		return m.DeletedAt()
+	case appgoodscope.FieldAppID:
+		return m.AppID()
+	case appgoodscope.FieldAppGoodID:
+		return m.AppGoodID()
+	case appgoodscope.FieldCouponID:
+		return m.CouponID()
+	case appgoodscope.FieldCouponScope:
+		return m.CouponScope()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppGoodScopeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case appgoodscope.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case appgoodscope.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case appgoodscope.FieldAppID:
+		return m.OldAppID(ctx)
+	case appgoodscope.FieldAppGoodID:
+		return m.OldAppGoodID(ctx)
+	case appgoodscope.FieldCouponID:
+		return m.OldCouponID(ctx)
+	case appgoodscope.FieldCouponScope:
+		return m.OldCouponScope(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppGoodScope field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppGoodScopeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case appgoodscope.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case appgoodscope.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case appgoodscope.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case appgoodscope.FieldAppGoodID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppGoodID(v)
+		return nil
+	case appgoodscope.FieldCouponID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponID(v)
+		return nil
+	case appgoodscope.FieldCouponScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponScope(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppGoodScope field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppGoodScopeMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, appgoodscope.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, appgoodscope.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, appgoodscope.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppGoodScopeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case appgoodscope.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case appgoodscope.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppGoodScopeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case appgoodscope.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case appgoodscope.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppGoodScope numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppGoodScopeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(appgoodscope.FieldAppID) {
+		fields = append(fields, appgoodscope.FieldAppID)
+	}
+	if m.FieldCleared(appgoodscope.FieldAppGoodID) {
+		fields = append(fields, appgoodscope.FieldAppGoodID)
+	}
+	if m.FieldCleared(appgoodscope.FieldCouponID) {
+		fields = append(fields, appgoodscope.FieldCouponID)
+	}
+	if m.FieldCleared(appgoodscope.FieldCouponScope) {
+		fields = append(fields, appgoodscope.FieldCouponScope)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppGoodScopeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppGoodScopeMutation) ClearField(name string) error {
+	switch name {
+	case appgoodscope.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case appgoodscope.FieldAppGoodID:
+		m.ClearAppGoodID()
+		return nil
+	case appgoodscope.FieldCouponID:
+		m.ClearCouponID()
+		return nil
+	case appgoodscope.FieldCouponScope:
+		m.ClearCouponScope()
+		return nil
+	}
+	return fmt.Errorf("unknown AppGoodScope nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppGoodScopeMutation) ResetField(name string) error {
+	switch name {
+	case appgoodscope.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case appgoodscope.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case appgoodscope.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case appgoodscope.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case appgoodscope.FieldAppGoodID:
+		m.ResetAppGoodID()
+		return nil
+	case appgoodscope.FieldCouponID:
+		m.ResetCouponID()
+		return nil
+	case appgoodscope.FieldCouponScope:
+		m.ResetCouponScope()
+		return nil
+	}
+	return fmt.Errorf("unknown AppGoodScope field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppGoodScopeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppGoodScopeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppGoodScopeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppGoodScopeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppGoodScopeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppGoodScopeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppGoodScopeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown AppGoodScope unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppGoodScopeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown AppGoodScope edge %s", name)
 }
 
 // CommissionMutation represents an operation that mutates the Commission nodes in the graph.
@@ -2972,8 +3798,6 @@ type CouponMutation struct {
 	adddeleted_at     *int32
 	app_id            *uuid.UUID
 	user_id           *uuid.UUID
-	good_id           *uuid.UUID
-	app_good_id       *uuid.UUID
 	denomination      *decimal.Decimal
 	circulation       *decimal.Decimal
 	random            *bool
@@ -2988,6 +3812,7 @@ type CouponMutation struct {
 	coupon_type       *string
 	threshold         *decimal.Decimal
 	coupon_constraint *string
+	coupon_scope      *string
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*Coupon, error)
@@ -3362,104 +4187,6 @@ func (m *CouponMutation) UserIDCleared() bool {
 func (m *CouponMutation) ResetUserID() {
 	m.user_id = nil
 	delete(m.clearedFields, coupon.FieldUserID)
-}
-
-// SetGoodID sets the "good_id" field.
-func (m *CouponMutation) SetGoodID(u uuid.UUID) {
-	m.good_id = &u
-}
-
-// GoodID returns the value of the "good_id" field in the mutation.
-func (m *CouponMutation) GoodID() (r uuid.UUID, exists bool) {
-	v := m.good_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldGoodID returns the old "good_id" field's value of the Coupon entity.
-// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGoodID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGoodID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGoodID: %w", err)
-	}
-	return oldValue.GoodID, nil
-}
-
-// ClearGoodID clears the value of the "good_id" field.
-func (m *CouponMutation) ClearGoodID() {
-	m.good_id = nil
-	m.clearedFields[coupon.FieldGoodID] = struct{}{}
-}
-
-// GoodIDCleared returns if the "good_id" field was cleared in this mutation.
-func (m *CouponMutation) GoodIDCleared() bool {
-	_, ok := m.clearedFields[coupon.FieldGoodID]
-	return ok
-}
-
-// ResetGoodID resets all changes to the "good_id" field.
-func (m *CouponMutation) ResetGoodID() {
-	m.good_id = nil
-	delete(m.clearedFields, coupon.FieldGoodID)
-}
-
-// SetAppGoodID sets the "app_good_id" field.
-func (m *CouponMutation) SetAppGoodID(u uuid.UUID) {
-	m.app_good_id = &u
-}
-
-// AppGoodID returns the value of the "app_good_id" field in the mutation.
-func (m *CouponMutation) AppGoodID() (r uuid.UUID, exists bool) {
-	v := m.app_good_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppGoodID returns the old "app_good_id" field's value of the Coupon entity.
-// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponMutation) OldAppGoodID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppGoodID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppGoodID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppGoodID: %w", err)
-	}
-	return oldValue.AppGoodID, nil
-}
-
-// ClearAppGoodID clears the value of the "app_good_id" field.
-func (m *CouponMutation) ClearAppGoodID() {
-	m.app_good_id = nil
-	m.clearedFields[coupon.FieldAppGoodID] = struct{}{}
-}
-
-// AppGoodIDCleared returns if the "app_good_id" field was cleared in this mutation.
-func (m *CouponMutation) AppGoodIDCleared() bool {
-	_, ok := m.clearedFields[coupon.FieldAppGoodID]
-	return ok
-}
-
-// ResetAppGoodID resets all changes to the "app_good_id" field.
-func (m *CouponMutation) ResetAppGoodID() {
-	m.app_good_id = nil
-	delete(m.clearedFields, coupon.FieldAppGoodID)
 }
 
 // SetDenomination sets the "denomination" field.
@@ -4079,6 +4806,55 @@ func (m *CouponMutation) ResetCouponConstraint() {
 	delete(m.clearedFields, coupon.FieldCouponConstraint)
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (m *CouponMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
+}
+
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *CouponMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponScope returns the old "coupon_scope" field's value of the Coupon entity.
+// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponMutation) OldCouponScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
+	}
+	return oldValue.CouponScope, nil
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *CouponMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[coupon.FieldCouponScope] = struct{}{}
+}
+
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *CouponMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[coupon.FieldCouponScope]
+	return ok
+}
+
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *CouponMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, coupon.FieldCouponScope)
+}
+
 // Where appends a list predicates to the CouponMutation builder.
 func (m *CouponMutation) Where(ps ...predicate.Coupon) {
 	m.predicates = append(m.predicates, ps...)
@@ -4098,7 +4874,7 @@ func (m *CouponMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, coupon.FieldCreatedAt)
 	}
@@ -4113,12 +4889,6 @@ func (m *CouponMutation) Fields() []string {
 	}
 	if m.user_id != nil {
 		fields = append(fields, coupon.FieldUserID)
-	}
-	if m.good_id != nil {
-		fields = append(fields, coupon.FieldGoodID)
-	}
-	if m.app_good_id != nil {
-		fields = append(fields, coupon.FieldAppGoodID)
 	}
 	if m.denomination != nil {
 		fields = append(fields, coupon.FieldDenomination)
@@ -4156,6 +4926,9 @@ func (m *CouponMutation) Fields() []string {
 	if m.coupon_constraint != nil {
 		fields = append(fields, coupon.FieldCouponConstraint)
 	}
+	if m.coupon_scope != nil {
+		fields = append(fields, coupon.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -4174,10 +4947,6 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case coupon.FieldUserID:
 		return m.UserID()
-	case coupon.FieldGoodID:
-		return m.GoodID()
-	case coupon.FieldAppGoodID:
-		return m.AppGoodID()
 	case coupon.FieldDenomination:
 		return m.Denomination()
 	case coupon.FieldCirculation:
@@ -4202,6 +4971,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.Threshold()
 	case coupon.FieldCouponConstraint:
 		return m.CouponConstraint()
+	case coupon.FieldCouponScope:
+		return m.CouponScope()
 	}
 	return nil, false
 }
@@ -4221,10 +4992,6 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldAppID(ctx)
 	case coupon.FieldUserID:
 		return m.OldUserID(ctx)
-	case coupon.FieldGoodID:
-		return m.OldGoodID(ctx)
-	case coupon.FieldAppGoodID:
-		return m.OldAppGoodID(ctx)
 	case coupon.FieldDenomination:
 		return m.OldDenomination(ctx)
 	case coupon.FieldCirculation:
@@ -4249,6 +5016,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldThreshold(ctx)
 	case coupon.FieldCouponConstraint:
 		return m.OldCouponConstraint(ctx)
+	case coupon.FieldCouponScope:
+		return m.OldCouponScope(ctx)
 	}
 	return nil, fmt.Errorf("unknown Coupon field %s", name)
 }
@@ -4292,20 +5061,6 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
-		return nil
-	case coupon.FieldGoodID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetGoodID(v)
-		return nil
-	case coupon.FieldAppGoodID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppGoodID(v)
 		return nil
 	case coupon.FieldDenomination:
 		v, ok := value.(decimal.Decimal)
@@ -4390,6 +5145,13 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCouponConstraint(v)
+		return nil
+	case coupon.FieldCouponScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponScope(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)
@@ -4490,12 +5252,6 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldUserID) {
 		fields = append(fields, coupon.FieldUserID)
 	}
-	if m.FieldCleared(coupon.FieldGoodID) {
-		fields = append(fields, coupon.FieldGoodID)
-	}
-	if m.FieldCleared(coupon.FieldAppGoodID) {
-		fields = append(fields, coupon.FieldAppGoodID)
-	}
 	if m.FieldCleared(coupon.FieldDenomination) {
 		fields = append(fields, coupon.FieldDenomination)
 	}
@@ -4529,6 +5285,9 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldCouponConstraint) {
 		fields = append(fields, coupon.FieldCouponConstraint)
 	}
+	if m.FieldCleared(coupon.FieldCouponScope) {
+		fields = append(fields, coupon.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -4548,12 +5307,6 @@ func (m *CouponMutation) ClearField(name string) error {
 		return nil
 	case coupon.FieldUserID:
 		m.ClearUserID()
-		return nil
-	case coupon.FieldGoodID:
-		m.ClearGoodID()
-		return nil
-	case coupon.FieldAppGoodID:
-		m.ClearAppGoodID()
 		return nil
 	case coupon.FieldDenomination:
 		m.ClearDenomination()
@@ -4588,6 +5341,9 @@ func (m *CouponMutation) ClearField(name string) error {
 	case coupon.FieldCouponConstraint:
 		m.ClearCouponConstraint()
 		return nil
+	case coupon.FieldCouponScope:
+		m.ClearCouponScope()
+		return nil
 	}
 	return fmt.Errorf("unknown Coupon nullable field %s", name)
 }
@@ -4610,12 +5366,6 @@ func (m *CouponMutation) ResetField(name string) error {
 		return nil
 	case coupon.FieldUserID:
 		m.ResetUserID()
-		return nil
-	case coupon.FieldGoodID:
-		m.ResetGoodID()
-		return nil
-	case coupon.FieldAppGoodID:
-		m.ResetAppGoodID()
 		return nil
 	case coupon.FieldDenomination:
 		m.ResetDenomination()
@@ -4652,6 +5402,9 @@ func (m *CouponMutation) ResetField(name string) error {
 		return nil
 	case coupon.FieldCouponConstraint:
 		m.ResetCouponConstraint()
+		return nil
+	case coupon.FieldCouponScope:
+		m.ResetCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)
@@ -4727,6 +5480,7 @@ type CouponAllocatedMutation struct {
 	used_by_order_id *uuid.UUID
 	start_at         *uint32
 	addstart_at      *int32
+	coupon_scope     *string
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*CouponAllocated, error)
@@ -5400,6 +6154,55 @@ func (m *CouponAllocatedMutation) ResetStartAt() {
 	delete(m.clearedFields, couponallocated.FieldStartAt)
 }
 
+// SetCouponScope sets the "coupon_scope" field.
+func (m *CouponAllocatedMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
+}
+
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *CouponAllocatedMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponScope returns the old "coupon_scope" field's value of the CouponAllocated entity.
+// If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponAllocatedMutation) OldCouponScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
+	}
+	return oldValue.CouponScope, nil
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *CouponAllocatedMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[couponallocated.FieldCouponScope] = struct{}{}
+}
+
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldCouponScope]
+	return ok
+}
+
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *CouponAllocatedMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, couponallocated.FieldCouponScope)
+}
+
 // Where appends a list predicates to the CouponAllocatedMutation builder.
 func (m *CouponAllocatedMutation) Where(ps ...predicate.CouponAllocated) {
 	m.predicates = append(m.predicates, ps...)
@@ -5419,7 +6222,7 @@ func (m *CouponAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, couponallocated.FieldCreatedAt)
 	}
@@ -5453,6 +6256,9 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	if m.start_at != nil {
 		fields = append(fields, couponallocated.FieldStartAt)
 	}
+	if m.coupon_scope != nil {
+		fields = append(fields, couponallocated.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -5483,6 +6289,8 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.UsedByOrderID()
 	case couponallocated.FieldStartAt:
 		return m.StartAt()
+	case couponallocated.FieldCouponScope:
+		return m.CouponScope()
 	}
 	return nil, false
 }
@@ -5514,6 +6322,8 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUsedByOrderID(ctx)
 	case couponallocated.FieldStartAt:
 		return m.OldStartAt(ctx)
+	case couponallocated.FieldCouponScope:
+		return m.OldCouponScope(ctx)
 	}
 	return nil, fmt.Errorf("unknown CouponAllocated field %s", name)
 }
@@ -5599,6 +6409,13 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStartAt(v)
+		return nil
+	case couponallocated.FieldCouponScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponScope(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -5708,6 +6525,9 @@ func (m *CouponAllocatedMutation) ClearedFields() []string {
 	if m.FieldCleared(couponallocated.FieldStartAt) {
 		fields = append(fields, couponallocated.FieldStartAt)
 	}
+	if m.FieldCleared(couponallocated.FieldCouponScope) {
+		fields = append(fields, couponallocated.FieldCouponScope)
+	}
 	return fields
 }
 
@@ -5736,6 +6556,9 @@ func (m *CouponAllocatedMutation) ClearField(name string) error {
 		return nil
 	case couponallocated.FieldStartAt:
 		m.ClearStartAt()
+		return nil
+	case couponallocated.FieldCouponScope:
+		m.ClearCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated nullable field %s", name)
@@ -5777,6 +6600,9 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 		return nil
 	case couponallocated.FieldStartAt:
 		m.ResetStartAt()
+		return nil
+	case couponallocated.FieldCouponScope:
+		m.ResetCouponScope()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -5828,6 +6654,755 @@ func (m *CouponAllocatedMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CouponAllocatedMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CouponAllocated edge %s", name)
+}
+
+// CouponScopeMutation represents an operation that mutates the CouponScope nodes in the graph.
+type CouponScopeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	coupon_id     *uuid.UUID
+	good_id       *uuid.UUID
+	coupon_scope  *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CouponScope, error)
+	predicates    []predicate.CouponScope
+}
+
+var _ ent.Mutation = (*CouponScopeMutation)(nil)
+
+// couponscopeOption allows management of the mutation configuration using functional options.
+type couponscopeOption func(*CouponScopeMutation)
+
+// newCouponScopeMutation creates new mutation for the CouponScope entity.
+func newCouponScopeMutation(c config, op Op, opts ...couponscopeOption) *CouponScopeMutation {
+	m := &CouponScopeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCouponScope,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCouponScopeID sets the ID field of the mutation.
+func withCouponScopeID(id uuid.UUID) couponscopeOption {
+	return func(m *CouponScopeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CouponScope
+		)
+		m.oldValue = func(ctx context.Context) (*CouponScope, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CouponScope.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCouponScope sets the old CouponScope of the mutation.
+func withCouponScope(node *CouponScope) couponscopeOption {
+	return func(m *CouponScopeMutation) {
+		m.oldValue = func(context.Context) (*CouponScope, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CouponScopeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CouponScopeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CouponScope entities.
+func (m *CouponScopeMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CouponScopeMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CouponScopeMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CouponScope.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CouponScopeMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CouponScopeMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *CouponScopeMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *CouponScopeMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CouponScopeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CouponScopeMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CouponScopeMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *CouponScopeMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *CouponScopeMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CouponScopeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CouponScopeMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CouponScopeMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *CouponScopeMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *CouponScopeMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CouponScopeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetCouponID sets the "coupon_id" field.
+func (m *CouponScopeMutation) SetCouponID(u uuid.UUID) {
+	m.coupon_id = &u
+}
+
+// CouponID returns the value of the "coupon_id" field in the mutation.
+func (m *CouponScopeMutation) CouponID() (r uuid.UUID, exists bool) {
+	v := m.coupon_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponID returns the old "coupon_id" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldCouponID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponID: %w", err)
+	}
+	return oldValue.CouponID, nil
+}
+
+// ClearCouponID clears the value of the "coupon_id" field.
+func (m *CouponScopeMutation) ClearCouponID() {
+	m.coupon_id = nil
+	m.clearedFields[couponscope.FieldCouponID] = struct{}{}
+}
+
+// CouponIDCleared returns if the "coupon_id" field was cleared in this mutation.
+func (m *CouponScopeMutation) CouponIDCleared() bool {
+	_, ok := m.clearedFields[couponscope.FieldCouponID]
+	return ok
+}
+
+// ResetCouponID resets all changes to the "coupon_id" field.
+func (m *CouponScopeMutation) ResetCouponID() {
+	m.coupon_id = nil
+	delete(m.clearedFields, couponscope.FieldCouponID)
+}
+
+// SetGoodID sets the "good_id" field.
+func (m *CouponScopeMutation) SetGoodID(u uuid.UUID) {
+	m.good_id = &u
+}
+
+// GoodID returns the value of the "good_id" field in the mutation.
+func (m *CouponScopeMutation) GoodID() (r uuid.UUID, exists bool) {
+	v := m.good_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGoodID returns the old "good_id" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldGoodID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGoodID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGoodID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGoodID: %w", err)
+	}
+	return oldValue.GoodID, nil
+}
+
+// ClearGoodID clears the value of the "good_id" field.
+func (m *CouponScopeMutation) ClearGoodID() {
+	m.good_id = nil
+	m.clearedFields[couponscope.FieldGoodID] = struct{}{}
+}
+
+// GoodIDCleared returns if the "good_id" field was cleared in this mutation.
+func (m *CouponScopeMutation) GoodIDCleared() bool {
+	_, ok := m.clearedFields[couponscope.FieldGoodID]
+	return ok
+}
+
+// ResetGoodID resets all changes to the "good_id" field.
+func (m *CouponScopeMutation) ResetGoodID() {
+	m.good_id = nil
+	delete(m.clearedFields, couponscope.FieldGoodID)
+}
+
+// SetCouponScope sets the "coupon_scope" field.
+func (m *CouponScopeMutation) SetCouponScope(s string) {
+	m.coupon_scope = &s
+}
+
+// CouponScope returns the value of the "coupon_scope" field in the mutation.
+func (m *CouponScopeMutation) CouponScope() (r string, exists bool) {
+	v := m.coupon_scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponScope returns the old "coupon_scope" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldCouponScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponScope: %w", err)
+	}
+	return oldValue.CouponScope, nil
+}
+
+// ClearCouponScope clears the value of the "coupon_scope" field.
+func (m *CouponScopeMutation) ClearCouponScope() {
+	m.coupon_scope = nil
+	m.clearedFields[couponscope.FieldCouponScope] = struct{}{}
+}
+
+// CouponScopeCleared returns if the "coupon_scope" field was cleared in this mutation.
+func (m *CouponScopeMutation) CouponScopeCleared() bool {
+	_, ok := m.clearedFields[couponscope.FieldCouponScope]
+	return ok
+}
+
+// ResetCouponScope resets all changes to the "coupon_scope" field.
+func (m *CouponScopeMutation) ResetCouponScope() {
+	m.coupon_scope = nil
+	delete(m.clearedFields, couponscope.FieldCouponScope)
+}
+
+// Where appends a list predicates to the CouponScopeMutation builder.
+func (m *CouponScopeMutation) Where(ps ...predicate.CouponScope) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *CouponScopeMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (CouponScope).
+func (m *CouponScopeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CouponScopeMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, couponscope.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, couponscope.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, couponscope.FieldDeletedAt)
+	}
+	if m.coupon_id != nil {
+		fields = append(fields, couponscope.FieldCouponID)
+	}
+	if m.good_id != nil {
+		fields = append(fields, couponscope.FieldGoodID)
+	}
+	if m.coupon_scope != nil {
+		fields = append(fields, couponscope.FieldCouponScope)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CouponScopeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		return m.CreatedAt()
+	case couponscope.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case couponscope.FieldDeletedAt:
+		return m.DeletedAt()
+	case couponscope.FieldCouponID:
+		return m.CouponID()
+	case couponscope.FieldGoodID:
+		return m.GoodID()
+	case couponscope.FieldCouponScope:
+		return m.CouponScope()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CouponScopeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case couponscope.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case couponscope.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case couponscope.FieldCouponID:
+		return m.OldCouponID(ctx)
+	case couponscope.FieldGoodID:
+		return m.OldGoodID(ctx)
+	case couponscope.FieldCouponScope:
+		return m.OldCouponScope(ctx)
+	}
+	return nil, fmt.Errorf("unknown CouponScope field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CouponScopeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case couponscope.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case couponscope.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case couponscope.FieldCouponID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponID(v)
+		return nil
+	case couponscope.FieldGoodID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGoodID(v)
+		return nil
+	case couponscope.FieldCouponScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponScope(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CouponScope field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CouponScopeMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, couponscope.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, couponscope.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, couponscope.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CouponScopeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case couponscope.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case couponscope.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CouponScopeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case couponscope.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case couponscope.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CouponScope numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CouponScopeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(couponscope.FieldCouponID) {
+		fields = append(fields, couponscope.FieldCouponID)
+	}
+	if m.FieldCleared(couponscope.FieldGoodID) {
+		fields = append(fields, couponscope.FieldGoodID)
+	}
+	if m.FieldCleared(couponscope.FieldCouponScope) {
+		fields = append(fields, couponscope.FieldCouponScope)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CouponScopeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CouponScopeMutation) ClearField(name string) error {
+	switch name {
+	case couponscope.FieldCouponID:
+		m.ClearCouponID()
+		return nil
+	case couponscope.FieldGoodID:
+		m.ClearGoodID()
+		return nil
+	case couponscope.FieldCouponScope:
+		m.ClearCouponScope()
+		return nil
+	}
+	return fmt.Errorf("unknown CouponScope nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CouponScopeMutation) ResetField(name string) error {
+	switch name {
+	case couponscope.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case couponscope.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case couponscope.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case couponscope.FieldCouponID:
+		m.ResetCouponID()
+		return nil
+	case couponscope.FieldGoodID:
+		m.ResetGoodID()
+		return nil
+	case couponscope.FieldCouponScope:
+		m.ResetCouponScope()
+		return nil
+	}
+	return fmt.Errorf("unknown CouponScope field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CouponScopeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CouponScopeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CouponScopeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CouponScopeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CouponScopeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CouponScopeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CouponScopeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CouponScope unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CouponScopeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CouponScope edge %s", name)
 }
 
 // EventMutation represents an operation that mutates the Event nodes in the graph.

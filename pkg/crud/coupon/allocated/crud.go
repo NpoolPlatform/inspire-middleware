@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcouponallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -21,6 +22,7 @@ type Req struct {
 	UsedByOrderID *uuid.UUID
 	Denomination  *decimal.Decimal
 	StartAt       *uint32
+	CouponScope   *inspiretypes.CouponScope
 	DeletedAt     *uint32
 }
 
@@ -42,6 +44,9 @@ func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreat
 	}
 	if req.StartAt != nil {
 		c.SetStartAt(*req.StartAt)
+	}
+	if req.CouponScope != nil {
+		c.SetCouponScope(req.CouponScope.String())
 	}
 	c.SetUsed(false)
 	c.SetUsedAt(0)
@@ -67,6 +72,7 @@ type Conds struct {
 	UserID         *cruder.Cond
 	CouponType     *cruder.Cond
 	CouponID       *cruder.Cond
+	CouponIDs      *cruder.Cond
 	Used           *cruder.Cond
 	UsedByOrderID  *cruder.Cond
 	UsedByOrderIDs *cruder.Cond
@@ -134,7 +140,19 @@ func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAlloca
 		case cruder.EQ:
 			q.Where(entcouponallocated.CouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, fmt.Errorf("invalid couponid field")
+		}
+	}
+	if conds.CouponIDs != nil {
+		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid couponids")
+		}
+		switch conds.CouponIDs.Op {
+		case cruder.IN:
+			q.Where(entcouponallocated.CouponIDIn(ids...))
+		default:
+			return nil, fmt.Errorf("invalid couponids field")
 		}
 	}
 	if conds.Used != nil {
