@@ -117,6 +117,9 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.Reqs[0].AppID},
 		IDs:   &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
+	handler.Offset = 0
+	handler.Limit = int32(len(ids))
+
 	coupons, _, err := handler.GetCoupons(ctx)
 	if err != nil {
 		return err

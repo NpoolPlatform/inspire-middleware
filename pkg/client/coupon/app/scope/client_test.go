@@ -75,7 +75,7 @@ var (
 
 	ret = npool.Scope{
 		ID:                 uuid.NewString(),
-		AppID:              uuid.NewString(),
+		AppID:              coupon.AppID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           scope.CouponID,
 		CouponName:         coupon.Name,
