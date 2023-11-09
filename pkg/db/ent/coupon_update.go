@@ -85,6 +85,20 @@ func (cu *CouponUpdate) AddDeletedAt(u int32) *CouponUpdate {
 	return cu
 }
 
+// SetEntID sets the "ent_id" field.
+func (cu *CouponUpdate) SetEntID(u uuid.UUID) *CouponUpdate {
+	cu.mutation.SetEntID(u)
+	return cu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableEntID(u *uuid.UUID) *CouponUpdate {
+	if u != nil {
+		cu.SetEntID(*u)
+	}
+	return cu
+}
+
 // SetAppID sets the "app_id" field.
 func (cu *CouponUpdate) SetAppID(u uuid.UUID) *CouponUpdate {
 	cu.mutation.SetAppID(u)
@@ -471,7 +485,7 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: coupon.FieldID,
 			},
 		},
@@ -523,6 +537,13 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: coupon.FieldDeletedAt,
+		})
+	}
+	if value, ok := cu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldEntID,
 		})
 	}
 	if value, ok := cu.mutation.AppID(); ok {
@@ -801,6 +822,20 @@ func (cuo *CouponUpdateOne) SetNillableDeletedAt(u *uint32) *CouponUpdateOne {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (cuo *CouponUpdateOne) AddDeletedAt(u int32) *CouponUpdateOne {
 	cuo.mutation.AddDeletedAt(u)
+	return cuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (cuo *CouponUpdateOne) SetEntID(u uuid.UUID) *CouponUpdateOne {
+	cuo.mutation.SetEntID(u)
+	return cuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableEntID(u *uuid.UUID) *CouponUpdateOne {
+	if u != nil {
+		cuo.SetEntID(*u)
+	}
 	return cuo
 }
 
@@ -1203,7 +1238,7 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: coupon.FieldID,
 			},
 		},
@@ -1272,6 +1307,13 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: coupon.FieldDeletedAt,
+		})
+	}
+	if value, ok := cuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldEntID,
 		})
 	}
 	if value, ok := cuo.mutation.AppID(); ok {

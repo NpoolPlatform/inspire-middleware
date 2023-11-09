@@ -325,7 +325,7 @@ func (c *AppGoodScopeClient) UpdateOne(ags *AppGoodScope) *AppGoodScopeUpdateOne
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AppGoodScopeClient) UpdateOneID(id uuid.UUID) *AppGoodScopeUpdateOne {
+func (c *AppGoodScopeClient) UpdateOneID(id uint32) *AppGoodScopeUpdateOne {
 	mutation := newAppGoodScopeMutation(c.config, OpUpdateOne, withAppGoodScopeID(id))
 	return &AppGoodScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -342,7 +342,7 @@ func (c *AppGoodScopeClient) DeleteOne(ags *AppGoodScope) *AppGoodScopeDeleteOne
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *AppGoodScopeClient) DeleteOneID(id uuid.UUID) *AppGoodScopeDeleteOne {
+func (c *AppGoodScopeClient) DeleteOneID(id uint32) *AppGoodScopeDeleteOne {
 	builder := c.Delete().Where(appgoodscope.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -357,12 +357,12 @@ func (c *AppGoodScopeClient) Query() *AppGoodScopeQuery {
 }
 
 // Get returns a AppGoodScope entity by its id.
-func (c *AppGoodScopeClient) Get(ctx context.Context, id uuid.UUID) (*AppGoodScope, error) {
+func (c *AppGoodScopeClient) Get(ctx context.Context, id uint32) (*AppGoodScope, error) {
 	return c.Query().Where(appgoodscope.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AppGoodScopeClient) GetX(ctx context.Context, id uuid.UUID) *AppGoodScope {
+func (c *AppGoodScopeClient) GetX(ctx context.Context, id uint32) *AppGoodScope {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -507,7 +507,7 @@ func (c *CouponClient) UpdateOne(co *Coupon) *CouponUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CouponClient) UpdateOneID(id uuid.UUID) *CouponUpdateOne {
+func (c *CouponClient) UpdateOneID(id uint32) *CouponUpdateOne {
 	mutation := newCouponMutation(c.config, OpUpdateOne, withCouponID(id))
 	return &CouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -524,7 +524,7 @@ func (c *CouponClient) DeleteOne(co *Coupon) *CouponDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *CouponClient) DeleteOneID(id uuid.UUID) *CouponDeleteOne {
+func (c *CouponClient) DeleteOneID(id uint32) *CouponDeleteOne {
 	builder := c.Delete().Where(coupon.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -539,12 +539,12 @@ func (c *CouponClient) Query() *CouponQuery {
 }
 
 // Get returns a Coupon entity by its id.
-func (c *CouponClient) Get(ctx context.Context, id uuid.UUID) (*Coupon, error) {
+func (c *CouponClient) Get(ctx context.Context, id uint32) (*Coupon, error) {
 	return c.Query().Where(coupon.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CouponClient) GetX(ctx context.Context, id uuid.UUID) *Coupon {
+func (c *CouponClient) GetX(ctx context.Context, id uint32) *Coupon {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -598,7 +598,7 @@ func (c *CouponAllocatedClient) UpdateOne(ca *CouponAllocated) *CouponAllocatedU
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CouponAllocatedClient) UpdateOneID(id uuid.UUID) *CouponAllocatedUpdateOne {
+func (c *CouponAllocatedClient) UpdateOneID(id uint32) *CouponAllocatedUpdateOne {
 	mutation := newCouponAllocatedMutation(c.config, OpUpdateOne, withCouponAllocatedID(id))
 	return &CouponAllocatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -615,7 +615,7 @@ func (c *CouponAllocatedClient) DeleteOne(ca *CouponAllocated) *CouponAllocatedD
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *CouponAllocatedClient) DeleteOneID(id uuid.UUID) *CouponAllocatedDeleteOne {
+func (c *CouponAllocatedClient) DeleteOneID(id uint32) *CouponAllocatedDeleteOne {
 	builder := c.Delete().Where(couponallocated.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -630,12 +630,12 @@ func (c *CouponAllocatedClient) Query() *CouponAllocatedQuery {
 }
 
 // Get returns a CouponAllocated entity by its id.
-func (c *CouponAllocatedClient) Get(ctx context.Context, id uuid.UUID) (*CouponAllocated, error) {
+func (c *CouponAllocatedClient) Get(ctx context.Context, id uint32) (*CouponAllocated, error) {
 	return c.Query().Where(couponallocated.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CouponAllocatedClient) GetX(ctx context.Context, id uuid.UUID) *CouponAllocated {
+func (c *CouponAllocatedClient) GetX(ctx context.Context, id uint32) *CouponAllocated {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -689,7 +689,7 @@ func (c *CouponScopeClient) UpdateOne(cs *CouponScope) *CouponScopeUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *CouponScopeClient) UpdateOneID(id uuid.UUID) *CouponScopeUpdateOne {
+func (c *CouponScopeClient) UpdateOneID(id uint32) *CouponScopeUpdateOne {
 	mutation := newCouponScopeMutation(c.config, OpUpdateOne, withCouponScopeID(id))
 	return &CouponScopeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -706,7 +706,7 @@ func (c *CouponScopeClient) DeleteOne(cs *CouponScope) *CouponScopeDeleteOne {
 }
 
 // DeleteOne returns a builder for deleting the given entity by its id.
-func (c *CouponScopeClient) DeleteOneID(id uuid.UUID) *CouponScopeDeleteOne {
+func (c *CouponScopeClient) DeleteOneID(id uint32) *CouponScopeDeleteOne {
 	builder := c.Delete().Where(couponscope.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -721,12 +721,12 @@ func (c *CouponScopeClient) Query() *CouponScopeQuery {
 }
 
 // Get returns a CouponScope entity by its id.
-func (c *CouponScopeClient) Get(ctx context.Context, id uuid.UUID) (*CouponScope, error) {
+func (c *CouponScopeClient) Get(ctx context.Context, id uint32) (*CouponScope, error) {
 	return c.Query().Where(couponscope.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *CouponScopeClient) GetX(ctx context.Context, id uuid.UUID) *CouponScope {
+func (c *CouponScopeClient) GetX(ctx context.Context, id uint32) *CouponScope {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

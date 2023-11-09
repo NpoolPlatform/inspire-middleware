@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // CouponScopeQuery is the builder for querying CouponScope entities.
@@ -87,8 +86,8 @@ func (csq *CouponScopeQuery) FirstX(ctx context.Context) *CouponScope {
 
 // FirstID returns the first CouponScope ID from the query.
 // Returns a *NotFoundError when no CouponScope ID was found.
-func (csq *CouponScopeQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (csq *CouponScopeQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = csq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (csq *CouponScopeQuery) FirstID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (csq *CouponScopeQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (csq *CouponScopeQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := csq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (csq *CouponScopeQuery) OnlyX(ctx context.Context) *CouponScope {
 // OnlyID is like Only, but returns the only CouponScope ID in the query.
 // Returns a *NotSingularError when more than one CouponScope ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (csq *CouponScopeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (csq *CouponScopeQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = csq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (csq *CouponScopeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (csq *CouponScopeQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (csq *CouponScopeQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := csq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (csq *CouponScopeQuery) AllX(ctx context.Context) []*CouponScope {
 }
 
 // IDs executes the query and returns a list of CouponScope IDs.
-func (csq *CouponScopeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (csq *CouponScopeQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := csq.Select(couponscope.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (csq *CouponScopeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (csq *CouponScopeQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (csq *CouponScopeQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := csq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (csq *CouponScopeQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		},

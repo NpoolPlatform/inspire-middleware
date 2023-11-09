@@ -57,7 +57,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   appgoodscope.Table,
 			Columns: appgoodscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: appgoodscope.FieldID,
 			},
 		},
@@ -66,6 +66,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appgoodscope.FieldCreatedAt:   {Type: field.TypeUint32, Column: appgoodscope.FieldCreatedAt},
 			appgoodscope.FieldUpdatedAt:   {Type: field.TypeUint32, Column: appgoodscope.FieldUpdatedAt},
 			appgoodscope.FieldDeletedAt:   {Type: field.TypeUint32, Column: appgoodscope.FieldDeletedAt},
+			appgoodscope.FieldEntID:       {Type: field.TypeUUID, Column: appgoodscope.FieldEntID},
 			appgoodscope.FieldAppID:       {Type: field.TypeUUID, Column: appgoodscope.FieldAppID},
 			appgoodscope.FieldAppGoodID:   {Type: field.TypeUUID, Column: appgoodscope.FieldAppGoodID},
 			appgoodscope.FieldCouponID:    {Type: field.TypeUUID, Column: appgoodscope.FieldCouponID},
@@ -107,7 +108,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: coupon.FieldID,
 			},
 		},
@@ -116,6 +117,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldCreatedAt:        {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
 			coupon.FieldUpdatedAt:        {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
 			coupon.FieldDeletedAt:        {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
+			coupon.FieldEntID:            {Type: field.TypeUUID, Column: coupon.FieldEntID},
 			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
 			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
 			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
@@ -138,7 +140,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   couponallocated.Table,
 			Columns: couponallocated.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponallocated.FieldID,
 			},
 		},
@@ -147,6 +149,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldCreatedAt:     {Type: field.TypeUint32, Column: couponallocated.FieldCreatedAt},
 			couponallocated.FieldUpdatedAt:     {Type: field.TypeUint32, Column: couponallocated.FieldUpdatedAt},
 			couponallocated.FieldDeletedAt:     {Type: field.TypeUint32, Column: couponallocated.FieldDeletedAt},
+			couponallocated.FieldEntID:         {Type: field.TypeUUID, Column: couponallocated.FieldEntID},
 			couponallocated.FieldAppID:         {Type: field.TypeUUID, Column: couponallocated.FieldAppID},
 			couponallocated.FieldUserID:        {Type: field.TypeUUID, Column: couponallocated.FieldUserID},
 			couponallocated.FieldCouponID:      {Type: field.TypeUUID, Column: couponallocated.FieldCouponID},
@@ -163,7 +166,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		},
@@ -172,6 +175,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponscope.FieldCreatedAt:   {Type: field.TypeUint32, Column: couponscope.FieldCreatedAt},
 			couponscope.FieldUpdatedAt:   {Type: field.TypeUint32, Column: couponscope.FieldUpdatedAt},
 			couponscope.FieldDeletedAt:   {Type: field.TypeUint32, Column: couponscope.FieldDeletedAt},
+			couponscope.FieldEntID:       {Type: field.TypeUUID, Column: couponscope.FieldEntID},
 			couponscope.FieldCouponID:    {Type: field.TypeUUID, Column: couponscope.FieldCouponID},
 			couponscope.FieldGoodID:      {Type: field.TypeUUID, Column: couponscope.FieldGoodID},
 			couponscope.FieldCouponScope: {Type: field.TypeString, Column: couponscope.FieldCouponScope},
@@ -457,8 +461,8 @@ func (f *AppGoodScopeFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *AppGoodScopeFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *AppGoodScopeFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(appgoodscope.FieldID))
 }
 
@@ -475,6 +479,11 @@ func (f *AppGoodScopeFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *AppGoodScopeFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(appgoodscope.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *AppGoodScopeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(appgoodscope.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
@@ -657,8 +666,8 @@ func (f *CouponFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *CouponFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CouponFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(coupon.FieldID))
 }
 
@@ -675,6 +684,11 @@ func (f *CouponFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *CouponFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(coupon.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CouponFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(coupon.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
@@ -787,8 +801,8 @@ func (f *CouponAllocatedFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *CouponAllocatedFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CouponAllocatedFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(couponallocated.FieldID))
 }
 
@@ -805,6 +819,11 @@ func (f *CouponAllocatedFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *CouponAllocatedFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(couponallocated.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CouponAllocatedFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(couponallocated.FieldEntID))
 }
 
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
@@ -887,8 +906,8 @@ func (f *CouponScopeFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *CouponScopeFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CouponScopeFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(couponscope.FieldID))
 }
 
@@ -905,6 +924,11 @@ func (f *CouponScopeFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *CouponScopeFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(couponscope.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CouponScopeFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(couponscope.FieldEntID))
 }
 
 // WhereCouponID applies the entql [16]byte predicate on the coupon_id field.

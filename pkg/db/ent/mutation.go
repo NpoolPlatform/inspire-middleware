@@ -1440,13 +1440,14 @@ type AppGoodScopeMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *uint32
 	created_at    *uint32
 	addcreated_at *int32
 	updated_at    *uint32
 	addupdated_at *int32
 	deleted_at    *uint32
 	adddeleted_at *int32
+	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
 	app_good_id   *uuid.UUID
 	coupon_id     *uuid.UUID
@@ -1477,7 +1478,7 @@ func newAppGoodScopeMutation(c config, op Op, opts ...appgoodscopeOption) *AppGo
 }
 
 // withAppGoodScopeID sets the ID field of the mutation.
-func withAppGoodScopeID(id uuid.UUID) appgoodscopeOption {
+func withAppGoodScopeID(id uint32) appgoodscopeOption {
 	return func(m *AppGoodScopeMutation) {
 		var (
 			err   error
@@ -1529,13 +1530,13 @@ func (m AppGoodScopeMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of AppGoodScope entities.
-func (m *AppGoodScopeMutation) SetID(id uuid.UUID) {
+func (m *AppGoodScopeMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AppGoodScopeMutation) ID() (id uuid.UUID, exists bool) {
+func (m *AppGoodScopeMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1546,12 +1547,12 @@ func (m *AppGoodScopeMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AppGoodScopeMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *AppGoodScopeMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1727,6 +1728,42 @@ func (m *AppGoodScopeMutation) AddedDeletedAt() (r int32, exists bool) {
 func (m *AppGoodScopeMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *AppGoodScopeMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *AppGoodScopeMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the AppGoodScope entity.
+// If the AppGoodScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodScopeMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *AppGoodScopeMutation) ResetEntID() {
+	m.ent_id = nil
 }
 
 // SetAppID sets the "app_id" field.
@@ -1944,7 +1981,7 @@ func (m *AppGoodScopeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppGoodScopeMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, appgoodscope.FieldCreatedAt)
 	}
@@ -1953,6 +1990,9 @@ func (m *AppGoodScopeMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, appgoodscope.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, appgoodscope.FieldEntID)
 	}
 	if m.app_id != nil {
 		fields = append(fields, appgoodscope.FieldAppID)
@@ -1980,6 +2020,8 @@ func (m *AppGoodScopeMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case appgoodscope.FieldDeletedAt:
 		return m.DeletedAt()
+	case appgoodscope.FieldEntID:
+		return m.EntID()
 	case appgoodscope.FieldAppID:
 		return m.AppID()
 	case appgoodscope.FieldAppGoodID:
@@ -2003,6 +2045,8 @@ func (m *AppGoodScopeMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUpdatedAt(ctx)
 	case appgoodscope.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case appgoodscope.FieldEntID:
+		return m.OldEntID(ctx)
 	case appgoodscope.FieldAppID:
 		return m.OldAppID(ctx)
 	case appgoodscope.FieldAppGoodID:
@@ -2040,6 +2084,13 @@ func (m *AppGoodScopeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case appgoodscope.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
 		return nil
 	case appgoodscope.FieldAppID:
 		v, ok := value.(uuid.UUID)
@@ -2192,6 +2243,9 @@ func (m *AppGoodScopeMutation) ResetField(name string) error {
 		return nil
 	case appgoodscope.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case appgoodscope.FieldEntID:
+		m.ResetEntID()
 		return nil
 	case appgoodscope.FieldAppID:
 		m.ResetAppID()
@@ -3897,13 +3951,14 @@ type CouponMutation struct {
 	config
 	op                Op
 	typ               string
-	id                *uuid.UUID
+	id                *uint32
 	created_at        *uint32
 	addcreated_at     *int32
 	updated_at        *uint32
 	addupdated_at     *int32
 	deleted_at        *uint32
 	adddeleted_at     *int32
+	ent_id            *uuid.UUID
 	app_id            *uuid.UUID
 	user_id           *uuid.UUID
 	denomination      *decimal.Decimal
@@ -3947,7 +4002,7 @@ func newCouponMutation(c config, op Op, opts ...couponOption) *CouponMutation {
 }
 
 // withCouponID sets the ID field of the mutation.
-func withCouponID(id uuid.UUID) couponOption {
+func withCouponID(id uint32) couponOption {
 	return func(m *CouponMutation) {
 		var (
 			err   error
@@ -3999,13 +4054,13 @@ func (m CouponMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Coupon entities.
-func (m *CouponMutation) SetID(id uuid.UUID) {
+func (m *CouponMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CouponMutation) ID() (id uuid.UUID, exists bool) {
+func (m *CouponMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -4016,12 +4071,12 @@ func (m *CouponMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *CouponMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *CouponMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -4197,6 +4252,42 @@ func (m *CouponMutation) AddedDeletedAt() (r int32, exists bool) {
 func (m *CouponMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *CouponMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *CouponMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the Coupon entity.
+// If the Coupon object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *CouponMutation) ResetEntID() {
+	m.ent_id = nil
 }
 
 // SetAppID sets the "app_id" field.
@@ -4982,7 +5073,7 @@ func (m *CouponMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, coupon.FieldCreatedAt)
 	}
@@ -4991,6 +5082,9 @@ func (m *CouponMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, coupon.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, coupon.FieldEntID)
 	}
 	if m.app_id != nil {
 		fields = append(fields, coupon.FieldAppID)
@@ -5051,6 +5145,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case coupon.FieldDeletedAt:
 		return m.DeletedAt()
+	case coupon.FieldEntID:
+		return m.EntID()
 	case coupon.FieldAppID:
 		return m.AppID()
 	case coupon.FieldUserID:
@@ -5096,6 +5192,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldUpdatedAt(ctx)
 	case coupon.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case coupon.FieldEntID:
+		return m.OldEntID(ctx)
 	case coupon.FieldAppID:
 		return m.OldAppID(ctx)
 	case coupon.FieldUserID:
@@ -5155,6 +5253,13 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case coupon.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
 		return nil
 	case coupon.FieldAppID:
 		v, ok := value.(uuid.UUID)
@@ -5469,6 +5574,9 @@ func (m *CouponMutation) ResetField(name string) error {
 	case coupon.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
+	case coupon.FieldEntID:
+		m.ResetEntID()
+		return nil
 	case coupon.FieldAppID:
 		m.ResetAppID()
 		return nil
@@ -5571,13 +5679,14 @@ type CouponAllocatedMutation struct {
 	config
 	op               Op
 	typ              string
-	id               *uuid.UUID
+	id               *uint32
 	created_at       *uint32
 	addcreated_at    *int32
 	updated_at       *uint32
 	addupdated_at    *int32
 	deleted_at       *uint32
 	adddeleted_at    *int32
+	ent_id           *uuid.UUID
 	app_id           *uuid.UUID
 	user_id          *uuid.UUID
 	coupon_id        *uuid.UUID
@@ -5615,7 +5724,7 @@ func newCouponAllocatedMutation(c config, op Op, opts ...couponallocatedOption) 
 }
 
 // withCouponAllocatedID sets the ID field of the mutation.
-func withCouponAllocatedID(id uuid.UUID) couponallocatedOption {
+func withCouponAllocatedID(id uint32) couponallocatedOption {
 	return func(m *CouponAllocatedMutation) {
 		var (
 			err   error
@@ -5667,13 +5776,13 @@ func (m CouponAllocatedMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of CouponAllocated entities.
-func (m *CouponAllocatedMutation) SetID(id uuid.UUID) {
+func (m *CouponAllocatedMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CouponAllocatedMutation) ID() (id uuid.UUID, exists bool) {
+func (m *CouponAllocatedMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -5684,12 +5793,12 @@ func (m *CouponAllocatedMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *CouponAllocatedMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *CouponAllocatedMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -5867,6 +5976,42 @@ func (m *CouponAllocatedMutation) ResetDeletedAt() {
 	m.adddeleted_at = nil
 }
 
+// SetEntID sets the "ent_id" field.
+func (m *CouponAllocatedMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *CouponAllocatedMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the CouponAllocated entity.
+// If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponAllocatedMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *CouponAllocatedMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
 // SetAppID sets the "app_id" field.
 func (m *CouponAllocatedMutation) SetAppID(u uuid.UUID) {
 	m.app_id = &u
@@ -5898,9 +6043,22 @@ func (m *CouponAllocatedMutation) OldAppID(ctx context.Context) (v uuid.UUID, er
 	return oldValue.AppID, nil
 }
 
+// ClearAppID clears the value of the "app_id" field.
+func (m *CouponAllocatedMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[couponallocated.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldAppID]
+	return ok
+}
+
 // ResetAppID resets all changes to the "app_id" field.
 func (m *CouponAllocatedMutation) ResetAppID() {
 	m.app_id = nil
+	delete(m.clearedFields, couponallocated.FieldAppID)
 }
 
 // SetUserID sets the "user_id" field.
@@ -5934,9 +6092,22 @@ func (m *CouponAllocatedMutation) OldUserID(ctx context.Context) (v uuid.UUID, e
 	return oldValue.UserID, nil
 }
 
+// ClearUserID clears the value of the "user_id" field.
+func (m *CouponAllocatedMutation) ClearUserID() {
+	m.user_id = nil
+	m.clearedFields[couponallocated.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldUserID]
+	return ok
+}
+
 // ResetUserID resets all changes to the "user_id" field.
 func (m *CouponAllocatedMutation) ResetUserID() {
 	m.user_id = nil
+	delete(m.clearedFields, couponallocated.FieldUserID)
 }
 
 // SetCouponID sets the "coupon_id" field.
@@ -5970,9 +6141,22 @@ func (m *CouponAllocatedMutation) OldCouponID(ctx context.Context) (v uuid.UUID,
 	return oldValue.CouponID, nil
 }
 
+// ClearCouponID clears the value of the "coupon_id" field.
+func (m *CouponAllocatedMutation) ClearCouponID() {
+	m.coupon_id = nil
+	m.clearedFields[couponallocated.FieldCouponID] = struct{}{}
+}
+
+// CouponIDCleared returns if the "coupon_id" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) CouponIDCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldCouponID]
+	return ok
+}
+
 // ResetCouponID resets all changes to the "coupon_id" field.
 func (m *CouponAllocatedMutation) ResetCouponID() {
 	m.coupon_id = nil
+	delete(m.clearedFields, couponallocated.FieldCouponID)
 }
 
 // SetDenomination sets the "denomination" field.
@@ -6330,7 +6514,7 @@ func (m *CouponAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, couponallocated.FieldCreatedAt)
 	}
@@ -6339,6 +6523,9 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, couponallocated.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, couponallocated.FieldEntID)
 	}
 	if m.app_id != nil {
 		fields = append(fields, couponallocated.FieldAppID)
@@ -6381,6 +6568,8 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case couponallocated.FieldDeletedAt:
 		return m.DeletedAt()
+	case couponallocated.FieldEntID:
+		return m.EntID()
 	case couponallocated.FieldAppID:
 		return m.AppID()
 	case couponallocated.FieldUserID:
@@ -6414,6 +6603,8 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUpdatedAt(ctx)
 	case couponallocated.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case couponallocated.FieldEntID:
+		return m.OldEntID(ctx)
 	case couponallocated.FieldAppID:
 		return m.OldAppID(ctx)
 	case couponallocated.FieldUserID:
@@ -6461,6 +6652,13 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case couponallocated.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
 		return nil
 	case couponallocated.FieldAppID:
 		v, ok := value.(uuid.UUID)
@@ -6618,6 +6816,15 @@ func (m *CouponAllocatedMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *CouponAllocatedMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(couponallocated.FieldAppID) {
+		fields = append(fields, couponallocated.FieldAppID)
+	}
+	if m.FieldCleared(couponallocated.FieldUserID) {
+		fields = append(fields, couponallocated.FieldUserID)
+	}
+	if m.FieldCleared(couponallocated.FieldCouponID) {
+		fields = append(fields, couponallocated.FieldCouponID)
+	}
 	if m.FieldCleared(couponallocated.FieldDenomination) {
 		fields = append(fields, couponallocated.FieldDenomination)
 	}
@@ -6650,6 +6857,15 @@ func (m *CouponAllocatedMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *CouponAllocatedMutation) ClearField(name string) error {
 	switch name {
+	case couponallocated.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case couponallocated.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case couponallocated.FieldCouponID:
+		m.ClearCouponID()
+		return nil
 	case couponallocated.FieldDenomination:
 		m.ClearDenomination()
 		return nil
@@ -6684,6 +6900,9 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 		return nil
 	case couponallocated.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case couponallocated.FieldEntID:
+		m.ResetEntID()
 		return nil
 	case couponallocated.FieldAppID:
 		m.ResetAppID()
@@ -6769,13 +6988,14 @@ type CouponScopeMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *uint32
 	created_at    *uint32
 	addcreated_at *int32
 	updated_at    *uint32
 	addupdated_at *int32
 	deleted_at    *uint32
 	adddeleted_at *int32
+	ent_id        *uuid.UUID
 	coupon_id     *uuid.UUID
 	good_id       *uuid.UUID
 	coupon_scope  *string
@@ -6805,7 +7025,7 @@ func newCouponScopeMutation(c config, op Op, opts ...couponscopeOption) *CouponS
 }
 
 // withCouponScopeID sets the ID field of the mutation.
-func withCouponScopeID(id uuid.UUID) couponscopeOption {
+func withCouponScopeID(id uint32) couponscopeOption {
 	return func(m *CouponScopeMutation) {
 		var (
 			err   error
@@ -6857,13 +7077,13 @@ func (m CouponScopeMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of CouponScope entities.
-func (m *CouponScopeMutation) SetID(id uuid.UUID) {
+func (m *CouponScopeMutation) SetID(id uint32) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *CouponScopeMutation) ID() (id uuid.UUID, exists bool) {
+func (m *CouponScopeMutation) ID() (id uint32, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -6874,12 +7094,12 @@ func (m *CouponScopeMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *CouponScopeMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *CouponScopeMutation) IDs(ctx context.Context) ([]uint32, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []uint32{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -7057,6 +7277,42 @@ func (m *CouponScopeMutation) ResetDeletedAt() {
 	m.adddeleted_at = nil
 }
 
+// SetEntID sets the "ent_id" field.
+func (m *CouponScopeMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *CouponScopeMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the CouponScope entity.
+// If the CouponScope object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponScopeMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *CouponScopeMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
 // SetCouponID sets the "coupon_id" field.
 func (m *CouponScopeMutation) SetCouponID(u uuid.UUID) {
 	m.coupon_id = &u
@@ -7223,7 +7479,7 @@ func (m *CouponScopeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponScopeMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, couponscope.FieldCreatedAt)
 	}
@@ -7232,6 +7488,9 @@ func (m *CouponScopeMutation) Fields() []string {
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, couponscope.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, couponscope.FieldEntID)
 	}
 	if m.coupon_id != nil {
 		fields = append(fields, couponscope.FieldCouponID)
@@ -7256,6 +7515,8 @@ func (m *CouponScopeMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case couponscope.FieldDeletedAt:
 		return m.DeletedAt()
+	case couponscope.FieldEntID:
+		return m.EntID()
 	case couponscope.FieldCouponID:
 		return m.CouponID()
 	case couponscope.FieldGoodID:
@@ -7277,6 +7538,8 @@ func (m *CouponScopeMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUpdatedAt(ctx)
 	case couponscope.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
+	case couponscope.FieldEntID:
+		return m.OldEntID(ctx)
 	case couponscope.FieldCouponID:
 		return m.OldCouponID(ctx)
 	case couponscope.FieldGoodID:
@@ -7312,6 +7575,13 @@ func (m *CouponScopeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
+		return nil
+	case couponscope.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
 		return nil
 	case couponscope.FieldCouponID:
 		v, ok := value.(uuid.UUID)
@@ -7451,6 +7721,9 @@ func (m *CouponScopeMutation) ResetField(name string) error {
 		return nil
 	case couponscope.FieldDeletedAt:
 		m.ResetDeletedAt()
+		return nil
+	case couponscope.FieldEntID:
+		m.ResetEntID()
 		return nil
 	case couponscope.FieldCouponID:
 		m.ResetCouponID()

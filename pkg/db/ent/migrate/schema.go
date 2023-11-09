@@ -43,10 +43,11 @@ var (
 	}
 	// AppGoodScopesColumns holds the columns for the "app_good_scopes" table.
 	AppGoodScopesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
@@ -57,6 +58,13 @@ var (
 		Name:       "app_good_scopes",
 		Columns:    AppGoodScopesColumns,
 		PrimaryKey: []*schema.Column{AppGoodScopesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appgoodscope_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppGoodScopesColumns[4]},
+			},
+		},
 	}
 	// CommissionsColumns holds the columns for the "commissions" table.
 	CommissionsColumns = []*schema.Column{
@@ -70,7 +78,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520629},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520981},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -94,17 +102,18 @@ var (
 	}
 	// CouponsColumns holds the columns for the "coupons" table.
 	CouponsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520629},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520981},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "name", Type: field.TypeString, Nullable: true, Default: ""},
@@ -119,21 +128,29 @@ var (
 		Name:       "coupons",
 		Columns:    CouponsColumns,
 		PrimaryKey: []*schema.Column{CouponsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "coupon_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{CouponsColumns[4]},
+			},
+		},
 	}
 	// CouponAllocatedsColumns holds the columns for the "coupon_allocateds" table.
 	CouponAllocatedsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "app_id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "coupon_id", Type: field.TypeUUID},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "denomination", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520629},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1699520981},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 	}
 	// CouponAllocatedsTable holds the schema information for the "coupon_allocateds" table.
@@ -141,13 +158,21 @@ var (
 		Name:       "coupon_allocateds",
 		Columns:    CouponAllocatedsColumns,
 		PrimaryKey: []*schema.Column{CouponAllocatedsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "couponallocated_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{CouponAllocatedsColumns[4]},
+			},
+		},
 	}
 	// CouponScopesColumns holds the columns for the "coupon_scopes" table.
 	CouponScopesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
@@ -157,6 +182,13 @@ var (
 		Name:       "coupon_scopes",
 		Columns:    CouponScopesColumns,
 		PrimaryKey: []*schema.Column{CouponScopesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "couponscope_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{CouponScopesColumns[4]},
+			},
+		},
 	}
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{

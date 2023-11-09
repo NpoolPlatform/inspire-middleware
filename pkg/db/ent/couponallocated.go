@@ -16,13 +16,15 @@ import (
 type CouponAllocated struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
@@ -52,11 +54,11 @@ func (*CouponAllocated) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case couponallocated.FieldUsed:
 			values[i] = new(sql.NullBool)
-		case couponallocated.FieldCreatedAt, couponallocated.FieldUpdatedAt, couponallocated.FieldDeletedAt, couponallocated.FieldUsedAt, couponallocated.FieldStartAt:
+		case couponallocated.FieldID, couponallocated.FieldCreatedAt, couponallocated.FieldUpdatedAt, couponallocated.FieldDeletedAt, couponallocated.FieldUsedAt, couponallocated.FieldStartAt:
 			values[i] = new(sql.NullInt64)
 		case couponallocated.FieldCouponScope:
 			values[i] = new(sql.NullString)
-		case couponallocated.FieldID, couponallocated.FieldAppID, couponallocated.FieldUserID, couponallocated.FieldCouponID, couponallocated.FieldUsedByOrderID:
+		case couponallocated.FieldEntID, couponallocated.FieldAppID, couponallocated.FieldUserID, couponallocated.FieldCouponID, couponallocated.FieldUsedByOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type CouponAllocated", columns[i])
@@ -74,11 +76,11 @@ func (ca *CouponAllocated) assignValues(columns []string, values []interface{}) 
 	for i := range columns {
 		switch columns[i] {
 		case couponallocated.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				ca.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			ca.ID = uint32(value.Int64)
 		case couponallocated.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -96,6 +98,12 @@ func (ca *CouponAllocated) assignValues(columns []string, values []interface{}) 
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				ca.DeletedAt = uint32(value.Int64)
+			}
+		case couponallocated.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				ca.EntID = *value
 			}
 		case couponallocated.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -187,6 +195,9 @@ func (ca *CouponAllocated) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", ca.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", ca.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", ca.AppID))

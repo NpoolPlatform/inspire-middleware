@@ -7,8 +7,10 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
 	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
+
 	"github.com/shopspring/decimal"
 )
 
@@ -20,6 +22,7 @@ type CouponAllocated struct {
 func (CouponAllocated) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
 	}
 }
 
@@ -27,15 +30,23 @@ func (CouponAllocated) Mixin() []ent.Mixin {
 func (CouponAllocated) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("id", uuid.UUID{}).
-			Default(uuid.New).
-			Unique(),
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
-			UUID("app_id", uuid.UUID{}),
+			UUID("user_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
-			UUID("user_id", uuid.UUID{}),
-		field.
-			UUID("coupon_id", uuid.UUID{}),
+			UUID("coupon_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
 			Other("denomination", decimal.Decimal{}).
 			SchemaType(map[string]string{

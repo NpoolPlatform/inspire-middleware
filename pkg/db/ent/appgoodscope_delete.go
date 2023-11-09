@@ -72,7 +72,7 @@ func (agsd *AppGoodScopeDelete) sqlExec(ctx context.Context) (int, error) {
 		Node: &sqlgraph.NodeSpec{
 			Table: appgoodscope.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: appgoodscope.FieldID,
 			},
 		},
