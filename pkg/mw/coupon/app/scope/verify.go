@@ -104,6 +104,7 @@ func (h *verifyHandler) verifyAllGood(ctx context.Context, tx *ent.Tx, req *appg
 		Query().
 		Where(
 			entcoupon.ID(*req.CouponID),
+			entcoupon.AppID(*req.AppID),
 			entcoupon.DeletedAt(0),
 		).Only(ctx)
 	if err != nil {
