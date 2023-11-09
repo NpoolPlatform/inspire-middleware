@@ -102,7 +102,7 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, tx *ent.Tx, req *ap
 	return true, nil
 }
 
-func (h *verifyHandler) getCoupons(ctx context.Context) (bool, error) {
+func (h *verifyHandler) checkCoupons(ctx context.Context) (bool, error) {
 	handler, err := coupon1.NewHandler(ctx)
 	if err != nil {
 		return false, err
@@ -113,7 +113,7 @@ func (h *verifyHandler) getCoupons(ctx context.Context) (bool, error) {
 	}
 
 	handler.Conds = &couponcrud.Conds{
-		AppID: &cruder.Cond{Op: cruder.EQ, Val: h.Reqs[0].AppID},
+		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.Reqs[0].AppID},
 		IDs:   &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	coupons, _, err := handler.GetCoupons(ctx)
@@ -130,7 +130,7 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) (bool, error) {
 	handler := &verifyHandler{
 		Handler: h,
 	}
-	if exist, err := handler.getCoupons(ctx); !exist || err != nil {
+	if exist, err := handler.checkCoupons(ctx); !exist || err != nil {
 		return false, err
 	}
 
