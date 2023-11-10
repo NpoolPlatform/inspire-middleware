@@ -118,18 +118,6 @@ func WithUsed(value *bool, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithUsedAt(value *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid usedat")
-			}
-		}
-		h.UsedAt = value
-		return nil
-	}
-}
-
 func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {

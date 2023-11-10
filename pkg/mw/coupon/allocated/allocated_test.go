@@ -119,7 +119,6 @@ func createCoupon(t *testing.T) {
 		ret.UpdatedAt = info.UpdatedAt
 		ret.StartAt = info.StartAt
 		ret.EndAt = info.EndAt
-		ret.Allocated = info.Allocated
 		assert.Equal(t, info, &ret)
 	}
 
@@ -138,8 +137,8 @@ func createCoupon(t *testing.T) {
 		ret1.UpdatedAt = info.UpdatedAt
 		ret1.StartAt = info.StartAt
 		ret1.EndAt = info.EndAt
-		ret.Allocated = info.Allocated
 		assert.Equal(t, info, &ret1)
+		ret.Allocated = info.Allocated
 	}
 }
 
@@ -186,6 +185,7 @@ func updateCoupons(t *testing.T) {
 		ret1.UsedAt = infos[0].UsedAt
 		assert.Equal(t, &ret1, infos[0])
 	}
+
 }
 
 func getCoupon(t *testing.T) {
