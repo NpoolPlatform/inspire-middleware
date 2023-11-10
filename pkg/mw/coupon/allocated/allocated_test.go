@@ -185,7 +185,6 @@ func updateCoupons(t *testing.T) {
 		ret1.UsedAt = infos[0].UsedAt
 		assert.Equal(t, &ret1, infos[0])
 	}
-
 }
 
 func getCoupon(t *testing.T) {
