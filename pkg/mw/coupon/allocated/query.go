@@ -34,15 +34,20 @@ func (h *queryHandler) selectCoupon(stm *ent.CouponAllocatedQuery) *ent.CouponAl
 	)
 }
 
-func (h *queryHandler) queryCoupon(cli *ent.Client) {
-	stm := cli.
-		CouponAllocated.
-		Query().
-		Where(
-			entcouponallocated.ID(*h.ID),
-			entcouponallocated.DeletedAt(0),
-		)
+func (h *queryHandler) queryCoupon(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.CouponAllocated.Query().Where(entcouponallocated.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entcouponallocated.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entcouponallocated.EntID(*h.EntID))
+	}
+
 	h.stmSelect = h.selectCoupon(stm)
+	return nil
 }
 
 func (h *queryHandler) queryCoupons(cli *ent.Client) (*ent.CouponAllocatedSelect, error) {
@@ -61,6 +66,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entcouponallocated.FieldID),
 		).
 		AppendSelect(
+			sql.As(t.C(entcouponallocated.FieldEntID), "ent_id"),
 			sql.As(t.C(entcouponallocated.FieldAppID), "app_id"),
 			sql.As(t.C(entcouponallocated.FieldUserID), "user_id"),
 			sql.As(t.C(entcouponallocated.FieldCouponID), "coupon_id"),
@@ -193,7 +199,9 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCoupon(cli)
+		if err := handler.queryCoupon(cli); err != nil {
+			return err
+		}
 		if err := handler.queryJoin(); err != nil {
 			return err
 		}

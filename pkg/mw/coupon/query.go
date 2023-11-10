@@ -22,15 +22,18 @@ type queryHandler struct {
 	total     uint32
 }
 
-func (h *queryHandler) queryCoupon(cli *ent.Client) {
-	h.stmSelect = cli.
-		Coupon.
-		Query().
-		Where(
-			entcoupon.ID(*h.ID),
-			entcoupon.DeletedAt(0),
-		).
-		Select()
+func (h *queryHandler) queryCoupon(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	h.stmSelect = cli.Coupon.Query().Where(entcoupon.DeletedAt(0)).Select()
+	if h.ID != nil {
+		h.stmSelect.Where(entcoupon.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		h.stmSelect.Where(entcoupon.EntID(*h.EntID))
+	}
+	return nil
 }
 
 func (h *queryHandler) queryCoupons(ctx context.Context, cli *ent.Client) error {
@@ -104,7 +107,9 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCoupon(cli)
+		if err := handler.queryCoupon(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

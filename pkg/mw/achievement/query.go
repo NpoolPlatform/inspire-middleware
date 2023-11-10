@@ -24,6 +24,7 @@ type queryHandler struct {
 func (h *queryHandler) selectAchievement(stm *ent.AchievementQuery) {
 	h.stmSelect = stm.Select(
 		entachievement.FieldID,
+		entachievement.FieldEntID,
 		entachievement.FieldAppID,
 		entachievement.FieldUserID,
 		entachievement.FieldGoodID,
@@ -44,11 +45,7 @@ func (h *queryHandler) queryAchievement(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	stm := cli.Achievement.
-		Query().
-		Where(
-			entachievement.DeletedAt(0),
-		)
+	stm := cli.Achievement.Query().Where(entachievement.DeletedAt(0))
 	if h.ID != nil {
 		stm.Where(entachievement.ID(*h.ID))
 	}

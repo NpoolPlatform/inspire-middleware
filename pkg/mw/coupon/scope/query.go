@@ -31,15 +31,19 @@ func (h *queryHandler) selectScope(stm *ent.CouponScopeQuery) *ent.CouponScopeSe
 	)
 }
 
-func (h *queryHandler) queryScope(cli *ent.Client) {
-	stm := cli.
-		CouponScope.
-		Query().
-		Where(
-			entcouponscope.ID(*h.ID),
-			entcouponscope.DeletedAt(0),
-		)
+func (h *queryHandler) queryScope(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.CouponScope.Query().Where(entcouponscope.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entcouponscope.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entcouponscope.EntID(*h.EntID))
+	}
 	h.stmSelect = h.selectScope(stm)
+	return nil
 }
 
 func (h *queryHandler) queryScopes(cli *ent.Client) (*ent.CouponScopeSelect, error) {
@@ -58,6 +62,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t.C(entcouponscope.FieldID),
 		).
 		AppendSelect(
+			sql.As(t.C(entcouponscope.FieldEntID), "ent_id"),
 			sql.As(t.C(entcouponscope.FieldGoodID), "good_id"),
 			sql.As(t.C(entcouponscope.FieldCouponID), "coupon_id"),
 			sql.As(t.C(entcouponscope.FieldCouponScope), "coupon_scope"),
@@ -129,7 +134,9 @@ func (h *Handler) GetScope(ctx context.Context) (*npool.Scope, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryScope(cli)
+		if err := handler.queryScope(cli); err != nil {
+			return err
+		}
 		if err := handler.queryJoin(); err != nil {
 			return err
 		}

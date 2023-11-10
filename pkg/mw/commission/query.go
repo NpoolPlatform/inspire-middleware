@@ -26,14 +26,7 @@ func (h *queryHandler) queryCommission(cli *ent.Client) error {
 		return fmt.Errorf("invalid id")
 	}
 
-	h.stmSelect = cli.
-		Commission.
-		Query().
-		Where(
-			entcommission.DeletedAt(0),
-		).
-		Select()
-
+	h.stmSelect = cli.Commission.Query().Where(entcommission.DeletedAt(0)).Select()
 	if h.ID != nil {
 		h.stmSelect.Where(entcommission.ID(*h.ID))
 	}
