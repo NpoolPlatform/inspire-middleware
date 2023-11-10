@@ -23,7 +23,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 	}
 	handler, err := coupon1.NewHandler(
 		ctx,
-		coupon1.WithID(req.ID, false),
+		coupon1.WithEntID(req.EntID, false),
 		coupon1.WithCouponType(req.CouponType, true),
 		coupon1.WithAppID(req.AppID, true),
 		coupon1.WithDenomination(req.Denomination, true),

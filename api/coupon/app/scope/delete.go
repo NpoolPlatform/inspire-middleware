@@ -22,7 +22,7 @@ func (s *Server) DeleteAppGoodScope(ctx context.Context, in *npool.DeleteAppGood
 
 	handler, err := scope1.NewHandler(
 		ctx,
-		scope1.WithID(req.ID, false),
+		scope1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
