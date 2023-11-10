@@ -40,7 +40,7 @@ func init() {
 }
 
 var ret = &couponmwpb.Coupon{
-	ID:                  uuid.NewString(),
+	EntID:               uuid.NewString(),
 	CouponType:          types.CouponType_Discount,
 	CouponTypeStr:       types.CouponType_Discount.String(),
 	AppID:               uuid.NewString(),
@@ -72,11 +72,11 @@ var req = &couponmwpb.CouponReq{
 }
 
 var ret1 = &npool.Coupon{
-	ID:                  uuid.NewString(),
+	EntID:               uuid.NewString(),
 	CouponType:          types.CouponType_Discount,
 	CouponTypeStr:       types.CouponType_Discount.String(),
 	AppID:               ret.AppID,
-	CouponID:            ret.ID,
+	CouponID:            ret.EntID,
 	UserID:              uuid.NewString(),
 	Denomination:        ret.Denomination,
 	Circulation:         ret.Circulation,
@@ -103,6 +103,7 @@ func createCoupon(t *testing.T) {
 
 	info, err := CreateCoupon(context.Background(), req1)
 	if assert.Nil(t, err) {
+		ret1.ID = info.ID
 		ret1.CreatedAt = info.CreatedAt
 		ret1.UpdatedAt = info.UpdatedAt
 		ret1.StartAt = info.StartAt
@@ -133,7 +134,7 @@ func updateCoupon(t *testing.T) {
 }
 
 func getCouponCoupon(t *testing.T) {
-	info, err := GetCoupon(context.Background(), ret1.ID)
+	info, err := GetCoupon(context.Background(), ret1.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, ret1, info)
 	}
@@ -153,7 +154,7 @@ func getCouponCoupons(t *testing.T) {
 
 func getCouponCouponOnly(t *testing.T) {
 	info, err := GetCouponOnly(context.Background(), &npool.Conds{
-		ID:            &basetypes.StringVal{Op: cruder.EQ, Value: ret1.ID},
+		EntID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret1.EntID},
 		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret1.AppID},
 		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret1.UserID},
 		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret1.GetUsedByOrderID()},

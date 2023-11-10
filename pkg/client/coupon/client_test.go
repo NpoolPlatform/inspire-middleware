@@ -37,7 +37,7 @@ func init() {
 }
 
 var ret = &npool.Coupon{
-	ID:                  uuid.NewString(),
+	EntID:               uuid.NewString(),
 	CouponType:          types.CouponType_Discount,
 	CouponTypeStr:       types.CouponType_Discount.String(),
 	AppID:               uuid.NewString(),
@@ -56,7 +56,7 @@ var ret = &npool.Coupon{
 }
 
 var req = &npool.CouponReq{
-	ID:               &ret.ID,
+	EntID:            &ret.EntID,
 	CouponType:       &ret.CouponType,
 	AppID:            &ret.AppID,
 	Denomination:     &ret.Denomination,
@@ -73,6 +73,7 @@ var req = &npool.CouponReq{
 func createDiscount(t *testing.T) {
 	info, err := CreateCoupon(context.Background(), req)
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)

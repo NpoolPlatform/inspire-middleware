@@ -40,7 +40,7 @@ func init() {
 
 var (
 	coupon = couponmwpb.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		AppID:               uuid.NewString(),
 		Name:                uuid.NewString(),
 		Message:             uuid.NewString(),
@@ -59,9 +59,9 @@ var (
 	}
 
 	ret = npool.Scope{
-		ID:                 uuid.NewString(),
+		EntID:              uuid.NewString(),
 		GoodID:             uuid.NewString(),
-		CouponID:           coupon.ID,
+		CouponID:           coupon.EntID,
 		CouponType:         coupon.CouponType,
 		CouponTypeStr:      coupon.CouponTypeStr,
 		CouponScope:        coupon.CouponScope,
@@ -74,7 +74,7 @@ var (
 
 func setup(t *testing.T) func(*testing.T) {
 	info, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
-		ID:           &coupon.ID,
+		EntID:        &coupon.EntID,
 		AppID:        &coupon.AppID,
 		Name:         &coupon.Name,
 		Message:      &coupon.Message,
@@ -87,24 +87,26 @@ func setup(t *testing.T) func(*testing.T) {
 		CouponScope:  &coupon.CouponScope,
 	})
 	if assert.Nil(t, err) {
+		coupon.ID = info.ID
 		coupon.CreatedAt = info.CreatedAt
 		coupon.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &coupon, info)
 	}
 
 	return func(*testing.T) {
-		_, _ = couponmwcli.DeleteCoupon(context.Background(), ret.CouponID)
+		_, _ = couponmwcli.DeleteCoupon(context.Background(), coupon.ID)
 	}
 }
 
 func createScope(t *testing.T) {
 	info, err := CreateScope(context.Background(), &npool.ScopeReq{
-		ID:          &ret.ID,
+		EntID:       &ret.EntID,
 		GoodID:      &ret.GoodID,
 		CouponID:    &ret.CouponID,
 		CouponScope: &ret.CouponScope,
 	})
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &ret, info)
@@ -112,7 +114,7 @@ func createScope(t *testing.T) {
 }
 
 func getScope(t *testing.T) {
-	info, err := GetScope(context.Background(), ret.ID)
+	info, err := GetScope(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, &ret, info)
 	}
@@ -120,7 +122,7 @@ func getScope(t *testing.T) {
 
 func getScopes(t *testing.T) {
 	infos, total, err := GetScopes(context.Background(), &npool.Conds{
-		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		EntID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		GoodID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 		CouponScope: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponScope)},
@@ -150,7 +152,7 @@ func deleteScope(t *testing.T) {
 		assert.Equal(t, info, &ret)
 	}
 
-	info, err = GetScope(context.Background(), ret.ID)
+	info, err = GetScope(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

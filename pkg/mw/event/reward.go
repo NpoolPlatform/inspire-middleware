@@ -66,7 +66,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 		_id := id
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(&_id, true),
+			coupon1.WithEntID(&_id, true),
 		)
 		if err != nil {
 			return err
@@ -89,7 +89,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			ctx,
 			allocated1.WithAppID(&coup.AppID, true),
 			allocated1.WithUserID(&userID, true),
-			allocated1.WithCouponID(&coup.ID, true),
+			allocated1.WithCouponID(&coup.EntID, true),
 			allocated1.WithCouponType(&coup.CouponType, true),
 		)
 		if err != nil {

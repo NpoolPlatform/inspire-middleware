@@ -23,7 +23,7 @@ func (h *Handler) validateCoupons(ctx context.Context) error {
 			Coupon.
 			Query().
 			Where(
-				entcoupon.IDIn(h.CouponIDs...),
+				entcoupon.EntIDIn(h.CouponIDs...),
 				entcoupon.DeletedAt(0),
 			).
 			All(_ctx)
@@ -36,7 +36,7 @@ func (h *Handler) validateCoupons(ctx context.Context) error {
 			if info.StartAt+info.DurationDays*timedef.SecondsPerDay <= now {
 				return fmt.Errorf("coupon expired")
 			}
-			infoMap[info.ID] = info
+			infoMap[info.EntID] = info
 		}
 		for _, id := range h.CouponIDs {
 			if _, ok := infoMap[id]; !ok {

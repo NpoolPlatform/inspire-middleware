@@ -60,7 +60,7 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithID(&ret.CouponIDs[0], true),
+		coupon1.WithEntID(&ret.CouponIDs[0], true),
 		coupon1.WithCouponType(&couponType, true),
 		coupon1.WithAppID(&ret.AppID, true),
 		coupon1.WithDenomination(&denomination, true),

@@ -73,7 +73,7 @@ func GetAppGoodScopes(ctx context.Context, conds *npool.Conds, offset, limit int
 func GetAppGoodScope(ctx context.Context, id string) (*npool.Scope, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetAppGoodScope(ctx, &npool.GetAppGoodScopeRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -86,7 +86,7 @@ func GetAppGoodScope(ctx context.Context, id string) (*npool.Scope, error) {
 	return info.(*npool.Scope), nil
 }
 
-func DeleteAppGoodScope(ctx context.Context, id string) (*npool.Scope, error) {
+func DeleteAppGoodScope(ctx context.Context, id uint32) (*npool.Scope, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteAppGoodScope(ctx, &npool.DeleteAppGoodScopeRequest{
 			Info: &npool.ScopeReq{

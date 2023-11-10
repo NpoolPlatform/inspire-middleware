@@ -15,7 +15,7 @@ import (
 func (s *Server) GetAppGoodScope(ctx context.Context, in *npool.GetAppGoodScopeRequest) (*npool.GetAppGoodScopeResponse, error) {
 	handler, err := scope1.NewHandler(
 		ctx,
-		scope1.WithID(&in.ID, true),
+		scope1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -8,7 +8,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
 
 	"github.com/google/uuid"
@@ -22,7 +21,7 @@ func (h *createHandler) createAppGoodScope(ctx context.Context, cli *ent.Client)
 	if _, err := appgoodscopecrud.CreateSet(
 		cli.AppGoodScope.Create(),
 		&appgoodscopecrud.Req{
-			ID:          h.ID,
+			EntID:       h.EntID,
 			AppID:       h.AppID,
 			AppGoodID:   h.AppGoodID,
 			CouponID:    h.CouponID,
@@ -34,30 +33,9 @@ func (h *createHandler) createAppGoodScope(ctx context.Context, cli *ent.Client)
 	return nil
 }
 
-func (h *createHandler) getCoupon(ctx context.Context) error {
-	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		coupon, err := cli.Coupon.Get(ctx, *h.CouponID)
-		if err != nil {
-			return err
-		}
-		if coupon == nil {
-			return fmt.Errorf("coupon not found %v", *h.CouponID)
-		}
-
-		if h.CouponScope == nil {
-			couponScope := types.CouponScope(types.CouponScope_value[coupon.CouponScope])
-			h.CouponScope = &couponScope
-		}
-		return nil
-	})
-}
-
 func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) {
 	handler := &createHandler{
 		Handler: h,
-	}
-	if err := handler.getCoupon(ctx); err != nil {
-		return nil, err
 	}
 
 	h.Conds = &appgoodscopecrud.Conds{
@@ -74,8 +52,8 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

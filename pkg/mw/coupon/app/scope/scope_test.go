@@ -35,7 +35,7 @@ func init() {
 
 var (
 	coupon = couponmwpb.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		AppID:               uuid.NewString(),
 		Name:                uuid.NewString(),
 		Message:             uuid.NewString(),
@@ -54,9 +54,9 @@ var (
 	}
 
 	scope = scopemwpb.Scope{
-		ID:                 uuid.NewString(),
+		EntID:              uuid.NewString(),
 		GoodID:             uuid.NewString(),
-		CouponID:           coupon.ID,
+		CouponID:           coupon.EntID,
 		CouponType:         coupon.CouponType,
 		CouponTypeStr:      coupon.CouponTypeStr,
 		CouponScope:        coupon.CouponScope,
@@ -67,7 +67,7 @@ var (
 	}
 
 	ret = npool.Scope{
-		ID:                 uuid.NewString(),
+		EntID:              uuid.NewString(),
 		AppID:              coupon.AppID,
 		AppGoodID:          uuid.NewString(),
 		CouponID:           scope.CouponID,
@@ -83,7 +83,7 @@ var (
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithID(&coupon.ID, true),
+		coupon1.WithEntID(&coupon.EntID, true),
 		coupon1.WithAppID(&coupon.AppID, true),
 		coupon1.WithName(&scope.CouponName, true),
 		coupon1.WithMessage(&coupon.Message, true),
@@ -99,6 +99,7 @@ func setup(t *testing.T) func(*testing.T) {
 
 	coup, err := h1.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		coupon.ID = coup.ID
 		coupon.CreatedAt = coup.CreatedAt
 		coupon.UpdatedAt = coup.UpdatedAt
 		assert.Equal(t, &coupon, coup)
@@ -108,13 +109,14 @@ func setup(t *testing.T) func(*testing.T) {
 		context.Background(),
 		scope1.WithID(&scope.ID, true),
 		scope1.WithGoodID(&scope.GoodID, true),
-		scope1.WithCouponID(&coupon.ID, true),
+		scope1.WithCouponID(&coupon.EntID, true),
 		scope1.WithCouponScope(&coupon.CouponScope, true),
 	)
 	assert.Nil(t, err)
 
 	info, err := h2.CreateScope(context.Background())
 	if assert.Nil(t, err) {
+		scope.ID = info.ID
 		scope.CreatedAt = info.CreatedAt
 		scope.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &scope, info)
@@ -129,7 +131,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createAppGoodScope(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithAppGoodID(&ret.AppGoodID, true),
 		WithCouponID(&ret.CouponID, true),
@@ -139,6 +141,7 @@ func createAppGoodScope(t *testing.T) {
 
 	info, err := handler.CreateAppGoodScope(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &ret, info)
@@ -160,7 +163,7 @@ func getAppGoodScope(t *testing.T) {
 
 func getAppGoodScopes(t *testing.T) {
 	conds := &npool.Conds{
-		ID:          &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		EntID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:       &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		AppGoodID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
 		CouponID:    &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},

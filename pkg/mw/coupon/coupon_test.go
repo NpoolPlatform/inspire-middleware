@@ -31,7 +31,7 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		CouponType:          types.CouponType_FixAmount,
 		CouponTypeStr:       types.CouponType_FixAmount.String(),
 		AppID:               uuid.NewString(),
@@ -59,7 +59,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithCouponType(&ret.CouponType, true),
 		WithAppID(&ret.AppID, true),
 		WithDenomination(&ret.Denomination, true),
@@ -75,6 +75,7 @@ func createCoupon(t *testing.T) {
 
 	info, err := handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, info, &ret)
@@ -107,7 +108,7 @@ func updateCoupon(t *testing.T) {
 func getCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 	)
 	assert.Nil(t, err)
 
@@ -119,8 +120,8 @@ func getCoupon(t *testing.T) {
 
 func getCoupons(t *testing.T) {
 	conds := &npool.Conds{
-		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		IDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		EntID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		EntIDs:     &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 	}

@@ -51,7 +51,7 @@ func CreateScope(ctx context.Context, in *npool.ScopeReq) (*npool.Scope, error) 
 func GetScope(ctx context.Context, id string) (*npool.Scope, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetScope(ctx, &npool.GetScopeRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -86,7 +86,7 @@ func GetScopes(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 	return infos.([]*npool.Scope), total, nil
 }
 
-func DeleteScope(ctx context.Context, id string) (*npool.Scope, error) {
+func DeleteScope(ctx context.Context, id uint32) (*npool.Scope, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteScope(ctx, &npool.DeleteScopeRequest{
 			Info: &npool.ScopeReq{

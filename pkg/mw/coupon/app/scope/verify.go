@@ -114,8 +114,8 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	}
 
 	handler.Conds = &couponcrud.Conds{
-		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.Reqs[0].AppID},
-		IDs:   &cruder.Cond{Op: cruder.IN, Val: ids},
+		AppID:  &cruder.Cond{Op: cruder.EQ, Val: *h.Reqs[0].AppID},
+		EntIDs: &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	handler.Offset = 0
 	handler.Limit = int32(len(ids))
@@ -124,7 +124,6 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-
 	if len(coupons) != len(h.Reqs) {
 		return fmt.Errorf("invalid couponid")
 	}

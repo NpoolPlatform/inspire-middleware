@@ -90,7 +90,7 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -106,7 +106,7 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 func ExistCoupon(ctx context.Context, id string) (bool, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -122,7 +122,7 @@ func ExistCoupon(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func DeleteCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
+func DeleteCoupon(ctx context.Context, id uint32) (*npool.Coupon, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteCoupon(ctx, &npool.DeleteCouponRequest{
 			Info: &npool.CouponReq{

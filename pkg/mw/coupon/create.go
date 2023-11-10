@@ -16,8 +16,8 @@ import (
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	switch *h.CouponType {
@@ -55,7 +55,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := couponcrud.CreateSet(
 			cli.Coupon.Create(),
 			&couponcrud.Req{
-				ID:               h.ID,
+				EntID:            h.EntID,
 				CouponType:       h.CouponType,
 				AppID:            h.AppID,
 				UserID:           h.UserID,
