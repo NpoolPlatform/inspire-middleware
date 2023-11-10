@@ -32,22 +32,46 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:               uuid.NewString(),
-		CouponType:       types.CouponType_FixAmount,
-		AppID:            uuid.NewString(),
-		UserID:           uuid.NewString(),
-		Denomination:     decimal.RequireFromString("12.25").String(),
-		Circulation:      decimal.RequireFromString("12.25").String(),
-		Allocated:        decimal.RequireFromString("12.25").String(),
-		StartAt:          uint32(time.Now().Unix()),
-		DurationDays:     27,
-		CouponID:         uuid.NewString(),
-		CouponName:       uuid.NewString(),
-		Message:          uuid.NewString(),
-		CouponConstraint: types.CouponConstraint_Normal,
-		CouponScope:      types.CouponScope_Whitelist,
-		CouponScopeStr:   types.CouponScope_Whitelist.String(),
-		Valid:            true,
+		ID:                  uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		AppID:               uuid.NewString(),
+		UserID:              uuid.NewString(),
+		Denomination:        decimal.RequireFromString("10").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		Allocated:           decimal.RequireFromString("10").String(),
+		StartAt:             uint32(time.Now().Unix()),
+		DurationDays:        27,
+		CouponID:            uuid.NewString(),
+		CouponName:          uuid.NewString(),
+		Message:             uuid.NewString(),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Valid:               true,
+	}
+
+	ret1 = npool.Coupon{
+		ID:                  uuid.NewString(),
+		AppID:               ret.AppID,
+		CouponID:            ret.CouponID,
+		CouponName:          ret.CouponName,
+		Message:             ret.Message,
+		CouponType:          ret.CouponType,
+		CouponTypeStr:       ret.CouponType.String(),
+		UserID:              uuid.NewString(),
+		Denomination:        decimal.RequireFromString("10").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		Allocated:           decimal.RequireFromString("20").String(),
+		StartAt:             uint32(time.Now().Unix()),
+		DurationDays:        27,
+		CouponConstraint:    ret.CouponConstraint,
+		CouponConstraintStr: ret.CouponConstraint.String(),
+		CouponScope:         ret.CouponScope,
+		CouponScopeStr:      ret.CouponScope.String(),
+		Valid:               true,
+		Used:                false,
 	}
 )
 
@@ -97,6 +121,25 @@ func createCoupon(t *testing.T) {
 		ret.EndAt = info.EndAt
 		assert.Equal(t, info, &ret)
 	}
+
+	handler, err = NewHandler(
+		context.Background(),
+		WithID(&ret1.ID, true),
+		WithAppID(&ret1.AppID, true),
+		WithCouponID(&ret1.CouponID, true),
+		WithUserID(&ret1.UserID, true),
+	)
+	assert.Nil(t, err)
+
+	info, err = handler.CreateCoupon(context.Background())
+	if assert.Nil(t, err) {
+		ret1.CreatedAt = info.CreatedAt
+		ret1.UpdatedAt = info.UpdatedAt
+		ret1.StartAt = info.StartAt
+		ret1.EndAt = info.EndAt
+		assert.Equal(t, info, &ret1)
+		ret.Allocated = info.Allocated
+	}
 }
 
 func updateCoupon(t *testing.T) {
@@ -117,6 +160,30 @@ func updateCoupon(t *testing.T) {
 		ret.UpdatedAt = info.UpdatedAt
 		ret.UsedAt = info.UsedAt
 		assert.Equal(t, info, &ret)
+	}
+}
+
+func updateCoupons(t *testing.T) {
+	orderID := uuid.NewString()
+	ret1.UsedByOrderID = &orderID
+	ret1.Used = true
+
+	reqs := []*npool.CouponReq{{
+		ID:            &ret1.ID,
+		Used:          &ret1.Used,
+		UsedByOrderID: ret1.UsedByOrderID,
+	}}
+	handler, err := NewHandler(
+		context.Background(),
+		WithReqs(reqs, true),
+	)
+	assert.Nil(t, err)
+
+	infos, err := handler.UpdateCoupons(context.Background())
+	if assert.Nil(t, err) {
+		assert.Equal(t, int(1), len(infos))
+		ret1.UsedAt = infos[0].UsedAt
+		assert.Equal(t, &ret1, infos[0])
 	}
 }
 
@@ -186,6 +253,7 @@ func TestCoupon(t *testing.T) {
 
 	t.Run("createCoupon", createCoupon)
 	t.Run("updateCoupon", updateCoupon)
+	t.Run("updateCoupons", updateCoupons)
 	t.Run("getCoupon", getCoupon)
 	t.Run("getCoupons", getCoupons)
 	t.Run("deleteCoupon", deleteCoupon)
