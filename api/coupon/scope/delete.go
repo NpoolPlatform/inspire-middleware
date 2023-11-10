@@ -22,7 +22,7 @@ func (s *Server) DeleteScope(ctx context.Context, in *npool.DeleteScopeRequest) 
 
 	handler, err := scope1.NewHandler(
 		ctx,
-		scope1.WithID(req.ID, false),
+		scope1.WithID(req.ID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
