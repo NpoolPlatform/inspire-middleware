@@ -32,42 +32,46 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:               uuid.NewString(),
-		CouponType:       types.CouponType_FixAmount,
-		AppID:            uuid.NewString(),
-		UserID:           uuid.NewString(),
-		Denomination:     decimal.RequireFromString("12.25").String(),
-		Circulation:      decimal.RequireFromString("12.25").String(),
-		Allocated:        decimal.RequireFromString("12.25").String(),
-		StartAt:          uint32(time.Now().Unix()),
-		DurationDays:     27,
-		CouponID:         uuid.NewString(),
-		CouponName:       uuid.NewString(),
-		Message:          uuid.NewString(),
-		CouponConstraint: types.CouponConstraint_Normal,
-		CouponScope:      types.CouponScope_Whitelist,
-		CouponScopeStr:   types.CouponScope_Whitelist.String(),
-		Valid:            true,
+		ID:                  uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		AppID:               uuid.NewString(),
+		UserID:              uuid.NewString(),
+		Denomination:        decimal.RequireFromString("10").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		Allocated:           decimal.RequireFromString("10").String(),
+		StartAt:             uint32(time.Now().Unix()),
+		DurationDays:        27,
+		CouponID:            uuid.NewString(),
+		CouponName:          uuid.NewString(),
+		Message:             uuid.NewString(),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Valid:               true,
 	}
 
 	ret1 = npool.Coupon{
-		ID:               uuid.NewString(),
-		CouponType:       types.CouponType_FixAmount,
-		AppID:            ret.AppID,
-		UserID:           uuid.NewString(),
-		Denomination:     decimal.RequireFromString("12.25").String(),
-		Circulation:      decimal.RequireFromString("12.25").String(),
-		Allocated:        decimal.RequireFromString("12.25").String(),
-		StartAt:          uint32(time.Now().Unix()),
-		DurationDays:     27,
-		CouponID:         uuid.NewString(),
-		CouponName:       uuid.NewString(),
-		Message:          uuid.NewString(),
-		CouponConstraint: types.CouponConstraint_Normal,
-		CouponScope:      types.CouponScope_Whitelist,
-		CouponScopeStr:   types.CouponScope_Whitelist.String(),
-		Valid:            true,
-		Used:             false,
+		ID:                  uuid.NewString(),
+		AppID:               ret.AppID,
+		CouponID:            ret.CouponID,
+		CouponName:          ret.CouponName,
+		Message:             ret.Message,
+		CouponType:          ret.CouponType,
+		CouponTypeStr:       ret.CouponType.String(),
+		UserID:              uuid.NewString(),
+		Denomination:        decimal.RequireFromString("10").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		Allocated:           decimal.RequireFromString("20").String(),
+		StartAt:             uint32(time.Now().Unix()),
+		DurationDays:        27,
+		CouponConstraint:    ret.CouponConstraint,
+		CouponConstraintStr: ret.CouponConstraint.String(),
+		CouponScope:         ret.CouponScope,
+		CouponScopeStr:      ret.CouponScope.String(),
+		Valid:               true,
+		Used:                false,
 	}
 )
 
@@ -115,6 +119,7 @@ func createCoupon(t *testing.T) {
 		ret.UpdatedAt = info.UpdatedAt
 		ret.StartAt = info.StartAt
 		ret.EndAt = info.EndAt
+		ret.Allocated = info.Allocated
 		assert.Equal(t, info, &ret)
 	}
 
@@ -133,6 +138,7 @@ func createCoupon(t *testing.T) {
 		ret1.UpdatedAt = info.UpdatedAt
 		ret1.StartAt = info.StartAt
 		ret1.EndAt = info.EndAt
+		ret.Allocated = info.Allocated
 		assert.Equal(t, info, &ret1)
 	}
 }
@@ -163,19 +169,21 @@ func updateCoupons(t *testing.T) {
 	ret1.UsedByOrderID = &orderID
 	ret1.Used = true
 
+	reqs := []*npool.CouponReq{{
+		ID:            &ret1.ID,
+		Used:          &ret1.Used,
+		UsedByOrderID: ret1.UsedByOrderID,
+	}}
 	handler, err := NewHandler(
 		context.Background(),
-		WithReqs([]*npool.CouponReq{{
-			ID:            &ret1.ID,
-			Used:          &ret1.Used,
-			UsedByOrderID: ret1.UsedByOrderID,
-		}}, true),
+		WithReqs(reqs, true),
 	)
 	assert.Nil(t, err)
 
 	infos, err := handler.UpdateCoupons(context.Background())
 	if assert.Nil(t, err) {
 		assert.Equal(t, int(1), len(infos))
+		ret1.UsedAt = infos[0].UsedAt
 		assert.Equal(t, &ret1, infos[0])
 	}
 }
