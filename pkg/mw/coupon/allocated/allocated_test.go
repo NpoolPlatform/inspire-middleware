@@ -49,6 +49,26 @@ var (
 		CouponScopeStr:   types.CouponScope_Whitelist.String(),
 		Valid:            true,
 	}
+
+	ret1 = npool.Coupon{
+		ID:               uuid.NewString(),
+		CouponType:       types.CouponType_FixAmount,
+		AppID:            ret.AppID,
+		UserID:           uuid.NewString(),
+		Denomination:     decimal.RequireFromString("12.25").String(),
+		Circulation:      decimal.RequireFromString("12.25").String(),
+		Allocated:        decimal.RequireFromString("12.25").String(),
+		StartAt:          uint32(time.Now().Unix()),
+		DurationDays:     27,
+		CouponID:         uuid.NewString(),
+		CouponName:       uuid.NewString(),
+		Message:          uuid.NewString(),
+		CouponConstraint: types.CouponConstraint_Normal,
+		CouponScope:      types.CouponScope_Whitelist,
+		CouponScopeStr:   types.CouponScope_Whitelist.String(),
+		Valid:            true,
+		Used:             false,
+	}
 )
 
 func setup(t *testing.T) func(*testing.T) {
@@ -97,6 +117,24 @@ func createCoupon(t *testing.T) {
 		ret.EndAt = info.EndAt
 		assert.Equal(t, info, &ret)
 	}
+
+	handler, err = NewHandler(
+		context.Background(),
+		WithID(&ret1.ID, true),
+		WithAppID(&ret1.AppID, true),
+		WithCouponID(&ret1.CouponID, true),
+		WithUserID(&ret1.UserID, true),
+	)
+	assert.Nil(t, err)
+
+	info, err = handler.CreateCoupon(context.Background())
+	if assert.Nil(t, err) {
+		ret1.CreatedAt = info.CreatedAt
+		ret1.UpdatedAt = info.UpdatedAt
+		ret1.StartAt = info.StartAt
+		ret1.EndAt = info.EndAt
+		assert.Equal(t, info, &ret1)
+	}
 }
 
 func updateCoupon(t *testing.T) {
@@ -117,6 +155,28 @@ func updateCoupon(t *testing.T) {
 		ret.UpdatedAt = info.UpdatedAt
 		ret.UsedAt = info.UsedAt
 		assert.Equal(t, info, &ret)
+	}
+}
+
+func updateCoupons(t *testing.T) {
+	orderID := uuid.NewString()
+	ret1.UsedByOrderID = &orderID
+	ret1.Used = true
+
+	handler, err := NewHandler(
+		context.Background(),
+		WithReqs([]*npool.CouponReq{{
+			ID:            &ret1.ID,
+			Used:          &ret1.Used,
+			UsedByOrderID: ret1.UsedByOrderID,
+		}}, true),
+	)
+	assert.Nil(t, err)
+
+	infos, err := handler.UpdateCoupons(context.Background())
+	if assert.Nil(t, err) {
+		assert.Equal(t, int(1), len(infos))
+		assert.Equal(t, &ret1, infos[0])
 	}
 }
 
@@ -186,6 +246,7 @@ func TestCoupon(t *testing.T) {
 
 	t.Run("createCoupon", createCoupon)
 	t.Run("updateCoupon", updateCoupon)
+	t.Run("updateCoupons", updateCoupons)
 	t.Run("getCoupon", getCoupon)
 	t.Run("getCoupons", getCoupons)
 	t.Run("deleteCoupon", deleteCoupon)

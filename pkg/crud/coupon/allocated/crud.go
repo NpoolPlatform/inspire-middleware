@@ -19,6 +19,7 @@ type Req struct {
 	UserID        *uuid.UUID
 	CouponID      *uuid.UUID
 	Used          *bool
+	UsedAt        *uint32
 	UsedByOrderID *uuid.UUID
 	Denomination  *decimal.Decimal
 	StartAt       *uint32
