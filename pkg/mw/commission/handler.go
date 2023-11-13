@@ -309,9 +309,14 @@ func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handle
 	}
 }
 
-func WithStartAt(at *uint32, must bool) func(context.Context, *Handler) error {
+func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.StartAt = at
+		if startAt == nil {
+			if must {
+				return fmt.Errorf("invalid startat")
+			}
+		}
+		h.StartAt = startAt
 		return nil
 	}
 }
