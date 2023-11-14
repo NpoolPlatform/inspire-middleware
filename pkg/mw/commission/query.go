@@ -80,6 +80,21 @@ func (h *queryHandler) queryCommissions(cli *ent.Client) (*ent.CommissionSelect,
 	return h.selectCommission(stm), nil
 }
 
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
+	if err != nil {
+		return err
+	}
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
+}
+
 func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
@@ -115,6 +130,9 @@ func (h *Handler) GetCommission(ctx context.Context) (*npool.Commission, error) 
 		if err := handler.queryCommission(cli); err != nil {
 			return err
 		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(ctx)
 	})
 	if err != nil {
@@ -146,6 +164,9 @@ func (h *Handler) GetCommissions(ctx context.Context) ([]*npool.Commission, uint
 		}
 		handler.stmCount, err = handler.queryCommissions(cli)
 		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
 			return err
 		}
 		_total, err := handler.stmCount.Count(_ctx)

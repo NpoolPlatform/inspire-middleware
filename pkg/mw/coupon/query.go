@@ -83,6 +83,21 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		)
 }
 
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
+	if err != nil {
+		return err
+	}
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
+}
+
 func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
@@ -143,6 +158,9 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if err := handler.queryCoupon(cli); err != nil {
 			return err
 		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -173,6 +191,9 @@ func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, erro
 		}
 		handler.stmCount, err = handler.queryCoupons(cli)
 		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
 			return err
 		}
 		_total, err := handler.stmCount.Count(_ctx)

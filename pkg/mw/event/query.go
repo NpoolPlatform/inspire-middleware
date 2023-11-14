@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -18,9 +19,16 @@ import (
 
 type queryHandler struct {
 	*Handler
+	stmCount  *ent.EventSelect
 	stmSelect *ent.EventSelect
 	infos     []*npool.Event
 	total     uint32
+}
+
+func (h *queryHandler) selectEvent(stm *ent.EventQuery) *ent.EventSelect {
+	return stm.Select(
+		entevent.FieldID,
+	)
 }
 
 func (h *queryHandler) queryEvent(cli *ent.Client) error {
@@ -28,35 +36,62 @@ func (h *queryHandler) queryEvent(cli *ent.Client) error {
 		return fmt.Errorf("invalid id")
 	}
 
-	h.stmSelect = cli.
-		Event.
-		Query().
-		Where(
-			entevent.ID(*h.ID),
-			entevent.DeletedAt(0),
-		).
-		Select()
+	stm := cli.Event.Query().Where(entevent.DeletedAt(0))
 	if h.ID != nil {
 		h.stmSelect.Where(entevent.ID(*h.ID))
 	}
 	if h.EntID != nil {
 		h.stmSelect.Where(entevent.EntID(*h.EntID))
 	}
+	h.selectEvent(stm)
 	return nil
 }
 
-func (h *queryHandler) queryEvents(ctx context.Context, cli *ent.Client) error {
+func (h *queryHandler) queryEvents(cli *ent.Client) (*ent.EventSelect, error) {
 	stm, err := eventcrud.SetQueryConds(cli.Event.Query(), h.Conds)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	total, err := stm.Count(ctx)
+	return h.selectEvent(stm), nil
+}
+
+func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
+	t := sql.Table(entevent.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entevent.FieldID),
+			t.C(entevent.FieldID),
+		).
+		AppendSelect(
+			sql.As(t.C(entevent.FieldEntID), "ent_id"),
+			sql.As(t.C(entevent.FieldAppID), "app_id"),
+			sql.As(t.C(entevent.FieldEventType), "event_type"),
+			sql.As(t.C(entevent.FieldCouponIds), "coupon_ids"),
+			sql.As(t.C(entevent.FieldCredits), "credits"),
+			sql.As(t.C(entevent.FieldCreditsPerUsd), "credits_per_usd"),
+			sql.As(t.C(entevent.FieldMaxConsecutive), "max_consecutive"),
+			sql.As(t.C(entevent.FieldGoodID), "good_id"),
+			sql.As(t.C(entevent.FieldAppGoodID), "app_good_id"),
+			sql.As(t.C(entevent.FieldInviterLayers), "inviter_layers"),
+			sql.As(t.C(entevent.FieldAppGoodID), "app_good_id"),
+			sql.As(t.C(entevent.FieldCreatedAt), "created_at"),
+			sql.As(t.C(entevent.FieldUpdatedAt), "updated_at"),
+		)
+}
+
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
 	if err != nil {
 		return err
 	}
-	h.total = uint32(total)
-	h.stmSelect = stm.Select()
-	return nil
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -98,6 +133,9 @@ func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
 		if err := handler.queryEvent(cli); err != nil {
 			return err
 		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -121,10 +159,24 @@ func (h *Handler) GetEvents(ctx context.Context) ([]*npool.Event, uint32, error)
 		infos:   []*npool.Event{},
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryEvents(ctx, cli); err != nil {
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryEvents(cli)
+		if err != nil {
 			return err
 		}
+		handler.stmCount, err = handler.queryEvents(cli)
+		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		handler.total = uint32(_total)
 		handler.stmSelect.
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit))
