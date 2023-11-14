@@ -11,13 +11,6 @@ import (
 )
 
 func (h *Handler) validateInvitationCode(ctx context.Context) error {
-	if h.AppID == nil {
-		return fmt.Errorf("invalid appid")
-	}
-	if h.InviterID == nil {
-		return fmt.Errorf("invalid inviterid")
-	}
-
 	h1, err := invitationcode1.NewHandler(
 		ctx,
 		invitationcode1.WithConds(&invitationcodemwpb.Conds{
