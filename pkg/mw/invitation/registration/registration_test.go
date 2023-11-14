@@ -46,6 +46,7 @@ func setup(t *testing.T) func(*testing.T) {
 	info, err := h.CreateInvitationCode(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info)
+	h.ID = &info.ID
 
 	h1, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -57,6 +58,7 @@ func setup(t *testing.T) func(*testing.T) {
 	info, err = h1.CreateInvitationCode(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info)
+	h1.ID = &info.ID
 
 	return func(*testing.T) {
 		_, _ = h.DeleteInvitationCode(context.Background())
