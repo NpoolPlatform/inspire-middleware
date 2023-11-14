@@ -14,7 +14,6 @@ func (h *Handler) UpdateCommission(ctx context.Context) (*npool.Commission, erro
 		if _, err := commissioncrud.UpdateSet(
 			tx.Commission.UpdateOneID(*h.ID),
 			&commissioncrud.Req{
-				ID:              h.ID,
 				AmountOrPercent: h.AmountOrPercent,
 				StartAt:         h.StartAt,
 				Threshold:       h.Threshold,
