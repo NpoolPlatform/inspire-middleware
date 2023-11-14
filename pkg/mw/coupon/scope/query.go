@@ -76,7 +76,7 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
 	s.LeftJoin(t).
 		On(
 			s.C(entcouponscope.FieldCouponID),
-			t.C(entcoupon.FieldID),
+			t.C(entcoupon.FieldEntID),
 		).
 		AppendSelect(
 			sql.As(t.C(entcoupon.FieldName), "coupon_name"),

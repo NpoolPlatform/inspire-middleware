@@ -82,7 +82,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithCouponID(&ret.CouponID, true),
 		WithUserID(&ret.UserID, true),

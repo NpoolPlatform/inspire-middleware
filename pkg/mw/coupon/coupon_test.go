@@ -95,6 +95,7 @@ func updateCoupon(t *testing.T) {
 		WithDenomination(&ret.Denomination, true),
 		WithCirculation(&ret.Circulation, true),
 		WithStartAt(&ret.StartAt, true),
+		WithAllocated(&ret.Allocated, true),
 		WithDurationDays(&ret.DurationDays, true),
 		WithMessage(&ret.Message, true),
 		WithName(&ret.Name, true),

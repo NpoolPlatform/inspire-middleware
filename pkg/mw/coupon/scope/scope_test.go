@@ -88,6 +88,7 @@ func setup(t *testing.T) func(*testing.T) {
 		coupon.CreatedAt = info.CreatedAt
 		coupon.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &coupon, info)
+		h1.ID = &info.ID
 	}
 
 	return func(*testing.T) {

@@ -165,15 +165,27 @@ func WithIssuedBy(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithStartAt(date *uint32, must bool) func(context.Context, *Handler) error {
+func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.StartAt = date
+		if startAt == nil {
+			if must {
+				return fmt.Errorf("invalid startat")
+			}
+			return nil
+		}
+		h.StartAt = startAt
 		return nil
 	}
 }
 
 func WithDurationDays(days *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if days == nil {
+			if must {
+				return fmt.Errorf("invalid durationdays")
+			}
+			return nil
+		}
 		h.DurationDays = days
 		return nil
 	}

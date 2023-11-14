@@ -31,7 +31,7 @@ func init() {
 }
 
 var ret = &statementmwpb.Statement{
-	EntID:                     uuid.NewString(),
+	EntID:                  uuid.NewString(),
 	AppID:                  uuid.NewString(),
 	UserID:                 uuid.NewString(),
 	DirectContributorID:    uuid.NewString(),
@@ -66,7 +66,7 @@ var ret1 = &npool.Achievement{
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := statement1.NewHandler(
 		context.Background(),
-		statement1.WithID(&ret.ID, true),
+		statement1.WithEntID(&ret.EntID, true),
 		statement1.WithAppID(&ret.AppID, true),
 		statement1.WithUserID(&ret.UserID, true),
 		statement1.WithDirectContributorID(&ret.DirectContributorID, true),
@@ -86,8 +86,10 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 
 	info, err := h1.CreateStatement(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info)
+	if assert.Nil(t, err) {
+		ret.ID = info.ID
+		h1.ID = &info.ID
+	}
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteStatement(context.Background())
@@ -114,6 +116,7 @@ func getAchievements(t *testing.T) {
 		assert.Equal(t, uint32(1), total)
 		if assert.Equal(t, 1, len(infos)) {
 			ret1.ID = infos[0].ID
+			ret1.EntID = infos[0].EntID
 			ret1.CreatedAt = infos[0].CreatedAt
 			ret1.UpdatedAt = infos[0].UpdatedAt
 			assert.Equal(t, infos[0], ret1)

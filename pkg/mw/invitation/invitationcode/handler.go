@@ -112,6 +112,12 @@ func WithInvitationCode(code *string, must bool) func(context.Context, *Handler)
 
 func WithDisabled(disabled *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
+		if disabled == nil {
+			if must {
+				return fmt.Errorf("invalid disabled")
+			}
+			return nil
+		}
 		h.Disabled = disabled
 		return nil
 	}

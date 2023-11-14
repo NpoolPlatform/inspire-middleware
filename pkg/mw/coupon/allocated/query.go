@@ -86,7 +86,7 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 	s.LeftJoin(t).
 		On(
 			s.C(entcouponallocated.FieldCouponID),
-			t.C(entcoupon.FieldID),
+			t.C(entcoupon.FieldEntID),
 		)
 
 	if h.Conds != nil && h.Conds.CouponType != nil {

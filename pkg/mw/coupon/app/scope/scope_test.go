@@ -107,7 +107,7 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h2, err := scope1.NewHandler(
 		context.Background(),
-		scope1.WithID(&scope.ID, true),
+		scope1.WithEntID(&scope.EntID, true),
 		scope1.WithGoodID(&scope.GoodID, true),
 		scope1.WithCouponID(&coupon.EntID, true),
 		scope1.WithCouponScope(&coupon.CouponScope, true),

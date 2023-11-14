@@ -81,7 +81,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithEventType(&ret.EventType, true),
 		WithCouponIDs(ret.CouponIDs, true),

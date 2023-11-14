@@ -252,8 +252,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info1, err := _h1.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info1)
+	if assert.Nil(t, err) {
+		_h1.ID = &_info1.ID
+	}
 
 	h1, err := registration1.NewHandler(
 		context.Background(),
@@ -264,8 +265,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info1, err := h1.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info1)
+	if assert.Nil(t, err) {
+		h1.ID = &info1.ID
+	}
 
 	_h2, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -275,8 +277,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info2, err := _h2.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info2)
+	if assert.Nil(t, err) {
+		_h2.ID = &_info2.ID
+	}
 
 	h2, err := registration1.NewHandler(
 		context.Background(),
@@ -287,8 +290,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info2, err := h2.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info2)
+	if assert.Nil(t, err) {
+		h2.ID = &info2.ID
+	}
 
 	_h3, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -298,8 +302,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info3, err := _h3.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info3)
+	if assert.Nil(t, err) {
+		_h3.ID = &_info3.ID
+	}
 
 	h3, err := registration1.NewHandler(
 		context.Background(),
@@ -310,8 +315,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info3, err := h3.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info3)
+	if assert.Nil(t, err) {
+		h3.ID = &info3.ID
+	}
 
 	_h4, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -321,8 +327,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info4, err := _h4.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info4)
+	if assert.Nil(t, err) {
+		_h4.ID = &_info4.ID
+	}
 
 	h4, err := registration1.NewHandler(
 		context.Background(),
@@ -333,8 +340,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info4, err := h4.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info4)
+	if assert.Nil(t, err) {
+		h4.ID = &info4.ID
+	}
 
 	_h5, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -344,8 +352,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info5, err := _h5.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info5)
+	if assert.Nil(t, err) {
+		_h5.ID = &_info5.ID
+	}
 
 	h5, err := registration1.NewHandler(
 		context.Background(),
@@ -356,8 +365,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info5, err := h5.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info5)
+	if assert.Nil(t, err) {
+		h5.ID = &info5.ID
+	}
 
 	h6, err := commission1.NewHandler(
 		context.Background(),
@@ -374,8 +384,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info6, err := h6.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info6)
+	if assert.Nil(t, err) {
+		h6.ID = &info6.ID
+	}
 
 	h7, err := commission1.NewHandler(
 		context.Background(),
@@ -392,8 +403,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info7, err := h7.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info7)
+	if assert.Nil(t, err) {
+		h7.ID = &info7.ID
+	}
 
 	h8, err := commission1.NewHandler(
 		context.Background(),
@@ -410,8 +422,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info8, err := h8.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info8)
+	if assert.Nil(t, err) {
+		h8.ID = &info8.ID
+	}
 
 	h9, err := commission1.NewHandler(
 		context.Background(),
@@ -428,8 +441,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info9, err := h9.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info9)
+	if assert.Nil(t, err) {
+		h9.ID = &info9.ID
+	}
 
 	h10, err := commission1.NewHandler(
 		context.Background(),
@@ -446,8 +460,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info10, err := h10.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info10)
+	if assert.Nil(t, err) {
+		h10.ID = &info10.ID
+	}
 
 	h11, err := commission1.NewHandler(
 		context.Background(),
@@ -464,8 +479,9 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info11, err := h11.CreateCommission(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info11)
+	if assert.Nil(t, err) {
+		h11.ID = &info11.ID
+	}
 
 	return func(*testing.T) {
 		_, _ = _h1.DeleteInvitationCode(context.Background())

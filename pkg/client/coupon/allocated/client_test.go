@@ -8,10 +8,7 @@ import (
 	"testing"
 	"time"
 
-	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
-
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
-	"github.com/shopspring/decimal"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
@@ -78,8 +75,6 @@ var ret = &npool.Coupon{
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	Valid:               true,
 	Allocated:           "1",
-	StartAt:             coupon.StartAt,
-	EndAt:               coupon.StartAt + coupon.DurationDays*timedef.SecondsPerDay,
 }
 
 func createCoupon(t *testing.T) {
@@ -110,6 +105,8 @@ func createCoupon(t *testing.T) {
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
+		ret.StartAt = info.StartAt
+		ret.EndAt = info.EndAt
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)

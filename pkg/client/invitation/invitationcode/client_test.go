@@ -35,19 +35,18 @@ func init() {
 }
 
 var ret = &npool.InvitationCode{
-	EntID:     uuid.NewString(),
-	AppID:  uuid.NewString(),
-	UserID: uuid.NewString(),
-}
-
-var req = &npool.InvitationCodeReq{
-	EntID:     &ret.EntID,
-	AppID:  &ret.AppID,
-	UserID: &ret.UserID,
+	EntID:    uuid.NewString(),
+	AppID:    uuid.NewString(),
+	UserID:   uuid.NewString(),
+	Disabled: false,
 }
 
 func create(t *testing.T) {
-	info, err := CreateInvitationCode(context.Background(), req)
+	info, err := CreateInvitationCode(context.Background(), &npool.InvitationCodeReq{
+		EntID:  &ret.EntID,
+		AppID:  &ret.AppID,
+		UserID: &ret.UserID,
+	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.InvitationCode = info.InvitationCode
@@ -58,12 +57,12 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
-	disabled := true
+	ret.Disabled = true
 
-	req.Disabled = &disabled
-	ret.Disabled = disabled
-
-	info, err := UpdateInvitationCode(context.Background(), req)
+	info, err := UpdateInvitationCode(context.Background(), &npool.InvitationCodeReq{
+		ID:       &ret.ID,
+		Disabled: &ret.Disabled,
+	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)

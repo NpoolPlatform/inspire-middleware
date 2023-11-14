@@ -55,7 +55,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createStatement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
 		WithDirectContributorID(&ret.DirectContributorID, true),
@@ -79,14 +79,14 @@ func createStatement(t *testing.T) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, &ret, info)
 	}
 }
 
 func getStatement(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 	)
 	assert.Nil(t, err)
 
