@@ -8,7 +8,10 @@ import (
 	"testing"
 	"time"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
+
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
+	"github.com/shopspring/decimal"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
@@ -75,10 +78,12 @@ var ret = &npool.Coupon{
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	Valid:               true,
 	Allocated:           "1",
+	StartAt:             coupon.StartAt,
+	EndAt:               coupon.StartAt + coupon.DurationDays*timedef.SecondsPerDay,
 }
 
 func createCoupon(t *testing.T) {
-	_, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
+	info1, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
 		EntID:        &coupon.EntID,
 		CouponType:   &coupon.CouponType,
 		AppID:        &coupon.AppID,
@@ -90,11 +95,18 @@ func createCoupon(t *testing.T) {
 		Message:      &coupon.Message,
 		Name:         &coupon.Name,
 	})
-	assert.Nil(t, err)
+	if assert.Nil(t, err) {
+		coupon.ID = info1.ID
+		coupon.CreatedAt = info1.CreatedAt
+		coupon.UpdatedAt = info1.UpdatedAt
+		assert.Equal(t, coupon, info1)
+	}
 
 	info, err := CreateCoupon(context.Background(), &npool.CouponReq{
+		EntID:    &ret.EntID,
 		AppID:    &ret.AppID,
 		CouponID: &ret.CouponID,
+		UserID:   &ret.UserID,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID

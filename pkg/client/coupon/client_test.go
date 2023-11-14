@@ -90,6 +90,7 @@ func updateDiscount(t *testing.T) {
 		Denomination: &ret.Denomination,
 		Circulation:  &ret.Circulation,
 		CouponScope:  &ret.CouponScope,
+		Allocated:    &ret.Allocated,
 	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt

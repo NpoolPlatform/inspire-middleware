@@ -11,7 +11,7 @@ import (
 )
 
 func (h *Handler) ExistCoupon(ctx context.Context) (bool, error) {
-	if h.EntID != nil {
+	if h.EntID == nil {
 		return false, fmt.Errorf("invaild entid")
 	}
 	exist := false
