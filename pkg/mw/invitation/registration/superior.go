@@ -113,12 +113,15 @@ func (h *Handler) GetSuperiores(ctx context.Context) ([]*npool.Registration, uin
 		return nil, 0, err
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := handler.queryRegistrations(cli)
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryRegistrations(cli)
 		if err != nil {
 			return err
 		}
-		handler.stmSelect = stm
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		handler.stmSelect.
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit))

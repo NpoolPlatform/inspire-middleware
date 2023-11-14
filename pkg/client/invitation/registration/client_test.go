@@ -58,8 +58,6 @@ var ret2 = &npool.Registration{
 	InviteeID: uuid.NewString(),
 }
 
-var updateInviterID = uuid.NewString()
-
 func create(t *testing.T) {
 	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
 		AppID:  &ret.AppID,
@@ -70,12 +68,6 @@ func create(t *testing.T) {
 	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
 		AppID:  &ret.AppID,
 		UserID: &ret.InviteeID,
-	})
-	assert.Nil(t, err)
-
-	_, err = ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
-		AppID:  &ret.AppID,
-		UserID: &updateInviterID,
 	})
 	assert.Nil(t, err)
 
@@ -94,8 +86,8 @@ func create(t *testing.T) {
 
 	info, err = CreateRegistration(context.Background(), &npool.RegistrationReq{
 		EntID:     &ret1.EntID,
-		AppID:     &ret.AppID,
-		InviterID: &ret.InviterID,
+		AppID:     &ret1.AppID,
+		InviterID: &ret1.InviterID,
 		InviteeID: &ret1.InviteeID,
 	})
 	if assert.Nil(t, err) {
@@ -107,8 +99,8 @@ func create(t *testing.T) {
 
 	info, err = CreateRegistration(context.Background(), &npool.RegistrationReq{
 		EntID:     &ret2.EntID,
-		AppID:     &ret.AppID,
-		InviterID: &ret.InviteeID,
+		AppID:     &ret2.AppID,
+		InviterID: &ret2.InviterID,
 		InviteeID: &ret2.InviteeID,
 	})
 	if assert.Nil(t, err) {
@@ -120,7 +112,12 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
-	ret2.InviterID = updateInviterID
+	ret2.InviterID = uuid.NewString()
+	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
+		AppID:  &ret2.AppID,
+		UserID: &ret2.InviterID,
+	})
+	assert.Nil(t, err)
 
 	info, err := UpdateRegistration(context.Background(), &npool.RegistrationReq{
 		ID:        &ret2.ID,
