@@ -36,6 +36,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
 	}
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
+	}
 	if req.CouponType != nil {
 		c.SetCouponType(req.CouponType.String())
 	}
@@ -122,8 +125,8 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 }
 
 type Conds struct {
-	EntID         *cruder.Cond
-	EntIDs        *cruder.Cond
+	EntID      *cruder.Cond
+	EntIDs     *cruder.Cond
 	CouponType *cruder.Cond
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond

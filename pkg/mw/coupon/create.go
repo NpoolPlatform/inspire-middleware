@@ -80,6 +80,5 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return h.GetCoupon(ctx)
 }

@@ -26,7 +26,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
 	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
