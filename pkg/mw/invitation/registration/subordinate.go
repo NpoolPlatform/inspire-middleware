@@ -114,9 +114,11 @@ func (h *Handler) GetSubordinates(ctx context.Context) ([]*npool.Registration, u
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryRegistrations(_ctx, cli); err != nil {
+		stm, err := handler.queryRegistrations(cli)
+		if err != nil {
 			return err
 		}
+		handler.stmSelect = stm
 		handler.stmSelect.
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit))
