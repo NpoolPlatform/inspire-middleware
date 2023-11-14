@@ -28,7 +28,7 @@ func (h *Handler) validateInvitationCode(ctx context.Context) error {
 		return err
 	}
 	if !exist {
-		return fmt.Errorf("invalid inviterid")
+		return fmt.Errorf("invatationcode not exist")
 	}
 
 	return nil
