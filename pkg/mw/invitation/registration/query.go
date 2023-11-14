@@ -38,7 +38,7 @@ func (h *queryHandler) queryRegistration(cli *ent.Client) error {
 	if h.EntID != nil {
 		stm.Where(entregistration.EntID(*h.EntID))
 	}
-	h.selectRegistration(stm)
+	h.stmSelect = h.selectRegistration(stm)
 	return nil
 }
 

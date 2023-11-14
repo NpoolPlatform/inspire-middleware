@@ -41,7 +41,7 @@ func (h *queryHandler) queryCommission(cli *ent.Client) error {
 	if h.EntID != nil {
 		stm.Where(entcommission.EntID(*h.EntID))
 	}
-	h.selectCommission(stm)
+	h.stmSelect = h.selectCommission(stm)
 	return nil
 }
 

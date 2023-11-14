@@ -37,7 +37,7 @@ func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
 	if h.EntID != nil {
 		stm.Where(entinvitationcode.EntID(*h.EntID))
 	}
-	h.selectInvitationCode(stm)
+	h.stmSelect = h.selectInvitationCode(stm)
 	return nil
 }
 
