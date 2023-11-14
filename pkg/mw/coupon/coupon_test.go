@@ -83,8 +83,12 @@ func createCoupon(t *testing.T) {
 }
 
 func updateCoupon(t *testing.T) {
+	ret.Denomination = "10.02"
+	ret.Circulation = "200.4"
 	ret.CouponScope = types.CouponScope_AllGood
 	ret.CouponScopeStr = types.CouponScope_AllGood.String()
+	ret.Allocated = "1"
+
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
