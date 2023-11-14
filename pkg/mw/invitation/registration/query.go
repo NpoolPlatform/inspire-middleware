@@ -33,10 +33,10 @@ func (h *queryHandler) queryRegistration(cli *ent.Client) error {
 	}
 	stm := cli.Registration.Query().Where(entregistration.DeletedAt(0))
 	if h.ID != nil {
-		h.stmSelect.Where(entregistration.ID(*h.ID))
+		stm.Where(entregistration.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		h.stmSelect.Where(entregistration.EntID(*h.EntID))
+		stm.Where(entregistration.EntID(*h.EntID))
 	}
 	h.selectRegistration(stm)
 	return nil

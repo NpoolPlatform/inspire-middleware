@@ -38,10 +38,10 @@ func (h *queryHandler) queryEvent(cli *ent.Client) error {
 
 	stm := cli.Event.Query().Where(entevent.DeletedAt(0))
 	if h.ID != nil {
-		h.stmSelect.Where(entevent.ID(*h.ID))
+		stm.Where(entevent.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		h.stmSelect.Where(entevent.EntID(*h.EntID))
+		stm.Where(entevent.EntID(*h.EntID))
 	}
 	h.selectEvent(stm)
 	return nil

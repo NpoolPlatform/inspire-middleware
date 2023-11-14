@@ -32,10 +32,10 @@ func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
 	}
 	stm := cli.InvitationCode.Query().Where(entinvitationcode.DeletedAt(0))
 	if h.ID != nil {
-		h.stmSelect.Where(entinvitationcode.ID(*h.ID))
+		stm.Where(entinvitationcode.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		h.stmSelect.Where(entinvitationcode.EntID(*h.EntID))
+		stm.Where(entinvitationcode.EntID(*h.EntID))
 	}
 	h.selectInvitationCode(stm)
 	return nil

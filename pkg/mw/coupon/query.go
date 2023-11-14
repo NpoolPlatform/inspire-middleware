@@ -37,10 +37,10 @@ func (h *queryHandler) queryCoupon(cli *ent.Client) error {
 	}
 	stm := cli.Coupon.Query().Where(entcoupon.DeletedAt(0))
 	if h.ID != nil {
-		h.stmSelect.Where(entcoupon.ID(*h.ID))
+		stm.Where(entcoupon.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		h.stmSelect.Where(entcoupon.EntID(*h.EntID))
+		stm.Where(entcoupon.EntID(*h.EntID))
 	}
 	h.stmSelect = h.selectCoupon(stm)
 	return nil

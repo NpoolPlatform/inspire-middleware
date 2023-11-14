@@ -36,10 +36,10 @@ func (h *queryHandler) queryCommission(cli *ent.Client) error {
 
 	stm := cli.Commission.Query().Where(entcommission.DeletedAt(0))
 	if h.ID != nil {
-		h.stmSelect.Where(entcommission.ID(*h.ID))
+		stm.Where(entcommission.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		h.stmSelect.Where(entcommission.EntID(*h.EntID))
+		stm.Where(entcommission.EntID(*h.EntID))
 	}
 	h.selectCommission(stm)
 	return nil
