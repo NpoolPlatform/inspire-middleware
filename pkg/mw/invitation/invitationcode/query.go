@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
 	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -13,44 +14,72 @@ import (
 
 type queryHandler struct {
 	*Handler
+	stmCount  *ent.InvitationCodeSelect
 	stmSelect *ent.InvitationCodeSelect
 	infos     []*npool.InvitationCode
 	total     uint32
+}
+
+func (h *queryHandler) selectInvitationCode(stm *ent.InvitationCodeQuery) *ent.InvitationCodeSelect {
+	return stm.Select(
+		entinvitationcode.FieldID,
+	)
 }
 
 func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	h.stmSelect = cli.
-		InvitationCode.
-		Query().
-		Where(
-			entinvitationcode.DeletedAt(0),
-		).
-		Select()
-
+	stm := cli.InvitationCode.Query().Where(entinvitationcode.DeletedAt(0))
 	if h.ID != nil {
 		h.stmSelect.Where(entinvitationcode.ID(*h.ID))
 	}
 	if h.EntID != nil {
 		h.stmSelect.Where(entinvitationcode.EntID(*h.EntID))
 	}
+	h.selectInvitationCode(stm)
 	return nil
 }
 
-func (h *queryHandler) queryInvitationCodes(ctx context.Context, cli *ent.Client) error {
+func (h *queryHandler) queryInvitationCodes(cli *ent.Client) (*ent.InvitationCodeSelect, error) {
 	stm, err := invitationcodecrud.SetQueryConds(cli.InvitationCode.Query(), h.Conds)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	total, err := stm.Count(ctx)
+	return h.selectInvitationCode(stm), nil
+}
+
+func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
+	t := sql.Table(entinvitationcode.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entinvitationcode.FieldID),
+			t.C(entinvitationcode.FieldID),
+		).
+		AppendSelect(
+			sql.As(t.C(entinvitationcode.FieldEntID), "ent_id"),
+			sql.As(t.C(entinvitationcode.FieldAppID), "app_id"),
+			sql.As(t.C(entinvitationcode.FieldUserID), "user_id"),
+			sql.As(t.C(entinvitationcode.FieldInvitationCode), "invitation_code"),
+			sql.As(t.C(entinvitationcode.FieldDisabled), "disable"),
+			sql.As(t.C(entinvitationcode.FieldCreatedAt), "created_at"),
+			sql.As(t.C(entinvitationcode.FieldUpdatedAt), "updated_at"),
+		)
+}
+
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
 	if err != nil {
 		return err
 	}
-	h.total = uint32(total)
-	h.stmSelect = stm.Select()
-	return nil
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -65,6 +94,9 @@ func (h *Handler) GetInvitationCode(ctx context.Context) (*npool.InvitationCode,
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryInvitationCode(cli); err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
 			return err
 		}
 		return handler.scan(_ctx)
@@ -88,10 +120,24 @@ func (h *Handler) GetInvitationCodes(ctx context.Context) ([]*npool.InvitationCo
 		infos:   []*npool.InvitationCode{},
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryInvitationCodes(_ctx, cli); err != nil {
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryInvitationCodes(cli)
+		if err != nil {
 			return err
 		}
+		handler.stmCount, err = handler.queryInvitationCodes(cli)
+		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		handler.total = uint32(_total)
 		handler.stmSelect.
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit))
