@@ -2,6 +2,7 @@ package coupon
 
 import (
 	"context"
+	"fmt"
 
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -10,13 +11,16 @@ import (
 )
 
 func (h *Handler) ExistCoupon(ctx context.Context) (bool, error) {
+	if h.EntID != nil {
+		return false, fmt.Errorf("invaild entid")
+	}
 	exist := false
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		_exist, err := cli.
 			Coupon.
 			Query().
 			Where(
-				entcoupon.ID(*h.ID),
+				entcoupon.EntID(*h.EntID),
 				entcoupon.DeletedAt(0),
 			).
 			Exist(_ctx)

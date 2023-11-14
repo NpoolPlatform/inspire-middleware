@@ -58,22 +58,20 @@ var ret = &npool.Commission{
 	StartAt:             uint32(time.Now().Unix()) + 10000,
 }
 
-var req = &npool.CommissionReq{
-	EntID:            &ret.EntID,
-	AppID:            &ret.AppID,
-	UserID:           &ret.UserID,
-	GoodID:           &ret.GoodID,
-	AppGoodID:        &ret.AppGoodID,
-	SettleType:       &ret.SettleType,
-	SettleMode:       &ret.SettleMode,
-	SettleAmountType: &ret.SettleAmountType,
-	SettleInterval:   &ret.SettleInterval,
-	AmountOrPercent:  &ret.AmountOrPercent,
-	StartAt:          &ret.StartAt,
-}
-
 func create(t *testing.T) {
-	info, err := CreateCommission(context.Background(), req)
+	info, err := CreateCommission(context.Background(), &npool.CommissionReq{
+		EntID:            &ret.EntID,
+		AppID:            &ret.AppID,
+		UserID:           &ret.UserID,
+		GoodID:           &ret.GoodID,
+		AppGoodID:        &ret.AppGoodID,
+		SettleType:       &ret.SettleType,
+		SettleMode:       &ret.SettleMode,
+		SettleAmountType: &ret.SettleAmountType,
+		SettleInterval:   &ret.SettleInterval,
+		AmountOrPercent:  &ret.AmountOrPercent,
+		StartAt:          &ret.StartAt,
+	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
@@ -83,7 +81,16 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
-	info, err := UpdateCommission(context.Background(), req)
+	ret.AmountOrPercent = "13"
+	ret.StartAt = ret.StartAt + 10000
+	ret.Threshold = decimal.NewFromInt(10).String()
+
+	info, err := UpdateCommission(context.Background(), &npool.CommissionReq{
+		ID:              &ret.ID,
+		StartAt:         &ret.StartAt,
+		AmountOrPercent: &ret.AmountOrPercent,
+		Threshold:       &ret.Threshold,
+	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)
