@@ -61,7 +61,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entinvitationcode.FieldAppID), "app_id"),
 			sql.As(t.C(entinvitationcode.FieldUserID), "user_id"),
 			sql.As(t.C(entinvitationcode.FieldInvitationCode), "invitation_code"),
-			sql.As(t.C(entinvitationcode.FieldDisabled), "disable"),
+			sql.As(t.C(entinvitationcode.FieldDisabled), "disabled"),
 			sql.As(t.C(entinvitationcode.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entinvitationcode.FieldUpdatedAt), "updated_at"),
 		)
