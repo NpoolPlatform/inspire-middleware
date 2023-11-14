@@ -12,16 +12,19 @@ import (
 )
 
 func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, error) {
-	if err := h.validateInvitationCode(ctx); err != nil {
-		return nil, err
-	}
-
 	info, err := h.GetRegistration(ctx)
 	if err != nil {
 		return nil, err
 	}
+	if info == nil {
+		return nil, fmt.Errorf("registration not found")
+	}
 	if info.InviterID == h.InviterID.String() || info.InviteeID == h.InviterID.String() {
 		return nil, fmt.Errorf("invalid inviterid")
+	}
+
+	if err := h.validateInvitationCode(ctx); err != nil {
+		return nil, err
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
