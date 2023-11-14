@@ -107,8 +107,9 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info1, err := _h1.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info1)
+	if assert.Nil(t, err) {
+		_h1.ID = &_info1.ID
+	}
 
 	h1, err := NewHandler(
 		context.Background(),
@@ -120,11 +121,12 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info1, err := h1.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info1)
-	reg1.ID = info1.ID
-	reg1.CreatedAt = info1.CreatedAt
-	reg1.UpdatedAt = info1.UpdatedAt
+	if assert.Nil(t, err) {
+		h1.ID = &info1.ID
+		reg1.ID = info1.ID
+		reg1.CreatedAt = info1.CreatedAt
+		reg1.UpdatedAt = info1.UpdatedAt
+	}
 
 	_h2, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -134,6 +136,10 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info2, err := _h2.CreateInvitationCode(context.Background())
+	if assert.Nil(t, err) {
+		_h2.ID = &_info2.ID
+	}
+
 	assert.Nil(t, err)
 	assert.NotNil(t, _info2)
 
@@ -147,11 +153,12 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info2, err := h2.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info2)
-	reg2.ID = info2.ID
-	reg2.CreatedAt = info2.CreatedAt
-	reg2.UpdatedAt = info2.UpdatedAt
+	if assert.Nil(t, err) {
+		h2.ID = &info2.ID
+		reg2.ID = info2.ID
+		reg2.CreatedAt = info2.CreatedAt
+		reg2.UpdatedAt = info2.UpdatedAt
+	}
 
 	_h3, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -161,8 +168,9 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info3, err := _h3.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info3)
+	if assert.Nil(t, err) {
+		_h3.ID = &_info3.ID
+	}
 
 	h3, err := NewHandler(
 		context.Background(),
@@ -174,11 +182,12 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	info3, err := h3.CreateRegistration(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, info3)
-	reg3.ID = info3.ID
-	reg3.CreatedAt = info3.CreatedAt
-	reg3.UpdatedAt = info3.UpdatedAt
+	if assert.Nil(t, err) {
+		h3.ID = &info3.ID
+		reg3.ID = info3.ID
+		reg3.CreatedAt = info3.CreatedAt
+		reg3.UpdatedAt = info3.UpdatedAt
+	}
 
 	_h4, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -188,8 +197,9 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info4, err := _h4.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info4)
+	if assert.Nil(t, err) {
+		_h4.ID = &_info4.ID
+	}
 
 	h4, err := NewHandler(
 		context.Background(),
@@ -203,9 +213,12 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info4, err := h4.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info4)
-	reg4.ID = info4.ID
-	reg4.CreatedAt = info4.CreatedAt
-	reg4.UpdatedAt = info4.UpdatedAt
+	if assert.Nil(t, err) {
+		h4.ID = &info4.ID
+		reg4.ID = info4.ID
+		reg4.CreatedAt = info4.CreatedAt
+		reg4.UpdatedAt = info4.UpdatedAt
+	}
 
 	_h5, err := invitationcode1.NewHandler(
 		context.Background(),
@@ -215,8 +228,9 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	assert.Nil(t, err)
 
 	_info5, err := _h5.CreateInvitationCode(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, _info5)
+	if assert.Nil(t, err) {
+		_h5.ID = &_info5.ID
+	}
 
 	h5, err := NewHandler(
 		context.Background(),
@@ -230,9 +244,12 @@ func setupSuperior(t *testing.T) func(*testing.T) { //nolint
 	info5, err := h5.CreateRegistration(context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, info5)
-	reg5.ID = info5.ID
-	reg5.CreatedAt = info5.CreatedAt
-	reg5.UpdatedAt = info5.UpdatedAt
+	if assert.Nil(t, err) {
+		h5.ID = &info5.ID
+		reg5.ID = info5.ID
+		reg5.CreatedAt = info5.CreatedAt
+		reg5.UpdatedAt = info5.UpdatedAt
+	}
 
 	return func(*testing.T) {
 		_, _ = _h1.DeleteInvitationCode(context.Background())
