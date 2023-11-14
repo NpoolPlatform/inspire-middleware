@@ -42,7 +42,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createInvitationCode(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
 	)

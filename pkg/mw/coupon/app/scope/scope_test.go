@@ -103,6 +103,7 @@ func setup(t *testing.T) func(*testing.T) {
 		coupon.CreatedAt = coup.CreatedAt
 		coupon.UpdatedAt = coup.UpdatedAt
 		assert.Equal(t, &coupon, coup)
+		h1.ID = &coup.ID
 	}
 
 	h2, err := scope1.NewHandler(
@@ -120,6 +121,7 @@ func setup(t *testing.T) func(*testing.T) {
 		scope.CreatedAt = info.CreatedAt
 		scope.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &scope, info)
+		h2.ID = &info.ID
 	}
 
 	return func(*testing.T) {

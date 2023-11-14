@@ -71,7 +71,10 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, _ = h1.CreateCoupon(context.Background())
+	info, err := h1.CreateCoupon(context.Background())
+	if assert.Nil(t, err) {
+		h1.ID = &info.ID
+	}
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
@@ -93,6 +96,7 @@ func createEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
+	fmt.Println("ret: ", ret)
 	info, err := handler.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
 		ret.ID = info.ID

@@ -71,8 +71,9 @@ func setup(t *testing.T) func(*testing.T) {
 	assert.Nil(t, err)
 
 	coup, err := h1.CreateCoupon(context.Background())
-	assert.Nil(t, err)
-	assert.NotNil(t, coup)
+	if assert.Nil(t, err) {
+		h1.ID = &coup.ID
+	}
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())

@@ -43,7 +43,7 @@ func (h *queryHandler) queryEvent(cli *ent.Client) error {
 	if h.EntID != nil {
 		stm.Where(entevent.EntID(*h.EntID))
 	}
-	h.selectEvent(stm)
+	h.stmSelect = h.selectEvent(stm)
 	return nil
 }
 
