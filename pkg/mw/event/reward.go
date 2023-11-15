@@ -90,7 +90,6 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			allocated1.WithAppID(&coup.AppID, true),
 			allocated1.WithUserID(&userID, true),
 			allocated1.WithCouponID(&coup.EntID, true),
-			allocated1.WithCouponType(&coup.CouponType, true),
 		)
 		if err != nil {
 			return err

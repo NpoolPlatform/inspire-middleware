@@ -159,11 +159,7 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 				}
 			}
 			if req.ID != nil {
-				id, err := uuid.Parse(*req.ID)
-				if err != nil {
-					return err
-				}
-				_req.ID = &id
+				_req.ID = req.ID
 			}
 			if req.Used != nil && *req.Used && req.UsedByOrderID == nil {
 				return fmt.Errorf("invalid usedbyorderid")

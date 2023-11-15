@@ -15,7 +15,7 @@ func Prepare(body string) (interface{}, error) {
 	if err := json.Unmarshal([]byte(body), &req); err != nil {
 		return nil, err
 	}
-	return &req, nil
+	return req, nil
 }
 
 func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) error {

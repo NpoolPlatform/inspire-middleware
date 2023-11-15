@@ -32,7 +32,7 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		CouponType:          types.CouponType_FixAmount,
 		CouponTypeStr:       types.CouponType_FixAmount.String(),
 		AppID:               uuid.NewString(),
@@ -53,7 +53,7 @@ var (
 	}
 
 	ret1 = npool.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		AppID:               ret.AppID,
 		CouponID:            ret.CouponID,
 		CouponName:          ret.CouponName,
