@@ -149,7 +149,6 @@ func deleteRegistration(t *testing.T) {
 
 	info, err := handler.DeleteRegistration(context.Background())
 	if assert.Nil(t, err) {
-		ret.DeletedAt = info.DeletedAt
 		assert.Equal(t, info, &ret)
 	}
 
