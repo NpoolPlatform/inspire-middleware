@@ -51,3 +51,32 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 		Info: info,
 	}, nil
 }
+
+func (s *Server) UpdateCoupons(ctx context.Context, in *npool.UpdateCouponsRequest) (*npool.UpdateCouponsResponse, error) {
+	handler, err := allocated1.NewHandler(
+		ctx,
+		allocated1.WithReqs(in.GetInfos(), true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateCoupons",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.UpdateCouponsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, err := handler.UpdateCoupons(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"UpdateCoupons",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.UpdateCouponsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpdateCouponsResponse{
+		Infos: infos,
+	}, nil
+}

@@ -65,6 +65,22 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 	return info.(*npool.Coupon), nil
 }
 
+func UpdateCoupons(ctx context.Context, in []*npool.CouponReq) ([]*npool.Coupon, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.UpdateCoupons(ctx, &npool.UpdateCouponsRequest{
+			Infos: in,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.Coupon), nil
+}
+
 func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{

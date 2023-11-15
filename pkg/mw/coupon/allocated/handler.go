@@ -15,17 +15,11 @@ import (
 )
 
 type Handler struct {
-	ID            *uint32
-	EntID         *uuid.UUID
-	CouponType    *types.CouponType
-	AppID         *uuid.UUID
-	CouponID      *uuid.UUID
-	UserID        *uuid.UUID
-	Used          *bool
-	UsedByOrderID *uuid.UUID
-	Conds         *allocatedcrud.Conds
-	Offset        int32
-	Limit         int32
+	allocatedcrud.Req
+	Reqs   []*allocatedcrud.Req
+	Conds  *allocatedcrud.Conds
+	Offset int32
+	Limit  int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -64,26 +58,6 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.EntID = &_id
-		return nil
-	}
-}
-
-func WithCouponType(couponType *types.CouponType, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if couponType == nil {
-			if must {
-				return fmt.Errorf("invalid coupontype")
-			}
-			return nil
-		}
-		switch *couponType {
-		case types.CouponType_FixAmount:
-		case types.CouponType_Discount:
-		case types.CouponType_SpecialOffer:
-		default:
-			return fmt.Errorf("invalid coupontype")
-		}
-		h.CouponType = couponType
 		return nil
 	}
 }
@@ -174,6 +148,44 @@ func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) er
 	}
 }
 
+func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		_reqs := []*allocatedcrud.Req{}
+		for _, req := range reqs {
+			_req := &allocatedcrud.Req{}
+			if must {
+				if req.ID == nil {
+					return fmt.Errorf("invalid id")
+				}
+			}
+			if req.ID != nil {
+				id, err := uuid.Parse(*req.ID)
+				if err != nil {
+					return err
+				}
+				_req.ID = &id
+			}
+			if req.Used != nil && *req.Used && req.UsedByOrderID == nil {
+				return fmt.Errorf("invalid usedbyorderid")
+			}
+			if req.Used != nil {
+				_req.Used = req.Used
+			}
+			if req.UsedByOrderID != nil {
+				id, err := uuid.Parse(*req.UsedByOrderID)
+				if err != nil {
+					return err
+				}
+				_req.UsedByOrderID = &id
+			}
+			_reqs = append(_reqs, _req)
+		}
+		h.Reqs = _reqs
+		return nil
+	}
+}
+
+//nolint
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &allocatedcrud.Conds{}

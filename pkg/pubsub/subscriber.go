@@ -10,6 +10,7 @@ import (
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
+	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/coupon/allocated"
 	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/event"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -50,6 +51,8 @@ func prepare(mid, body string) (req interface{}, err error) {
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
 		req, err = event1.Prepare(body)
+	case basetypes.MsgID_UpdateCouponsUsedReq.String():
+		req, err = allocated1.Prepare(body)
 	default:
 		return nil, nil
 	}
@@ -110,6 +113,8 @@ func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bo
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
 		return statReq(ctx, mid, uid)
+	case basetypes.MsgID_UpdateCouponsUsedReq.String():
+		return statReq(ctx, mid, uid)
 	default:
 		return false, fmt.Errorf("invalid message")
 	}
@@ -130,6 +135,8 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 	switch mid {
 	case basetypes.MsgID_RewardEventReq.String():
 		err = event1.Apply(ctx, req, publisher)
+	case basetypes.MsgID_UpdateCouponsUsedReq.String():
+		err = allocated1.Apply(ctx, req, publisher)
 	default:
 		return nil
 	}
