@@ -82,7 +82,7 @@ func create(t *testing.T) {
 
 func update(t *testing.T) {
 	ret.AmountOrPercent = "13"
-	ret.StartAt = ret.StartAt + 10000
+	ret.StartAt += 10000
 	ret.Threshold = decimal.NewFromInt(10).String()
 
 	info, err := UpdateCommission(context.Background(), &npool.CommissionReq{

@@ -112,12 +112,7 @@ func create(t *testing.T) {
 }
 
 func update(t *testing.T) {
-	ret2.InviterID = uuid.NewString()
-	_, err := ivcodemwcli.CreateInvitationCode(context.Background(), &ivcodemwpb.InvitationCodeReq{
-		AppID:  &ret2.AppID,
-		UserID: &ret2.InviterID,
-	})
-	assert.Nil(t, err)
+	ret2.InviterID = ret.InviterID
 
 	info, err := UpdateRegistration(context.Background(), &npool.RegistrationReq{
 		ID:        &ret2.ID,

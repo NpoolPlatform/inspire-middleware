@@ -96,7 +96,6 @@ func createEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	fmt.Println("ret: ", ret)
 	info, err := handler.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
 		ret.ID = info.ID

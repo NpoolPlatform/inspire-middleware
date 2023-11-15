@@ -112,24 +112,9 @@ func (h *Handler) GetSubordinates(ctx context.Context) ([]*npool.Registration, u
 	if err := handler.getInviterIDs(ctx); err != nil {
 		return nil, 0, err
 	}
-
-	var err error
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.stmSelect, err = handler.queryRegistrations(cli)
-		if err != nil {
-			return err
-		}
-		if err := handler.queryJoin(); err != nil {
-			return err
-		}
-		handler.stmSelect.
-			Offset(int(handler.Offset)).
-			Limit(int(handler.Limit))
-		return handler.scan(_ctx)
-	})
+	infos, total, err := h.GetRegistrations(ctx)
 	if err != nil {
 		return nil, 0, err
 	}
-
-	return handler.infos, handler.total, nil
+	return infos, total, nil
 }
