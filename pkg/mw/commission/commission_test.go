@@ -83,7 +83,7 @@ func createCommission(t *testing.T) {
 
 func updateCommission(t *testing.T) {
 	ret.AmountOrPercent = "13"
-	ret.StartAt = ret.StartAt + 10000
+	ret.StartAt += 10000
 	ret.Threshold = decimal.NewFromInt(10).String()
 
 	handler, err := NewHandler(
