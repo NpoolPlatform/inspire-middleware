@@ -218,7 +218,6 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 
 	handler.formalize()
-
 	return handler.infos[0], nil
 }
 
