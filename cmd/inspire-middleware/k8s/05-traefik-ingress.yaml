@@ -1,0 +1,135 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: inspire-middleware-traefik-app-ingress
+  namespace: kube-system
+  annotations:
+    k8s.kuboard.cn/displayName: inspire-middleware-traefik-app
+    k8s.kuboard.cn/workload: inspire-middleware-traefik-app
+    kubernetes.io/ingress.class: "traefik-internet"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares:
+      kube-system-strip-inspire-middleware-prefix@kubernetescrd,
+      kube-system-common-headers@kubernetescrd,
+      kube-system-headers-appid-to-body@kubernetescrd,
+      kube-system-headers-userid-to-body@kubernetescrd,
+      kube-system-headers-app-login-token-to-body@kubernetescrd,
+      kube-system-app-user-role-rbac-auth@kubernetescrd
+
+spec:
+  rules:
+    - host: api.npool.top
+      http: &http_rules
+        paths:
+          - path: /api/inspiremw/v1/statement_CreateStatement
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/statement_CreateStatements
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/statement_DeleteStatements
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/statement_DeleteStatement
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/statement_GetStatements
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/achievement_ExpropriateAchievement
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/achievement_GetAchievements
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/achievement_DeleteAchievement
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/calculate_Calculate
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/commission_CreateCommission
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/commission_UpdateCommission
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/commission_GetCommission
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/commission_GetCommissions
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/commission_CloneCommissions
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/coupon_DeleteCoupon
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/allocated_CreateCoupon
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/allocated_UpdateCoupon
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/allocated_GetCoupon
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/allocated_GetCoupons
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/allocated_DeleteCoupon
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/event_DeleteEvent
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/event_RewardEvent
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/invitationcode_DeleteInvitationCode
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/registration_GetSubordinates
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/registration_GetSuperiores
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+          - path: /api/inspiremw/v1/registration_DeleteRegistration
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
+    - host: api.procyon.vip
+      http: *http_rules
+    - host: api.xpool.top
+      http: *http_rules
+    - host: api.ohhash.com
+      http: *http_rules
+    - host: api.development.npool.top
+      http: *http_rules
