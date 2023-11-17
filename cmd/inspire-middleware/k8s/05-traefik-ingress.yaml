@@ -121,6 +121,10 @@ spec:
             backend:
               serviceName: inspire-middleware
               servicePort: 50400
+          - path: /api/inspiremw/v1/registration_CreateRegistration
+            backend:
+              serviceName: inspire-middleware
+              servicePort: 50400
           - path: /api/inspiremw/v1/registration_DeleteRegistration
             backend:
               serviceName: inspire-middleware
