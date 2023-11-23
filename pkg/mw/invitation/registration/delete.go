@@ -19,6 +19,9 @@ func (h *Handler) DeleteRegistration(ctx context.Context) (*npool.Registration, 
 	if info == nil {
 		return nil, nil
 	}
+	if h.ID == nil {
+		h.ID = &info.ID
+	}
 
 	now := uint32(time.Now().Unix())
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
