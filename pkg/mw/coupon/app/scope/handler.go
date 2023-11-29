@@ -233,6 +233,13 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds == nil {
 			return nil
 		}
+		if conds.AppID != nil {
+			id, err := uuid.Parse(conds.GetAppID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
+		}
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
