@@ -41,6 +41,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 			Query().
 			Where(
 				entcommission.AppID(*h.AppID),
+				entcommission.GoodID(*h.FromGoodID),
 				entcommission.AppGoodID(*h.FromAppGoodID),
 				entcommission.EndAt(0),
 				entcommission.DeletedAt(0),
@@ -48,6 +49,9 @@ func (h *Handler) CloneCommissions(ctx context.Context) error {
 			All(_ctx)
 		if err != nil {
 			return err
+		}
+		if len(infos) == 0 {
+			return fmt.Errorf("commission not found")
 		}
 
 		percent := decimal.NewFromInt(1)
