@@ -21,13 +21,17 @@ type rewardHandler struct {
 	*Handler
 }
 
-func (h *rewardHandler) condGood() {
+func (h *rewardHandler) condGood() error {
 	switch *h.EventType {
 	case basetypes.UsedFor_Purchase:
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
+		if h.GoodID == nil {
+			return fmt.Errorf("need goodid")
+		}
 		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
 	}
+	return nil
 }
 
 func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
@@ -35,8 +39,8 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 		AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		EventType: &cruder.Cond{Op: cruder.EQ, Val: *h.EventType},
 	}
-	if h.GoodID != nil {
-		h.condGood()
+	if err := h.condGood(); err != nil {
+		return nil, err
 	}
 	info, err := h.GetEventOnly(ctx)
 	if err != nil {
