@@ -31,7 +31,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		statement1.WithAppGoodID(req.AppGoodID, true),
 		statement1.WithOrderID(req.OrderID, true),
 		statement1.WithSelfOrder(req.SelfOrder, false),
-		statement1.WithPaymentID(req.PaymentID, false),
+		statement1.WithPaymentID(req.PaymentID, true),
 		statement1.WithCoinTypeID(req.CoinTypeID, true),
 		statement1.WithPaymentCoinTypeID(req.PaymentCoinTypeID, true),
 		statement1.WithPaymentCoinUSDCurrency(req.PaymentCoinUSDCurrency, true),

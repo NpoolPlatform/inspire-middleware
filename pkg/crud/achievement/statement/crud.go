@@ -32,9 +32,6 @@ type Req struct {
 }
 
 func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
-	if req.ID != nil {
-		c.SetID(*req.ID)
-	}
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -89,6 +86,7 @@ func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
 type Conds struct {
 	EntID               *cruder.Cond
 	EntIDs              *cruder.Cond
+	IDs                 *cruder.Cond
 	AppID               *cruder.Cond
 	UserID              *cruder.Cond
 	DirectContributorID *cruder.Cond
@@ -140,6 +138,18 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entstatement.UserID(id))
+		default:
+			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		switch conds.IDs.Op {
+		case cruder.IN:
+			q.Where(entstatement.IDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}

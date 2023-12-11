@@ -312,50 +312,59 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		_reqs := []*statementcrud.Req{}
 
 		for _, req := range reqs {
-			if req.AppID == nil {
-				return fmt.Errorf("invalid appid")
+			if must {
+				if req.AppID == nil {
+					return fmt.Errorf("invalid appid")
+				}
+				if req.UserID == nil {
+					return fmt.Errorf("invalid userid")
+				}
+				if req.GoodID == nil {
+					return fmt.Errorf("invalid goodid")
+				}
+				if req.AppGoodID == nil {
+					return fmt.Errorf("invalid appgoodid")
+				}
+				if req.OrderID == nil {
+					return fmt.Errorf("invalid orderid")
+				}
+				if req.PaymentID == nil {
+					return fmt.Errorf("invalid paymentid")
+				}
+				if req.CoinTypeID == nil {
+					return fmt.Errorf("invalid paymentid")
+				}
+				if req.PaymentCoinTypeID == nil {
+					return fmt.Errorf("invalid paymentcointypeid")
+				}
+				if req.PaymentCoinUSDCurrency == nil {
+					return fmt.Errorf("invalid paymentcoinusdcurrency")
+				}
+				if req.Units == nil {
+					return fmt.Errorf("invalid units")
+				}
+				if req.Amount == nil {
+					return fmt.Errorf("invalid amount")
+				}
+				if req.USDAmount == nil {
+					return fmt.Errorf("invalid usdamount")
+				}
+				if req.Commission == nil {
+					return fmt.Errorf("invalid commission")
+				}
+			} else {
+				if req.ID == nil {
+					return fmt.Errorf("invalid id")
+				}
 			}
-			if req.UserID == nil {
-				return fmt.Errorf("invalid userid")
-			}
-			if req.GoodID == nil {
-				return fmt.Errorf("invalid goodid")
-			}
-			if req.AppGoodID == nil {
-				return fmt.Errorf("invalid appgoodid")
-			}
-			if req.OrderID == nil {
-				return fmt.Errorf("invalid orderid")
-			}
-			if req.PaymentID == nil {
-				return fmt.Errorf("invalid paymentid")
-			}
-			if req.CoinTypeID == nil {
-				return fmt.Errorf("invalid paymentid")
-			}
-			if req.PaymentCoinTypeID == nil {
-				return fmt.Errorf("invalid paymentcointypeid")
-			}
-			if req.PaymentCoinUSDCurrency == nil {
-				return fmt.Errorf("invalid paymentcoinusdcurrency")
-			}
-			if req.Units == nil {
-				return fmt.Errorf("invalid units")
-			}
-			if req.Amount == nil {
-				return fmt.Errorf("invalid amount")
-			}
-			if req.USDAmount == nil {
-				return fmt.Errorf("invalid usdamount")
-			}
-			if req.Commission == nil {
-				return fmt.Errorf("invalid commission")
-			}
-
 			_req := &statementcrud.Req{
 				SelfOrder: req.SelfOrder,
 			}
 			var err error
+
+			if req.ID != nil {
+				_req.ID = req.ID
+			}
 
 			if req.EntID != nil {
 				id, err := uuid.Parse(*req.EntID)
@@ -464,7 +473,6 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		}
 
 		h.Reqs = _reqs
-
 		return nil
 	}
 }
