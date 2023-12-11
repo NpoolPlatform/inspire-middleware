@@ -143,7 +143,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 	}
 	if conds.IDs != nil {
-		ids, ok := conds.EntIDs.Val.([]uint32)
+		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid ids")
 		}

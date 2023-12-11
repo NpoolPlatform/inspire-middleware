@@ -361,7 +361,6 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 			_req := &statementcrud.Req{
 				SelfOrder: req.SelfOrder,
 			}
-			var err error
 
 			if req.ID != nil {
 				_req.ID = req.ID
@@ -375,17 +374,21 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				_req.EntID = &id
 			}
 
-			id1, err := uuid.Parse(*req.AppID)
-			if err != nil {
-				return err
+			if req.AppID != nil {
+				id1, err := uuid.Parse(*req.AppID)
+				if err != nil {
+					return err
+				}
+				_req.AppID = &id1
 			}
-			_req.AppID = &id1
 
-			id2, err := uuid.Parse(*req.UserID)
-			if err != nil {
-				return err
+			if req.UserID != nil {
+				id2, err := uuid.Parse(*req.UserID)
+				if err != nil {
+					return err
+				}
+				_req.UserID = &id2
 			}
-			_req.UserID = &id2
 
 			if req.DirectContributorID != nil {
 				id3, err := uuid.Parse(*req.DirectContributorID)
@@ -395,74 +398,100 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				_req.DirectContributorID = &id3
 			}
 
-			id4, err := uuid.Parse(*req.GoodID)
-			if err != nil {
-				return err
+			if req.GoodID != nil {
+				id4, err := uuid.Parse(*req.GoodID)
+				if err != nil {
+					return err
+				}
+				_req.GoodID = &id4
 			}
-			_req.GoodID = &id4
 
-			id5, err := uuid.Parse(*req.OrderID)
-			if err != nil {
-				return err
+			if req.OrderID != nil {
+				id5, err := uuid.Parse(*req.OrderID)
+				if err != nil {
+					return err
+				}
+				_req.OrderID = &id5
 			}
-			_req.OrderID = &id5
 
-			id6, err := uuid.Parse(*req.PaymentID)
-			if err != nil {
-				return err
+			if req.PaymentID != nil {
+				id6, err := uuid.Parse(*req.PaymentID)
+				if err != nil {
+					return err
+				}
+				_req.PaymentID = &id6
 			}
-			_req.PaymentID = &id6
 
-			id7, err := uuid.Parse(*req.CoinTypeID)
-			if err != nil {
-				return err
+			if req.CoinTypeID != nil {
+				id7, err := uuid.Parse(*req.CoinTypeID)
+				if err != nil {
+					return err
+				}
+				_req.CoinTypeID = &id7
 			}
-			_req.CoinTypeID = &id7
 
-			id8, err := uuid.Parse(*req.PaymentCoinTypeID)
-			if err != nil {
-				return err
+			if req.PaymentCoinTypeID != nil {
+				id8, err := uuid.Parse(*req.PaymentCoinTypeID)
+				if err != nil {
+					return err
+				}
+				_req.PaymentCoinTypeID = &id8
 			}
-			_req.PaymentCoinTypeID = &id8
 
-			id9, err := uuid.Parse(*req.AppGoodID)
-			if err != nil {
-				return err
+			if req.AppGoodID != nil {
+				id9, err := uuid.Parse(*req.AppGoodID)
+				if err != nil {
+					return err
+				}
+				_req.AppGoodID = &id9
 			}
-			_req.AppGoodID = &id9
 
-			amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
-			if err != nil {
-				return err
+			if req.PaymentCoinUSDCurrency != nil {
+				amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
+				if err != nil {
+					return err
+				}
+				_req.PaymentCoinUSDCurrency = &amount1
 			}
-			_req.PaymentCoinUSDCurrency = &amount1
 
-			amount2, err := decimal.NewFromString(*req.Units)
-			if err != nil {
-				return err
+			if req.Units != nil {
+				amount2, err := decimal.NewFromString(*req.Units)
+				if err != nil {
+					return err
+				}
+				_req.Units = &amount2
 			}
-			_req.Units = &amount2
 
-			amount3, err := decimal.NewFromString(*req.Amount)
-			if err != nil {
-				return err
+			if req.Amount != nil {
+				amount3, err := decimal.NewFromString(*req.Amount)
+				if err != nil {
+					return err
+				}
+				_req.Amount = &amount3
 			}
-			_req.Amount = &amount3
 
-			amount4, err := decimal.NewFromString(*req.USDAmount)
-			if err != nil {
-				return err
+			if req.USDAmount != nil {
+				amount4, err := decimal.NewFromString(*req.USDAmount)
+				if err != nil {
+					return err
+				}
+				_req.USDAmount = &amount4
 			}
-			_req.USDAmount = &amount4
 
-			amount5, err := decimal.NewFromString(*req.Commission)
-			if err != nil {
-				return err
+			if req.Commission != nil {
+				amount5, err := decimal.NewFromString(*req.Commission)
+				if err != nil {
+					return err
+				}
+				_req.Commission = &amount5
 			}
-			_req.Commission = &amount5
 
-			appMap[*req.AppID] = struct{}{}
-			orderMap[*req.OrderID] = struct{}{}
+			if req.AppID != nil {
+				appMap[*req.AppID] = struct{}{}
+			}
+			if req.OrderID != nil {
+				orderMap[*req.OrderID] = struct{}{}
+			}
 			_reqs = append(_reqs, _req)
 		}
 
