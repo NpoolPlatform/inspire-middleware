@@ -352,7 +352,8 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				if req.Commission == nil {
 					return fmt.Errorf("invalid commission")
 				}
-			} else {
+			}
+			if !must {
 				if req.ID == nil {
 					return fmt.Errorf("invalid id")
 				}
