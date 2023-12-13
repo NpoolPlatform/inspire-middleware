@@ -2,6 +2,7 @@ package statement
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -100,4 +101,20 @@ func DeleteStatement(ctx context.Context, id uint32) (*npool.Statement, error) {
 		return nil, err
 	}
 	return info.(*npool.Statement), nil
+}
+
+func DeleteStatements(ctx context.Context, in []*npool.StatementReq) ([]*npool.Statement, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.DeleteStatements(ctx, &npool.DeleteStatementsRequest{
+			Infos: in,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("fail delete statements: %v", err)
+		}
+		return resp.GetInfos(), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("fail delete statements: %v", err)
+	}
+	return infos.([]*npool.Statement), nil
 }
