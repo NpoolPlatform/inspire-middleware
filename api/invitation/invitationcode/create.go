@@ -23,7 +23,7 @@ func (s *Server) CreateInvitationCode(ctx context.Context, in *npool.CreateInvit
 	}
 	handler, err := invitationcode1.NewHandler(
 		ctx,
-		invitationcode1.WithID(req.ID, false),
+		invitationcode1.WithEntID(req.EntID, false),
 		invitationcode1.WithAppID(req.AppID, true),
 		invitationcode1.WithUserID(req.UserID, true),
 	)

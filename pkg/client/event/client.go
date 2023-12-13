@@ -70,7 +70,7 @@ func UpdateEvent(ctx context.Context, req *npool.EventReq) (*npool.Event, error)
 func GetEvent(ctx context.Context, id string) (*npool.Event, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetEvent(ctx, &npool.GetEventRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err
@@ -130,7 +130,7 @@ func GetEventOnly(ctx context.Context, conds *npool.Conds) (*npool.Event, error)
 	return infos.([]*npool.Event)[0], nil
 }
 
-func DeleteEvent(ctx context.Context, id string) (*npool.Event, error) {
+func DeleteEvent(ctx context.Context, id uint32) (*npool.Event, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteEvent(ctx, &npool.DeleteEventRequest{
 			Info: &npool.EventReq{

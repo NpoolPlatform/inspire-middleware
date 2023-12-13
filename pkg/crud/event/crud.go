@@ -14,7 +14,8 @@ import (
 )
 
 type Req struct {
-	ID             *uuid.UUID
+	ID             *uint32
+	EntID          *uuid.UUID
 	AppID          *uuid.UUID
 	EventType      *basetypes.UsedFor
 	CouponIDs      []uuid.UUID
@@ -30,6 +31,9 @@ type Req struct {
 func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 	if req.ID != nil {
 		c.SetID(*req.ID)
+	}
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
@@ -84,8 +88,8 @@ func UpdateSet(u *ent.EventUpdateOne, req *Req) *ent.EventUpdateOne {
 }
 
 type Conds struct {
-	ID        *cruder.Cond
-	IDs       *cruder.Cond
+	EntID     *cruder.Cond
+	EntIDs    *cruder.Cond
 	AppID     *cruder.Cond
 	EventType *cruder.Cond
 	GoodID    *cruder.Cond
@@ -98,26 +102,26 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 	if conds == nil {
 		return q, nil
 	}
-	if conds.ID != nil {
-		id, ok := conds.ID.Val.(uuid.UUID)
+	if conds.EntID != nil {
+		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, fmt.Errorf("invalid entid")
 		}
-		switch conds.ID.Op {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(entevent.ID(id))
+			q.Where(entevent.EntID(id))
 		default:
 			return nil, fmt.Errorf("invalid event field")
 		}
 	}
-	if conds.IDs != nil {
-		ids, ok := conds.IDs.Val.([]uuid.UUID)
+	if conds.EntIDs != nil {
+		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, fmt.Errorf("invalid entids")
 		}
-		switch conds.IDs.Op {
+		switch conds.EntIDs.Op {
 		case cruder.IN:
-			q.Where(entevent.IDIn(ids...))
+			q.Where(entevent.EntIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid event field")
 		}

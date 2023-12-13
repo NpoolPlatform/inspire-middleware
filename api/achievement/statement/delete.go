@@ -19,7 +19,7 @@ func (s *Server) DeleteStatement(ctx context.Context, in *npool.DeleteStatementR
 			"DeleteStatement",
 			"In", in,
 		)
-		return &npool.DeleteStatementResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.DeleteStatementResponse{}, status.Error(codes.Aborted, "invalid info")
 	}
 	handler, err := statement1.NewHandler(
 		ctx,
@@ -31,7 +31,7 @@ func (s *Server) DeleteStatement(ctx context.Context, in *npool.DeleteStatementR
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteStatementResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteStatementResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.DeleteStatement(ctx)
@@ -41,10 +41,39 @@ func (s *Server) DeleteStatement(ctx context.Context, in *npool.DeleteStatementR
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteStatementResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.DeleteStatementResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.DeleteStatementResponse{
 		Info: info,
+	}, nil
+}
+
+func (s *Server) DeleteStatements(ctx context.Context, in *npool.DeleteStatementsRequest) (*npool.DeleteStatementsResponse, error) {
+	handler, err := statement1.NewHandler(
+		ctx,
+		statement1.WithReqs(in.GetInfos(), false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteStatements",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.DeleteStatementsResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+
+	infos, err := handler.DeleteStatements(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"DeleteStatements",
+			"In", in,
+			"Err", err,
+		)
+		return &npool.DeleteStatementsResponse{}, status.Error(codes.Aborted, err.Error())
+	}
+
+	return &npool.DeleteStatementsResponse{
+		Infos: infos,
 	}, nil
 }

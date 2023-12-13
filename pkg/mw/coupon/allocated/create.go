@@ -20,9 +20,9 @@ import (
 )
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
-	id1 := uuid.New()
-	if h.ID == nil {
-		h.ID = &id1
+	id := uuid.New()
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	now := uint32(time.Now().Unix())
@@ -31,7 +31,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			Coupon.
 			Query().
 			Where(
-				entcoupon.ID(*h.CouponID),
+				entcoupon.EntID(*h.CouponID),
 				entcoupon.DeletedAt(0),
 			).
 			ForUpdate().
@@ -67,7 +67,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := allocatedcrud.CreateSet(
 			tx.CouponAllocated.Create(),
 			&allocatedcrud.Req{
-				ID:           h.ID,
+				EntID:        h.EntID,
 				AppID:        h.AppID,
 				CouponID:     h.CouponID,
 				UserID:       h.UserID,

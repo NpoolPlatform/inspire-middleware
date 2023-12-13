@@ -40,6 +40,8 @@ func init() {
 	}
 	achievementMixinFields0 := achievementMixin[0].Fields()
 	_ = achievementMixinFields0
+	achievementMixinFields1 := achievementMixin[1].Fields()
+	_ = achievementMixinFields1
 	achievementFields := schema.Achievement{}.Fields()
 	_ = achievementFields
 	// achievementDescCreatedAt is the schema descriptor for created_at field.
@@ -56,54 +58,54 @@ func init() {
 	achievementDescDeletedAt := achievementMixinFields0[2].Descriptor()
 	// achievement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	achievement.DefaultDeletedAt = achievementDescDeletedAt.Default.(func() uint32)
+	// achievementDescEntID is the schema descriptor for ent_id field.
+	achievementDescEntID := achievementMixinFields1[1].Descriptor()
+	// achievement.DefaultEntID holds the default value on creation for the ent_id field.
+	achievement.DefaultEntID = achievementDescEntID.Default.(func() uuid.UUID)
 	// achievementDescAppID is the schema descriptor for app_id field.
-	achievementDescAppID := achievementFields[1].Descriptor()
+	achievementDescAppID := achievementFields[0].Descriptor()
 	// achievement.DefaultAppID holds the default value on creation for the app_id field.
 	achievement.DefaultAppID = achievementDescAppID.Default.(func() uuid.UUID)
 	// achievementDescUserID is the schema descriptor for user_id field.
-	achievementDescUserID := achievementFields[2].Descriptor()
+	achievementDescUserID := achievementFields[1].Descriptor()
 	// achievement.DefaultUserID holds the default value on creation for the user_id field.
 	achievement.DefaultUserID = achievementDescUserID.Default.(func() uuid.UUID)
 	// achievementDescGoodID is the schema descriptor for good_id field.
-	achievementDescGoodID := achievementFields[3].Descriptor()
+	achievementDescGoodID := achievementFields[2].Descriptor()
 	// achievement.DefaultGoodID holds the default value on creation for the good_id field.
 	achievement.DefaultGoodID = achievementDescGoodID.Default.(func() uuid.UUID)
 	// achievementDescAppGoodID is the schema descriptor for app_good_id field.
-	achievementDescAppGoodID := achievementFields[4].Descriptor()
+	achievementDescAppGoodID := achievementFields[3].Descriptor()
 	// achievement.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	achievement.DefaultAppGoodID = achievementDescAppGoodID.Default.(func() uuid.UUID)
 	// achievementDescCoinTypeID is the schema descriptor for coin_type_id field.
-	achievementDescCoinTypeID := achievementFields[5].Descriptor()
+	achievementDescCoinTypeID := achievementFields[4].Descriptor()
 	// achievement.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	achievement.DefaultCoinTypeID = achievementDescCoinTypeID.Default.(func() uuid.UUID)
 	// achievementDescTotalUnitsV1 is the schema descriptor for total_units_v1 field.
-	achievementDescTotalUnitsV1 := achievementFields[6].Descriptor()
+	achievementDescTotalUnitsV1 := achievementFields[5].Descriptor()
 	// achievement.DefaultTotalUnitsV1 holds the default value on creation for the total_units_v1 field.
 	achievement.DefaultTotalUnitsV1 = achievementDescTotalUnitsV1.Default.(decimal.Decimal)
 	// achievementDescSelfUnitsV1 is the schema descriptor for self_units_v1 field.
-	achievementDescSelfUnitsV1 := achievementFields[7].Descriptor()
+	achievementDescSelfUnitsV1 := achievementFields[6].Descriptor()
 	// achievement.DefaultSelfUnitsV1 holds the default value on creation for the self_units_v1 field.
 	achievement.DefaultSelfUnitsV1 = achievementDescSelfUnitsV1.Default.(decimal.Decimal)
 	// achievementDescTotalAmount is the schema descriptor for total_amount field.
-	achievementDescTotalAmount := achievementFields[8].Descriptor()
+	achievementDescTotalAmount := achievementFields[7].Descriptor()
 	// achievement.DefaultTotalAmount holds the default value on creation for the total_amount field.
 	achievement.DefaultTotalAmount = achievementDescTotalAmount.Default.(decimal.Decimal)
 	// achievementDescSelfAmount is the schema descriptor for self_amount field.
-	achievementDescSelfAmount := achievementFields[9].Descriptor()
+	achievementDescSelfAmount := achievementFields[8].Descriptor()
 	// achievement.DefaultSelfAmount holds the default value on creation for the self_amount field.
 	achievement.DefaultSelfAmount = achievementDescSelfAmount.Default.(decimal.Decimal)
 	// achievementDescTotalCommission is the schema descriptor for total_commission field.
-	achievementDescTotalCommission := achievementFields[10].Descriptor()
+	achievementDescTotalCommission := achievementFields[9].Descriptor()
 	// achievement.DefaultTotalCommission holds the default value on creation for the total_commission field.
 	achievement.DefaultTotalCommission = achievementDescTotalCommission.Default.(decimal.Decimal)
 	// achievementDescSelfCommission is the schema descriptor for self_commission field.
-	achievementDescSelfCommission := achievementFields[11].Descriptor()
+	achievementDescSelfCommission := achievementFields[10].Descriptor()
 	// achievement.DefaultSelfCommission holds the default value on creation for the self_commission field.
 	achievement.DefaultSelfCommission = achievementDescSelfCommission.Default.(decimal.Decimal)
-	// achievementDescID is the schema descriptor for id field.
-	achievementDescID := achievementFields[0].Descriptor()
-	// achievement.DefaultID holds the default value on creation for the id field.
-	achievement.DefaultID = achievementDescID.Default.(func() uuid.UUID)
 	appgoodscopeMixin := schema.AppGoodScope{}.Mixin()
 	appgoodscope.Policy = privacy.NewPolicies(appgoodscopeMixin[0], schema.AppGoodScope{})
 	appgoodscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -116,6 +118,8 @@ func init() {
 	}
 	appgoodscopeMixinFields0 := appgoodscopeMixin[0].Fields()
 	_ = appgoodscopeMixinFields0
+	appgoodscopeMixinFields1 := appgoodscopeMixin[1].Fields()
+	_ = appgoodscopeMixinFields1
 	appgoodscopeFields := schema.AppGoodScope{}.Fields()
 	_ = appgoodscopeFields
 	// appgoodscopeDescCreatedAt is the schema descriptor for created_at field.
@@ -132,26 +136,26 @@ func init() {
 	appgoodscopeDescDeletedAt := appgoodscopeMixinFields0[2].Descriptor()
 	// appgoodscope.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	appgoodscope.DefaultDeletedAt = appgoodscopeDescDeletedAt.Default.(func() uint32)
+	// appgoodscopeDescEntID is the schema descriptor for ent_id field.
+	appgoodscopeDescEntID := appgoodscopeMixinFields1[1].Descriptor()
+	// appgoodscope.DefaultEntID holds the default value on creation for the ent_id field.
+	appgoodscope.DefaultEntID = appgoodscopeDescEntID.Default.(func() uuid.UUID)
 	// appgoodscopeDescAppID is the schema descriptor for app_id field.
-	appgoodscopeDescAppID := appgoodscopeFields[1].Descriptor()
+	appgoodscopeDescAppID := appgoodscopeFields[0].Descriptor()
 	// appgoodscope.DefaultAppID holds the default value on creation for the app_id field.
 	appgoodscope.DefaultAppID = appgoodscopeDescAppID.Default.(func() uuid.UUID)
 	// appgoodscopeDescAppGoodID is the schema descriptor for app_good_id field.
-	appgoodscopeDescAppGoodID := appgoodscopeFields[2].Descriptor()
+	appgoodscopeDescAppGoodID := appgoodscopeFields[1].Descriptor()
 	// appgoodscope.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	appgoodscope.DefaultAppGoodID = appgoodscopeDescAppGoodID.Default.(func() uuid.UUID)
 	// appgoodscopeDescCouponID is the schema descriptor for coupon_id field.
-	appgoodscopeDescCouponID := appgoodscopeFields[3].Descriptor()
+	appgoodscopeDescCouponID := appgoodscopeFields[2].Descriptor()
 	// appgoodscope.DefaultCouponID holds the default value on creation for the coupon_id field.
 	appgoodscope.DefaultCouponID = appgoodscopeDescCouponID.Default.(func() uuid.UUID)
 	// appgoodscopeDescCouponScope is the schema descriptor for coupon_scope field.
-	appgoodscopeDescCouponScope := appgoodscopeFields[4].Descriptor()
+	appgoodscopeDescCouponScope := appgoodscopeFields[3].Descriptor()
 	// appgoodscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	appgoodscope.DefaultCouponScope = appgoodscopeDescCouponScope.Default.(string)
-	// appgoodscopeDescID is the schema descriptor for id field.
-	appgoodscopeDescID := appgoodscopeFields[0].Descriptor()
-	// appgoodscope.DefaultID holds the default value on creation for the id field.
-	appgoodscope.DefaultID = appgoodscopeDescID.Default.(func() uuid.UUID)
 	commissionMixin := schema.Commission{}.Mixin()
 	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
 	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -164,6 +168,8 @@ func init() {
 	}
 	commissionMixinFields0 := commissionMixin[0].Fields()
 	_ = commissionMixinFields0
+	commissionMixinFields1 := commissionMixin[1].Fields()
+	_ = commissionMixinFields1
 	commissionFields := schema.Commission{}.Fields()
 	_ = commissionFields
 	// commissionDescCreatedAt is the schema descriptor for created_at field.
@@ -180,62 +186,62 @@ func init() {
 	commissionDescDeletedAt := commissionMixinFields0[2].Descriptor()
 	// commission.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	commission.DefaultDeletedAt = commissionDescDeletedAt.Default.(func() uint32)
+	// commissionDescEntID is the schema descriptor for ent_id field.
+	commissionDescEntID := commissionMixinFields1[1].Descriptor()
+	// commission.DefaultEntID holds the default value on creation for the ent_id field.
+	commission.DefaultEntID = commissionDescEntID.Default.(func() uuid.UUID)
 	// commissionDescAppID is the schema descriptor for app_id field.
-	commissionDescAppID := commissionFields[1].Descriptor()
+	commissionDescAppID := commissionFields[0].Descriptor()
 	// commission.DefaultAppID holds the default value on creation for the app_id field.
 	commission.DefaultAppID = commissionDescAppID.Default.(func() uuid.UUID)
 	// commissionDescUserID is the schema descriptor for user_id field.
-	commissionDescUserID := commissionFields[2].Descriptor()
+	commissionDescUserID := commissionFields[1].Descriptor()
 	// commission.DefaultUserID holds the default value on creation for the user_id field.
 	commission.DefaultUserID = commissionDescUserID.Default.(func() uuid.UUID)
 	// commissionDescGoodID is the schema descriptor for good_id field.
-	commissionDescGoodID := commissionFields[3].Descriptor()
+	commissionDescGoodID := commissionFields[2].Descriptor()
 	// commission.DefaultGoodID holds the default value on creation for the good_id field.
 	commission.DefaultGoodID = commissionDescGoodID.Default.(func() uuid.UUID)
 	// commissionDescAppGoodID is the schema descriptor for app_good_id field.
-	commissionDescAppGoodID := commissionFields[4].Descriptor()
+	commissionDescAppGoodID := commissionFields[3].Descriptor()
 	// commission.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	commission.DefaultAppGoodID = commissionDescAppGoodID.Default.(func() uuid.UUID)
 	// commissionDescAmountOrPercent is the schema descriptor for amount_or_percent field.
-	commissionDescAmountOrPercent := commissionFields[5].Descriptor()
+	commissionDescAmountOrPercent := commissionFields[4].Descriptor()
 	// commission.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
 	commission.DefaultAmountOrPercent = commissionDescAmountOrPercent.Default.(decimal.Decimal)
 	// commissionDescStartAt is the schema descriptor for start_at field.
-	commissionDescStartAt := commissionFields[6].Descriptor()
+	commissionDescStartAt := commissionFields[5].Descriptor()
 	// commission.DefaultStartAt holds the default value on creation for the start_at field.
 	commission.DefaultStartAt = commissionDescStartAt.Default.(uint32)
 	// commissionDescEndAt is the schema descriptor for end_at field.
-	commissionDescEndAt := commissionFields[7].Descriptor()
+	commissionDescEndAt := commissionFields[6].Descriptor()
 	// commission.DefaultEndAt holds the default value on creation for the end_at field.
 	commission.DefaultEndAt = commissionDescEndAt.Default.(uint32)
 	// commissionDescSettleType is the schema descriptor for settle_type field.
-	commissionDescSettleType := commissionFields[8].Descriptor()
+	commissionDescSettleType := commissionFields[7].Descriptor()
 	// commission.DefaultSettleType holds the default value on creation for the settle_type field.
 	commission.DefaultSettleType = commissionDescSettleType.Default.(string)
 	// commissionDescSettleMode is the schema descriptor for settle_mode field.
-	commissionDescSettleMode := commissionFields[9].Descriptor()
+	commissionDescSettleMode := commissionFields[8].Descriptor()
 	// commission.DefaultSettleMode holds the default value on creation for the settle_mode field.
 	commission.DefaultSettleMode = commissionDescSettleMode.Default.(string)
 	// commissionDescSettleInterval is the schema descriptor for settle_interval field.
-	commissionDescSettleInterval := commissionFields[10].Descriptor()
+	commissionDescSettleInterval := commissionFields[9].Descriptor()
 	// commission.DefaultSettleInterval holds the default value on creation for the settle_interval field.
 	commission.DefaultSettleInterval = commissionDescSettleInterval.Default.(string)
 	// commissionDescSettleAmountType is the schema descriptor for settle_amount_type field.
-	commissionDescSettleAmountType := commissionFields[11].Descriptor()
+	commissionDescSettleAmountType := commissionFields[10].Descriptor()
 	// commission.DefaultSettleAmountType holds the default value on creation for the settle_amount_type field.
 	commission.DefaultSettleAmountType = commissionDescSettleAmountType.Default.(string)
 	// commissionDescThreshold is the schema descriptor for threshold field.
-	commissionDescThreshold := commissionFields[12].Descriptor()
+	commissionDescThreshold := commissionFields[11].Descriptor()
 	// commission.DefaultThreshold holds the default value on creation for the threshold field.
 	commission.DefaultThreshold = commissionDescThreshold.Default.(decimal.Decimal)
 	// commissionDescOrderLimit is the schema descriptor for order_limit field.
-	commissionDescOrderLimit := commissionFields[13].Descriptor()
+	commissionDescOrderLimit := commissionFields[12].Descriptor()
 	// commission.DefaultOrderLimit holds the default value on creation for the order_limit field.
 	commission.DefaultOrderLimit = commissionDescOrderLimit.Default.(uint32)
-	// commissionDescID is the schema descriptor for id field.
-	commissionDescID := commissionFields[0].Descriptor()
-	// commission.DefaultID holds the default value on creation for the id field.
-	commission.DefaultID = commissionDescID.Default.(func() uuid.UUID)
 	couponMixin := schema.Coupon{}.Mixin()
 	coupon.Policy = privacy.NewPolicies(couponMixin[0], schema.Coupon{})
 	coupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -248,6 +254,8 @@ func init() {
 	}
 	couponMixinFields0 := couponMixin[0].Fields()
 	_ = couponMixinFields0
+	couponMixinFields1 := couponMixin[1].Fields()
+	_ = couponMixinFields1
 	couponFields := schema.Coupon{}.Fields()
 	_ = couponFields
 	// couponDescCreatedAt is the schema descriptor for created_at field.
@@ -264,66 +272,66 @@ func init() {
 	couponDescDeletedAt := couponMixinFields0[2].Descriptor()
 	// coupon.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	coupon.DefaultDeletedAt = couponDescDeletedAt.Default.(func() uint32)
+	// couponDescEntID is the schema descriptor for ent_id field.
+	couponDescEntID := couponMixinFields1[1].Descriptor()
+	// coupon.DefaultEntID holds the default value on creation for the ent_id field.
+	coupon.DefaultEntID = couponDescEntID.Default.(func() uuid.UUID)
 	// couponDescAppID is the schema descriptor for app_id field.
-	couponDescAppID := couponFields[1].Descriptor()
+	couponDescAppID := couponFields[0].Descriptor()
 	// coupon.DefaultAppID holds the default value on creation for the app_id field.
 	coupon.DefaultAppID = couponDescAppID.Default.(func() uuid.UUID)
 	// couponDescUserID is the schema descriptor for user_id field.
-	couponDescUserID := couponFields[2].Descriptor()
+	couponDescUserID := couponFields[1].Descriptor()
 	// coupon.DefaultUserID holds the default value on creation for the user_id field.
 	coupon.DefaultUserID = couponDescUserID.Default.(func() uuid.UUID)
 	// couponDescDenomination is the schema descriptor for denomination field.
-	couponDescDenomination := couponFields[3].Descriptor()
+	couponDescDenomination := couponFields[2].Descriptor()
 	// coupon.DefaultDenomination holds the default value on creation for the denomination field.
 	coupon.DefaultDenomination = couponDescDenomination.Default.(decimal.Decimal)
 	// couponDescCirculation is the schema descriptor for circulation field.
-	couponDescCirculation := couponFields[4].Descriptor()
+	couponDescCirculation := couponFields[3].Descriptor()
 	// coupon.DefaultCirculation holds the default value on creation for the circulation field.
 	coupon.DefaultCirculation = couponDescCirculation.Default.(decimal.Decimal)
 	// couponDescRandom is the schema descriptor for random field.
-	couponDescRandom := couponFields[5].Descriptor()
+	couponDescRandom := couponFields[4].Descriptor()
 	// coupon.DefaultRandom holds the default value on creation for the random field.
 	coupon.DefaultRandom = couponDescRandom.Default.(bool)
 	// couponDescStartAt is the schema descriptor for start_at field.
-	couponDescStartAt := couponFields[7].Descriptor()
+	couponDescStartAt := couponFields[6].Descriptor()
 	// coupon.DefaultStartAt holds the default value on creation for the start_at field.
 	coupon.DefaultStartAt = couponDescStartAt.Default.(uint32)
 	// couponDescDurationDays is the schema descriptor for duration_days field.
-	couponDescDurationDays := couponFields[8].Descriptor()
+	couponDescDurationDays := couponFields[7].Descriptor()
 	// coupon.DefaultDurationDays holds the default value on creation for the duration_days field.
 	coupon.DefaultDurationDays = couponDescDurationDays.Default.(uint32)
 	// couponDescMessage is the schema descriptor for message field.
-	couponDescMessage := couponFields[9].Descriptor()
+	couponDescMessage := couponFields[8].Descriptor()
 	// coupon.DefaultMessage holds the default value on creation for the message field.
 	coupon.DefaultMessage = couponDescMessage.Default.(string)
 	// couponDescName is the schema descriptor for name field.
-	couponDescName := couponFields[10].Descriptor()
+	couponDescName := couponFields[9].Descriptor()
 	// coupon.DefaultName holds the default value on creation for the name field.
 	coupon.DefaultName = couponDescName.Default.(string)
 	// couponDescAllocated is the schema descriptor for allocated field.
-	couponDescAllocated := couponFields[11].Descriptor()
+	couponDescAllocated := couponFields[10].Descriptor()
 	// coupon.DefaultAllocated holds the default value on creation for the allocated field.
 	coupon.DefaultAllocated = couponDescAllocated.Default.(decimal.Decimal)
 	// couponDescCouponType is the schema descriptor for coupon_type field.
-	couponDescCouponType := couponFields[12].Descriptor()
+	couponDescCouponType := couponFields[11].Descriptor()
 	// coupon.DefaultCouponType holds the default value on creation for the coupon_type field.
 	coupon.DefaultCouponType = couponDescCouponType.Default.(string)
 	// couponDescThreshold is the schema descriptor for threshold field.
-	couponDescThreshold := couponFields[13].Descriptor()
+	couponDescThreshold := couponFields[12].Descriptor()
 	// coupon.DefaultThreshold holds the default value on creation for the threshold field.
 	coupon.DefaultThreshold = couponDescThreshold.Default.(decimal.Decimal)
 	// couponDescCouponConstraint is the schema descriptor for coupon_constraint field.
-	couponDescCouponConstraint := couponFields[14].Descriptor()
+	couponDescCouponConstraint := couponFields[13].Descriptor()
 	// coupon.DefaultCouponConstraint holds the default value on creation for the coupon_constraint field.
 	coupon.DefaultCouponConstraint = couponDescCouponConstraint.Default.(string)
 	// couponDescCouponScope is the schema descriptor for coupon_scope field.
-	couponDescCouponScope := couponFields[15].Descriptor()
+	couponDescCouponScope := couponFields[14].Descriptor()
 	// coupon.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	coupon.DefaultCouponScope = couponDescCouponScope.Default.(string)
-	// couponDescID is the schema descriptor for id field.
-	couponDescID := couponFields[0].Descriptor()
-	// coupon.DefaultID holds the default value on creation for the id field.
-	coupon.DefaultID = couponDescID.Default.(func() uuid.UUID)
 	couponallocatedMixin := schema.CouponAllocated{}.Mixin()
 	couponallocated.Policy = privacy.NewPolicies(couponallocatedMixin[0], schema.CouponAllocated{})
 	couponallocated.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -336,6 +344,8 @@ func init() {
 	}
 	couponallocatedMixinFields0 := couponallocatedMixin[0].Fields()
 	_ = couponallocatedMixinFields0
+	couponallocatedMixinFields1 := couponallocatedMixin[1].Fields()
+	_ = couponallocatedMixinFields1
 	couponallocatedFields := schema.CouponAllocated{}.Fields()
 	_ = couponallocatedFields
 	// couponallocatedDescCreatedAt is the schema descriptor for created_at field.
@@ -352,34 +362,46 @@ func init() {
 	couponallocatedDescDeletedAt := couponallocatedMixinFields0[2].Descriptor()
 	// couponallocated.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	couponallocated.DefaultDeletedAt = couponallocatedDescDeletedAt.Default.(func() uint32)
+	// couponallocatedDescEntID is the schema descriptor for ent_id field.
+	couponallocatedDescEntID := couponallocatedMixinFields1[1].Descriptor()
+	// couponallocated.DefaultEntID holds the default value on creation for the ent_id field.
+	couponallocated.DefaultEntID = couponallocatedDescEntID.Default.(func() uuid.UUID)
+	// couponallocatedDescAppID is the schema descriptor for app_id field.
+	couponallocatedDescAppID := couponallocatedFields[0].Descriptor()
+	// couponallocated.DefaultAppID holds the default value on creation for the app_id field.
+	couponallocated.DefaultAppID = couponallocatedDescAppID.Default.(func() uuid.UUID)
+	// couponallocatedDescUserID is the schema descriptor for user_id field.
+	couponallocatedDescUserID := couponallocatedFields[1].Descriptor()
+	// couponallocated.DefaultUserID holds the default value on creation for the user_id field.
+	couponallocated.DefaultUserID = couponallocatedDescUserID.Default.(func() uuid.UUID)
+	// couponallocatedDescCouponID is the schema descriptor for coupon_id field.
+	couponallocatedDescCouponID := couponallocatedFields[2].Descriptor()
+	// couponallocated.DefaultCouponID holds the default value on creation for the coupon_id field.
+	couponallocated.DefaultCouponID = couponallocatedDescCouponID.Default.(func() uuid.UUID)
 	// couponallocatedDescDenomination is the schema descriptor for denomination field.
-	couponallocatedDescDenomination := couponallocatedFields[4].Descriptor()
+	couponallocatedDescDenomination := couponallocatedFields[3].Descriptor()
 	// couponallocated.DefaultDenomination holds the default value on creation for the denomination field.
 	couponallocated.DefaultDenomination = couponallocatedDescDenomination.Default.(decimal.Decimal)
 	// couponallocatedDescUsed is the schema descriptor for used field.
-	couponallocatedDescUsed := couponallocatedFields[5].Descriptor()
+	couponallocatedDescUsed := couponallocatedFields[4].Descriptor()
 	// couponallocated.DefaultUsed holds the default value on creation for the used field.
 	couponallocated.DefaultUsed = couponallocatedDescUsed.Default.(bool)
 	// couponallocatedDescUsedAt is the schema descriptor for used_at field.
-	couponallocatedDescUsedAt := couponallocatedFields[6].Descriptor()
+	couponallocatedDescUsedAt := couponallocatedFields[5].Descriptor()
 	// couponallocated.DefaultUsedAt holds the default value on creation for the used_at field.
 	couponallocated.DefaultUsedAt = couponallocatedDescUsedAt.Default.(uint32)
 	// couponallocatedDescUsedByOrderID is the schema descriptor for used_by_order_id field.
-	couponallocatedDescUsedByOrderID := couponallocatedFields[7].Descriptor()
+	couponallocatedDescUsedByOrderID := couponallocatedFields[6].Descriptor()
 	// couponallocated.DefaultUsedByOrderID holds the default value on creation for the used_by_order_id field.
 	couponallocated.DefaultUsedByOrderID = couponallocatedDescUsedByOrderID.Default.(func() uuid.UUID)
 	// couponallocatedDescStartAt is the schema descriptor for start_at field.
-	couponallocatedDescStartAt := couponallocatedFields[8].Descriptor()
+	couponallocatedDescStartAt := couponallocatedFields[7].Descriptor()
 	// couponallocated.DefaultStartAt holds the default value on creation for the start_at field.
 	couponallocated.DefaultStartAt = couponallocatedDescStartAt.Default.(uint32)
 	// couponallocatedDescCouponScope is the schema descriptor for coupon_scope field.
-	couponallocatedDescCouponScope := couponallocatedFields[9].Descriptor()
+	couponallocatedDescCouponScope := couponallocatedFields[8].Descriptor()
 	// couponallocated.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponallocated.DefaultCouponScope = couponallocatedDescCouponScope.Default.(string)
-	// couponallocatedDescID is the schema descriptor for id field.
-	couponallocatedDescID := couponallocatedFields[0].Descriptor()
-	// couponallocated.DefaultID holds the default value on creation for the id field.
-	couponallocated.DefaultID = couponallocatedDescID.Default.(func() uuid.UUID)
 	couponscopeMixin := schema.CouponScope{}.Mixin()
 	couponscope.Policy = privacy.NewPolicies(couponscopeMixin[0], schema.CouponScope{})
 	couponscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -392,6 +414,8 @@ func init() {
 	}
 	couponscopeMixinFields0 := couponscopeMixin[0].Fields()
 	_ = couponscopeMixinFields0
+	couponscopeMixinFields1 := couponscopeMixin[1].Fields()
+	_ = couponscopeMixinFields1
 	couponscopeFields := schema.CouponScope{}.Fields()
 	_ = couponscopeFields
 	// couponscopeDescCreatedAt is the schema descriptor for created_at field.
@@ -408,22 +432,22 @@ func init() {
 	couponscopeDescDeletedAt := couponscopeMixinFields0[2].Descriptor()
 	// couponscope.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	couponscope.DefaultDeletedAt = couponscopeDescDeletedAt.Default.(func() uint32)
+	// couponscopeDescEntID is the schema descriptor for ent_id field.
+	couponscopeDescEntID := couponscopeMixinFields1[1].Descriptor()
+	// couponscope.DefaultEntID holds the default value on creation for the ent_id field.
+	couponscope.DefaultEntID = couponscopeDescEntID.Default.(func() uuid.UUID)
 	// couponscopeDescCouponID is the schema descriptor for coupon_id field.
-	couponscopeDescCouponID := couponscopeFields[1].Descriptor()
+	couponscopeDescCouponID := couponscopeFields[0].Descriptor()
 	// couponscope.DefaultCouponID holds the default value on creation for the coupon_id field.
 	couponscope.DefaultCouponID = couponscopeDescCouponID.Default.(func() uuid.UUID)
 	// couponscopeDescGoodID is the schema descriptor for good_id field.
-	couponscopeDescGoodID := couponscopeFields[2].Descriptor()
+	couponscopeDescGoodID := couponscopeFields[1].Descriptor()
 	// couponscope.DefaultGoodID holds the default value on creation for the good_id field.
 	couponscope.DefaultGoodID = couponscopeDescGoodID.Default.(func() uuid.UUID)
 	// couponscopeDescCouponScope is the schema descriptor for coupon_scope field.
-	couponscopeDescCouponScope := couponscopeFields[3].Descriptor()
+	couponscopeDescCouponScope := couponscopeFields[2].Descriptor()
 	// couponscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponscope.DefaultCouponScope = couponscopeDescCouponScope.Default.(string)
-	// couponscopeDescID is the schema descriptor for id field.
-	couponscopeDescID := couponscopeFields[0].Descriptor()
-	// couponscope.DefaultID holds the default value on creation for the id field.
-	couponscope.DefaultID = couponscopeDescID.Default.(func() uuid.UUID)
 	eventMixin := schema.Event{}.Mixin()
 	event.Policy = privacy.NewPolicies(eventMixin[0], schema.Event{})
 	event.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -436,6 +460,8 @@ func init() {
 	}
 	eventMixinFields0 := eventMixin[0].Fields()
 	_ = eventMixinFields0
+	eventMixinFields1 := eventMixin[1].Fields()
+	_ = eventMixinFields1
 	eventFields := schema.Event{}.Fields()
 	_ = eventFields
 	// eventDescCreatedAt is the schema descriptor for created_at field.
@@ -452,42 +478,46 @@ func init() {
 	eventDescDeletedAt := eventMixinFields0[2].Descriptor()
 	// event.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	event.DefaultDeletedAt = eventDescDeletedAt.Default.(func() uint32)
+	// eventDescEntID is the schema descriptor for ent_id field.
+	eventDescEntID := eventMixinFields1[1].Descriptor()
+	// event.DefaultEntID holds the default value on creation for the ent_id field.
+	event.DefaultEntID = eventDescEntID.Default.(func() uuid.UUID)
+	// eventDescAppID is the schema descriptor for app_id field.
+	eventDescAppID := eventFields[0].Descriptor()
+	// event.DefaultAppID holds the default value on creation for the app_id field.
+	event.DefaultAppID = eventDescAppID.Default.(func() uuid.UUID)
 	// eventDescEventType is the schema descriptor for event_type field.
-	eventDescEventType := eventFields[2].Descriptor()
+	eventDescEventType := eventFields[1].Descriptor()
 	// event.DefaultEventType holds the default value on creation for the event_type field.
 	event.DefaultEventType = eventDescEventType.Default.(string)
 	// eventDescCouponIds is the schema descriptor for coupon_ids field.
-	eventDescCouponIds := eventFields[3].Descriptor()
+	eventDescCouponIds := eventFields[2].Descriptor()
 	// event.DefaultCouponIds holds the default value on creation for the coupon_ids field.
 	event.DefaultCouponIds = eventDescCouponIds.Default.([]uuid.UUID)
 	// eventDescCredits is the schema descriptor for credits field.
-	eventDescCredits := eventFields[4].Descriptor()
+	eventDescCredits := eventFields[3].Descriptor()
 	// event.DefaultCredits holds the default value on creation for the credits field.
 	event.DefaultCredits = eventDescCredits.Default.(decimal.Decimal)
 	// eventDescCreditsPerUsd is the schema descriptor for credits_per_usd field.
-	eventDescCreditsPerUsd := eventFields[5].Descriptor()
+	eventDescCreditsPerUsd := eventFields[4].Descriptor()
 	// event.DefaultCreditsPerUsd holds the default value on creation for the credits_per_usd field.
 	event.DefaultCreditsPerUsd = eventDescCreditsPerUsd.Default.(decimal.Decimal)
 	// eventDescMaxConsecutive is the schema descriptor for max_consecutive field.
-	eventDescMaxConsecutive := eventFields[6].Descriptor()
+	eventDescMaxConsecutive := eventFields[5].Descriptor()
 	// event.DefaultMaxConsecutive holds the default value on creation for the max_consecutive field.
 	event.DefaultMaxConsecutive = eventDescMaxConsecutive.Default.(uint32)
 	// eventDescGoodID is the schema descriptor for good_id field.
-	eventDescGoodID := eventFields[7].Descriptor()
+	eventDescGoodID := eventFields[6].Descriptor()
 	// event.DefaultGoodID holds the default value on creation for the good_id field.
 	event.DefaultGoodID = eventDescGoodID.Default.(func() uuid.UUID)
 	// eventDescAppGoodID is the schema descriptor for app_good_id field.
-	eventDescAppGoodID := eventFields[8].Descriptor()
+	eventDescAppGoodID := eventFields[7].Descriptor()
 	// event.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	event.DefaultAppGoodID = eventDescAppGoodID.Default.(func() uuid.UUID)
 	// eventDescInviterLayers is the schema descriptor for inviter_layers field.
-	eventDescInviterLayers := eventFields[9].Descriptor()
+	eventDescInviterLayers := eventFields[8].Descriptor()
 	// event.DefaultInviterLayers holds the default value on creation for the inviter_layers field.
 	event.DefaultInviterLayers = eventDescInviterLayers.Default.(uint32)
-	// eventDescID is the schema descriptor for id field.
-	eventDescID := eventFields[0].Descriptor()
-	// event.DefaultID holds the default value on creation for the id field.
-	event.DefaultID = eventDescID.Default.(func() uuid.UUID)
 	invitationcodeMixin := schema.InvitationCode{}.Mixin()
 	invitationcode.Policy = privacy.NewPolicies(invitationcodeMixin[0], schema.InvitationCode{})
 	invitationcode.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -500,6 +530,8 @@ func init() {
 	}
 	invitationcodeMixinFields0 := invitationcodeMixin[0].Fields()
 	_ = invitationcodeMixinFields0
+	invitationcodeMixinFields1 := invitationcodeMixin[1].Fields()
+	_ = invitationcodeMixinFields1
 	invitationcodeFields := schema.InvitationCode{}.Fields()
 	_ = invitationcodeFields
 	// invitationcodeDescCreatedAt is the schema descriptor for created_at field.
@@ -516,18 +548,26 @@ func init() {
 	invitationcodeDescDeletedAt := invitationcodeMixinFields0[2].Descriptor()
 	// invitationcode.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	invitationcode.DefaultDeletedAt = invitationcodeDescDeletedAt.Default.(func() uint32)
+	// invitationcodeDescEntID is the schema descriptor for ent_id field.
+	invitationcodeDescEntID := invitationcodeMixinFields1[1].Descriptor()
+	// invitationcode.DefaultEntID holds the default value on creation for the ent_id field.
+	invitationcode.DefaultEntID = invitationcodeDescEntID.Default.(func() uuid.UUID)
+	// invitationcodeDescAppID is the schema descriptor for app_id field.
+	invitationcodeDescAppID := invitationcodeFields[0].Descriptor()
+	// invitationcode.DefaultAppID holds the default value on creation for the app_id field.
+	invitationcode.DefaultAppID = invitationcodeDescAppID.Default.(func() uuid.UUID)
+	// invitationcodeDescUserID is the schema descriptor for user_id field.
+	invitationcodeDescUserID := invitationcodeFields[1].Descriptor()
+	// invitationcode.DefaultUserID holds the default value on creation for the user_id field.
+	invitationcode.DefaultUserID = invitationcodeDescUserID.Default.(func() uuid.UUID)
 	// invitationcodeDescInvitationCode is the schema descriptor for invitation_code field.
-	invitationcodeDescInvitationCode := invitationcodeFields[3].Descriptor()
+	invitationcodeDescInvitationCode := invitationcodeFields[2].Descriptor()
 	// invitationcode.DefaultInvitationCode holds the default value on creation for the invitation_code field.
 	invitationcode.DefaultInvitationCode = invitationcodeDescInvitationCode.Default.(string)
 	// invitationcodeDescDisabled is the schema descriptor for disabled field.
-	invitationcodeDescDisabled := invitationcodeFields[4].Descriptor()
+	invitationcodeDescDisabled := invitationcodeFields[3].Descriptor()
 	// invitationcode.DefaultDisabled holds the default value on creation for the disabled field.
 	invitationcode.DefaultDisabled = invitationcodeDescDisabled.Default.(bool)
-	// invitationcodeDescID is the schema descriptor for id field.
-	invitationcodeDescID := invitationcodeFields[0].Descriptor()
-	// invitationcode.DefaultID holds the default value on creation for the id field.
-	invitationcode.DefaultID = invitationcodeDescID.Default.(func() uuid.UUID)
 	pubsubmessageMixin := schema.PubsubMessage{}.Mixin()
 	pubsubmessage.Policy = privacy.NewPolicies(pubsubmessageMixin[0], schema.PubsubMessage{})
 	pubsubmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -540,6 +580,8 @@ func init() {
 	}
 	pubsubmessageMixinFields0 := pubsubmessageMixin[0].Fields()
 	_ = pubsubmessageMixinFields0
+	pubsubmessageMixinFields1 := pubsubmessageMixin[1].Fields()
+	_ = pubsubmessageMixinFields1
 	pubsubmessageFields := schema.PubsubMessage{}.Fields()
 	_ = pubsubmessageFields
 	// pubsubmessageDescCreatedAt is the schema descriptor for created_at field.
@@ -556,24 +598,28 @@ func init() {
 	pubsubmessageDescDeletedAt := pubsubmessageMixinFields0[2].Descriptor()
 	// pubsubmessage.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	pubsubmessage.DefaultDeletedAt = pubsubmessageDescDeletedAt.Default.(func() uint32)
+	// pubsubmessageDescEntID is the schema descriptor for ent_id field.
+	pubsubmessageDescEntID := pubsubmessageMixinFields1[1].Descriptor()
+	// pubsubmessage.DefaultEntID holds the default value on creation for the ent_id field.
+	pubsubmessage.DefaultEntID = pubsubmessageDescEntID.Default.(func() uuid.UUID)
 	// pubsubmessageDescMessageID is the schema descriptor for message_id field.
-	pubsubmessageDescMessageID := pubsubmessageFields[1].Descriptor()
+	pubsubmessageDescMessageID := pubsubmessageFields[0].Descriptor()
 	// pubsubmessage.DefaultMessageID holds the default value on creation for the message_id field.
 	pubsubmessage.DefaultMessageID = pubsubmessageDescMessageID.Default.(string)
 	// pubsubmessageDescState is the schema descriptor for state field.
-	pubsubmessageDescState := pubsubmessageFields[2].Descriptor()
+	pubsubmessageDescState := pubsubmessageFields[1].Descriptor()
 	// pubsubmessage.DefaultState holds the default value on creation for the state field.
 	pubsubmessage.DefaultState = pubsubmessageDescState.Default.(string)
 	// pubsubmessageDescRespToID is the schema descriptor for resp_to_id field.
-	pubsubmessageDescRespToID := pubsubmessageFields[3].Descriptor()
+	pubsubmessageDescRespToID := pubsubmessageFields[2].Descriptor()
 	// pubsubmessage.DefaultRespToID holds the default value on creation for the resp_to_id field.
 	pubsubmessage.DefaultRespToID = pubsubmessageDescRespToID.Default.(func() uuid.UUID)
 	// pubsubmessageDescUndoID is the schema descriptor for undo_id field.
-	pubsubmessageDescUndoID := pubsubmessageFields[4].Descriptor()
+	pubsubmessageDescUndoID := pubsubmessageFields[3].Descriptor()
 	// pubsubmessage.DefaultUndoID holds the default value on creation for the undo_id field.
 	pubsubmessage.DefaultUndoID = pubsubmessageDescUndoID.Default.(func() uuid.UUID)
 	// pubsubmessageDescArguments is the schema descriptor for arguments field.
-	pubsubmessageDescArguments := pubsubmessageFields[5].Descriptor()
+	pubsubmessageDescArguments := pubsubmessageFields[4].Descriptor()
 	// pubsubmessage.DefaultArguments holds the default value on creation for the arguments field.
 	pubsubmessage.DefaultArguments = pubsubmessageDescArguments.Default.(string)
 	registrationMixin := schema.Registration{}.Mixin()
@@ -588,6 +634,8 @@ func init() {
 	}
 	registrationMixinFields0 := registrationMixin[0].Fields()
 	_ = registrationMixinFields0
+	registrationMixinFields1 := registrationMixin[1].Fields()
+	_ = registrationMixinFields1
 	registrationFields := schema.Registration{}.Fields()
 	_ = registrationFields
 	// registrationDescCreatedAt is the schema descriptor for created_at field.
@@ -604,10 +652,22 @@ func init() {
 	registrationDescDeletedAt := registrationMixinFields0[2].Descriptor()
 	// registration.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	registration.DefaultDeletedAt = registrationDescDeletedAt.Default.(func() uint32)
-	// registrationDescID is the schema descriptor for id field.
-	registrationDescID := registrationFields[0].Descriptor()
-	// registration.DefaultID holds the default value on creation for the id field.
-	registration.DefaultID = registrationDescID.Default.(func() uuid.UUID)
+	// registrationDescEntID is the schema descriptor for ent_id field.
+	registrationDescEntID := registrationMixinFields1[1].Descriptor()
+	// registration.DefaultEntID holds the default value on creation for the ent_id field.
+	registration.DefaultEntID = registrationDescEntID.Default.(func() uuid.UUID)
+	// registrationDescAppID is the schema descriptor for app_id field.
+	registrationDescAppID := registrationFields[0].Descriptor()
+	// registration.DefaultAppID holds the default value on creation for the app_id field.
+	registration.DefaultAppID = registrationDescAppID.Default.(func() uuid.UUID)
+	// registrationDescInviterID is the schema descriptor for inviter_id field.
+	registrationDescInviterID := registrationFields[1].Descriptor()
+	// registration.DefaultInviterID holds the default value on creation for the inviter_id field.
+	registration.DefaultInviterID = registrationDescInviterID.Default.(func() uuid.UUID)
+	// registrationDescInviteeID is the schema descriptor for invitee_id field.
+	registrationDescInviteeID := registrationFields[2].Descriptor()
+	// registration.DefaultInviteeID holds the default value on creation for the invitee_id field.
+	registration.DefaultInviteeID = registrationDescInviteeID.Default.(func() uuid.UUID)
 	statementMixin := schema.Statement{}.Mixin()
 	statement.Policy = privacy.NewPolicies(statementMixin[0], schema.Statement{})
 	statement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -620,6 +680,8 @@ func init() {
 	}
 	statementMixinFields0 := statementMixin[0].Fields()
 	_ = statementMixinFields0
+	statementMixinFields1 := statementMixin[1].Fields()
+	_ = statementMixinFields1
 	statementFields := schema.Statement{}.Fields()
 	_ = statementFields
 	// statementDescCreatedAt is the schema descriptor for created_at field.
@@ -636,74 +698,74 @@ func init() {
 	statementDescDeletedAt := statementMixinFields0[2].Descriptor()
 	// statement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	statement.DefaultDeletedAt = statementDescDeletedAt.Default.(func() uint32)
+	// statementDescEntID is the schema descriptor for ent_id field.
+	statementDescEntID := statementMixinFields1[1].Descriptor()
+	// statement.DefaultEntID holds the default value on creation for the ent_id field.
+	statement.DefaultEntID = statementDescEntID.Default.(func() uuid.UUID)
 	// statementDescAppID is the schema descriptor for app_id field.
-	statementDescAppID := statementFields[1].Descriptor()
+	statementDescAppID := statementFields[0].Descriptor()
 	// statement.DefaultAppID holds the default value on creation for the app_id field.
 	statement.DefaultAppID = statementDescAppID.Default.(func() uuid.UUID)
 	// statementDescUserID is the schema descriptor for user_id field.
-	statementDescUserID := statementFields[2].Descriptor()
+	statementDescUserID := statementFields[1].Descriptor()
 	// statement.DefaultUserID holds the default value on creation for the user_id field.
 	statement.DefaultUserID = statementDescUserID.Default.(func() uuid.UUID)
 	// statementDescDirectContributorID is the schema descriptor for direct_contributor_id field.
-	statementDescDirectContributorID := statementFields[3].Descriptor()
+	statementDescDirectContributorID := statementFields[2].Descriptor()
 	// statement.DefaultDirectContributorID holds the default value on creation for the direct_contributor_id field.
 	statement.DefaultDirectContributorID = statementDescDirectContributorID.Default.(func() uuid.UUID)
 	// statementDescGoodID is the schema descriptor for good_id field.
-	statementDescGoodID := statementFields[4].Descriptor()
+	statementDescGoodID := statementFields[3].Descriptor()
 	// statement.DefaultGoodID holds the default value on creation for the good_id field.
 	statement.DefaultGoodID = statementDescGoodID.Default.(func() uuid.UUID)
 	// statementDescAppGoodID is the schema descriptor for app_good_id field.
-	statementDescAppGoodID := statementFields[5].Descriptor()
+	statementDescAppGoodID := statementFields[4].Descriptor()
 	// statement.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	statement.DefaultAppGoodID = statementDescAppGoodID.Default.(func() uuid.UUID)
 	// statementDescOrderID is the schema descriptor for order_id field.
-	statementDescOrderID := statementFields[6].Descriptor()
+	statementDescOrderID := statementFields[5].Descriptor()
 	// statement.DefaultOrderID holds the default value on creation for the order_id field.
 	statement.DefaultOrderID = statementDescOrderID.Default.(func() uuid.UUID)
 	// statementDescSelfOrder is the schema descriptor for self_order field.
-	statementDescSelfOrder := statementFields[7].Descriptor()
+	statementDescSelfOrder := statementFields[6].Descriptor()
 	// statement.DefaultSelfOrder holds the default value on creation for the self_order field.
 	statement.DefaultSelfOrder = statementDescSelfOrder.Default.(bool)
 	// statementDescPaymentID is the schema descriptor for payment_id field.
-	statementDescPaymentID := statementFields[8].Descriptor()
+	statementDescPaymentID := statementFields[7].Descriptor()
 	// statement.DefaultPaymentID holds the default value on creation for the payment_id field.
 	statement.DefaultPaymentID = statementDescPaymentID.Default.(func() uuid.UUID)
 	// statementDescCoinTypeID is the schema descriptor for coin_type_id field.
-	statementDescCoinTypeID := statementFields[9].Descriptor()
+	statementDescCoinTypeID := statementFields[8].Descriptor()
 	// statement.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	statement.DefaultCoinTypeID = statementDescCoinTypeID.Default.(func() uuid.UUID)
 	// statementDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
-	statementDescPaymentCoinTypeID := statementFields[10].Descriptor()
+	statementDescPaymentCoinTypeID := statementFields[9].Descriptor()
 	// statement.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
 	statement.DefaultPaymentCoinTypeID = statementDescPaymentCoinTypeID.Default.(func() uuid.UUID)
 	// statementDescPaymentCoinUsdCurrency is the schema descriptor for payment_coin_usd_currency field.
-	statementDescPaymentCoinUsdCurrency := statementFields[11].Descriptor()
+	statementDescPaymentCoinUsdCurrency := statementFields[10].Descriptor()
 	// statement.DefaultPaymentCoinUsdCurrency holds the default value on creation for the payment_coin_usd_currency field.
 	statement.DefaultPaymentCoinUsdCurrency = statementDescPaymentCoinUsdCurrency.Default.(decimal.Decimal)
 	// statementDescUnits is the schema descriptor for units field.
-	statementDescUnits := statementFields[12].Descriptor()
+	statementDescUnits := statementFields[11].Descriptor()
 	// statement.DefaultUnits holds the default value on creation for the units field.
 	statement.DefaultUnits = statementDescUnits.Default.(uint32)
 	// statementDescUnitsV1 is the schema descriptor for units_v1 field.
-	statementDescUnitsV1 := statementFields[13].Descriptor()
+	statementDescUnitsV1 := statementFields[12].Descriptor()
 	// statement.DefaultUnitsV1 holds the default value on creation for the units_v1 field.
 	statement.DefaultUnitsV1 = statementDescUnitsV1.Default.(decimal.Decimal)
 	// statementDescAmount is the schema descriptor for amount field.
-	statementDescAmount := statementFields[14].Descriptor()
+	statementDescAmount := statementFields[13].Descriptor()
 	// statement.DefaultAmount holds the default value on creation for the amount field.
 	statement.DefaultAmount = statementDescAmount.Default.(decimal.Decimal)
 	// statementDescUsdAmount is the schema descriptor for usd_amount field.
-	statementDescUsdAmount := statementFields[15].Descriptor()
+	statementDescUsdAmount := statementFields[14].Descriptor()
 	// statement.DefaultUsdAmount holds the default value on creation for the usd_amount field.
 	statement.DefaultUsdAmount = statementDescUsdAmount.Default.(decimal.Decimal)
 	// statementDescCommission is the schema descriptor for commission field.
-	statementDescCommission := statementFields[16].Descriptor()
+	statementDescCommission := statementFields[15].Descriptor()
 	// statement.DefaultCommission holds the default value on creation for the commission field.
 	statement.DefaultCommission = statementDescCommission.Default.(decimal.Decimal)
-	// statementDescID is the schema descriptor for id field.
-	statementDescID := statementFields[0].Descriptor()
-	// statement.DefaultID holds the default value on creation for the id field.
-	statement.DefaultID = statementDescID.Default.(func() uuid.UUID)
 }
 
 const (

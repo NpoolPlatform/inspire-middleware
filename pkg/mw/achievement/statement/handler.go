@@ -31,7 +31,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string, must bool) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
@@ -39,11 +39,23 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 			}
 			return nil
 		}
+		h.ID = id
+		return nil
+	}
+}
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
 			return err
 		}
-		h.ID = &_id
+		h.EntID = &_id
 		return nil
 	}
 }
@@ -300,70 +312,83 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		_reqs := []*statementcrud.Req{}
 
 		for _, req := range reqs {
-			if req.AppID == nil {
-				return fmt.Errorf("invalid appid")
+			if must {
+				if req.AppID == nil {
+					return fmt.Errorf("invalid appid")
+				}
+				if req.UserID == nil {
+					return fmt.Errorf("invalid userid")
+				}
+				if req.GoodID == nil {
+					return fmt.Errorf("invalid goodid")
+				}
+				if req.AppGoodID == nil {
+					return fmt.Errorf("invalid appgoodid")
+				}
+				if req.OrderID == nil {
+					return fmt.Errorf("invalid orderid")
+				}
+				if req.PaymentID == nil {
+					return fmt.Errorf("invalid paymentid")
+				}
+				if req.CoinTypeID == nil {
+					return fmt.Errorf("invalid paymentid")
+				}
+				if req.PaymentCoinTypeID == nil {
+					return fmt.Errorf("invalid paymentcointypeid")
+				}
+				if req.PaymentCoinUSDCurrency == nil {
+					return fmt.Errorf("invalid paymentcoinusdcurrency")
+				}
+				if req.Units == nil {
+					return fmt.Errorf("invalid units")
+				}
+				if req.Amount == nil {
+					return fmt.Errorf("invalid amount")
+				}
+				if req.USDAmount == nil {
+					return fmt.Errorf("invalid usdamount")
+				}
+				if req.Commission == nil {
+					return fmt.Errorf("invalid commission")
+				}
 			}
-			if req.UserID == nil {
-				return fmt.Errorf("invalid userid")
+			if !must {
+				if req.ID == nil {
+					return fmt.Errorf("invalid id")
+				}
 			}
-			if req.GoodID == nil {
-				return fmt.Errorf("invalid goodid")
-			}
-			if req.AppGoodID == nil {
-				return fmt.Errorf("invalid appgoodid")
-			}
-			if req.OrderID == nil {
-				return fmt.Errorf("invalid orderid")
-			}
-			if req.PaymentID == nil {
-				return fmt.Errorf("invalid paymentid")
-			}
-			if req.CoinTypeID == nil {
-				return fmt.Errorf("invalid paymentid")
-			}
-			if req.PaymentCoinTypeID == nil {
-				return fmt.Errorf("invalid paymentcointypeid")
-			}
-			if req.PaymentCoinUSDCurrency == nil {
-				return fmt.Errorf("invalid paymentcoinusdcurrency")
-			}
-			if req.Units == nil {
-				return fmt.Errorf("invalid units")
-			}
-			if req.Amount == nil {
-				return fmt.Errorf("invalid amount")
-			}
-			if req.USDAmount == nil {
-				return fmt.Errorf("invalid usdamount")
-			}
-			if req.Commission == nil {
-				return fmt.Errorf("invalid commission")
-			}
-
 			_req := &statementcrud.Req{
 				SelfOrder: req.SelfOrder,
 			}
-			var err error
 
 			if req.ID != nil {
-				id, err := uuid.Parse(*req.ID)
+				_req.ID = req.ID
+			}
+
+			if req.EntID != nil {
+				id, err := uuid.Parse(*req.EntID)
 				if err != nil {
 					return err
 				}
-				_req.ID = &id
+				_req.EntID = &id
 			}
 
-			id1, err := uuid.Parse(*req.AppID)
-			if err != nil {
-				return err
+			if req.AppID != nil {
+				id1, err := uuid.Parse(*req.AppID)
+				if err != nil {
+					return err
+				}
+				_req.AppID = &id1
 			}
-			_req.AppID = &id1
 
-			id2, err := uuid.Parse(*req.UserID)
-			if err != nil {
-				return err
+			if req.UserID != nil {
+				id2, err := uuid.Parse(*req.UserID)
+				if err != nil {
+					return err
+				}
+				_req.UserID = &id2
 			}
-			_req.UserID = &id2
 
 			if req.DirectContributorID != nil {
 				id3, err := uuid.Parse(*req.DirectContributorID)
@@ -373,74 +398,100 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				_req.DirectContributorID = &id3
 			}
 
-			id4, err := uuid.Parse(*req.GoodID)
-			if err != nil {
-				return err
+			if req.GoodID != nil {
+				id4, err := uuid.Parse(*req.GoodID)
+				if err != nil {
+					return err
+				}
+				_req.GoodID = &id4
 			}
-			_req.GoodID = &id4
 
-			id5, err := uuid.Parse(*req.OrderID)
-			if err != nil {
-				return err
+			if req.OrderID != nil {
+				id5, err := uuid.Parse(*req.OrderID)
+				if err != nil {
+					return err
+				}
+				_req.OrderID = &id5
 			}
-			_req.OrderID = &id5
 
-			id6, err := uuid.Parse(*req.PaymentID)
-			if err != nil {
-				return err
+			if req.PaymentID != nil {
+				id6, err := uuid.Parse(*req.PaymentID)
+				if err != nil {
+					return err
+				}
+				_req.PaymentID = &id6
 			}
-			_req.PaymentID = &id6
 
-			id7, err := uuid.Parse(*req.CoinTypeID)
-			if err != nil {
-				return err
+			if req.CoinTypeID != nil {
+				id7, err := uuid.Parse(*req.CoinTypeID)
+				if err != nil {
+					return err
+				}
+				_req.CoinTypeID = &id7
 			}
-			_req.CoinTypeID = &id7
 
-			id8, err := uuid.Parse(*req.PaymentCoinTypeID)
-			if err != nil {
-				return err
+			if req.PaymentCoinTypeID != nil {
+				id8, err := uuid.Parse(*req.PaymentCoinTypeID)
+				if err != nil {
+					return err
+				}
+				_req.PaymentCoinTypeID = &id8
 			}
-			_req.PaymentCoinTypeID = &id8
 
-			id9, err := uuid.Parse(*req.AppGoodID)
-			if err != nil {
-				return err
+			if req.AppGoodID != nil {
+				id9, err := uuid.Parse(*req.AppGoodID)
+				if err != nil {
+					return err
+				}
+				_req.AppGoodID = &id9
 			}
-			_req.AppGoodID = &id9
 
-			amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
-			if err != nil {
-				return err
+			if req.PaymentCoinUSDCurrency != nil {
+				amount1, err := decimal.NewFromString(*req.PaymentCoinUSDCurrency)
+				if err != nil {
+					return err
+				}
+				_req.PaymentCoinUSDCurrency = &amount1
 			}
-			_req.PaymentCoinUSDCurrency = &amount1
 
-			amount2, err := decimal.NewFromString(*req.Units)
-			if err != nil {
-				return err
+			if req.Units != nil {
+				amount2, err := decimal.NewFromString(*req.Units)
+				if err != nil {
+					return err
+				}
+				_req.Units = &amount2
 			}
-			_req.Units = &amount2
 
-			amount3, err := decimal.NewFromString(*req.Amount)
-			if err != nil {
-				return err
+			if req.Amount != nil {
+				amount3, err := decimal.NewFromString(*req.Amount)
+				if err != nil {
+					return err
+				}
+				_req.Amount = &amount3
 			}
-			_req.Amount = &amount3
 
-			amount4, err := decimal.NewFromString(*req.USDAmount)
-			if err != nil {
-				return err
+			if req.USDAmount != nil {
+				amount4, err := decimal.NewFromString(*req.USDAmount)
+				if err != nil {
+					return err
+				}
+				_req.USDAmount = &amount4
 			}
-			_req.USDAmount = &amount4
 
-			amount5, err := decimal.NewFromString(*req.Commission)
-			if err != nil {
-				return err
+			if req.Commission != nil {
+				amount5, err := decimal.NewFromString(*req.Commission)
+				if err != nil {
+					return err
+				}
+				_req.Commission = &amount5
 			}
-			_req.Commission = &amount5
 
-			appMap[*req.AppID] = struct{}{}
-			orderMap[*req.OrderID] = struct{}{}
+			if req.AppID != nil {
+				appMap[*req.AppID] = struct{}{}
+			}
+			if req.OrderID != nil {
+				orderMap[*req.OrderID] = struct{}{}
+			}
 			_reqs = append(_reqs, _req)
 		}
 
@@ -452,46 +503,36 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		}
 
 		h.Reqs = _reqs
-
 		return nil
 	}
 }
 
-func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nolint
+func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &statementcrud.Conds{}
 		if conds == nil {
 			return nil
 		}
-		if conds.ID != nil {
-			id, err := uuid.Parse(conds.GetID().GetValue())
+		if conds.EntID != nil {
+			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.ID = &cruder.Cond{
-				Op:  conds.GetID().GetOp(),
-				Val: id,
-			}
+			h.Conds.EntID = &cruder.Cond{Op: conds.GetEntID().GetOp(), Val: id}
 		}
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
+			h.Conds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
 		}
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.UserID = &cruder.Cond{
-				Op:  conds.GetUserID().GetOp(),
-				Val: id,
-			}
+			h.Conds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 		}
 		if conds.UserIDs != nil {
 			ids := []uuid.UUID{}
@@ -502,86 +543,59 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error { //nol
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.UserIDs = &cruder.Cond{
-				Op:  conds.GetUserIDs().GetOp(),
-				Val: ids,
-			}
+			h.Conds.UserIDs = &cruder.Cond{Op: conds.GetUserIDs().GetOp(), Val: ids}
 		}
 		if conds.DirectContributorID != nil {
 			id, err := uuid.Parse(conds.GetDirectContributorID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.DirectContributorID = &cruder.Cond{
-				Op:  conds.GetDirectContributorID().GetOp(),
-				Val: id,
-			}
+			h.Conds.DirectContributorID = &cruder.Cond{Op: conds.GetDirectContributorID().GetOp(), Val: id}
 		}
 		if conds.GoodID != nil {
 			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.GoodID = &cruder.Cond{
-				Op:  conds.GetGoodID().GetOp(),
-				Val: id,
-			}
+			h.Conds.GoodID = &cruder.Cond{Op: conds.GetGoodID().GetOp(), Val: id}
 		}
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op:  conds.GetAppGoodID().GetOp(),
-				Val: id,
-			}
+			h.Conds.AppGoodID = &cruder.Cond{Op: conds.GetAppGoodID().GetOp(), Val: id}
 		}
 		if conds.OrderID != nil {
 			id, err := uuid.Parse(conds.GetOrderID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.OrderID = &cruder.Cond{
-				Op:  conds.GetOrderID().GetOp(),
-				Val: id,
-			}
+			h.Conds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
 		}
 		if conds.SelfOrder != nil {
-			h.Conds.SelfOrder = &cruder.Cond{
-				Op:  conds.GetSelfOrder().GetOp(),
-				Val: conds.GetSelfOrder().GetValue(),
-			}
+			h.Conds.SelfOrder = &cruder.Cond{Op: conds.GetSelfOrder().GetOp(), Val: conds.GetSelfOrder().GetValue()}
 		}
 		if conds.PaymentID != nil {
 			id, err := uuid.Parse(conds.GetPaymentID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.PaymentID = &cruder.Cond{
-				Op:  conds.GetPaymentID().GetOp(),
-				Val: id,
-			}
+			h.Conds.PaymentID = &cruder.Cond{Op: conds.GetPaymentID().GetOp(), Val: id}
 		}
 		if conds.CoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.CoinTypeID = &cruder.Cond{
-				Op:  conds.GetCoinTypeID().GetOp(),
-				Val: id,
-			}
+			h.Conds.CoinTypeID = &cruder.Cond{Op: conds.GetCoinTypeID().GetOp(), Val: id}
 		}
 		if conds.PaymentCoinTypeID != nil {
 			id, err := uuid.Parse(conds.GetPaymentCoinTypeID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.PaymentCoinTypeID = &cruder.Cond{
-				Op:  conds.GetPaymentCoinTypeID().GetOp(),
-				Val: id,
-			}
+			h.Conds.PaymentCoinTypeID = &cruder.Cond{Op: conds.GetPaymentCoinTypeID().GetOp(), Val: id}
 		}
 		return nil
 	}

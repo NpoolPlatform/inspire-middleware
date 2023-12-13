@@ -169,13 +169,8 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 			selfUnits = selfUnits.Sub(orderUnits)
 		}
 
-		id, err := uuid.Parse(achievement.ID)
-		if err != nil {
-			return err
-		}
-
 		if _, err := achievementcrud.UpdateSet(
-			tx.Achievement.UpdateOneID(id),
+			tx.Achievement.UpdateOneID(achievement.ID),
 			&achievementcrud.Req{
 				TotalAmount:     &totalAmount,
 				TotalCommission: &totalCommission,
@@ -188,14 +183,9 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 			return err
 		}
 
-		id1, err := uuid.Parse(statement.ID)
-		if err != nil {
-			return err
-		}
-
 		if _, err := tx.
 			Statement.
-			UpdateOneID(id1).
+			UpdateOneID(statement.ID).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(ctx); err != nil {
 			return err

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -65,6 +64,20 @@ func (csc *CouponScopeCreate) SetNillableDeletedAt(u *uint32) *CouponScopeCreate
 	return csc
 }
 
+// SetEntID sets the "ent_id" field.
+func (csc *CouponScopeCreate) SetEntID(u uuid.UUID) *CouponScopeCreate {
+	csc.mutation.SetEntID(u)
+	return csc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (csc *CouponScopeCreate) SetNillableEntID(u *uuid.UUID) *CouponScopeCreate {
+	if u != nil {
+		csc.SetEntID(*u)
+	}
+	return csc
+}
+
 // SetCouponID sets the "coupon_id" field.
 func (csc *CouponScopeCreate) SetCouponID(u uuid.UUID) *CouponScopeCreate {
 	csc.mutation.SetCouponID(u)
@@ -108,16 +121,8 @@ func (csc *CouponScopeCreate) SetNillableCouponScope(s *string) *CouponScopeCrea
 }
 
 // SetID sets the "id" field.
-func (csc *CouponScopeCreate) SetID(u uuid.UUID) *CouponScopeCreate {
+func (csc *CouponScopeCreate) SetID(u uint32) *CouponScopeCreate {
 	csc.mutation.SetID(u)
-	return csc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (csc *CouponScopeCreate) SetNillableID(u *uuid.UUID) *CouponScopeCreate {
-	if u != nil {
-		csc.SetID(*u)
-	}
 	return csc
 }
 
@@ -221,6 +226,13 @@ func (csc *CouponScopeCreate) defaults() error {
 		v := couponscope.DefaultDeletedAt()
 		csc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := csc.mutation.EntID(); !ok {
+		if couponscope.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized couponscope.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := couponscope.DefaultEntID()
+		csc.mutation.SetEntID(v)
+	}
 	if _, ok := csc.mutation.CouponID(); !ok {
 		if couponscope.DefaultCouponID == nil {
 			return fmt.Errorf("ent: uninitialized couponscope.DefaultCouponID (forgotten import ent/runtime?)")
@@ -239,13 +251,6 @@ func (csc *CouponScopeCreate) defaults() error {
 		v := couponscope.DefaultCouponScope
 		csc.mutation.SetCouponScope(v)
 	}
-	if _, ok := csc.mutation.ID(); !ok {
-		if couponscope.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized couponscope.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := couponscope.DefaultID()
-		csc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -260,6 +265,9 @@ func (csc *CouponScopeCreate) check() error {
 	if _, ok := csc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "CouponScope.deleted_at"`)}
 	}
+	if _, ok := csc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "CouponScope.ent_id"`)}
+	}
 	return nil
 }
 
@@ -271,12 +279,9 @@ func (csc *CouponScopeCreate) sqlSave(ctx context.Context) (*CouponScope, error)
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -287,7 +292,7 @@ func (csc *CouponScopeCreate) createSpec() (*CouponScope, *sqlgraph.CreateSpec) 
 		_spec = &sqlgraph.CreateSpec{
 			Table: couponscope.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		}
@@ -295,7 +300,7 @@ func (csc *CouponScopeCreate) createSpec() (*CouponScope, *sqlgraph.CreateSpec) 
 	_spec.OnConflict = csc.conflict
 	if id, ok := csc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := csc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -320,6 +325,14 @@ func (csc *CouponScopeCreate) createSpec() (*CouponScope, *sqlgraph.CreateSpec) 
 			Column: couponscope.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := csc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponscope.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := csc.mutation.CouponID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -450,6 +463,18 @@ func (u *CouponScopeUpsert) UpdateDeletedAt() *CouponScopeUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *CouponScopeUpsert) AddDeletedAt(v uint32) *CouponScopeUpsert {
 	u.Add(couponscope.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CouponScopeUpsert) SetEntID(v uuid.UUID) *CouponScopeUpsert {
+	u.Set(couponscope.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponScopeUpsert) UpdateEntID() *CouponScopeUpsert {
+	u.SetExcluded(couponscope.FieldEntID)
 	return u
 }
 
@@ -620,6 +645,20 @@ func (u *CouponScopeUpsertOne) UpdateDeletedAt() *CouponScopeUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *CouponScopeUpsertOne) SetEntID(v uuid.UUID) *CouponScopeUpsertOne {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponScopeUpsertOne) UpdateEntID() *CouponScopeUpsertOne {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCouponID sets the "coupon_id" field.
 func (u *CouponScopeUpsertOne) SetCouponID(v uuid.UUID) *CouponScopeUpsertOne {
 	return u.Update(func(s *CouponScopeUpsert) {
@@ -699,12 +738,7 @@ func (u *CouponScopeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CouponScopeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: CouponScopeUpsertOne.ID is not supported by MySQL driver. Use CouponScopeUpsertOne.Exec instead")
-	}
+func (u *CouponScopeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -713,7 +747,7 @@ func (u *CouponScopeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CouponScopeUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *CouponScopeUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -764,6 +798,10 @@ func (cscb *CouponScopeCreateBulk) Save(ctx context.Context) ([]*CouponScope, er
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -959,6 +997,20 @@ func (u *CouponScopeUpsertBulk) AddDeletedAt(v uint32) *CouponScopeUpsertBulk {
 func (u *CouponScopeUpsertBulk) UpdateDeletedAt() *CouponScopeUpsertBulk {
 	return u.Update(func(s *CouponScopeUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CouponScopeUpsertBulk) SetEntID(v uuid.UUID) *CouponScopeUpsertBulk {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponScopeUpsertBulk) UpdateEntID() *CouponScopeUpsertBulk {
+	return u.Update(func(s *CouponScopeUpsert) {
+		s.UpdateEntID()
 	})
 }
 

@@ -44,5 +44,35 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := npool.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err
 	}
+	if err := achievement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := statement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := calculate.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := allocated.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := commission.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := coupon.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := allocated.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := event.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := invitationcode.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := registration.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }

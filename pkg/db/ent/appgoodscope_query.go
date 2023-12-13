@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // AppGoodScopeQuery is the builder for querying AppGoodScope entities.
@@ -87,8 +86,8 @@ func (agsq *AppGoodScopeQuery) FirstX(ctx context.Context) *AppGoodScope {
 
 // FirstID returns the first AppGoodScope ID from the query.
 // Returns a *NotFoundError when no AppGoodScope ID was found.
-func (agsq *AppGoodScopeQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (agsq *AppGoodScopeQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = agsq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (agsq *AppGoodScopeQuery) FirstID(ctx context.Context) (id uuid.UUID, err e
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (agsq *AppGoodScopeQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (agsq *AppGoodScopeQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := agsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (agsq *AppGoodScopeQuery) OnlyX(ctx context.Context) *AppGoodScope {
 // OnlyID is like Only, but returns the only AppGoodScope ID in the query.
 // Returns a *NotSingularError when more than one AppGoodScope ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (agsq *AppGoodScopeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (agsq *AppGoodScopeQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = agsq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (agsq *AppGoodScopeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err er
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (agsq *AppGoodScopeQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (agsq *AppGoodScopeQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := agsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (agsq *AppGoodScopeQuery) AllX(ctx context.Context) []*AppGoodScope {
 }
 
 // IDs executes the query and returns a list of AppGoodScope IDs.
-func (agsq *AppGoodScopeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (agsq *AppGoodScopeQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := agsq.Select(appgoodscope.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (agsq *AppGoodScopeQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (agsq *AppGoodScopeQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (agsq *AppGoodScopeQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := agsq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (agsq *AppGoodScopeQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   appgoodscope.Table,
 			Columns: appgoodscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: appgoodscope.FieldID,
 			},
 		},

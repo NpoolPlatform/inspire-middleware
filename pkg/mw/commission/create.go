@@ -26,8 +26,8 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 	}()
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
@@ -50,7 +50,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 		if _, err := commissioncrud.CreateSet(
 			tx.Commission.Create(),
 			&commissioncrud.Req{
-				ID:               h.ID,
+				EntID:            h.EntID,
 				AppID:            h.AppID,
 				UserID:           h.UserID,
 				GoodID:           h.GoodID,

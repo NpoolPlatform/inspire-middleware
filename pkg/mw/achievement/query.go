@@ -24,6 +24,7 @@ type queryHandler struct {
 func (h *queryHandler) selectAchievement(stm *ent.AchievementQuery) {
 	h.stmSelect = stm.Select(
 		entachievement.FieldID,
+		entachievement.FieldEntID,
 		entachievement.FieldAppID,
 		entachievement.FieldUserID,
 		entachievement.FieldGoodID,
@@ -40,15 +41,19 @@ func (h *queryHandler) selectAchievement(stm *ent.AchievementQuery) {
 	)
 }
 
-func (h *queryHandler) queryAchievement(cli *ent.Client) {
-	h.selectAchievement(
-		cli.Achievement.
-			Query().
-			Where(
-				entachievement.ID(*h.ID),
-				entachievement.DeletedAt(0),
-			),
-	)
+func (h *queryHandler) queryAchievement(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.Achievement.Query().Where(entachievement.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entachievement.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entachievement.EntID(*h.EntID))
+	}
+	h.selectAchievement(stm)
+	return nil
 }
 
 func (h *queryHandler) queryAchievements(ctx context.Context, cli *ent.Client) error {
@@ -116,7 +121,9 @@ func (h *Handler) GetAchievement(ctx context.Context) (*npool.Achievement, error
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryAchievement(cli)
+		if err := handler.queryAchievement(cli); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {

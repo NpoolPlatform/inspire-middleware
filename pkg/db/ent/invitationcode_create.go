@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -65,15 +64,45 @@ func (icc *InvitationCodeCreate) SetNillableDeletedAt(u *uint32) *InvitationCode
 	return icc
 }
 
+// SetEntID sets the "ent_id" field.
+func (icc *InvitationCodeCreate) SetEntID(u uuid.UUID) *InvitationCodeCreate {
+	icc.mutation.SetEntID(u)
+	return icc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (icc *InvitationCodeCreate) SetNillableEntID(u *uuid.UUID) *InvitationCodeCreate {
+	if u != nil {
+		icc.SetEntID(*u)
+	}
+	return icc
+}
+
 // SetAppID sets the "app_id" field.
 func (icc *InvitationCodeCreate) SetAppID(u uuid.UUID) *InvitationCodeCreate {
 	icc.mutation.SetAppID(u)
 	return icc
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (icc *InvitationCodeCreate) SetNillableAppID(u *uuid.UUID) *InvitationCodeCreate {
+	if u != nil {
+		icc.SetAppID(*u)
+	}
+	return icc
+}
+
 // SetUserID sets the "user_id" field.
 func (icc *InvitationCodeCreate) SetUserID(u uuid.UUID) *InvitationCodeCreate {
 	icc.mutation.SetUserID(u)
+	return icc
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (icc *InvitationCodeCreate) SetNillableUserID(u *uuid.UUID) *InvitationCodeCreate {
+	if u != nil {
+		icc.SetUserID(*u)
+	}
 	return icc
 }
 
@@ -106,16 +135,8 @@ func (icc *InvitationCodeCreate) SetNillableDisabled(b *bool) *InvitationCodeCre
 }
 
 // SetID sets the "id" field.
-func (icc *InvitationCodeCreate) SetID(u uuid.UUID) *InvitationCodeCreate {
+func (icc *InvitationCodeCreate) SetID(u uint32) *InvitationCodeCreate {
 	icc.mutation.SetID(u)
-	return icc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (icc *InvitationCodeCreate) SetNillableID(u *uuid.UUID) *InvitationCodeCreate {
-	if u != nil {
-		icc.SetID(*u)
-	}
 	return icc
 }
 
@@ -219,6 +240,27 @@ func (icc *InvitationCodeCreate) defaults() error {
 		v := invitationcode.DefaultDeletedAt()
 		icc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := icc.mutation.EntID(); !ok {
+		if invitationcode.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized invitationcode.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := invitationcode.DefaultEntID()
+		icc.mutation.SetEntID(v)
+	}
+	if _, ok := icc.mutation.AppID(); !ok {
+		if invitationcode.DefaultAppID == nil {
+			return fmt.Errorf("ent: uninitialized invitationcode.DefaultAppID (forgotten import ent/runtime?)")
+		}
+		v := invitationcode.DefaultAppID()
+		icc.mutation.SetAppID(v)
+	}
+	if _, ok := icc.mutation.UserID(); !ok {
+		if invitationcode.DefaultUserID == nil {
+			return fmt.Errorf("ent: uninitialized invitationcode.DefaultUserID (forgotten import ent/runtime?)")
+		}
+		v := invitationcode.DefaultUserID()
+		icc.mutation.SetUserID(v)
+	}
 	if _, ok := icc.mutation.InvitationCode(); !ok {
 		v := invitationcode.DefaultInvitationCode
 		icc.mutation.SetInvitationCode(v)
@@ -226,13 +268,6 @@ func (icc *InvitationCodeCreate) defaults() error {
 	if _, ok := icc.mutation.Disabled(); !ok {
 		v := invitationcode.DefaultDisabled
 		icc.mutation.SetDisabled(v)
-	}
-	if _, ok := icc.mutation.ID(); !ok {
-		if invitationcode.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized invitationcode.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := invitationcode.DefaultID()
-		icc.mutation.SetID(v)
 	}
 	return nil
 }
@@ -248,11 +283,8 @@ func (icc *InvitationCodeCreate) check() error {
 	if _, ok := icc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "InvitationCode.deleted_at"`)}
 	}
-	if _, ok := icc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "InvitationCode.app_id"`)}
-	}
-	if _, ok := icc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "InvitationCode.user_id"`)}
+	if _, ok := icc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "InvitationCode.ent_id"`)}
 	}
 	return nil
 }
@@ -265,12 +297,9 @@ func (icc *InvitationCodeCreate) sqlSave(ctx context.Context) (*InvitationCode, 
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -281,7 +310,7 @@ func (icc *InvitationCodeCreate) createSpec() (*InvitationCode, *sqlgraph.Create
 		_spec = &sqlgraph.CreateSpec{
 			Table: invitationcode.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		}
@@ -289,7 +318,7 @@ func (icc *InvitationCodeCreate) createSpec() (*InvitationCode, *sqlgraph.Create
 	_spec.OnConflict = icc.conflict
 	if id, ok := icc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := icc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -314,6 +343,14 @@ func (icc *InvitationCodeCreate) createSpec() (*InvitationCode, *sqlgraph.Create
 			Column: invitationcode.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := icc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: invitationcode.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := icc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -455,6 +492,18 @@ func (u *InvitationCodeUpsert) AddDeletedAt(v uint32) *InvitationCodeUpsert {
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *InvitationCodeUpsert) SetEntID(v uuid.UUID) *InvitationCodeUpsert {
+	u.Set(invitationcode.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *InvitationCodeUpsert) UpdateEntID() *InvitationCodeUpsert {
+	u.SetExcluded(invitationcode.FieldEntID)
+	return u
+}
+
 // SetAppID sets the "app_id" field.
 func (u *InvitationCodeUpsert) SetAppID(v uuid.UUID) *InvitationCodeUpsert {
 	u.Set(invitationcode.FieldAppID, v)
@@ -467,6 +516,12 @@ func (u *InvitationCodeUpsert) UpdateAppID() *InvitationCodeUpsert {
 	return u
 }
 
+// ClearAppID clears the value of the "app_id" field.
+func (u *InvitationCodeUpsert) ClearAppID() *InvitationCodeUpsert {
+	u.SetNull(invitationcode.FieldAppID)
+	return u
+}
+
 // SetUserID sets the "user_id" field.
 func (u *InvitationCodeUpsert) SetUserID(v uuid.UUID) *InvitationCodeUpsert {
 	u.Set(invitationcode.FieldUserID, v)
@@ -476,6 +531,12 @@ func (u *InvitationCodeUpsert) SetUserID(v uuid.UUID) *InvitationCodeUpsert {
 // UpdateUserID sets the "user_id" field to the value that was provided on create.
 func (u *InvitationCodeUpsert) UpdateUserID() *InvitationCodeUpsert {
 	u.SetExcluded(invitationcode.FieldUserID)
+	return u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *InvitationCodeUpsert) ClearUserID() *InvitationCodeUpsert {
+	u.SetNull(invitationcode.FieldUserID)
 	return u
 }
 
@@ -628,6 +689,20 @@ func (u *InvitationCodeUpsertOne) UpdateDeletedAt() *InvitationCodeUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *InvitationCodeUpsertOne) SetEntID(v uuid.UUID) *InvitationCodeUpsertOne {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *InvitationCodeUpsertOne) UpdateEntID() *InvitationCodeUpsertOne {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *InvitationCodeUpsertOne) SetAppID(v uuid.UUID) *InvitationCodeUpsertOne {
 	return u.Update(func(s *InvitationCodeUpsert) {
@@ -642,6 +717,13 @@ func (u *InvitationCodeUpsertOne) UpdateAppID() *InvitationCodeUpsertOne {
 	})
 }
 
+// ClearAppID clears the value of the "app_id" field.
+func (u *InvitationCodeUpsertOne) ClearAppID() *InvitationCodeUpsertOne {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.ClearAppID()
+	})
+}
+
 // SetUserID sets the "user_id" field.
 func (u *InvitationCodeUpsertOne) SetUserID(v uuid.UUID) *InvitationCodeUpsertOne {
 	return u.Update(func(s *InvitationCodeUpsert) {
@@ -653,6 +735,13 @@ func (u *InvitationCodeUpsertOne) SetUserID(v uuid.UUID) *InvitationCodeUpsertOn
 func (u *InvitationCodeUpsertOne) UpdateUserID() *InvitationCodeUpsertOne {
 	return u.Update(func(s *InvitationCodeUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *InvitationCodeUpsertOne) ClearUserID() *InvitationCodeUpsertOne {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.ClearUserID()
 	})
 }
 
@@ -714,12 +803,7 @@ func (u *InvitationCodeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: InvitationCodeUpsertOne.ID is not supported by MySQL driver. Use InvitationCodeUpsertOne.Exec instead")
-	}
+func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -728,7 +812,7 @@ func (u *InvitationCodeUpsertOne) ID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *InvitationCodeUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *InvitationCodeUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -779,6 +863,10 @@ func (iccb *InvitationCodeCreateBulk) Save(ctx context.Context) ([]*InvitationCo
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -977,6 +1065,20 @@ func (u *InvitationCodeUpsertBulk) UpdateDeletedAt() *InvitationCodeUpsertBulk {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *InvitationCodeUpsertBulk) SetEntID(v uuid.UUID) *InvitationCodeUpsertBulk {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *InvitationCodeUpsertBulk) UpdateEntID() *InvitationCodeUpsertBulk {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *InvitationCodeUpsertBulk) SetAppID(v uuid.UUID) *InvitationCodeUpsertBulk {
 	return u.Update(func(s *InvitationCodeUpsert) {
@@ -991,6 +1093,13 @@ func (u *InvitationCodeUpsertBulk) UpdateAppID() *InvitationCodeUpsertBulk {
 	})
 }
 
+// ClearAppID clears the value of the "app_id" field.
+func (u *InvitationCodeUpsertBulk) ClearAppID() *InvitationCodeUpsertBulk {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.ClearAppID()
+	})
+}
+
 // SetUserID sets the "user_id" field.
 func (u *InvitationCodeUpsertBulk) SetUserID(v uuid.UUID) *InvitationCodeUpsertBulk {
 	return u.Update(func(s *InvitationCodeUpsert) {
@@ -1002,6 +1111,13 @@ func (u *InvitationCodeUpsertBulk) SetUserID(v uuid.UUID) *InvitationCodeUpsertB
 func (u *InvitationCodeUpsertBulk) UpdateUserID() *InvitationCodeUpsertBulk {
 	return u.Update(func(s *InvitationCodeUpsert) {
 		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *InvitationCodeUpsertBulk) ClearUserID() *InvitationCodeUpsertBulk {
+	return u.Update(func(s *InvitationCodeUpsert) {
+		s.ClearUserID()
 	})
 }
 

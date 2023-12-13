@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -66,9 +65,31 @@ func (ec *EventCreate) SetNillableDeletedAt(u *uint32) *EventCreate {
 	return ec
 }
 
+// SetEntID sets the "ent_id" field.
+func (ec *EventCreate) SetEntID(u uuid.UUID) *EventCreate {
+	ec.mutation.SetEntID(u)
+	return ec
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableEntID(u *uuid.UUID) *EventCreate {
+	if u != nil {
+		ec.SetEntID(*u)
+	}
+	return ec
+}
+
 // SetAppID sets the "app_id" field.
 func (ec *EventCreate) SetAppID(u uuid.UUID) *EventCreate {
 	ec.mutation.SetAppID(u)
+	return ec
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableAppID(u *uuid.UUID) *EventCreate {
+	if u != nil {
+		ec.SetAppID(*u)
+	}
 	return ec
 }
 
@@ -177,16 +198,8 @@ func (ec *EventCreate) SetNillableInviterLayers(u *uint32) *EventCreate {
 }
 
 // SetID sets the "id" field.
-func (ec *EventCreate) SetID(u uuid.UUID) *EventCreate {
+func (ec *EventCreate) SetID(u uint32) *EventCreate {
 	ec.mutation.SetID(u)
-	return ec
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (ec *EventCreate) SetNillableID(u *uuid.UUID) *EventCreate {
-	if u != nil {
-		ec.SetID(*u)
-	}
 	return ec
 }
 
@@ -290,6 +303,20 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultDeletedAt()
 		ec.mutation.SetDeletedAt(v)
 	}
+	if _, ok := ec.mutation.EntID(); !ok {
+		if event.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := event.DefaultEntID()
+		ec.mutation.SetEntID(v)
+	}
+	if _, ok := ec.mutation.AppID(); !ok {
+		if event.DefaultAppID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultAppID (forgotten import ent/runtime?)")
+		}
+		v := event.DefaultAppID()
+		ec.mutation.SetAppID(v)
+	}
 	if _, ok := ec.mutation.EventType(); !ok {
 		v := event.DefaultEventType
 		ec.mutation.SetEventType(v)
@@ -328,13 +355,6 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultInviterLayers
 		ec.mutation.SetInviterLayers(v)
 	}
-	if _, ok := ec.mutation.ID(); !ok {
-		if event.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized event.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := event.DefaultID()
-		ec.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -349,8 +369,8 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Event.deleted_at"`)}
 	}
-	if _, ok := ec.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Event.app_id"`)}
+	if _, ok := ec.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Event.ent_id"`)}
 	}
 	return nil
 }
@@ -363,12 +383,9 @@ func (ec *EventCreate) sqlSave(ctx context.Context) (*Event, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -379,7 +396,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: event.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: event.FieldID,
 			},
 		}
@@ -387,7 +404,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = ec.conflict
 	if id, ok := ec.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := ec.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -412,6 +429,14 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			Column: event.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := ec.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: event.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := ec.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -593,6 +618,18 @@ func (u *EventUpsert) AddDeletedAt(v uint32) *EventUpsert {
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *EventUpsert) SetEntID(v uuid.UUID) *EventUpsert {
+	u.Set(event.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EventUpsert) UpdateEntID() *EventUpsert {
+	u.SetExcluded(event.FieldEntID)
+	return u
+}
+
 // SetAppID sets the "app_id" field.
 func (u *EventUpsert) SetAppID(v uuid.UUID) *EventUpsert {
 	u.Set(event.FieldAppID, v)
@@ -602,6 +639,12 @@ func (u *EventUpsert) SetAppID(v uuid.UUID) *EventUpsert {
 // UpdateAppID sets the "app_id" field to the value that was provided on create.
 func (u *EventUpsert) UpdateAppID() *EventUpsert {
 	u.SetExcluded(event.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *EventUpsert) ClearAppID() *EventUpsert {
+	u.SetNull(event.FieldAppID)
 	return u
 }
 
@@ -874,6 +917,20 @@ func (u *EventUpsertOne) UpdateDeletedAt() *EventUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *EventUpsertOne) SetEntID(v uuid.UUID) *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EventUpsertOne) UpdateEntID() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *EventUpsertOne) SetAppID(v uuid.UUID) *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
@@ -885,6 +942,13 @@ func (u *EventUpsertOne) SetAppID(v uuid.UUID) *EventUpsertOne {
 func (u *EventUpsertOne) UpdateAppID() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
 		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *EventUpsertOne) ClearAppID() *EventUpsertOne {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1086,12 +1150,7 @@ func (u *EventUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *EventUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: EventUpsertOne.ID is not supported by MySQL driver. Use EventUpsertOne.Exec instead")
-	}
+func (u *EventUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1100,7 +1159,7 @@ func (u *EventUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *EventUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *EventUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1151,6 +1210,10 @@ func (ecb *EventCreateBulk) Save(ctx context.Context) ([]*Event, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1349,6 +1412,20 @@ func (u *EventUpsertBulk) UpdateDeletedAt() *EventUpsertBulk {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *EventUpsertBulk) SetEntID(v uuid.UUID) *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EventUpsertBulk) UpdateEntID() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *EventUpsertBulk) SetAppID(v uuid.UUID) *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
@@ -1360,6 +1437,13 @@ func (u *EventUpsertBulk) SetAppID(v uuid.UUID) *EventUpsertBulk {
 func (u *EventUpsertBulk) UpdateAppID() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
 		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *EventUpsertBulk) ClearAppID() *EventUpsertBulk {
+	return u.Update(func(s *EventUpsert) {
+		s.ClearAppID()
 	})
 }
 

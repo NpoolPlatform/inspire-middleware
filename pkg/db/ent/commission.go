@@ -16,13 +16,15 @@ import (
 type Commission struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
@@ -58,11 +60,11 @@ func (*Commission) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case commission.FieldAmountOrPercent, commission.FieldThreshold:
 			values[i] = new(decimal.Decimal)
-		case commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt, commission.FieldOrderLimit:
+		case commission.FieldID, commission.FieldCreatedAt, commission.FieldUpdatedAt, commission.FieldDeletedAt, commission.FieldStartAt, commission.FieldEndAt, commission.FieldOrderLimit:
 			values[i] = new(sql.NullInt64)
 		case commission.FieldSettleType, commission.FieldSettleMode, commission.FieldSettleInterval, commission.FieldSettleAmountType:
 			values[i] = new(sql.NullString)
-		case commission.FieldID, commission.FieldAppID, commission.FieldUserID, commission.FieldGoodID, commission.FieldAppGoodID:
+		case commission.FieldEntID, commission.FieldAppID, commission.FieldUserID, commission.FieldGoodID, commission.FieldAppGoodID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Commission", columns[i])
@@ -80,11 +82,11 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case commission.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				c.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			c.ID = uint32(value.Int64)
 		case commission.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -102,6 +104,12 @@ func (c *Commission) assignValues(columns []string, values []interface{}) error 
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				c.DeletedAt = uint32(value.Int64)
+			}
+		case commission.FieldEntID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
+			} else if value != nil {
+				c.EntID = *value
 			}
 		case commission.FieldAppID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -217,6 +225,9 @@ func (c *Commission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", c.DeletedAt))
+	builder.WriteString(", ")
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", c.EntID))
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.AppID))

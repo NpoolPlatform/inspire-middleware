@@ -81,15 +81,15 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := invitationcodecrud.CreateSet(
 			cli.InvitationCode.Create(),
 			&invitationcodecrud.Req{
-				ID:             h.ID,
+				EntID:          h.EntID,
 				AppID:          h.AppID,
 				UserID:         h.UserID,
 				InvitationCode: &code,

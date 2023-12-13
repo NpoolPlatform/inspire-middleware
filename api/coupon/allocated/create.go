@@ -24,7 +24,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 
 	handler, err := allocated1.NewHandler(
 		ctx,
-		allocated1.WithID(req.ID, false),
+		allocated1.WithEntID(req.EntID, false),
 		allocated1.WithAppID(req.AppID, true),
 		allocated1.WithCouponID(req.CouponID, true),
 		allocated1.WithUserID(req.UserID, true),

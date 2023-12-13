@@ -72,7 +72,7 @@ func (csd *CouponScopeDelete) sqlExec(ctx context.Context) (int, error) {
 		Node: &sqlgraph.NodeSpec{
 			Table: couponscope.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		},

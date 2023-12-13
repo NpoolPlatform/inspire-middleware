@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
 	"github.com/shopspring/decimal"
 
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
 	"github.com/google/uuid"
 
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
@@ -20,6 +21,7 @@ type Event struct {
 func (Event) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
 	}
 }
 
@@ -27,11 +29,11 @@ func (Event) Mixin() []ent.Mixin {
 func (Event) Fields() []ent.Field {
 	return []ent.Field{
 		field.
-			UUID("id", uuid.UUID{}).
-			Default(uuid.New).
-			Unique(),
-		field.
-			UUID("app_id", uuid.UUID{}),
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
 		field.
 			String("event_type").
 			Optional().

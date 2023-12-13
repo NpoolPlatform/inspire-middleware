@@ -21,13 +21,17 @@ type rewardHandler struct {
 	*Handler
 }
 
-func (h *rewardHandler) condGood() {
+func (h *rewardHandler) condGood() error {
 	switch *h.EventType {
 	case basetypes.UsedFor_Purchase:
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
+		if h.GoodID == nil {
+			return fmt.Errorf("need goodid")
+		}
 		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
 	}
+	return nil
 }
 
 func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
@@ -35,8 +39,8 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 		AppID:     &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		EventType: &cruder.Cond{Op: cruder.EQ, Val: *h.EventType},
 	}
-	if h.GoodID != nil {
-		h.condGood()
+	if err := h.condGood(); err != nil {
+		return nil, err
 	}
 	info, err := h.GetEventOnly(ctx)
 	if err != nil {
@@ -66,7 +70,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 		_id := id
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(&_id, true),
+			coupon1.WithEntID(&_id, true),
 		)
 		if err != nil {
 			return err
@@ -89,7 +93,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			ctx,
 			allocated1.WithAppID(&coup.AppID, true),
 			allocated1.WithUserID(&userID, true),
-			allocated1.WithCouponID(&coup.ID, true),
+			allocated1.WithCouponID(&coup.EntID, true),
 		)
 		if err != nil {
 			return err

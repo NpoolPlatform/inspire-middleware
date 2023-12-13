@@ -37,7 +37,7 @@ func init() {
 }
 
 var ret = &npool.Coupon{
-	ID:                  uuid.NewString(),
+	EntID:               uuid.NewString(),
 	CouponType:          types.CouponType_Discount,
 	CouponTypeStr:       types.CouponType_Discount.String(),
 	AppID:               uuid.NewString(),
@@ -55,24 +55,23 @@ var ret = &npool.Coupon{
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 }
 
-var req = &npool.CouponReq{
-	ID:               &ret.ID,
-	CouponType:       &ret.CouponType,
-	AppID:            &ret.AppID,
-	Denomination:     &ret.Denomination,
-	Circulation:      &ret.Circulation,
-	IssuedBy:         &ret.IssuedBy,
-	StartAt:          &ret.StartAt,
-	DurationDays:     &ret.DurationDays,
-	Message:          &ret.Message,
-	Name:             &ret.Name,
-	CouponConstraint: &ret.CouponConstraint,
-	CouponScope:      &ret.CouponScope,
-}
-
 func createDiscount(t *testing.T) {
-	info, err := CreateCoupon(context.Background(), req)
+	info, err := CreateCoupon(context.Background(), &npool.CouponReq{
+		EntID:            &ret.EntID,
+		CouponType:       &ret.CouponType,
+		AppID:            &ret.AppID,
+		Denomination:     &ret.Denomination,
+		Circulation:      &ret.Circulation,
+		IssuedBy:         &ret.IssuedBy,
+		StartAt:          &ret.StartAt,
+		DurationDays:     &ret.DurationDays,
+		Message:          &ret.Message,
+		Name:             &ret.Name,
+		CouponConstraint: &ret.CouponConstraint,
+		CouponScope:      &ret.CouponScope,
+	})
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)
@@ -80,43 +79,19 @@ func createDiscount(t *testing.T) {
 }
 
 func updateDiscount(t *testing.T) {
-	denomination := "10.02"
-	circulation := "200.4"
-
-	req.Denomination = &denomination
-	req.Circulation = &circulation
-
-	ret.Denomination = denomination
-	ret.Circulation = circulation
-
+	ret.Denomination = "10.02"
+	ret.Circulation = "200.4"
 	ret.CouponScope = types.CouponScope_AllGood
 	ret.CouponScopeStr = types.CouponScope_AllGood.String()
+	ret.Allocated = "1"
 
-	info, err := UpdateCoupon(context.Background(), req)
-	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
-	}
-
-	allocated := "2"
-
-	req.Allocated = &allocated
-	ret.Allocated = allocated
-
-	info, err = UpdateCoupon(context.Background(), req)
-	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
-	}
-
-	allocated = "4"
-
-	req.Allocated = &allocated
-	ret.Allocated = "6"
-	req.Denomination = nil
-	req.Circulation = nil
-
-	info, err = UpdateCoupon(context.Background(), req)
+	info, err := UpdateCoupon(context.Background(), &npool.CouponReq{
+		ID:           &ret.ID,
+		Denomination: &ret.Denomination,
+		Circulation:  &ret.Circulation,
+		CouponScope:  &ret.CouponScope,
+		Allocated:    &ret.Allocated,
+	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, ret, info)

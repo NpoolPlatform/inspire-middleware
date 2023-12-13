@@ -8,6 +8,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/api"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/migrator"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 
 	apicli "github.com/NpoolPlatform/basal-middleware/pkg/client/api"
@@ -37,6 +38,9 @@ var runCmd = &cli.Command{
 }
 
 func run(ctx context.Context) error {
+	if err := migrator.Migrate(ctx); err != nil {
+		return err
+	}
 	if err := db.Init(); err != nil {
 		return err
 	}

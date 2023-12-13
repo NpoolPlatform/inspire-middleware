@@ -42,15 +42,15 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := registrationcrud.CreateSet(
 			cli.Registration.Create(),
 			&registrationcrud.Req{
-				ID:        h.ID,
+				EntID:     h.EntID,
 				AppID:     h.AppID,
 				InviterID: h.InviterID,
 				InviteeID: h.InviteeID,

@@ -1,3 +1,4 @@
+//nolint
 package invitationcode
 
 import (
@@ -23,7 +24,8 @@ func (s *Server) DeleteInvitationCode(ctx context.Context, in *npool.DeleteInvit
 	}
 	handler, err := invitationcode1.NewHandler(
 		ctx,
-		invitationcode1.WithID(req.ID, true),
+		invitationcode1.WithID(req.ID, false),
+		invitationcode1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

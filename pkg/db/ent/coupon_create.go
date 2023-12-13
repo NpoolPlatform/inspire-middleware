@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,6 +61,20 @@ func (cc *CouponCreate) SetDeletedAt(u uint32) *CouponCreate {
 func (cc *CouponCreate) SetNillableDeletedAt(u *uint32) *CouponCreate {
 	if u != nil {
 		cc.SetDeletedAt(*u)
+	}
+	return cc
+}
+
+// SetEntID sets the "ent_id" field.
+func (cc *CouponCreate) SetEntID(u uuid.UUID) *CouponCreate {
+	cc.mutation.SetEntID(u)
+	return cc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableEntID(u *uuid.UUID) *CouponCreate {
+	if u != nil {
+		cc.SetEntID(*u)
 	}
 	return cc
 }
@@ -269,16 +282,8 @@ func (cc *CouponCreate) SetNillableCouponScope(s *string) *CouponCreate {
 }
 
 // SetID sets the "id" field.
-func (cc *CouponCreate) SetID(u uuid.UUID) *CouponCreate {
+func (cc *CouponCreate) SetID(u uint32) *CouponCreate {
 	cc.mutation.SetID(u)
-	return cc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (cc *CouponCreate) SetNillableID(u *uuid.UUID) *CouponCreate {
-	if u != nil {
-		cc.SetID(*u)
-	}
 	return cc
 }
 
@@ -382,6 +387,13 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultDeletedAt()
 		cc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		if coupon.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized coupon.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := coupon.DefaultEntID()
+		cc.mutation.SetEntID(v)
+	}
 	if _, ok := cc.mutation.AppID(); !ok {
 		if coupon.DefaultAppID == nil {
 			return fmt.Errorf("ent: uninitialized coupon.DefaultAppID (forgotten import ent/runtime?)")
@@ -444,13 +456,6 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultCouponScope
 		cc.mutation.SetCouponScope(v)
 	}
-	if _, ok := cc.mutation.ID(); !ok {
-		if coupon.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized coupon.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := coupon.DefaultID()
-		cc.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -464,6 +469,9 @@ func (cc *CouponCreate) check() error {
 	}
 	if _, ok := cc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Coupon.deleted_at"`)}
+	}
+	if _, ok := cc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Coupon.ent_id"`)}
 	}
 	if _, ok := cc.mutation.IssuedBy(); !ok {
 		return &ValidationError{Name: "issued_by", err: errors.New(`ent: missing required field "Coupon.issued_by"`)}
@@ -479,12 +487,9 @@ func (cc *CouponCreate) sqlSave(ctx context.Context) (*Coupon, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -495,7 +500,7 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: coupon.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: coupon.FieldID,
 			},
 		}
@@ -503,7 +508,7 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = cc.conflict
 	if id, ok := cc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := cc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -528,6 +533,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := cc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: coupon.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := cc.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -754,6 +767,18 @@ func (u *CouponUpsert) UpdateDeletedAt() *CouponUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *CouponUpsert) AddDeletedAt(v uint32) *CouponUpsert {
 	u.Add(coupon.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CouponUpsert) SetEntID(v uuid.UUID) *CouponUpsert {
+	u.Set(coupon.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateEntID() *CouponUpsert {
+	u.SetExcluded(coupon.FieldEntID)
 	return u
 }
 
@@ -1146,6 +1171,20 @@ func (u *CouponUpsertOne) UpdateDeletedAt() *CouponUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *CouponUpsertOne) SetEntID(v uuid.UUID) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateEntID() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *CouponUpsertOne) SetAppID(v uuid.UUID) *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
@@ -1484,12 +1523,7 @@ func (u *CouponUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CouponUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: CouponUpsertOne.ID is not supported by MySQL driver. Use CouponUpsertOne.Exec instead")
-	}
+func (u *CouponUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1498,7 +1532,7 @@ func (u *CouponUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CouponUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *CouponUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1549,6 +1583,10 @@ func (ccb *CouponCreateBulk) Save(ctx context.Context) ([]*Coupon, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1744,6 +1782,20 @@ func (u *CouponUpsertBulk) AddDeletedAt(v uint32) *CouponUpsertBulk {
 func (u *CouponUpsertBulk) UpdateDeletedAt() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *CouponUpsertBulk) SetEntID(v uuid.UUID) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateEntID() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateEntID()
 	})
 }
 

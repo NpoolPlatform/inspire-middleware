@@ -31,7 +31,7 @@ func init() {
 
 var (
 	ret = npool.Commission{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		AppID:               uuid.NewString(),
 		UserID:              uuid.NewString(),
 		GoodID:              uuid.NewString(),
@@ -57,7 +57,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
 		WithGoodID(&ret.GoodID, true),
@@ -74,6 +74,7 @@ func createCommission(t *testing.T) {
 
 	info, err := handler.CreateCommission(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, info, &ret)
@@ -81,6 +82,10 @@ func createCommission(t *testing.T) {
 }
 
 func updateCommission(t *testing.T) {
+	ret.AmountOrPercent = "13"
+	ret.StartAt += 10000
+	ret.Threshold = decimal.NewFromInt(10).String()
+
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
@@ -100,7 +105,7 @@ func updateCommission(t *testing.T) {
 func getCommission(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 	)
 	assert.Nil(t, err)
 
@@ -112,7 +117,7 @@ func getCommission(t *testing.T) {
 
 func getCommissions(t *testing.T) {
 	conds := &npool.Conds{
-		ID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
+		EntID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.GoodID},

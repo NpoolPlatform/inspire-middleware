@@ -17,24 +17,11 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) getCoupon(ctx context.Context) error {
-	return db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		coupon, err := cli.Coupon.Get(ctx, *h.CouponID)
-		if err != nil {
-			return err
-		}
-		if coupon == nil {
-			return fmt.Errorf("coupon not found %v", *h.CouponID)
-		}
-		return nil
-	})
-}
-
 func (h *createHandler) createScope(ctx context.Context, cli *ent.Client) error {
 	if _, err := scopecrud.CreateSet(
 		cli.CouponScope.Create(),
 		&scopecrud.Req{
-			ID:          h.ID,
+			EntID:       h.EntID,
 			GoodID:      h.GoodID,
 			CouponID:    h.CouponID,
 			CouponScope: h.CouponScope,
@@ -48,9 +35,6 @@ func (h *createHandler) createScope(ctx context.Context, cli *ent.Client) error 
 func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 	handler := &createHandler{
 		Handler: h,
-	}
-	if err := handler.getCoupon(ctx); err != nil {
-		return nil, err
 	}
 
 	h.Conds = &scopecrud.Conds{
@@ -67,8 +51,8 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 	}
 
 	id := uuid.New()
-	if h.ID == nil {
-		h.ID = &id
+	if h.EntID == nil {
+		h.EntID = &id
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

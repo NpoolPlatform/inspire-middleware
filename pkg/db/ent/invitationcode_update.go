@@ -84,15 +84,57 @@ func (icu *InvitationCodeUpdate) AddDeletedAt(u int32) *InvitationCodeUpdate {
 	return icu
 }
 
+// SetEntID sets the "ent_id" field.
+func (icu *InvitationCodeUpdate) SetEntID(u uuid.UUID) *InvitationCodeUpdate {
+	icu.mutation.SetEntID(u)
+	return icu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (icu *InvitationCodeUpdate) SetNillableEntID(u *uuid.UUID) *InvitationCodeUpdate {
+	if u != nil {
+		icu.SetEntID(*u)
+	}
+	return icu
+}
+
 // SetAppID sets the "app_id" field.
 func (icu *InvitationCodeUpdate) SetAppID(u uuid.UUID) *InvitationCodeUpdate {
 	icu.mutation.SetAppID(u)
 	return icu
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (icu *InvitationCodeUpdate) SetNillableAppID(u *uuid.UUID) *InvitationCodeUpdate {
+	if u != nil {
+		icu.SetAppID(*u)
+	}
+	return icu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (icu *InvitationCodeUpdate) ClearAppID() *InvitationCodeUpdate {
+	icu.mutation.ClearAppID()
+	return icu
+}
+
 // SetUserID sets the "user_id" field.
 func (icu *InvitationCodeUpdate) SetUserID(u uuid.UUID) *InvitationCodeUpdate {
 	icu.mutation.SetUserID(u)
+	return icu
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (icu *InvitationCodeUpdate) SetNillableUserID(u *uuid.UUID) *InvitationCodeUpdate {
+	if u != nil {
+		icu.SetUserID(*u)
+	}
+	return icu
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (icu *InvitationCodeUpdate) ClearUserID() *InvitationCodeUpdate {
+	icu.mutation.ClearUserID()
 	return icu
 }
 
@@ -222,7 +264,7 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},
@@ -276,6 +318,13 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: invitationcode.FieldDeletedAt,
 		})
 	}
+	if value, ok := icu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: invitationcode.FieldEntID,
+		})
+	}
 	if value, ok := icu.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -283,10 +332,22 @@ func (icu *InvitationCodeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: invitationcode.FieldAppID,
 		})
 	}
+	if icu.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: invitationcode.FieldAppID,
+		})
+	}
 	if value, ok := icu.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: invitationcode.FieldUserID,
+		})
+	}
+	if icu.mutation.UserIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: invitationcode.FieldUserID,
 		})
 	}
@@ -392,15 +453,57 @@ func (icuo *InvitationCodeUpdateOne) AddDeletedAt(u int32) *InvitationCodeUpdate
 	return icuo
 }
 
+// SetEntID sets the "ent_id" field.
+func (icuo *InvitationCodeUpdateOne) SetEntID(u uuid.UUID) *InvitationCodeUpdateOne {
+	icuo.mutation.SetEntID(u)
+	return icuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (icuo *InvitationCodeUpdateOne) SetNillableEntID(u *uuid.UUID) *InvitationCodeUpdateOne {
+	if u != nil {
+		icuo.SetEntID(*u)
+	}
+	return icuo
+}
+
 // SetAppID sets the "app_id" field.
 func (icuo *InvitationCodeUpdateOne) SetAppID(u uuid.UUID) *InvitationCodeUpdateOne {
 	icuo.mutation.SetAppID(u)
 	return icuo
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (icuo *InvitationCodeUpdateOne) SetNillableAppID(u *uuid.UUID) *InvitationCodeUpdateOne {
+	if u != nil {
+		icuo.SetAppID(*u)
+	}
+	return icuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (icuo *InvitationCodeUpdateOne) ClearAppID() *InvitationCodeUpdateOne {
+	icuo.mutation.ClearAppID()
+	return icuo
+}
+
 // SetUserID sets the "user_id" field.
 func (icuo *InvitationCodeUpdateOne) SetUserID(u uuid.UUID) *InvitationCodeUpdateOne {
 	icuo.mutation.SetUserID(u)
+	return icuo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (icuo *InvitationCodeUpdateOne) SetNillableUserID(u *uuid.UUID) *InvitationCodeUpdateOne {
+	if u != nil {
+		icuo.SetUserID(*u)
+	}
+	return icuo
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (icuo *InvitationCodeUpdateOne) ClearUserID() *InvitationCodeUpdateOne {
+	icuo.mutation.ClearUserID()
 	return icuo
 }
 
@@ -543,7 +646,7 @@ func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: invitationcode.FieldID,
 			},
 		},
@@ -614,6 +717,13 @@ func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 			Column: invitationcode.FieldDeletedAt,
 		})
 	}
+	if value, ok := icuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: invitationcode.FieldEntID,
+		})
+	}
 	if value, ok := icuo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -621,10 +731,22 @@ func (icuo *InvitationCodeUpdateOne) sqlSave(ctx context.Context) (_node *Invita
 			Column: invitationcode.FieldAppID,
 		})
 	}
+	if icuo.mutation.AppIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: invitationcode.FieldAppID,
+		})
+	}
 	if value, ok := icuo.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
+			Column: invitationcode.FieldUserID,
+		})
+	}
+	if icuo.mutation.UserIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: invitationcode.FieldUserID,
 		})
 	}

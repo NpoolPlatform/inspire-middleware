@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
-	"github.com/google/uuid"
 )
 
 // CouponAllocatedQuery is the builder for querying CouponAllocated entities.
@@ -87,8 +86,8 @@ func (caq *CouponAllocatedQuery) FirstX(ctx context.Context) *CouponAllocated {
 
 // FirstID returns the first CouponAllocated ID from the query.
 // Returns a *NotFoundError when no CouponAllocated ID was found.
-func (caq *CouponAllocatedQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (caq *CouponAllocatedQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = caq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (caq *CouponAllocatedQuery) FirstID(ctx context.Context) (id uuid.UUID, err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (caq *CouponAllocatedQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (caq *CouponAllocatedQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := caq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (caq *CouponAllocatedQuery) OnlyX(ctx context.Context) *CouponAllocated {
 // OnlyID is like Only, but returns the only CouponAllocated ID in the query.
 // Returns a *NotSingularError when more than one CouponAllocated ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (caq *CouponAllocatedQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (caq *CouponAllocatedQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = caq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (caq *CouponAllocatedQuery) OnlyID(ctx context.Context) (id uuid.UUID, err 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (caq *CouponAllocatedQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (caq *CouponAllocatedQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := caq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (caq *CouponAllocatedQuery) AllX(ctx context.Context) []*CouponAllocated {
 }
 
 // IDs executes the query and returns a list of CouponAllocated IDs.
-func (caq *CouponAllocatedQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (caq *CouponAllocatedQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := caq.Select(couponallocated.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (caq *CouponAllocatedQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (caq *CouponAllocatedQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (caq *CouponAllocatedQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := caq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -377,7 +376,7 @@ func (caq *CouponAllocatedQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   couponallocated.Table,
 			Columns: couponallocated.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponallocated.FieldID,
 			},
 		},

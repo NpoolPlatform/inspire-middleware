@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,6 +61,20 @@ func (ac *AchievementCreate) SetDeletedAt(u uint32) *AchievementCreate {
 func (ac *AchievementCreate) SetNillableDeletedAt(u *uint32) *AchievementCreate {
 	if u != nil {
 		ac.SetDeletedAt(*u)
+	}
+	return ac
+}
+
+// SetEntID sets the "ent_id" field.
+func (ac *AchievementCreate) SetEntID(u uuid.UUID) *AchievementCreate {
+	ac.mutation.SetEntID(u)
+	return ac
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ac *AchievementCreate) SetNillableEntID(u *uuid.UUID) *AchievementCreate {
+	if u != nil {
+		ac.SetEntID(*u)
 	}
 	return ac
 }
@@ -221,16 +234,8 @@ func (ac *AchievementCreate) SetNillableSelfCommission(d *decimal.Decimal) *Achi
 }
 
 // SetID sets the "id" field.
-func (ac *AchievementCreate) SetID(u uuid.UUID) *AchievementCreate {
+func (ac *AchievementCreate) SetID(u uint32) *AchievementCreate {
 	ac.mutation.SetID(u)
-	return ac
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (ac *AchievementCreate) SetNillableID(u *uuid.UUID) *AchievementCreate {
-	if u != nil {
-		ac.SetID(*u)
-	}
 	return ac
 }
 
@@ -334,6 +339,13 @@ func (ac *AchievementCreate) defaults() error {
 		v := achievement.DefaultDeletedAt()
 		ac.mutation.SetDeletedAt(v)
 	}
+	if _, ok := ac.mutation.EntID(); !ok {
+		if achievement.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized achievement.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := achievement.DefaultEntID()
+		ac.mutation.SetEntID(v)
+	}
 	if _, ok := ac.mutation.AppID(); !ok {
 		if achievement.DefaultAppID == nil {
 			return fmt.Errorf("ent: uninitialized achievement.DefaultAppID (forgotten import ent/runtime?)")
@@ -393,13 +405,6 @@ func (ac *AchievementCreate) defaults() error {
 		v := achievement.DefaultSelfCommission
 		ac.mutation.SetSelfCommission(v)
 	}
-	if _, ok := ac.mutation.ID(); !ok {
-		if achievement.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized achievement.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := achievement.DefaultID()
-		ac.mutation.SetID(v)
-	}
 	return nil
 }
 
@@ -414,6 +419,9 @@ func (ac *AchievementCreate) check() error {
 	if _, ok := ac.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Achievement.deleted_at"`)}
 	}
+	if _, ok := ac.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Achievement.ent_id"`)}
+	}
 	return nil
 }
 
@@ -425,12 +433,9 @@ func (ac *AchievementCreate) sqlSave(ctx context.Context) (*Achievement, error) 
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -441,7 +446,7 @@ func (ac *AchievementCreate) createSpec() (*Achievement, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: achievement.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: achievement.FieldID,
 			},
 		}
@@ -449,7 +454,7 @@ func (ac *AchievementCreate) createSpec() (*Achievement, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = ac.conflict
 	if id, ok := ac.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -474,6 +479,14 @@ func (ac *AchievementCreate) createSpec() (*Achievement, *sqlgraph.CreateSpec) {
 			Column: achievement.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := ac.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: achievement.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := ac.mutation.AppID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -668,6 +681,18 @@ func (u *AchievementUpsert) UpdateDeletedAt() *AchievementUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *AchievementUpsert) AddDeletedAt(v uint32) *AchievementUpsert {
 	u.Add(achievement.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *AchievementUpsert) SetEntID(v uuid.UUID) *AchievementUpsert {
+	u.Set(achievement.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *AchievementUpsert) UpdateEntID() *AchievementUpsert {
+	u.SetExcluded(achievement.FieldEntID)
 	return u
 }
 
@@ -982,6 +1007,20 @@ func (u *AchievementUpsertOne) UpdateDeletedAt() *AchievementUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *AchievementUpsertOne) SetEntID(v uuid.UUID) *AchievementUpsertOne {
+	return u.Update(func(s *AchievementUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *AchievementUpsertOne) UpdateEntID() *AchievementUpsertOne {
+	return u.Update(func(s *AchievementUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetAppID sets the "app_id" field.
 func (u *AchievementUpsertOne) SetAppID(v uuid.UUID) *AchievementUpsertOne {
 	return u.Update(func(s *AchievementUpsert) {
@@ -1229,12 +1268,7 @@ func (u *AchievementUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *AchievementUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: AchievementUpsertOne.ID is not supported by MySQL driver. Use AchievementUpsertOne.Exec instead")
-	}
+func (u *AchievementUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1243,7 +1277,7 @@ func (u *AchievementUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *AchievementUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *AchievementUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1294,6 +1328,10 @@ func (acb *AchievementCreateBulk) Save(ctx context.Context) ([]*Achievement, err
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1489,6 +1527,20 @@ func (u *AchievementUpsertBulk) AddDeletedAt(v uint32) *AchievementUpsertBulk {
 func (u *AchievementUpsertBulk) UpdateDeletedAt() *AchievementUpsertBulk {
 	return u.Update(func(s *AchievementUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *AchievementUpsertBulk) SetEntID(v uuid.UUID) *AchievementUpsertBulk {
+	return u.Update(func(s *AchievementUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *AchievementUpsertBulk) UpdateEntID() *AchievementUpsertBulk {
+	return u.Update(func(s *AchievementUpsert) {
+		s.UpdateEntID()
 	})
 }
 

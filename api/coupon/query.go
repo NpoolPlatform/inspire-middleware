@@ -47,7 +47,7 @@ func (s *Server) GetCoupons(ctx context.Context, in *npool.GetCouponsRequest) (*
 func (s *Server) GetCoupon(ctx context.Context, in *npool.GetCouponRequest) (*npool.GetCouponResponse, error) {
 	handler, err := coupon1.NewHandler(
 		ctx,
-		coupon1.WithID(&in.ID, true),
+		coupon1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

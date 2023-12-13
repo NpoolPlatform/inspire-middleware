@@ -18,6 +18,9 @@ func (h *Handler) DeleteInvitationCode(ctx context.Context) (*npool.InvitationCo
 	if info == nil {
 		return nil, nil
 	}
+	if h.ID == nil {
+		h.ID = &info.ID
+	}
 
 	now := uint32(time.Now().Unix())
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {

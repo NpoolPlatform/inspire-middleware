@@ -15,14 +15,12 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
-
-	"github.com/google/uuid"
 )
 
 type deleteHandler struct {
 	*Handler
 	info         *npool.Achievement
-	statementIDs []uuid.UUID
+	statementIDs []uint32
 }
 
 func (h *deleteHandler) getStatementIDs(ctx context.Context) error {
@@ -49,7 +47,7 @@ func (h *deleteHandler) getStatementIDs(ctx context.Context) error {
 			break
 		}
 		for _, statement := range statements {
-			h.statementIDs = append(h.statementIDs, uuid.MustParse(statement.ID))
+			h.statementIDs = append(h.statementIDs, statement.ID)
 		}
 		handler.Offset += handler.Limit
 	}
@@ -60,7 +58,7 @@ func (h *deleteHandler) getStatementIDs(ctx context.Context) error {
 func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, error) {
 	handler := &deleteHandler{
 		Handler:      h,
-		statementIDs: []uuid.UUID{},
+		statementIDs: []uint32{},
 	}
 
 	var err error
@@ -92,7 +90,7 @@ func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, er
 			Achievement.
 			Update().
 			Where(
-				entachievement.ID(uuid.MustParse(handler.info.ID)),
+				entachievement.ID(handler.info.ID),
 				entachievement.DeletedAt(0),
 			).
 			SetDeletedAt(now).

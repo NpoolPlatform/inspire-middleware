@@ -32,7 +32,7 @@ func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) 
 	return handler, nil
 }
 
-func WithID(id *string, must bool) func(context.Context, *Handler) error {
+func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
@@ -40,11 +40,24 @@ func WithID(id *string, must bool) func(context.Context, *Handler) error {
 			}
 			return nil
 		}
+		h.ID = id
+		return nil
+	}
+}
+
+func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid entid")
+			}
+			return nil
+		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
 			return err
 		}
-		h.ID = &_id
+		h.EntID = &_id
 		return nil
 	}
 }
@@ -76,7 +89,7 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 		}
 		handler, err := coupon1.NewHandler(
 			ctx,
-			coupon1.WithID(id, true),
+			coupon1.WithEntID(id, true),
 		)
 		if err != nil {
 			return err
@@ -146,11 +159,7 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 				}
 			}
 			if req.ID != nil {
-				id, err := uuid.Parse(*req.ID)
-				if err != nil {
-					return err
-				}
-				_req.ID = &id
+				_req.ID = req.ID
 			}
 			if req.Used != nil && *req.Used && req.UsedByOrderID == nil {
 				return fmt.Errorf("invalid usedbyorderid")
@@ -172,58 +181,42 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 	}
 }
 
-//nolint
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &allocatedcrud.Conds{}
 		if conds == nil {
 			return nil
 		}
-		if conds.ID != nil {
-			id, err := uuid.Parse(conds.GetID().GetValue())
+		if conds.EntID != nil {
+			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.ID = &cruder.Cond{
-				Op:  conds.GetID().GetOp(),
-				Val: id,
-			}
+			h.Conds.EntID = &cruder.Cond{Op: conds.GetEntID().GetOp(), Val: id}
 		}
 		if conds.CouponType != nil {
-			h.Conds.CouponType = &cruder.Cond{
-				Op:  conds.GetCouponType().GetOp(),
-				Val: types.CouponType(conds.GetCouponType().GetValue()),
-			}
+			h.Conds.CouponType = &cruder.Cond{Op: conds.GetCouponType().GetOp(), Val: types.CouponType(conds.GetCouponType().GetValue())}
 		}
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
+			h.Conds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
 		}
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.UserID = &cruder.Cond{
-				Op:  conds.GetUserID().GetOp(),
-				Val: id,
-			}
+			h.Conds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.CouponID = &cruder.Cond{
-				Op:  conds.GetCouponID().GetOp(),
-				Val: id,
-			}
+			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
 		}
 		if conds.CouponIDs != nil {
 			ids := []uuid.UUID{}
@@ -234,40 +227,28 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.CouponIDs = &cruder.Cond{
-				Op:  conds.GetCouponIDs().GetOp(),
-				Val: ids,
-			}
+			h.Conds.CouponIDs = &cruder.Cond{Op: conds.GetCouponIDs().GetOp(), Val: ids}
 		}
 		if conds.Used != nil {
-			h.Conds.Used = &cruder.Cond{
-				Op:  conds.GetUsed().GetOp(),
-				Val: conds.GetUsed().GetValue(),
-			}
+			h.Conds.Used = &cruder.Cond{Op: conds.GetUsed().GetOp(), Val: conds.GetUsed().GetValue()}
 		}
 		if conds.UsedByOrderID != nil {
 			id, err := uuid.Parse(conds.GetUsedByOrderID().GetValue())
 			if err != nil {
 				return err
 			}
-			h.Conds.UsedByOrderID = &cruder.Cond{
-				Op:  conds.GetUsedByOrderID().GetOp(),
-				Val: id,
-			}
+			h.Conds.UsedByOrderID = &cruder.Cond{Op: conds.GetUsedByOrderID().GetOp(), Val: id}
 		}
-		if conds.IDs != nil {
+		if conds.EntIDs != nil {
 			ids := []uuid.UUID{}
-			for _, id := range conds.GetIDs().GetValue() {
+			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
 					return err
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.IDs = &cruder.Cond{
-				Op:  conds.GetIDs().GetOp(),
-				Val: ids,
-			}
+			h.Conds.EntIDs = &cruder.Cond{Op: conds.GetEntIDs().GetOp(), Val: ids}
 		}
 		if conds.UsedByOrderIDs != nil {
 			ids := []uuid.UUID{}
@@ -278,10 +259,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				}
 				ids = append(ids, _id)
 			}
-			h.Conds.UsedByOrderIDs = &cruder.Cond{
-				Op:  conds.GetUsedByOrderIDs().GetOp(),
-				Val: ids,
-			}
+			h.Conds.UsedByOrderIDs = &cruder.Cond{Op: conds.GetUsedByOrderIDs().GetOp(), Val: ids}
 		}
 		return nil
 	}

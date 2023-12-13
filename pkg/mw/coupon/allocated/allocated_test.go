@@ -32,7 +32,7 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		CouponType:          types.CouponType_FixAmount,
 		CouponTypeStr:       types.CouponType_FixAmount.String(),
 		AppID:               uuid.NewString(),
@@ -50,19 +50,20 @@ var (
 		CouponScope:         types.CouponScope_Whitelist,
 		CouponScopeStr:      types.CouponScope_Whitelist.String(),
 		Valid:               true,
+		Used:                false,
 	}
 
 	ret1 = npool.Coupon{
-		ID:                  uuid.NewString(),
+		EntID:               uuid.NewString(),
 		AppID:               ret.AppID,
+		UserID:              uuid.NewString(),
 		CouponID:            ret.CouponID,
 		CouponName:          ret.CouponName,
 		Message:             ret.Message,
 		CouponType:          ret.CouponType,
 		CouponTypeStr:       ret.CouponType.String(),
-		UserID:              uuid.NewString(),
-		Denomination:        decimal.RequireFromString("10").String(),
-		Circulation:         decimal.RequireFromString("100").String(),
+		Denomination:        ret.Denomination,
+		Circulation:         ret.Circulation,
 		Allocated:           decimal.RequireFromString("20").String(),
 		StartAt:             uint32(time.Now().Unix()),
 		DurationDays:        27,
@@ -81,7 +82,7 @@ func setup(t *testing.T) func(*testing.T) {
 
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithID(&ret.CouponID, true),
+		coupon1.WithEntID(&ret.CouponID, true),
 		coupon1.WithCouponType(&ret.CouponType, true),
 		coupon1.WithAppID(&ret.AppID, true),
 		coupon1.WithDenomination(&ret.Denomination, true),
@@ -96,7 +97,7 @@ func setup(t *testing.T) func(*testing.T) {
 
 	coup, err := h1.CreateCoupon(context.Background())
 	assert.Nil(t, err)
-	assert.NotNil(t, coup)
+	h1.ID = &coup.ID
 
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
@@ -106,7 +107,7 @@ func setup(t *testing.T) func(*testing.T) {
 func createCoupon(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithCouponID(&ret.CouponID, true),
 		WithUserID(&ret.UserID, true),
@@ -115,16 +116,17 @@ func createCoupon(t *testing.T) {
 
 	info, err := handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
 		ret.StartAt = info.StartAt
 		ret.EndAt = info.EndAt
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, &ret, info)
 	}
 
 	handler, err = NewHandler(
 		context.Background(),
-		WithID(&ret1.ID, true),
+		WithEntID(&ret1.EntID, true),
 		WithAppID(&ret1.AppID, true),
 		WithCouponID(&ret1.CouponID, true),
 		WithUserID(&ret1.UserID, true),
@@ -133,11 +135,12 @@ func createCoupon(t *testing.T) {
 
 	info, err = handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		ret1.ID = info.ID
 		ret1.CreatedAt = info.CreatedAt
 		ret1.UpdatedAt = info.UpdatedAt
 		ret1.StartAt = info.StartAt
 		ret1.EndAt = info.EndAt
-		assert.Equal(t, info, &ret1)
+		assert.Equal(t, &ret1, info)
 		ret.Allocated = info.Allocated
 	}
 }
@@ -159,7 +162,7 @@ func updateCoupon(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		ret.UsedAt = info.UsedAt
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, &ret, info)
 	}
 }
 
@@ -196,14 +199,14 @@ func getCoupon(t *testing.T) {
 
 	info, err := handler.GetCoupon(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, &ret, info)
 	}
 }
 
 func getCoupons(t *testing.T) {
 	conds := &npool.Conds{
-		ID:            &basetypes.StringVal{Op: cruder.EQ, Value: ret.ID},
-		IDs:           &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.ID}},
+		EntID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		EntIDs:        &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 		CouponType:    &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
 		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
@@ -222,7 +225,7 @@ func getCoupons(t *testing.T) {
 	infos, _, err := handler.GetCoupons(context.Background())
 	if !assert.Nil(t, err) {
 		assert.Equal(t, len(infos), 1)
-		assert.Equal(t, infos[0], &ret)
+		assert.Equal(t, &ret, infos[0])
 	}
 }
 
@@ -235,7 +238,7 @@ func deleteCoupon(t *testing.T) {
 
 	info, err := handler.DeleteCoupon(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, &ret, info)
 	}
 
 	info, err = handler.GetCoupon(context.Background())

@@ -84,6 +84,20 @@ func (csu *CouponScopeUpdate) AddDeletedAt(u int32) *CouponScopeUpdate {
 	return csu
 }
 
+// SetEntID sets the "ent_id" field.
+func (csu *CouponScopeUpdate) SetEntID(u uuid.UUID) *CouponScopeUpdate {
+	csu.mutation.SetEntID(u)
+	return csu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (csu *CouponScopeUpdate) SetNillableEntID(u *uuid.UUID) *CouponScopeUpdate {
+	if u != nil {
+		csu.SetEntID(*u)
+	}
+	return csu
+}
+
 // SetCouponID sets the "coupon_id" field.
 func (csu *CouponScopeUpdate) SetCouponID(u uuid.UUID) *CouponScopeUpdate {
 	csu.mutation.SetCouponID(u)
@@ -230,7 +244,7 @@ func (csu *CouponScopeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		},
@@ -282,6 +296,13 @@ func (csu *CouponScopeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: couponscope.FieldDeletedAt,
+		})
+	}
+	if value, ok := csu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponscope.FieldEntID,
 		})
 	}
 	if value, ok := csu.mutation.CouponID(); ok {
@@ -396,6 +417,20 @@ func (csuo *CouponScopeUpdateOne) SetNillableDeletedAt(u *uint32) *CouponScopeUp
 // AddDeletedAt adds u to the "deleted_at" field.
 func (csuo *CouponScopeUpdateOne) AddDeletedAt(u int32) *CouponScopeUpdateOne {
 	csuo.mutation.AddDeletedAt(u)
+	return csuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (csuo *CouponScopeUpdateOne) SetEntID(u uuid.UUID) *CouponScopeUpdateOne {
+	csuo.mutation.SetEntID(u)
+	return csuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (csuo *CouponScopeUpdateOne) SetNillableEntID(u *uuid.UUID) *CouponScopeUpdateOne {
+	if u != nil {
+		csuo.SetEntID(*u)
+	}
 	return csuo
 }
 
@@ -558,7 +593,7 @@ func (csuo *CouponScopeUpdateOne) sqlSave(ctx context.Context) (_node *CouponSco
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: couponscope.FieldID,
 			},
 		},
@@ -627,6 +662,13 @@ func (csuo *CouponScopeUpdateOne) sqlSave(ctx context.Context) (_node *CouponSco
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: couponscope.FieldDeletedAt,
+		})
+	}
+	if value, ok := csuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: couponscope.FieldEntID,
 		})
 	}
 	if value, ok := csuo.mutation.CouponID(); ok {

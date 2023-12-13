@@ -23,7 +23,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 	}
 	handler, err := statement1.NewHandler(
 		ctx,
-		statement1.WithID(req.ID, false),
+		statement1.WithEntID(req.EntID, false),
 		statement1.WithAppID(req.AppID, true),
 		statement1.WithUserID(req.UserID, true),
 		statement1.WithDirectContributorID(req.DirectContributorID, true),
@@ -31,7 +31,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		statement1.WithAppGoodID(req.AppGoodID, true),
 		statement1.WithOrderID(req.OrderID, true),
 		statement1.WithSelfOrder(req.SelfOrder, false),
-		statement1.WithPaymentID(req.PaymentID, false),
+		statement1.WithPaymentID(req.PaymentID, true),
 		statement1.WithCoinTypeID(req.CoinTypeID, true),
 		statement1.WithPaymentCoinTypeID(req.PaymentCoinTypeID, true),
 		statement1.WithPaymentCoinUSDCurrency(req.PaymentCoinUSDCurrency, true),

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
+
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -17,34 +19,83 @@ import (
 
 type queryHandler struct {
 	*Handler
+	stmCount  *ent.CouponSelect
 	stmSelect *ent.CouponSelect
 	infos     []*npool.Coupon
 	total     uint32
 }
 
-func (h *queryHandler) queryCoupon(cli *ent.Client) {
-	h.stmSelect = cli.
-		Coupon.
-		Query().
-		Where(
-			entcoupon.ID(*h.ID),
-			entcoupon.DeletedAt(0),
-		).
-		Select()
+func (h *queryHandler) selectCoupon(stm *ent.CouponQuery) *ent.CouponSelect {
+	return stm.Select(
+		entcoupon.FieldID,
+	)
 }
 
-func (h *queryHandler) queryCoupons(ctx context.Context, cli *ent.Client) error {
+func (h *queryHandler) queryCoupon(cli *ent.Client) error {
+	if h.ID == nil && h.EntID == nil {
+		return fmt.Errorf("invalid id")
+	}
+	stm := cli.Coupon.Query().Where(entcoupon.DeletedAt(0))
+	if h.ID != nil {
+		stm.Where(entcoupon.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entcoupon.EntID(*h.EntID))
+	}
+	h.stmSelect = h.selectCoupon(stm)
+	return nil
+}
+
+func (h *queryHandler) queryCoupons(cli *ent.Client) (*ent.CouponSelect, error) {
 	stm, err := couponcrud.SetQueryConds(cli.Coupon.Query(), h.Conds)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	total, err := stm.Count(ctx)
+	return h.selectCoupon(stm), nil
+}
+
+func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
+	t := sql.Table(entcoupon.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(entcoupon.FieldID),
+			t.C(entcoupon.FieldID),
+		).
+		AppendSelect(
+			sql.As(t.C(entcoupon.FieldEntID), "ent_id"),
+			sql.As(t.C(entcoupon.FieldAppID), "app_id"),
+			sql.As(t.C(entcoupon.FieldName), "name"),
+			sql.As(t.C(entcoupon.FieldMessage), "message"),
+			sql.As(t.C(entcoupon.FieldCouponType), "coupon_type"),
+			sql.As(t.C(entcoupon.FieldDenomination), "denomination"),
+			sql.As(t.C(entcoupon.FieldCirculation), "circulation"),
+			sql.As(t.C(entcoupon.FieldDurationDays), "duration_days"),
+			sql.As(t.C(entcoupon.FieldCouponScope), "coupon_scope"),
+			sql.As(t.C(entcoupon.FieldStartAt), "start_at"),
+			sql.As(t.C(entcoupon.FieldIssuedBy), "issued_by"),
+			sql.As(t.C(entcoupon.FieldAllocated), "allocated"),
+			sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
+			sql.As(t.C(entcoupon.FieldRandom), "random"),
+			sql.As(t.C(entcoupon.FieldUserID), "user_id"),
+			sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
+			sql.As(t.C(entcoupon.FieldCreatedAt), "created_at"),
+			sql.As(t.C(entcoupon.FieldUpdatedAt), "updated_at"),
+		)
+}
+
+func (h *queryHandler) queryJoin() error {
+	var err error
+	h.stmSelect.Modify(func(s *sql.Selector) {
+		h.queryJoinMyself(s)
+	})
 	if err != nil {
 		return err
 	}
-	h.total = uint32(total)
-	h.stmSelect = stm.Select()
-	return nil
+	if h.stmCount == nil {
+		return nil
+	}
+	h.stmCount.Modify(func(s *sql.Selector) {})
+	return err
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -104,7 +155,12 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		handler.queryCoupon(cli)
+		if err := handler.queryCoupon(cli); err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
@@ -127,13 +183,27 @@ func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, erro
 		infos:   []*npool.Coupon{},
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryCoupons(_ctx, cli); err != nil {
+	var err error
+	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		handler.stmSelect, err = handler.queryCoupons(cli)
+		if err != nil {
 			return err
 		}
+		handler.stmCount, err = handler.queryCoupons(cli)
+		if err != nil {
+			return err
+		}
+		if err := handler.queryJoin(); err != nil {
+			return err
+		}
+		_total, err := handler.stmCount.Count(_ctx)
+		if err != nil {
+			return err
+		}
+		handler.total = uint32(_total)
 		handler.stmSelect.
-			Offset(int(h.Offset)).
-			Limit(int(h.Limit))
+			Offset(int(handler.Offset)).
+			Limit(int(handler.Limit))
 		return handler.scan(_ctx)
 	})
 	if err != nil {

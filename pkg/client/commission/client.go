@@ -68,7 +68,7 @@ func UpdateCommission(ctx context.Context, in *npool.CommissionReq) (*npool.Comm
 func GetCommission(ctx context.Context, id string) (*npool.Commission, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.GetCommission(ctx, &npool.GetCommissionRequest{
-			ID: id,
+			EntID: id,
 		})
 		if err != nil {
 			return nil, err

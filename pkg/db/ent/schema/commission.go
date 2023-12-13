@@ -6,6 +6,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
@@ -20,16 +22,13 @@ type Commission struct {
 func (Commission) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
 	}
 }
 
 // Fields of the Commission.
 func (Commission) Fields() []ent.Field {
 	return []ent.Field{
-		field.
-			UUID("id", uuid.UUID{}).
-			Default(uuid.New).
-			Unique(),
 		field.
 			UUID("app_id", uuid.UUID{}).
 			Optional().

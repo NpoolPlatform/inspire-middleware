@@ -41,16 +41,17 @@ func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {
 	ids := []uuid.UUID{}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		for _, req := range h.Reqs {
-			if _, err := allocatedcrud.UpdateSet(
+			info, err := allocatedcrud.UpdateSet(
 				tx.CouponAllocated.UpdateOneID(*req.ID),
 				&allocatedcrud.Req{
 					Used:          req.Used,
 					UsedByOrderID: req.UsedByOrderID,
 				},
-			).Save(_ctx); err != nil {
+			).Save(_ctx)
+			if err != nil {
 				return err
 			}
-			ids = append(ids, *req.ID)
+			ids = append(ids, info.EntID)
 		}
 		return nil
 	})
@@ -59,7 +60,7 @@ func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {
 	}
 
 	h.Conds = &allocatedcrud.Conds{
-		IDs: &cruder.Cond{Op: cruder.IN, Val: ids},
+		EntIDs: &cruder.Cond{Op: cruder.IN, Val: ids},
 	}
 	h.Offset = 0
 	h.Limit = int32(len(ids))
