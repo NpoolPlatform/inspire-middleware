@@ -25,25 +25,21 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return err
 		}
 
-		req := &couponcrud.Req{
-			Denomination: h.Denomination,
-			Circulation:  h.Circulation,
-			StartAt:      h.StartAt,
-			DurationDays: h.DurationDays,
-			Message:      h.Message,
-			Name:         h.Name,
-			Random:       h.Random,
-			Threshold:    h.Threshold,
-			CouponScope:  h.CouponScope,
-		}
-		if h.Allocated != nil {
-			allocated := info.Allocated.Add(*h.Allocated)
-			req.Allocated = &allocated
-		}
-
 		if _, err := couponcrud.UpdateSet(
 			info.Update(),
-			req,
+			&couponcrud.Req{
+				Denomination:                  h.Denomination,
+				Circulation:                   h.Circulation,
+				StartAt:                       h.StartAt,
+				EndAt:                         h.EndAt,
+				DurationDays:                  h.DurationDays,
+				Message:                       h.Message,
+				Name:                          h.Name,
+				Random:                        h.Random,
+				Threshold:                     h.Threshold,
+				CouponScope:                   h.CouponScope,
+				CashableProbabilityPerMillion: h.CashableProbabilityPerMillion,
+			},
 		).Save(_ctx); err != nil {
 			return err
 		}

@@ -31,7 +31,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.DeleteCoupon(ctx)
@@ -41,7 +41,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteCouponResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.DeleteCouponResponse{
