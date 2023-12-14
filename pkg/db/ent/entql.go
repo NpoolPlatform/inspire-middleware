@@ -114,25 +114,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Coupon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			coupon.FieldCreatedAt:        {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
-			coupon.FieldUpdatedAt:        {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
-			coupon.FieldDeletedAt:        {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
-			coupon.FieldEntID:            {Type: field.TypeUUID, Column: coupon.FieldEntID},
-			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
-			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
-			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
-			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
-			coupon.FieldRandom:           {Type: field.TypeBool, Column: coupon.FieldRandom},
-			coupon.FieldIssuedBy:         {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
-			coupon.FieldStartAt:          {Type: field.TypeUint32, Column: coupon.FieldStartAt},
-			coupon.FieldDurationDays:     {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
-			coupon.FieldMessage:          {Type: field.TypeString, Column: coupon.FieldMessage},
-			coupon.FieldName:             {Type: field.TypeString, Column: coupon.FieldName},
-			coupon.FieldAllocated:        {Type: field.TypeOther, Column: coupon.FieldAllocated},
-			coupon.FieldCouponType:       {Type: field.TypeString, Column: coupon.FieldCouponType},
-			coupon.FieldThreshold:        {Type: field.TypeOther, Column: coupon.FieldThreshold},
-			coupon.FieldCouponConstraint: {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
-			coupon.FieldCouponScope:      {Type: field.TypeString, Column: coupon.FieldCouponScope},
+			coupon.FieldCreatedAt:                     {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
+			coupon.FieldUpdatedAt:                     {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
+			coupon.FieldDeletedAt:                     {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
+			coupon.FieldEntID:                         {Type: field.TypeUUID, Column: coupon.FieldEntID},
+			coupon.FieldAppID:                         {Type: field.TypeUUID, Column: coupon.FieldAppID},
+			coupon.FieldDenomination:                  {Type: field.TypeOther, Column: coupon.FieldDenomination},
+			coupon.FieldCirculation:                   {Type: field.TypeOther, Column: coupon.FieldCirculation},
+			coupon.FieldRandom:                        {Type: field.TypeBool, Column: coupon.FieldRandom},
+			coupon.FieldIssuedBy:                      {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
+			coupon.FieldStartAt:                       {Type: field.TypeUint32, Column: coupon.FieldStartAt},
+			coupon.FieldEndAt:                         {Type: field.TypeUint32, Column: coupon.FieldEndAt},
+			coupon.FieldDurationDays:                  {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
+			coupon.FieldMessage:                       {Type: field.TypeString, Column: coupon.FieldMessage},
+			coupon.FieldName:                          {Type: field.TypeString, Column: coupon.FieldName},
+			coupon.FieldAllocated:                     {Type: field.TypeOther, Column: coupon.FieldAllocated},
+			coupon.FieldCouponType:                    {Type: field.TypeString, Column: coupon.FieldCouponType},
+			coupon.FieldThreshold:                     {Type: field.TypeOther, Column: coupon.FieldThreshold},
+			coupon.FieldCouponConstraint:              {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
+			coupon.FieldCouponScope:                   {Type: field.TypeString, Column: coupon.FieldCouponScope},
+			coupon.FieldCashableProbabilityPerMillion: {Type: field.TypeOther, Column: coupon.FieldCashableProbabilityPerMillion},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -697,11 +698,6 @@ func (f *CouponFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(coupon.FieldAppID))
 }
 
-// WhereUserID applies the entql [16]byte predicate on the user_id field.
-func (f *CouponFilter) WhereUserID(p entql.ValueP) {
-	f.Where(p.Field(coupon.FieldUserID))
-}
-
 // WhereDenomination applies the entql other predicate on the denomination field.
 func (f *CouponFilter) WhereDenomination(p entql.OtherP) {
 	f.Where(p.Field(coupon.FieldDenomination))
@@ -725,6 +721,11 @@ func (f *CouponFilter) WhereIssuedBy(p entql.ValueP) {
 // WhereStartAt applies the entql uint32 predicate on the start_at field.
 func (f *CouponFilter) WhereStartAt(p entql.Uint32P) {
 	f.Where(p.Field(coupon.FieldStartAt))
+}
+
+// WhereEndAt applies the entql uint32 predicate on the end_at field.
+func (f *CouponFilter) WhereEndAt(p entql.Uint32P) {
+	f.Where(p.Field(coupon.FieldEndAt))
 }
 
 // WhereDurationDays applies the entql uint32 predicate on the duration_days field.
@@ -765,6 +766,11 @@ func (f *CouponFilter) WhereCouponConstraint(p entql.StringP) {
 // WhereCouponScope applies the entql string predicate on the coupon_scope field.
 func (f *CouponFilter) WhereCouponScope(p entql.StringP) {
 	f.Where(p.Field(coupon.FieldCouponScope))
+}
+
+// WhereCashableProbabilityPerMillion applies the entql other predicate on the cashable_probability_per_million field.
+func (f *CouponFilter) WhereCashableProbabilityPerMillion(p entql.OtherP) {
+	f.Where(p.Field(coupon.FieldCashableProbabilityPerMillion))
 }
 
 // addPredicate implements the predicateAdder interface.

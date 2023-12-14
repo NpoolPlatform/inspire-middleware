@@ -119,26 +119,6 @@ func (cu *CouponUpdate) ClearAppID() *CouponUpdate {
 	return cu
 }
 
-// SetUserID sets the "user_id" field.
-func (cu *CouponUpdate) SetUserID(u uuid.UUID) *CouponUpdate {
-	cu.mutation.SetUserID(u)
-	return cu
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (cu *CouponUpdate) SetNillableUserID(u *uuid.UUID) *CouponUpdate {
-	if u != nil {
-		cu.SetUserID(*u)
-	}
-	return cu
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (cu *CouponUpdate) ClearUserID() *CouponUpdate {
-	cu.mutation.ClearUserID()
-	return cu
-}
-
 // SetDenomination sets the "denomination" field.
 func (cu *CouponUpdate) SetDenomination(d decimal.Decimal) *CouponUpdate {
 	cu.mutation.SetDenomination(d)
@@ -205,6 +185,20 @@ func (cu *CouponUpdate) SetIssuedBy(u uuid.UUID) *CouponUpdate {
 	return cu
 }
 
+// SetNillableIssuedBy sets the "issued_by" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableIssuedBy(u *uuid.UUID) *CouponUpdate {
+	if u != nil {
+		cu.SetIssuedBy(*u)
+	}
+	return cu
+}
+
+// ClearIssuedBy clears the value of the "issued_by" field.
+func (cu *CouponUpdate) ClearIssuedBy() *CouponUpdate {
+	cu.mutation.ClearIssuedBy()
+	return cu
+}
+
 // SetStartAt sets the "start_at" field.
 func (cu *CouponUpdate) SetStartAt(u uint32) *CouponUpdate {
 	cu.mutation.ResetStartAt()
@@ -229,6 +223,33 @@ func (cu *CouponUpdate) AddStartAt(u int32) *CouponUpdate {
 // ClearStartAt clears the value of the "start_at" field.
 func (cu *CouponUpdate) ClearStartAt() *CouponUpdate {
 	cu.mutation.ClearStartAt()
+	return cu
+}
+
+// SetEndAt sets the "end_at" field.
+func (cu *CouponUpdate) SetEndAt(u uint32) *CouponUpdate {
+	cu.mutation.ResetEndAt()
+	cu.mutation.SetEndAt(u)
+	return cu
+}
+
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableEndAt(u *uint32) *CouponUpdate {
+	if u != nil {
+		cu.SetEndAt(*u)
+	}
+	return cu
+}
+
+// AddEndAt adds u to the "end_at" field.
+func (cu *CouponUpdate) AddEndAt(u int32) *CouponUpdate {
+	cu.mutation.AddEndAt(u)
+	return cu
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (cu *CouponUpdate) ClearEndAt() *CouponUpdate {
+	cu.mutation.ClearEndAt()
 	return cu
 }
 
@@ -399,6 +420,26 @@ func (cu *CouponUpdate) ClearCouponScope() *CouponUpdate {
 	return cu
 }
 
+// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
+func (cu *CouponUpdate) SetCashableProbabilityPerMillion(d decimal.Decimal) *CouponUpdate {
+	cu.mutation.SetCashableProbabilityPerMillion(d)
+	return cu
+}
+
+// SetNillableCashableProbabilityPerMillion sets the "cashable_probability_per_million" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableCashableProbabilityPerMillion(d *decimal.Decimal) *CouponUpdate {
+	if d != nil {
+		cu.SetCashableProbabilityPerMillion(*d)
+	}
+	return cu
+}
+
+// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
+func (cu *CouponUpdate) ClearCashableProbabilityPerMillion() *CouponUpdate {
+	cu.mutation.ClearCashableProbabilityPerMillion()
+	return cu
+}
+
 // Mutation returns the CouponMutation object of the builder.
 func (cu *CouponUpdate) Mutation() *CouponMutation {
 	return cu.mutation
@@ -559,19 +600,6 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldAppID,
 		})
 	}
-	if value, ok := cu.mutation.UserID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldUserID,
-		})
-	}
-	if cu.mutation.UserIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coupon.FieldUserID,
-		})
-	}
 	if value, ok := cu.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -618,6 +646,12 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldIssuedBy,
 		})
 	}
+	if cu.mutation.IssuedByCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: coupon.FieldIssuedBy,
+		})
+	}
 	if value, ok := cu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -636,6 +670,26 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: coupon.FieldStartAt,
+		})
+	}
+	if value, ok := cu.mutation.EndAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: coupon.FieldEndAt,
+		})
+	}
+	if value, ok := cu.mutation.AddedEndAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: coupon.FieldEndAt,
+		})
+	}
+	if cu.mutation.EndAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: coupon.FieldEndAt,
 		})
 	}
 	if value, ok := cu.mutation.DurationDays(); ok {
@@ -749,6 +803,19 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCouponScope,
 		})
 	}
+	if value, ok := cu.mutation.CashableProbabilityPerMillion(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldCashableProbabilityPerMillion,
+		})
+	}
+	if cu.mutation.CashableProbabilityPerMillionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: coupon.FieldCashableProbabilityPerMillion,
+		})
+	}
 	_spec.Modifiers = cu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -859,26 +926,6 @@ func (cuo *CouponUpdateOne) ClearAppID() *CouponUpdateOne {
 	return cuo
 }
 
-// SetUserID sets the "user_id" field.
-func (cuo *CouponUpdateOne) SetUserID(u uuid.UUID) *CouponUpdateOne {
-	cuo.mutation.SetUserID(u)
-	return cuo
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (cuo *CouponUpdateOne) SetNillableUserID(u *uuid.UUID) *CouponUpdateOne {
-	if u != nil {
-		cuo.SetUserID(*u)
-	}
-	return cuo
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (cuo *CouponUpdateOne) ClearUserID() *CouponUpdateOne {
-	cuo.mutation.ClearUserID()
-	return cuo
-}
-
 // SetDenomination sets the "denomination" field.
 func (cuo *CouponUpdateOne) SetDenomination(d decimal.Decimal) *CouponUpdateOne {
 	cuo.mutation.SetDenomination(d)
@@ -945,6 +992,20 @@ func (cuo *CouponUpdateOne) SetIssuedBy(u uuid.UUID) *CouponUpdateOne {
 	return cuo
 }
 
+// SetNillableIssuedBy sets the "issued_by" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableIssuedBy(u *uuid.UUID) *CouponUpdateOne {
+	if u != nil {
+		cuo.SetIssuedBy(*u)
+	}
+	return cuo
+}
+
+// ClearIssuedBy clears the value of the "issued_by" field.
+func (cuo *CouponUpdateOne) ClearIssuedBy() *CouponUpdateOne {
+	cuo.mutation.ClearIssuedBy()
+	return cuo
+}
+
 // SetStartAt sets the "start_at" field.
 func (cuo *CouponUpdateOne) SetStartAt(u uint32) *CouponUpdateOne {
 	cuo.mutation.ResetStartAt()
@@ -969,6 +1030,33 @@ func (cuo *CouponUpdateOne) AddStartAt(u int32) *CouponUpdateOne {
 // ClearStartAt clears the value of the "start_at" field.
 func (cuo *CouponUpdateOne) ClearStartAt() *CouponUpdateOne {
 	cuo.mutation.ClearStartAt()
+	return cuo
+}
+
+// SetEndAt sets the "end_at" field.
+func (cuo *CouponUpdateOne) SetEndAt(u uint32) *CouponUpdateOne {
+	cuo.mutation.ResetEndAt()
+	cuo.mutation.SetEndAt(u)
+	return cuo
+}
+
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableEndAt(u *uint32) *CouponUpdateOne {
+	if u != nil {
+		cuo.SetEndAt(*u)
+	}
+	return cuo
+}
+
+// AddEndAt adds u to the "end_at" field.
+func (cuo *CouponUpdateOne) AddEndAt(u int32) *CouponUpdateOne {
+	cuo.mutation.AddEndAt(u)
+	return cuo
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (cuo *CouponUpdateOne) ClearEndAt() *CouponUpdateOne {
+	cuo.mutation.ClearEndAt()
 	return cuo
 }
 
@@ -1136,6 +1224,26 @@ func (cuo *CouponUpdateOne) SetNillableCouponScope(s *string) *CouponUpdateOne {
 // ClearCouponScope clears the value of the "coupon_scope" field.
 func (cuo *CouponUpdateOne) ClearCouponScope() *CouponUpdateOne {
 	cuo.mutation.ClearCouponScope()
+	return cuo
+}
+
+// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
+func (cuo *CouponUpdateOne) SetCashableProbabilityPerMillion(d decimal.Decimal) *CouponUpdateOne {
+	cuo.mutation.SetCashableProbabilityPerMillion(d)
+	return cuo
+}
+
+// SetNillableCashableProbabilityPerMillion sets the "cashable_probability_per_million" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableCashableProbabilityPerMillion(d *decimal.Decimal) *CouponUpdateOne {
+	if d != nil {
+		cuo.SetCashableProbabilityPerMillion(*d)
+	}
+	return cuo
+}
+
+// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
+func (cuo *CouponUpdateOne) ClearCashableProbabilityPerMillion() *CouponUpdateOne {
+	cuo.mutation.ClearCashableProbabilityPerMillion()
 	return cuo
 }
 
@@ -1329,19 +1437,6 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldAppID,
 		})
 	}
-	if value, ok := cuo.mutation.UserID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldUserID,
-		})
-	}
-	if cuo.mutation.UserIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coupon.FieldUserID,
-		})
-	}
 	if value, ok := cuo.mutation.Denomination(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -1388,6 +1483,12 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldIssuedBy,
 		})
 	}
+	if cuo.mutation.IssuedByCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: coupon.FieldIssuedBy,
+		})
+	}
 	if value, ok := cuo.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -1406,6 +1507,26 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: coupon.FieldStartAt,
+		})
+	}
+	if value, ok := cuo.mutation.EndAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: coupon.FieldEndAt,
+		})
+	}
+	if value, ok := cuo.mutation.AddedEndAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: coupon.FieldEndAt,
+		})
+	}
+	if cuo.mutation.EndAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: coupon.FieldEndAt,
 		})
 	}
 	if value, ok := cuo.mutation.DurationDays(); ok {
@@ -1517,6 +1638,19 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: coupon.FieldCouponScope,
+		})
+	}
+	if value, ok := cuo.mutation.CashableProbabilityPerMillion(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldCashableProbabilityPerMillion,
+		})
+	}
+	if cuo.mutation.CashableProbabilityPerMillionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Column: coupon.FieldCashableProbabilityPerMillion,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers
