@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
@@ -61,7 +63,7 @@ func (Coupon) Fields() []ent.Field {
 		field.
 			Uint32("start_at").
 			Optional().
-			Default(0),
+			Default(uint32(time.Now().Unix())),
 		field.
 			Uint32("end_at").
 			Optional().

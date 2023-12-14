@@ -293,6 +293,26 @@ func (cau *CouponAllocatedUpdate) ClearCouponScope() *CouponAllocatedUpdate {
 	return cau
 }
 
+// SetCashable sets the "cashable" field.
+func (cau *CouponAllocatedUpdate) SetCashable(b bool) *CouponAllocatedUpdate {
+	cau.mutation.SetCashable(b)
+	return cau
+}
+
+// SetNillableCashable sets the "cashable" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableCashable(b *bool) *CouponAllocatedUpdate {
+	if b != nil {
+		cau.SetCashable(*b)
+	}
+	return cau
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (cau *CouponAllocatedUpdate) ClearCashable() *CouponAllocatedUpdate {
+	cau.mutation.ClearCashable()
+	return cau
+}
+
 // Mutation returns the CouponAllocatedMutation object of the builder.
 func (cau *CouponAllocatedUpdate) Mutation() *CouponAllocatedMutation {
 	return cau.mutation
@@ -569,6 +589,19 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: couponallocated.FieldCouponScope,
+		})
+	}
+	if value, ok := cau.mutation.Cashable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: couponallocated.FieldCashable,
+		})
+	}
+	if cau.mutation.CashableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: couponallocated.FieldCashable,
 		})
 	}
 	_spec.Modifiers = cau.modifiers
@@ -852,6 +885,26 @@ func (cauo *CouponAllocatedUpdateOne) SetNillableCouponScope(s *string) *CouponA
 // ClearCouponScope clears the value of the "coupon_scope" field.
 func (cauo *CouponAllocatedUpdateOne) ClearCouponScope() *CouponAllocatedUpdateOne {
 	cauo.mutation.ClearCouponScope()
+	return cauo
+}
+
+// SetCashable sets the "cashable" field.
+func (cauo *CouponAllocatedUpdateOne) SetCashable(b bool) *CouponAllocatedUpdateOne {
+	cauo.mutation.SetCashable(b)
+	return cauo
+}
+
+// SetNillableCashable sets the "cashable" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableCashable(b *bool) *CouponAllocatedUpdateOne {
+	if b != nil {
+		cauo.SetCashable(*b)
+	}
+	return cauo
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (cauo *CouponAllocatedUpdateOne) ClearCashable() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearCashable()
 	return cauo
 }
 
@@ -1161,6 +1214,19 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: couponallocated.FieldCouponScope,
+		})
+	}
+	if value, ok := cauo.mutation.Cashable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: couponallocated.FieldCashable,
+		})
+	}
+	if cauo.mutation.CashableCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: couponallocated.FieldCashable,
 		})
 	}
 	_spec.Modifiers = cauo.modifiers

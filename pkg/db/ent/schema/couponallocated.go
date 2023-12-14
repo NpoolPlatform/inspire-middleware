@@ -76,6 +76,10 @@ func (CouponAllocated) Fields() []ent.Field {
 			String("coupon_scope").
 			Optional().
 			Default(inspiretypes.CouponScope_Whitelist.String()),
+		field.
+			Bool("cashable").
+			Optional().
+			Default(false),
 	}
 }
 

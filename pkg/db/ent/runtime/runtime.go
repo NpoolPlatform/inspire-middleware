@@ -410,6 +410,10 @@ func init() {
 	couponallocatedDescCouponScope := couponallocatedFields[8].Descriptor()
 	// couponallocated.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponallocated.DefaultCouponScope = couponallocatedDescCouponScope.Default.(string)
+	// couponallocatedDescCashable is the schema descriptor for cashable field.
+	couponallocatedDescCashable := couponallocatedFields[9].Descriptor()
+	// couponallocated.DefaultCashable holds the default value on creation for the cashable field.
+	couponallocated.DefaultCashable = couponallocatedDescCashable.Default.(bool)
 	couponscopeMixin := schema.CouponScope{}.Mixin()
 	couponscope.Policy = privacy.NewPolicies(couponscopeMixin[0], schema.CouponScope{})
 	couponscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -5824,6 +5824,7 @@ type CouponAllocatedMutation struct {
 	start_at         *uint32
 	addstart_at      *int32
 	coupon_scope     *string
+	cashable         *bool
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*CouponAllocated, error)
@@ -6621,6 +6622,55 @@ func (m *CouponAllocatedMutation) ResetCouponScope() {
 	delete(m.clearedFields, couponallocated.FieldCouponScope)
 }
 
+// SetCashable sets the "cashable" field.
+func (m *CouponAllocatedMutation) SetCashable(b bool) {
+	m.cashable = &b
+}
+
+// Cashable returns the value of the "cashable" field in the mutation.
+func (m *CouponAllocatedMutation) Cashable() (r bool, exists bool) {
+	v := m.cashable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCashable returns the old "cashable" field's value of the CouponAllocated entity.
+// If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponAllocatedMutation) OldCashable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCashable is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCashable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCashable: %w", err)
+	}
+	return oldValue.Cashable, nil
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (m *CouponAllocatedMutation) ClearCashable() {
+	m.cashable = nil
+	m.clearedFields[couponallocated.FieldCashable] = struct{}{}
+}
+
+// CashableCleared returns if the "cashable" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) CashableCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldCashable]
+	return ok
+}
+
+// ResetCashable resets all changes to the "cashable" field.
+func (m *CouponAllocatedMutation) ResetCashable() {
+	m.cashable = nil
+	delete(m.clearedFields, couponallocated.FieldCashable)
+}
+
 // Where appends a list predicates to the CouponAllocatedMutation builder.
 func (m *CouponAllocatedMutation) Where(ps ...predicate.CouponAllocated) {
 	m.predicates = append(m.predicates, ps...)
@@ -6640,7 +6690,7 @@ func (m *CouponAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, couponallocated.FieldCreatedAt)
 	}
@@ -6680,6 +6730,9 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	if m.coupon_scope != nil {
 		fields = append(fields, couponallocated.FieldCouponScope)
 	}
+	if m.cashable != nil {
+		fields = append(fields, couponallocated.FieldCashable)
+	}
 	return fields
 }
 
@@ -6714,6 +6767,8 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.StartAt()
 	case couponallocated.FieldCouponScope:
 		return m.CouponScope()
+	case couponallocated.FieldCashable:
+		return m.Cashable()
 	}
 	return nil, false
 }
@@ -6749,6 +6804,8 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldStartAt(ctx)
 	case couponallocated.FieldCouponScope:
 		return m.OldCouponScope(ctx)
+	case couponallocated.FieldCashable:
+		return m.OldCashable(ctx)
 	}
 	return nil, fmt.Errorf("unknown CouponAllocated field %s", name)
 }
@@ -6848,6 +6905,13 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCouponScope(v)
+		return nil
+	case couponallocated.FieldCashable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCashable(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -6969,6 +7033,9 @@ func (m *CouponAllocatedMutation) ClearedFields() []string {
 	if m.FieldCleared(couponallocated.FieldCouponScope) {
 		fields = append(fields, couponallocated.FieldCouponScope)
 	}
+	if m.FieldCleared(couponallocated.FieldCashable) {
+		fields = append(fields, couponallocated.FieldCashable)
+	}
 	return fields
 }
 
@@ -7009,6 +7076,9 @@ func (m *CouponAllocatedMutation) ClearField(name string) error {
 		return nil
 	case couponallocated.FieldCouponScope:
 		m.ClearCouponScope()
+		return nil
+	case couponallocated.FieldCashable:
+		m.ClearCashable()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated nullable field %s", name)
@@ -7056,6 +7126,9 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 		return nil
 	case couponallocated.FieldCouponScope:
 		m.ResetCouponScope()
+		return nil
+	case couponallocated.FieldCashable:
+		m.ResetCashable()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)

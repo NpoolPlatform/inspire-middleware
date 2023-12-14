@@ -205,6 +205,20 @@ func (cac *CouponAllocatedCreate) SetNillableCouponScope(s *string) *CouponAlloc
 	return cac
 }
 
+// SetCashable sets the "cashable" field.
+func (cac *CouponAllocatedCreate) SetCashable(b bool) *CouponAllocatedCreate {
+	cac.mutation.SetCashable(b)
+	return cac
+}
+
+// SetNillableCashable sets the "cashable" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableCashable(b *bool) *CouponAllocatedCreate {
+	if b != nil {
+		cac.SetCashable(*b)
+	}
+	return cac
+}
+
 // SetID sets the "id" field.
 func (cac *CouponAllocatedCreate) SetID(u uint32) *CouponAllocatedCreate {
 	cac.mutation.SetID(u)
@@ -366,6 +380,10 @@ func (cac *CouponAllocatedCreate) defaults() error {
 		v := couponallocated.DefaultCouponScope
 		cac.mutation.SetCouponScope(v)
 	}
+	if _, ok := cac.mutation.Cashable(); !ok {
+		v := couponallocated.DefaultCashable
+		cac.mutation.SetCashable(v)
+	}
 	return nil
 }
 
@@ -520,6 +538,14 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldCouponScope,
 		})
 		_node.CouponScope = value
+	}
+	if value, ok := cac.mutation.Cashable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: couponallocated.FieldCashable,
+		})
+		_node.Cashable = value
 	}
 	return _node, _spec
 }
@@ -812,6 +838,24 @@ func (u *CouponAllocatedUpsert) UpdateCouponScope() *CouponAllocatedUpsert {
 // ClearCouponScope clears the value of the "coupon_scope" field.
 func (u *CouponAllocatedUpsert) ClearCouponScope() *CouponAllocatedUpsert {
 	u.SetNull(couponallocated.FieldCouponScope)
+	return u
+}
+
+// SetCashable sets the "cashable" field.
+func (u *CouponAllocatedUpsert) SetCashable(v bool) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldCashable, v)
+	return u
+}
+
+// UpdateCashable sets the "cashable" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateCashable() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldCashable)
+	return u
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (u *CouponAllocatedUpsert) ClearCashable() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldCashable)
 	return u
 }
 
@@ -1142,6 +1186,27 @@ func (u *CouponAllocatedUpsertOne) UpdateCouponScope() *CouponAllocatedUpsertOne
 func (u *CouponAllocatedUpsertOne) ClearCouponScope() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearCouponScope()
+	})
+}
+
+// SetCashable sets the "cashable" field.
+func (u *CouponAllocatedUpsertOne) SetCashable(v bool) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetCashable(v)
+	})
+}
+
+// UpdateCashable sets the "cashable" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateCashable() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateCashable()
+	})
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (u *CouponAllocatedUpsertOne) ClearCashable() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearCashable()
 	})
 }
 
@@ -1637,6 +1702,27 @@ func (u *CouponAllocatedUpsertBulk) UpdateCouponScope() *CouponAllocatedUpsertBu
 func (u *CouponAllocatedUpsertBulk) ClearCouponScope() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearCouponScope()
+	})
+}
+
+// SetCashable sets the "cashable" field.
+func (u *CouponAllocatedUpsertBulk) SetCashable(v bool) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetCashable(v)
+	})
+}
+
+// UpdateCashable sets the "cashable" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateCashable() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateCashable()
+	})
+}
+
+// ClearCashable clears the value of the "cashable" field.
+func (u *CouponAllocatedUpsertBulk) ClearCashable() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearCashable()
 	})
 }
 

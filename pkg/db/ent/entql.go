@@ -160,6 +160,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldUsedByOrderID: {Type: field.TypeUUID, Column: couponallocated.FieldUsedByOrderID},
 			couponallocated.FieldStartAt:       {Type: field.TypeUint32, Column: couponallocated.FieldStartAt},
 			couponallocated.FieldCouponScope:   {Type: field.TypeString, Column: couponallocated.FieldCouponScope},
+			couponallocated.FieldCashable:      {Type: field.TypeBool, Column: couponallocated.FieldCashable},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -876,6 +877,11 @@ func (f *CouponAllocatedFilter) WhereStartAt(p entql.Uint32P) {
 // WhereCouponScope applies the entql string predicate on the coupon_scope field.
 func (f *CouponAllocatedFilter) WhereCouponScope(p entql.StringP) {
 	f.Where(p.Field(couponallocated.FieldCouponScope))
+}
+
+// WhereCashable applies the entql bool predicate on the cashable field.
+func (f *CouponAllocatedFilter) WhereCashable(p entql.BoolP) {
+	f.Where(p.Field(couponallocated.FieldCashable))
 }
 
 // addPredicate implements the predicateAdder interface.
