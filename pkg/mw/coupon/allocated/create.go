@@ -54,8 +54,6 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			allocated = allocated.Add(coupon.Denomination)
 		case inspiretypes.CouponType_Discount.String():
 			allocated = allocated.Add(decimal.NewFromInt(1))
-		case inspiretypes.CouponType_SpecialOffer.String():
-			allocated = allocated.Add(coupon.Denomination)
 		default:
 			return fmt.Errorf("invalid coupontype")
 		}

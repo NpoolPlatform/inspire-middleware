@@ -147,14 +147,14 @@ func createCoupon(t *testing.T) {
 
 func updateCoupon(t *testing.T) {
 	orderID := uuid.NewString()
-	ret.UsedByOrderID = &orderID
+	ret.UsedByOrderID = orderID
 	ret.Used = true
 
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithUsed(&ret.Used, true),
-		WithUsedByOrderID(ret.UsedByOrderID, true),
+		WithUsedByOrderID(&ret.UsedByOrderID, true),
 	)
 	assert.Nil(t, err)
 
@@ -168,13 +168,13 @@ func updateCoupon(t *testing.T) {
 
 func updateCoupons(t *testing.T) {
 	orderID := uuid.NewString()
-	ret1.UsedByOrderID = &orderID
+	ret1.UsedByOrderID = orderID
 	ret1.Used = true
 
 	reqs := []*npool.CouponReq{{
 		ID:            &ret1.ID,
 		Used:          &ret1.Used,
-		UsedByOrderID: ret1.UsedByOrderID,
+		UsedByOrderID: &ret1.UsedByOrderID,
 	}}
 	handler, err := NewHandler(
 		context.Background(),
@@ -211,7 +211,7 @@ func getCoupons(t *testing.T) {
 		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		CouponID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: *ret.UsedByOrderID},
+		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.UsedByOrderID},
 	}
 
 	handler, err := NewHandler(

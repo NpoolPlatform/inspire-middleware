@@ -119,12 +119,12 @@ func updateCoupon(t *testing.T) {
 	orderID := uuid.NewString()
 
 	ret.Used = used
-	ret.UsedByOrderID = &orderID
+	ret.UsedByOrderID = orderID
 
 	info, err := UpdateCoupon(context.Background(), &npool.CouponReq{
 		ID:            &ret.ID,
 		Used:          &ret.Used,
-		UsedByOrderID: ret.UsedByOrderID,
+		UsedByOrderID: &ret.UsedByOrderID,
 	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
