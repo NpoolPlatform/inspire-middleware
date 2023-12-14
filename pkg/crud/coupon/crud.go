@@ -34,9 +34,6 @@ type Req struct {
 }
 
 func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
-	if req.ID != nil {
-		c.SetID(*req.ID)
-	}
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}

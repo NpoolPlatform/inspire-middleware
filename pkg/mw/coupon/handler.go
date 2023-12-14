@@ -15,26 +15,10 @@ import (
 )
 
 type Handler struct {
-	ID               *uint32
-	EntID            *uuid.UUID
-	CouponType       *types.CouponType
-	AppID            *uuid.UUID
-	Denomination     *decimal.Decimal
-	Circulation      *decimal.Decimal
-	IssuedBy         *uuid.UUID
-	StartAt          *uint32
-	DurationDays     *uint32
-	Message          *string
-	Name             *string
-	UserID           *uuid.UUID
-	Threshold        *decimal.Decimal
-	Allocated        *decimal.Decimal
-	CouponConstraint *types.CouponConstraint
-	CouponScope      *types.CouponScope
-	Random           *bool
-	Conds            *couponcrud.Conds
-	Offset           int32
-	Limit            int32
+	couponcrud.Req
+	Conds  *couponcrud.Conds
+	Offset int32
+	Limit  int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -88,7 +72,6 @@ func WithCouponType(couponType *types.CouponType, must bool) func(context.Contex
 		switch *couponType {
 		case types.CouponType_FixAmount:
 		case types.CouponType_Discount:
-		case types.CouponType_SpecialOffer:
 		default:
 			return fmt.Errorf("invalid coupontype")
 		}
@@ -178,6 +161,19 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	}
 }
 
+func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if endAt == nil {
+			if must {
+				return fmt.Errorf("invalid endat")
+			}
+			return nil
+		}
+		h.EndAt = endAt
+		return nil
+	}
+}
+
 func WithDurationDays(days *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if days == nil {
@@ -219,23 +215,6 @@ func WithName(value *string, must bool) func(context.Context, *Handler) error {
 			return fmt.Errorf("invalid name")
 		}
 		h.Name = value
-		return nil
-	}
-}
-
-func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid userid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.UserID = &_id
 		return nil
 	}
 }
@@ -285,8 +264,6 @@ func WithCouponConstraint(constraint *types.CouponConstraint, must bool) func(co
 		switch *constraint {
 		case types.CouponConstraint_Normal:
 		case types.CouponConstraint_PaymentThreshold:
-		case types.CouponConstraint_GoodOnly:
-		case types.CouponConstraint_GoodThreshold:
 		default:
 			return fmt.Errorf("invalid constraint")
 		}
@@ -315,9 +292,32 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 	}
 }
 
-func WithRandom(value *bool, must bool) func(context.Context, *Handler) error {
+func WithRandom(random *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Random = value
+		if random == nil {
+			if must {
+				return fmt.Errorf("invalid random")
+			}
+			return nil
+		}
+		h.Random = random
+		return nil
+	}
+}
+
+func WithCashableProbabilityPerMillion(probability *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if probability == nil {
+			if must {
+				return fmt.Errorf("invalid probability")
+			}
+			return nil
+		}
+		_probability, err := decimal.NewFromString(*probability)
+		if err != nil {
+			return err
+		}
+		h.CashableProbabilityPerMillion = &_probability
 		return nil
 	}
 }
@@ -334,14 +334,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				return err
 			}
 			h.Conds.EntID = &cruder.Cond{
-				Op:  conds.GetEntID().GetOp(),
-				Val: id,
+				Op: conds.GetEntID().GetOp(), Val: id,
 			}
 		}
 		if conds.CouponType != nil {
 			h.Conds.CouponType = &cruder.Cond{
-				Op:  conds.GetCouponType().GetOp(),
-				Val: types.CouponType(conds.GetCouponType().GetValue()),
+				Op: conds.GetCouponType().GetOp(), Val: types.CouponType(conds.GetCouponType().GetValue()),
 			}
 		}
 		if conds.AppID != nil {
@@ -350,8 +348,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				return err
 			}
 			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
+				Op: conds.GetAppID().GetOp(), Val: id,
 			}
 		}
 		if conds.EntIDs != nil {
@@ -364,8 +361,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				ids = append(ids, _id)
 			}
 			h.Conds.EntIDs = &cruder.Cond{
-				Op:  conds.GetEntIDs().GetOp(),
-				Val: ids,
+				Op: conds.GetEntIDs().GetOp(), Val: ids,
 			}
 		}
 		return nil
