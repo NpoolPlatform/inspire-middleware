@@ -94,7 +94,7 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 
 	if _, err := tx.
 		Coupon.
-		UpdateOneID(h.coupon.ID).
+		UpdateOne(h.coupon).
 		SetAllocated(allocated).
 		Save(ctx); err != nil {
 		return err
