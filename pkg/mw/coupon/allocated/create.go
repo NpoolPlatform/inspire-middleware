@@ -42,7 +42,7 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 	})
 }
 
-func (h *createHandler) cashable(ctx context.Context) bool {
+func (h *createHandler) cashable() bool {
 	probability := h.coupon.CashableProbabilityPerMillion
 	if probability.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return false
@@ -50,18 +50,16 @@ func (h *createHandler) cashable(ctx context.Context) bool {
 	if probability.Cmp(decimal.NewFromInt(1)) >= 0 {
 		return true
 	}
+
 	rand.Seed(time.Now().UnixNano())
-	value := rand.Float64()
-	if decimal.NewFromFloat(value).Cmp(h.coupon.CashableProbabilityPerMillion) <= 0 {
-		return true
-	}
-	return false
+	value := rand.Float64() //nolint
+	return decimal.NewFromFloat(value).Cmp(h.coupon.CashableProbabilityPerMillion) <= 0
 }
 
 func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) error {
 	startAt := uint32(time.Now().Unix())
 	couponScope := inspiretypes.CouponScope(inspiretypes.CouponScope_value[h.coupon.CouponScope])
-	_cashable := h.cashable(ctx)
+	_cashable := h.cashable()
 	if _, err := allocatedcrud.CreateSet(
 		tx.CouponAllocated.Create(),
 		&allocatedcrud.Req{
