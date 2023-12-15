@@ -317,6 +317,9 @@ func WithCashableProbabilityPerMillion(probability *string, must bool) func(cont
 		if err != nil {
 			return err
 		}
+		if _probability.Cmp(decimal.NewFromInt(0)) < 0 || _probability.Cmp(decimal.NewFromInt(1)) > 0 {
+			return fmt.Errorf("invalid probability")
+		}
 		h.CashableProbabilityPerMillion = &_probability
 		return nil
 	}

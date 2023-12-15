@@ -24,6 +24,7 @@ type Req struct {
 	Denomination  *decimal.Decimal
 	StartAt       *uint32
 	CouponScope   *inspiretypes.CouponScope
+	Cashable      *bool
 	DeletedAt     *uint32
 }
 
@@ -51,6 +52,9 @@ func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreat
 	}
 	if req.CouponScope != nil {
 		c.SetCouponScope(req.CouponScope.String())
+	}
+	if req.Cashable != nil {
+		c.SetCashable(*req.Cashable)
 	}
 	c.SetUsed(false)
 	c.SetUsedAt(0)
