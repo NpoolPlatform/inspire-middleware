@@ -55,6 +55,7 @@ var ret = &npool.Coupon{
 	CouponScope:                   types.CouponScope_Whitelist,
 	CouponScopeStr:                types.CouponScope_Whitelist.String(),
 	Allocated:                     decimal.NewFromInt(0).String(),
+	Threshold:                     decimal.NewFromInt(0).String(),
 	CashableProbabilityPerMillion: decimal.RequireFromString("0.0001").String(),
 }
 
