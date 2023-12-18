@@ -2,6 +2,7 @@ package coin
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
@@ -118,4 +119,26 @@ func ExistCouponCoinConds(ctx context.Context, conds *npool.Conds) (bool, error)
 		return false, err
 	}
 	return info.(bool), nil
+}
+
+func GetCouponCoinOnly(ctx context.Context, conds *npool.Conds) (*npool.CouponCoin, error) {
+	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.GetCouponCoins(ctx, &npool.GetCouponCoinsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(infos.([]*npool.CouponCoin)) == 0 {
+		return nil, nil
+	}
+	if len(infos.([]*npool.CouponCoin)) > 1 {
+		return nil, fmt.Errorf("too many records")
+	}
+	return infos.([]*npool.CouponCoin)[0], nil
 }
