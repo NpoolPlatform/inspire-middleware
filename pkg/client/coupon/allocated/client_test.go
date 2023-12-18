@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
+	"github.com/shopspring/decimal"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
@@ -39,22 +40,25 @@ func init() {
 }
 
 var coupon = &couponmwpb.Coupon{
-	EntID:               uuid.NewString(),
-	CouponType:          types.CouponType_Discount,
-	CouponTypeStr:       types.CouponType_Discount.String(),
-	AppID:               uuid.NewString(),
-	Denomination:        "10.01",
-	Circulation:         "100.1",
-	IssuedBy:            uuid.NewString(),
-	StartAt:             uint32(time.Now().Unix()),
-	DurationDays:        30,
-	Message:             "Test coupon message",
-	Name:                "Test coupon name",
-	Allocated:           "0",
-	CouponConstraint:    types.CouponConstraint_Normal,
-	CouponConstraintStr: types.CouponConstraint_Normal.String(),
-	CouponScope:         types.CouponScope_Whitelist,
-	CouponScopeStr:      types.CouponScope_Whitelist.String(),
+	EntID:                         uuid.NewString(),
+	CouponType:                    types.CouponType_Discount,
+	CouponTypeStr:                 types.CouponType_Discount.String(),
+	AppID:                         uuid.NewString(),
+	Denomination:                  "10.01",
+	Circulation:                   "100.1",
+	IssuedBy:                      uuid.NewString(),
+	StartAt:                       uint32(time.Now().Unix()),
+	EndAt:                         uint32(time.Now().Add(24 * time.Hour).Unix()),
+	DurationDays:                  30,
+	Message:                       "Test coupon message",
+	Name:                          "Test coupon name",
+	Allocated:                     "0",
+	CouponConstraint:              types.CouponConstraint_Normal,
+	CouponConstraintStr:           types.CouponConstraint_Normal.String(),
+	CouponScope:                   types.CouponScope_Whitelist,
+	CouponScopeStr:                types.CouponScope_Whitelist.String(),
+	Threshold:                     decimal.RequireFromString("0").String(),
+	CashableProbabilityPerMillion: decimal.RequireFromString("0").String(),
 }
 
 var ret = &npool.Coupon{
@@ -75,20 +79,24 @@ var ret = &npool.Coupon{
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	Valid:               true,
 	Allocated:           "1",
+	UsedByOrderID:       uuid.Nil.String(),
+	Threshold:           decimal.RequireFromString("0").String(),
 }
 
 func createCoupon(t *testing.T) {
 	info1, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
-		EntID:        &coupon.EntID,
-		CouponType:   &coupon.CouponType,
-		AppID:        &coupon.AppID,
-		Denomination: &coupon.Denomination,
-		Circulation:  &coupon.Circulation,
-		IssuedBy:     &coupon.IssuedBy,
-		StartAt:      &coupon.StartAt,
-		DurationDays: &coupon.DurationDays,
-		Message:      &coupon.Message,
-		Name:         &coupon.Name,
+		EntID:                         &coupon.EntID,
+		CouponType:                    &coupon.CouponType,
+		AppID:                         &coupon.AppID,
+		Denomination:                  &coupon.Denomination,
+		Circulation:                   &coupon.Circulation,
+		IssuedBy:                      &coupon.IssuedBy,
+		StartAt:                       &coupon.StartAt,
+		EndAt:                         &coupon.EndAt,
+		DurationDays:                  &coupon.DurationDays,
+		Message:                       &coupon.Message,
+		Name:                          &coupon.Name,
+		CashableProbabilityPerMillion: &coupon.CashableProbabilityPerMillion,
 	})
 	if assert.Nil(t, err) {
 		coupon.ID = info1.ID
