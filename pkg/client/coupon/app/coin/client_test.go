@@ -157,7 +157,7 @@ func deleteCouponCoin(t *testing.T) {
 	assert.Nil(t, info)
 }
 
-func TestScope(t *testing.T) {
+func TestCouponCoin(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}

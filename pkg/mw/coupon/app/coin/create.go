@@ -13,30 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type createHandler struct {
-	*Handler
-}
-
-func (h *createHandler) createCouponCoin(ctx context.Context, cli *ent.Client) error {
-	if _, err := couponcoincrud.CreateSet(
-		cli.CouponCoin.Create(),
-		&couponcoincrud.Req{
-			EntID:      h.EntID,
-			AppID:      h.AppID,
-			CoinTypeID: h.CoinTypeID,
-			CouponID:   h.CouponID,
-		},
-	).Save(ctx); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (h *Handler) CreateCouponCoin(ctx context.Context) (*npool.CouponCoin, error) {
-	handler := &createHandler{
-		Handler: h,
-	}
-
 	h.Conds = &couponcoincrud.Conds{
 		AppID:      &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		CouponID:   &cruder.Cond{Op: cruder.EQ, Val: *h.CouponID},
@@ -56,7 +33,15 @@ func (h *Handler) CreateCouponCoin(ctx context.Context) (*npool.CouponCoin, erro
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.createCouponCoin(ctx, cli); err != nil {
+		if _, err := couponcoincrud.CreateSet(
+			cli.CouponCoin.Create(),
+			&couponcoincrud.Req{
+				EntID:      h.EntID,
+				AppID:      h.AppID,
+				CoinTypeID: h.CoinTypeID,
+				CouponID:   h.CouponID,
+			},
+		).Save(ctx); err != nil {
 			return err
 		}
 		return nil
