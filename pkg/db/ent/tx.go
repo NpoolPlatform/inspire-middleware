@@ -24,6 +24,8 @@ type Tx struct {
 	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
+	// CouponCoin is the client for interacting with the CouponCoin builders.
+	CouponCoin *CouponCoinClient
 	// CouponScope is the client for interacting with the CouponScope builders.
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
@@ -176,6 +178,7 @@ func (tx *Tx) init() {
 	tx.Commission = NewCommissionClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
+	tx.CouponCoin = NewCouponCoinClient(tx.config)
 	tx.CouponScope = NewCouponScopeClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
 	tx.InvitationCode = NewInvitationCodeClient(tx.config)
