@@ -52,7 +52,6 @@ type Conds struct {
 	CouponIDs  *cruder.Cond
 }
 
-//nolint
 func SetQueryConds(q *ent.CouponCoinQuery, conds *Conds) (*ent.CouponCoinQuery, error) {
 	q.Where(entcouponcoin.DeletedAt(0))
 	if conds == nil {
