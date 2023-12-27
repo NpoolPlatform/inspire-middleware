@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
@@ -83,6 +84,11 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			return fmt.Errorf("invalid coupon")
 		}
 
+		now := time.Now().Unix()
+		if now < int64(_coupon.StartAt) || now > int64(_coupon.EndAt) {
+			logger.Sugar().Errorw("coupon can not be issued in current time")
+			continue
+		}
 		coups = append(coups, _coupon)
 	}
 
