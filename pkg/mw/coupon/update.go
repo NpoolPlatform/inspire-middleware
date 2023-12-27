@@ -2,12 +2,15 @@ package coupon
 
 import (
 	"context"
+	"fmt"
 
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
+	"github.com/shopspring/decimal"
 )
 
 func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
@@ -23,6 +26,12 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			Only(_ctx)
 		if err != nil {
 			return err
+		}
+
+		if info.CouponType == inspiretypes.CouponType_Discount.String() {
+			if h.CashableProbabilityPerMillion != nil && h.CashableProbabilityPerMillion.Cmp(decimal.NewFromInt(0)) > 0 {
+				return fmt.Errorf("discount can not set probability")
+			}
 		}
 
 		if _, err := couponcrud.UpdateSet(

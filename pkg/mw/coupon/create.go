@@ -29,6 +29,9 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 { //nolint
 			return nil, fmt.Errorf("100 discounat not allowed")
 		}
+		if h.CashableProbabilityPerMillion != nil {
+			return nil, fmt.Errorf("probability must set with fix amount")
+		}
 	}
 
 	if h.CouponConstraint != nil {
