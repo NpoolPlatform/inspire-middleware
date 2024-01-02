@@ -6,7 +6,6 @@ import (
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	couponcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/coin"
-	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/coin"
 
@@ -94,34 +93,6 @@ func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error
 	}
 }
 
-func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid couponid")
-			}
-			return nil
-		}
-		handler, err := coupon1.NewHandler(
-			ctx,
-			coupon1.WithEntID(id, true),
-		)
-		if err != nil {
-			return err
-		}
-		exist, err := handler.ExistCoupon(ctx)
-		if err != nil {
-			return err
-		}
-		if !exist {
-			return fmt.Errorf("invalid couponid")
-		}
-		_id := uuid.MustParse(*id)
-		h.CouponID = &_id
-		return nil
-	}
-}
-
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &couponcoincrud.Conds{}
@@ -148,24 +119,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				return err
 			}
 			h.Conds.CoinTypeID = &cruder.Cond{Op: conds.GetCoinTypeID().GetOp(), Val: id}
-		}
-		if conds.CouponID != nil {
-			id, err := uuid.Parse(conds.GetCouponID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
-		}
-		if conds.CouponIDs != nil {
-			ids := []uuid.UUID{}
-			for _, id := range conds.GetCouponIDs().GetValue() {
-				_id, err := uuid.Parse(id)
-				if err != nil {
-					return err
-				}
-				ids = append(ids, _id)
-			}
-			h.Conds.CouponIDs = &cruder.Cond{Op: conds.GetCouponIDs().GetOp(), Val: ids}
 		}
 		return nil
 	}

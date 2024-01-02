@@ -289,16 +289,16 @@ func (cc *CouponCreate) SetNillableCouponScope(s *string) *CouponCreate {
 	return cc
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (cc *CouponCreate) SetCashableProbabilityPerMillion(d decimal.Decimal) *CouponCreate {
-	cc.mutation.SetCashableProbabilityPerMillion(d)
+// SetCashableProbability sets the "cashable_probability" field.
+func (cc *CouponCreate) SetCashableProbability(d decimal.Decimal) *CouponCreate {
+	cc.mutation.SetCashableProbability(d)
 	return cc
 }
 
-// SetNillableCashableProbabilityPerMillion sets the "cashable_probability_per_million" field if the given value is not nil.
-func (cc *CouponCreate) SetNillableCashableProbabilityPerMillion(d *decimal.Decimal) *CouponCreate {
+// SetNillableCashableProbability sets the "cashable_probability" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableCashableProbability(d *decimal.Decimal) *CouponCreate {
 	if d != nil {
-		cc.SetCashableProbabilityPerMillion(*d)
+		cc.SetCashableProbability(*d)
 	}
 	return cc
 }
@@ -482,9 +482,9 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultCouponScope
 		cc.mutation.SetCouponScope(v)
 	}
-	if _, ok := cc.mutation.CashableProbabilityPerMillion(); !ok {
-		v := coupon.DefaultCashableProbabilityPerMillion
-		cc.mutation.SetCashableProbabilityPerMillion(v)
+	if _, ok := cc.mutation.CashableProbability(); !ok {
+		v := coupon.DefaultCashableProbability
+		cc.mutation.SetCashableProbability(v)
 	}
 	return nil
 }
@@ -689,13 +689,13 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 		})
 		_node.CouponScope = value
 	}
-	if value, ok := cc.mutation.CashableProbabilityPerMillion(); ok {
+	if value, ok := cc.mutation.CashableProbability(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: coupon.FieldCashableProbabilityPerMillion,
+			Column: coupon.FieldCashableProbability,
 		})
-		_node.CashableProbabilityPerMillion = value
+		_node.CashableProbability = value
 	}
 	return _node, _spec
 }
@@ -1105,21 +1105,21 @@ func (u *CouponUpsert) ClearCouponScope() *CouponUpsert {
 	return u
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (u *CouponUpsert) SetCashableProbabilityPerMillion(v decimal.Decimal) *CouponUpsert {
-	u.Set(coupon.FieldCashableProbabilityPerMillion, v)
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsert) SetCashableProbability(v decimal.Decimal) *CouponUpsert {
+	u.Set(coupon.FieldCashableProbability, v)
 	return u
 }
 
-// UpdateCashableProbabilityPerMillion sets the "cashable_probability_per_million" field to the value that was provided on create.
-func (u *CouponUpsert) UpdateCashableProbabilityPerMillion() *CouponUpsert {
-	u.SetExcluded(coupon.FieldCashableProbabilityPerMillion)
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateCashableProbability() *CouponUpsert {
+	u.SetExcluded(coupon.FieldCashableProbability)
 	return u
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (u *CouponUpsert) ClearCashableProbabilityPerMillion() *CouponUpsert {
-	u.SetNull(coupon.FieldCashableProbabilityPerMillion)
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsert) ClearCashableProbability() *CouponUpsert {
+	u.SetNull(coupon.FieldCashableProbability)
 	return u
 }
 
@@ -1586,24 +1586,24 @@ func (u *CouponUpsertOne) ClearCouponScope() *CouponUpsertOne {
 	})
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (u *CouponUpsertOne) SetCashableProbabilityPerMillion(v decimal.Decimal) *CouponUpsertOne {
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsertOne) SetCashableProbability(v decimal.Decimal) *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
-		s.SetCashableProbabilityPerMillion(v)
+		s.SetCashableProbability(v)
 	})
 }
 
-// UpdateCashableProbabilityPerMillion sets the "cashable_probability_per_million" field to the value that was provided on create.
-func (u *CouponUpsertOne) UpdateCashableProbabilityPerMillion() *CouponUpsertOne {
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateCashableProbability() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
-		s.UpdateCashableProbabilityPerMillion()
+		s.UpdateCashableProbability()
 	})
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (u *CouponUpsertOne) ClearCashableProbabilityPerMillion() *CouponUpsertOne {
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsertOne) ClearCashableProbability() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
-		s.ClearCashableProbabilityPerMillion()
+		s.ClearCashableProbability()
 	})
 }
 
@@ -2235,24 +2235,24 @@ func (u *CouponUpsertBulk) ClearCouponScope() *CouponUpsertBulk {
 	})
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (u *CouponUpsertBulk) SetCashableProbabilityPerMillion(v decimal.Decimal) *CouponUpsertBulk {
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsertBulk) SetCashableProbability(v decimal.Decimal) *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
-		s.SetCashableProbabilityPerMillion(v)
+		s.SetCashableProbability(v)
 	})
 }
 
-// UpdateCashableProbabilityPerMillion sets the "cashable_probability_per_million" field to the value that was provided on create.
-func (u *CouponUpsertBulk) UpdateCashableProbabilityPerMillion() *CouponUpsertBulk {
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateCashableProbability() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
-		s.UpdateCashableProbabilityPerMillion()
+		s.UpdateCashableProbability()
 	})
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (u *CouponUpsertBulk) ClearCashableProbabilityPerMillion() *CouponUpsertBulk {
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsertBulk) ClearCashableProbability() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
-		s.ClearCashableProbabilityPerMillion()
+		s.ClearCashableProbability()
 	})
 }
 

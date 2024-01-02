@@ -9,11 +9,8 @@ import (
 	couponcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/coin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	entcouponcoin "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponcoin"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/coin"
-
-	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -64,22 +61,8 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcouponcoin.FieldEntID), "ent_id"),
 			sql.As(t.C(entcouponcoin.FieldAppID), "app_id"),
 			sql.As(t.C(entcouponcoin.FieldCoinTypeID), "coin_type_id"),
-			sql.As(t.C(entcouponcoin.FieldCouponID), "coupon_id"),
 			sql.As(t.C(entcouponcoin.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entcouponcoin.FieldUpdatedAt), "updated_at"),
-		)
-}
-
-func (h *queryHandler) queryJoinCoupon(s *sql.Selector) {
-	t := sql.Table(entcoupon.Table)
-	s.LeftJoin(t).
-		On(
-			s.C(entcouponcoin.FieldCouponID),
-			t.C(entcoupon.FieldEntID),
-		).
-		AppendSelect(
-			sql.As(t.C(entcoupon.FieldName), "coupon_name"),
-			sql.As(t.C(entcoupon.FieldDenomination), "coupon_denomination"),
 		)
 }
 
@@ -87,7 +70,6 @@ func (h *queryHandler) queryJoin() error {
 	var err error
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
-		h.queryJoinCoupon(s)
 	})
 	if err != nil {
 		return err
@@ -95,9 +77,7 @@ func (h *queryHandler) queryJoin() error {
 	if h.stmCount == nil {
 		return nil
 	}
-	h.stmCount.Modify(func(s *sql.Selector) {
-		h.queryJoinCoupon(s)
-	})
+	h.stmCount.Modify(func(s *sql.Selector) {})
 	return err
 }
 
@@ -105,16 +85,7 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
-func (h *queryHandler) formalize() {
-	for _, info := range h.infos {
-		denomination, err := decimal.NewFromString(info.CouponDenomination)
-		if err != nil {
-			info.CouponDenomination = decimal.NewFromInt(0).String()
-		} else {
-			info.CouponDenomination = denomination.String()
-		}
-	}
-}
+func (h *queryHandler) formalize() {}
 
 func (h *Handler) GetCouponCoin(ctx context.Context) (*npool.CouponCoin, error) {
 	handler := &queryHandler{

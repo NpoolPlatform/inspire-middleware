@@ -30,12 +30,6 @@ func (CouponCoin) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
-			UUID("coupon_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
 			UUID("coin_type_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

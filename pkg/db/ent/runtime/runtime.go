@@ -337,10 +337,10 @@ func init() {
 	couponDescCouponScope := couponFields[14].Descriptor()
 	// coupon.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	coupon.DefaultCouponScope = couponDescCouponScope.Default.(string)
-	// couponDescCashableProbabilityPerMillion is the schema descriptor for cashable_probability_per_million field.
-	couponDescCashableProbabilityPerMillion := couponFields[15].Descriptor()
-	// coupon.DefaultCashableProbabilityPerMillion holds the default value on creation for the cashable_probability_per_million field.
-	coupon.DefaultCashableProbabilityPerMillion = couponDescCashableProbabilityPerMillion.Default.(decimal.Decimal)
+	// couponDescCashableProbability is the schema descriptor for cashable_probability field.
+	couponDescCashableProbability := couponFields[15].Descriptor()
+	// coupon.DefaultCashableProbability holds the default value on creation for the cashable_probability field.
+	coupon.DefaultCashableProbability = couponDescCashableProbability.Default.(decimal.Decimal)
 	couponallocatedMixin := schema.CouponAllocated{}.Mixin()
 	couponallocated.Policy = privacy.NewPolicies(couponallocatedMixin[0], schema.CouponAllocated{})
 	couponallocated.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -453,12 +453,8 @@ func init() {
 	couponcoinDescAppID := couponcoinFields[0].Descriptor()
 	// couponcoin.DefaultAppID holds the default value on creation for the app_id field.
 	couponcoin.DefaultAppID = couponcoinDescAppID.Default.(func() uuid.UUID)
-	// couponcoinDescCouponID is the schema descriptor for coupon_id field.
-	couponcoinDescCouponID := couponcoinFields[1].Descriptor()
-	// couponcoin.DefaultCouponID holds the default value on creation for the coupon_id field.
-	couponcoin.DefaultCouponID = couponcoinDescCouponID.Default.(func() uuid.UUID)
 	// couponcoinDescCoinTypeID is the schema descriptor for coin_type_id field.
-	couponcoinDescCoinTypeID := couponcoinFields[2].Descriptor()
+	couponcoinDescCoinTypeID := couponcoinFields[1].Descriptor()
 	// couponcoin.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
 	couponcoin.DefaultCoinTypeID = couponcoinDescCoinTypeID.Default.(func() uuid.UUID)
 	couponscopeMixin := schema.CouponScope{}.Mixin()

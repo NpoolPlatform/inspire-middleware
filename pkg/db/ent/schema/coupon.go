@@ -107,7 +107,7 @@ func (Coupon) Fields() []ent.Field {
 			Optional().
 			Default(types.CouponScope_Whitelist.String()),
 		field.
-			Other("cashable_probability_per_million", decimal.Decimal{}).
+			Other("cashable_probability", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

@@ -305,7 +305,7 @@ func WithRandom(random *bool, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCashableProbabilityPerMillion(probability *string, must bool) func(context.Context, *Handler) error {
+func WithCashableProbability(probability *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if probability == nil {
 			if must {
@@ -320,7 +320,7 @@ func WithCashableProbabilityPerMillion(probability *string, must bool) func(cont
 		if _probability.Cmp(decimal.NewFromInt(0)) < 0 || _probability.Cmp(decimal.NewFromInt(1)) > 0 {
 			return fmt.Errorf("invalid probability")
 		}
-		h.CashableProbabilityPerMillion = &_probability
+		h.CashableProbability = &_probability
 		return nil
 	}
 }

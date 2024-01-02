@@ -92,20 +92,6 @@ func (ccc *CouponCoinCreate) SetNillableAppID(u *uuid.UUID) *CouponCoinCreate {
 	return ccc
 }
 
-// SetCouponID sets the "coupon_id" field.
-func (ccc *CouponCoinCreate) SetCouponID(u uuid.UUID) *CouponCoinCreate {
-	ccc.mutation.SetCouponID(u)
-	return ccc
-}
-
-// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
-func (ccc *CouponCoinCreate) SetNillableCouponID(u *uuid.UUID) *CouponCoinCreate {
-	if u != nil {
-		ccc.SetCouponID(*u)
-	}
-	return ccc
-}
-
 // SetCoinTypeID sets the "coin_type_id" field.
 func (ccc *CouponCoinCreate) SetCoinTypeID(u uuid.UUID) *CouponCoinCreate {
 	ccc.mutation.SetCoinTypeID(u)
@@ -240,13 +226,6 @@ func (ccc *CouponCoinCreate) defaults() error {
 		v := couponcoin.DefaultAppID()
 		ccc.mutation.SetAppID(v)
 	}
-	if _, ok := ccc.mutation.CouponID(); !ok {
-		if couponcoin.DefaultCouponID == nil {
-			return fmt.Errorf("ent: uninitialized couponcoin.DefaultCouponID (forgotten import ent/runtime?)")
-		}
-		v := couponcoin.DefaultCouponID()
-		ccc.mutation.SetCouponID(v)
-	}
 	if _, ok := ccc.mutation.CoinTypeID(); !ok {
 		if couponcoin.DefaultCoinTypeID == nil {
 			return fmt.Errorf("ent: uninitialized couponcoin.DefaultCoinTypeID (forgotten import ent/runtime?)")
@@ -344,14 +323,6 @@ func (ccc *CouponCoinCreate) createSpec() (*CouponCoin, *sqlgraph.CreateSpec) {
 			Column: couponcoin.FieldAppID,
 		})
 		_node.AppID = value
-	}
-	if value, ok := ccc.mutation.CouponID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponcoin.FieldCouponID,
-		})
-		_node.CouponID = value
 	}
 	if value, ok := ccc.mutation.CoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -496,24 +467,6 @@ func (u *CouponCoinUpsert) UpdateAppID() *CouponCoinUpsert {
 // ClearAppID clears the value of the "app_id" field.
 func (u *CouponCoinUpsert) ClearAppID() *CouponCoinUpsert {
 	u.SetNull(couponcoin.FieldAppID)
-	return u
-}
-
-// SetCouponID sets the "coupon_id" field.
-func (u *CouponCoinUpsert) SetCouponID(v uuid.UUID) *CouponCoinUpsert {
-	u.Set(couponcoin.FieldCouponID, v)
-	return u
-}
-
-// UpdateCouponID sets the "coupon_id" field to the value that was provided on create.
-func (u *CouponCoinUpsert) UpdateCouponID() *CouponCoinUpsert {
-	u.SetExcluded(couponcoin.FieldCouponID)
-	return u
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (u *CouponCoinUpsert) ClearCouponID() *CouponCoinUpsert {
-	u.SetNull(couponcoin.FieldCouponID)
 	return u
 }
 
@@ -680,27 +633,6 @@ func (u *CouponCoinUpsertOne) UpdateAppID() *CouponCoinUpsertOne {
 func (u *CouponCoinUpsertOne) ClearAppID() *CouponCoinUpsertOne {
 	return u.Update(func(s *CouponCoinUpsert) {
 		s.ClearAppID()
-	})
-}
-
-// SetCouponID sets the "coupon_id" field.
-func (u *CouponCoinUpsertOne) SetCouponID(v uuid.UUID) *CouponCoinUpsertOne {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.SetCouponID(v)
-	})
-}
-
-// UpdateCouponID sets the "coupon_id" field to the value that was provided on create.
-func (u *CouponCoinUpsertOne) UpdateCouponID() *CouponCoinUpsertOne {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.UpdateCouponID()
-	})
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (u *CouponCoinUpsertOne) ClearCouponID() *CouponCoinUpsertOne {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.ClearCouponID()
 	})
 }
 
@@ -1035,27 +967,6 @@ func (u *CouponCoinUpsertBulk) UpdateAppID() *CouponCoinUpsertBulk {
 func (u *CouponCoinUpsertBulk) ClearAppID() *CouponCoinUpsertBulk {
 	return u.Update(func(s *CouponCoinUpsert) {
 		s.ClearAppID()
-	})
-}
-
-// SetCouponID sets the "coupon_id" field.
-func (u *CouponCoinUpsertBulk) SetCouponID(v uuid.UUID) *CouponCoinUpsertBulk {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.SetCouponID(v)
-	})
-}
-
-// UpdateCouponID sets the "coupon_id" field to the value that was provided on create.
-func (u *CouponCoinUpsertBulk) UpdateCouponID() *CouponCoinUpsertBulk {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.UpdateCouponID()
-	})
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (u *CouponCoinUpsertBulk) ClearCouponID() *CouponCoinUpsertBulk {
-	return u.Update(func(s *CouponCoinUpsert) {
-		s.ClearCouponID()
 	})
 }
 

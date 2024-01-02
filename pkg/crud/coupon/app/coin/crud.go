@@ -13,7 +13,6 @@ type Req struct {
 	ID         *uint32
 	EntID      *uuid.UUID
 	AppID      *uuid.UUID
-	CouponID   *uuid.UUID
 	CoinTypeID *uuid.UUID
 	DeletedAt  *uint32
 }
@@ -31,9 +30,6 @@ func CreateSet(c *ent.CouponCoinCreate, req *Req) *ent.CouponCoinCreate {
 	if req.CoinTypeID != nil {
 		c.SetCoinTypeID(*req.CoinTypeID)
 	}
-	if req.CouponID != nil {
-		c.SetCouponID(*req.CouponID)
-	}
 	return c
 }
 
@@ -48,8 +44,6 @@ type Conds struct {
 	EntID      *cruder.Cond
 	AppID      *cruder.Cond
 	CoinTypeID *cruder.Cond
-	CouponID   *cruder.Cond
-	CouponIDs  *cruder.Cond
 }
 
 func SetQueryConds(q *ent.CouponCoinQuery, conds *Conds) (*ent.CouponCoinQuery, error) {
@@ -84,37 +78,13 @@ func SetQueryConds(q *ent.CouponCoinQuery, conds *Conds) (*ent.CouponCoinQuery, 
 	if conds.CoinTypeID != nil {
 		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
+			return nil, fmt.Errorf("invalid cointypeid")
 		}
 		switch conds.CoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entcouponcoin.CoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid appgoodid field")
-		}
-	}
-	if conds.CouponID != nil {
-		id, ok := conds.CouponID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid couponid")
-		}
-		switch conds.CouponID.Op {
-		case cruder.EQ:
-			q.Where(entcouponcoin.CouponID(id))
-		default:
-			return nil, fmt.Errorf("invalid couponid field")
-		}
-	}
-	if conds.CouponIDs != nil {
-		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid couponids")
-		}
-		switch conds.CouponIDs.Op {
-		case cruder.IN:
-			q.Where(entcouponcoin.CouponIDIn(ids...))
-		default:
-			return nil, fmt.Errorf("invalid couponids field")
+			return nil, fmt.Errorf("invalid cointypeid field")
 		}
 	}
 	return q, nil

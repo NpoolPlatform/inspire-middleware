@@ -38,7 +38,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		coupon1.WithCouponConstraint(req.CouponConstraint, false),
 		coupon1.WithCouponScope(req.CouponScope, false),
 		coupon1.WithRandom(req.Random, false),
-		coupon1.WithCashableProbabilityPerMillion(req.CashableProbabilityPerMillion, false),
+		coupon1.WithCashableProbability(req.CashableProbability, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

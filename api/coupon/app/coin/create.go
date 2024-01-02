@@ -25,7 +25,6 @@ func (s *Server) CreateCouponCoin(ctx context.Context, in *npool.CreateCouponCoi
 		couponcoin1.WithEntID(req.EntID, false),
 		couponcoin1.WithAppID(req.AppID, true),
 		couponcoin1.WithCoinTypeID(req.CoinTypeID, true),
-		couponcoin1.WithCouponID(req.CouponID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

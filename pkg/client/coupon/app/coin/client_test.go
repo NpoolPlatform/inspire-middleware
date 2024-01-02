@@ -40,52 +40,49 @@ func init() {
 
 var (
 	coupon = couponmwpb.Coupon{
-		EntID:                         uuid.NewString(),
-		AppID:                         uuid.NewString(),
-		Name:                          uuid.NewString(),
-		Message:                       uuid.NewString(),
-		CouponType:                    types.CouponType_FixAmount,
-		CouponTypeStr:                 types.CouponType_FixAmount.String(),
-		Denomination:                  decimal.RequireFromString("100").String(),
-		Circulation:                   decimal.RequireFromString("100").String(),
-		DurationDays:                  365,
-		IssuedBy:                      uuid.NewString(),
-		StartAt:                       uint32(time.Now().Unix()),
-		EndAt:                         uint32(time.Now().Add(24 * time.Hour).Unix()),
-		CouponConstraint:              types.CouponConstraint_Normal,
-		CouponConstraintStr:           types.CouponConstraint_Normal.String(),
-		CouponScope:                   types.CouponScope_Whitelist,
-		CouponScopeStr:                types.CouponScope_Whitelist.String(),
-		Allocated:                     decimal.NewFromInt(0).String(),
-		Threshold:                     decimal.NewFromInt(0).String(),
-		CashableProbabilityPerMillion: decimal.RequireFromString("0.0001").String(),
+		EntID:               uuid.NewString(),
+		AppID:               uuid.NewString(),
+		Name:                uuid.NewString(),
+		Message:             uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		Denomination:        decimal.RequireFromString("100").String(),
+		Circulation:         decimal.RequireFromString("100").String(),
+		DurationDays:        365,
+		IssuedBy:            uuid.NewString(),
+		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Allocated:           decimal.NewFromInt(0).String(),
+		Threshold:           decimal.NewFromInt(0).String(),
+		CashableProbability: decimal.RequireFromString("0.0001").String(),
 	}
 
 	ret = npool.CouponCoin{
-		EntID:              uuid.NewString(),
-		AppID:              coupon.AppID,
-		CouponID:           coupon.EntID,
-		CouponName:         coupon.Name,
-		CouponDenomination: coupon.Denomination,
-		CoinTypeID:         uuid.NewString(),
+		EntID:      uuid.NewString(),
+		AppID:      coupon.AppID,
+		CoinTypeID: uuid.NewString(),
 	}
 )
 
 func setup(t *testing.T) func(*testing.T) {
 	info, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
-		EntID:                         &coupon.EntID,
-		AppID:                         &coupon.AppID,
-		Name:                          &coupon.Name,
-		Message:                       &coupon.Message,
-		CouponType:                    &coupon.CouponType,
-		Denomination:                  &coupon.Denomination,
-		Circulation:                   &coupon.Circulation,
-		DurationDays:                  &coupon.DurationDays,
-		IssuedBy:                      &coupon.IssuedBy,
-		StartAt:                       &coupon.StartAt,
-		EndAt:                         &coupon.EndAt,
-		CouponScope:                   &coupon.CouponScope,
-		CashableProbabilityPerMillion: &coupon.CashableProbabilityPerMillion,
+		EntID:               &coupon.EntID,
+		AppID:               &coupon.AppID,
+		Name:                &coupon.Name,
+		Message:             &coupon.Message,
+		CouponType:          &coupon.CouponType,
+		Denomination:        &coupon.Denomination,
+		Circulation:         &coupon.Circulation,
+		DurationDays:        &coupon.DurationDays,
+		IssuedBy:            &coupon.IssuedBy,
+		StartAt:             &coupon.StartAt,
+		EndAt:               &coupon.EndAt,
+		CouponScope:         &coupon.CouponScope,
+		CashableProbability: &coupon.CashableProbability,
 	})
 	if assert.Nil(t, err) {
 		coupon.ID = info.ID
@@ -104,7 +101,6 @@ func createCouponCoin(t *testing.T) {
 		EntID:      &ret.EntID,
 		AppID:      &ret.AppID,
 		CoinTypeID: &ret.CoinTypeID,
-		CouponID:   &ret.CouponID,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
@@ -126,7 +122,6 @@ func getCouponCoins(t *testing.T) {
 		EntID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		CoinTypeID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.CoinTypeID},
-		CouponID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 	}, 0, 1)
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(1))
@@ -138,7 +133,6 @@ func getCouponCoins(t *testing.T) {
 func existCouponCoinConds(t *testing.T) {
 	conds := &npool.Conds{
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-		CouponID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
 		CoinTypeID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.CoinTypeID},
 	}
 	exist, err := ExistCouponCoinConds(context.Background(), conds)

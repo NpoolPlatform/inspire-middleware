@@ -12,25 +12,25 @@ import (
 )
 
 type Req struct {
-	ID                            *uint32
-	EntID                         *uuid.UUID
-	CouponType                    *types.CouponType
-	AppID                         *uuid.UUID
-	Denomination                  *decimal.Decimal
-	Circulation                   *decimal.Decimal
-	IssuedBy                      *uuid.UUID
-	StartAt                       *uint32
-	EndAt                         *uint32
-	DurationDays                  *uint32
-	Message                       *string
-	Name                          *string
-	CouponConstraint              *types.CouponConstraint
-	CouponScope                   *types.CouponScope
-	Threshold                     *decimal.Decimal
-	Allocated                     *decimal.Decimal
-	Random                        *bool
-	CashableProbabilityPerMillion *decimal.Decimal
-	DeletedAt                     *uint32
+	ID                  *uint32
+	EntID               *uuid.UUID
+	CouponType          *types.CouponType
+	AppID               *uuid.UUID
+	Denomination        *decimal.Decimal
+	Circulation         *decimal.Decimal
+	IssuedBy            *uuid.UUID
+	StartAt             *uint32
+	EndAt               *uint32
+	DurationDays        *uint32
+	Message             *string
+	Name                *string
+	CouponConstraint    *types.CouponConstraint
+	CouponScope         *types.CouponScope
+	Threshold           *decimal.Decimal
+	Allocated           *decimal.Decimal
+	Random              *bool
+	CashableProbability *decimal.Decimal
+	DeletedAt           *uint32
 }
 
 func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
@@ -82,8 +82,8 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.Random != nil {
 		c.SetRandom(*req.Random)
 	}
-	if req.CashableProbabilityPerMillion != nil {
-		c.SetCashableProbabilityPerMillion(*req.CashableProbabilityPerMillion)
+	if req.CashableProbability != nil {
+		c.SetCashableProbability(*req.CashableProbability)
 	}
 	return c
 }
@@ -122,8 +122,8 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	if req.CouponScope != nil {
 		u.SetCouponScope(req.CouponScope.String())
 	}
-	if req.CashableProbabilityPerMillion != nil {
-		u.SetCashableProbabilityPerMillion(*req.CashableProbabilityPerMillion)
+	if req.CashableProbability != nil {
+		u.SetCashableProbability(*req.CashableProbability)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

@@ -29,7 +29,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 { //nolint
 			return nil, fmt.Errorf("100 discounat not allowed")
 		}
-		if h.CashableProbabilityPerMillion != nil {
+		if h.CashableProbability != nil {
 			return nil, fmt.Errorf("probability must set with fix amount")
 		}
 	}
@@ -50,22 +50,22 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := couponcrud.CreateSet(
 			cli.Coupon.Create(),
 			&couponcrud.Req{
-				EntID:                         h.EntID,
-				CouponType:                    h.CouponType,
-				AppID:                         h.AppID,
-				Denomination:                  h.Denomination,
-				Circulation:                   h.Circulation,
-				IssuedBy:                      h.IssuedBy,
-				StartAt:                       h.StartAt,
-				EndAt:                         h.EndAt,
-				DurationDays:                  h.DurationDays,
-				Message:                       h.Message,
-				Name:                          h.Name,
-				CouponConstraint:              h.CouponConstraint,
-				CouponScope:                   h.CouponScope,
-				Threshold:                     h.Threshold,
-				Random:                        h.Random,
-				CashableProbabilityPerMillion: h.CashableProbabilityPerMillion,
+				EntID:               h.EntID,
+				CouponType:          h.CouponType,
+				AppID:               h.AppID,
+				Denomination:        h.Denomination,
+				Circulation:         h.Circulation,
+				IssuedBy:            h.IssuedBy,
+				StartAt:             h.StartAt,
+				EndAt:               h.EndAt,
+				DurationDays:        h.DurationDays,
+				Message:             h.Message,
+				Name:                h.Name,
+				CouponConstraint:    h.CouponConstraint,
+				CouponScope:         h.CouponScope,
+				Threshold:           h.Threshold,
+				Random:              h.Random,
+				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
 			return err

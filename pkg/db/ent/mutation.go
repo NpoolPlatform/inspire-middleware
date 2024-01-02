@@ -3951,39 +3951,39 @@ func (m *CommissionMutation) ResetEdge(name string) error {
 // CouponMutation represents an operation that mutates the Coupon nodes in the graph.
 type CouponMutation struct {
 	config
-	op                               Op
-	typ                              string
-	id                               *uint32
-	created_at                       *uint32
-	addcreated_at                    *int32
-	updated_at                       *uint32
-	addupdated_at                    *int32
-	deleted_at                       *uint32
-	adddeleted_at                    *int32
-	ent_id                           *uuid.UUID
-	app_id                           *uuid.UUID
-	denomination                     *decimal.Decimal
-	circulation                      *decimal.Decimal
-	random                           *bool
-	issued_by                        *uuid.UUID
-	start_at                         *uint32
-	addstart_at                      *int32
-	end_at                           *uint32
-	addend_at                        *int32
-	duration_days                    *uint32
-	addduration_days                 *int32
-	message                          *string
-	name                             *string
-	allocated                        *decimal.Decimal
-	coupon_type                      *string
-	threshold                        *decimal.Decimal
-	coupon_constraint                *string
-	coupon_scope                     *string
-	cashable_probability_per_million *decimal.Decimal
-	clearedFields                    map[string]struct{}
-	done                             bool
-	oldValue                         func(context.Context) (*Coupon, error)
-	predicates                       []predicate.Coupon
+	op                   Op
+	typ                  string
+	id                   *uint32
+	created_at           *uint32
+	addcreated_at        *int32
+	updated_at           *uint32
+	addupdated_at        *int32
+	deleted_at           *uint32
+	adddeleted_at        *int32
+	ent_id               *uuid.UUID
+	app_id               *uuid.UUID
+	denomination         *decimal.Decimal
+	circulation          *decimal.Decimal
+	random               *bool
+	issued_by            *uuid.UUID
+	start_at             *uint32
+	addstart_at          *int32
+	end_at               *uint32
+	addend_at            *int32
+	duration_days        *uint32
+	addduration_days     *int32
+	message              *string
+	name                 *string
+	allocated            *decimal.Decimal
+	coupon_type          *string
+	threshold            *decimal.Decimal
+	coupon_constraint    *string
+	coupon_scope         *string
+	cashable_probability *decimal.Decimal
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*Coupon, error)
+	predicates           []predicate.Coupon
 }
 
 var _ ent.Mutation = (*CouponMutation)(nil)
@@ -5092,53 +5092,53 @@ func (m *CouponMutation) ResetCouponScope() {
 	delete(m.clearedFields, coupon.FieldCouponScope)
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (m *CouponMutation) SetCashableProbabilityPerMillion(d decimal.Decimal) {
-	m.cashable_probability_per_million = &d
+// SetCashableProbability sets the "cashable_probability" field.
+func (m *CouponMutation) SetCashableProbability(d decimal.Decimal) {
+	m.cashable_probability = &d
 }
 
-// CashableProbabilityPerMillion returns the value of the "cashable_probability_per_million" field in the mutation.
-func (m *CouponMutation) CashableProbabilityPerMillion() (r decimal.Decimal, exists bool) {
-	v := m.cashable_probability_per_million
+// CashableProbability returns the value of the "cashable_probability" field in the mutation.
+func (m *CouponMutation) CashableProbability() (r decimal.Decimal, exists bool) {
+	v := m.cashable_probability
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCashableProbabilityPerMillion returns the old "cashable_probability_per_million" field's value of the Coupon entity.
+// OldCashableProbability returns the old "cashable_probability" field's value of the Coupon entity.
 // If the Coupon object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponMutation) OldCashableProbabilityPerMillion(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *CouponMutation) OldCashableProbability(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCashableProbabilityPerMillion is only allowed on UpdateOne operations")
+		return v, errors.New("OldCashableProbability is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCashableProbabilityPerMillion requires an ID field in the mutation")
+		return v, errors.New("OldCashableProbability requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCashableProbabilityPerMillion: %w", err)
+		return v, fmt.Errorf("querying old value for OldCashableProbability: %w", err)
 	}
-	return oldValue.CashableProbabilityPerMillion, nil
+	return oldValue.CashableProbability, nil
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (m *CouponMutation) ClearCashableProbabilityPerMillion() {
-	m.cashable_probability_per_million = nil
-	m.clearedFields[coupon.FieldCashableProbabilityPerMillion] = struct{}{}
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (m *CouponMutation) ClearCashableProbability() {
+	m.cashable_probability = nil
+	m.clearedFields[coupon.FieldCashableProbability] = struct{}{}
 }
 
-// CashableProbabilityPerMillionCleared returns if the "cashable_probability_per_million" field was cleared in this mutation.
-func (m *CouponMutation) CashableProbabilityPerMillionCleared() bool {
-	_, ok := m.clearedFields[coupon.FieldCashableProbabilityPerMillion]
+// CashableProbabilityCleared returns if the "cashable_probability" field was cleared in this mutation.
+func (m *CouponMutation) CashableProbabilityCleared() bool {
+	_, ok := m.clearedFields[coupon.FieldCashableProbability]
 	return ok
 }
 
-// ResetCashableProbabilityPerMillion resets all changes to the "cashable_probability_per_million" field.
-func (m *CouponMutation) ResetCashableProbabilityPerMillion() {
-	m.cashable_probability_per_million = nil
-	delete(m.clearedFields, coupon.FieldCashableProbabilityPerMillion)
+// ResetCashableProbability resets all changes to the "cashable_probability" field.
+func (m *CouponMutation) ResetCashableProbability() {
+	m.cashable_probability = nil
+	delete(m.clearedFields, coupon.FieldCashableProbability)
 }
 
 // Where appends a list predicates to the CouponMutation builder.
@@ -5218,8 +5218,8 @@ func (m *CouponMutation) Fields() []string {
 	if m.coupon_scope != nil {
 		fields = append(fields, coupon.FieldCouponScope)
 	}
-	if m.cashable_probability_per_million != nil {
-		fields = append(fields, coupon.FieldCashableProbabilityPerMillion)
+	if m.cashable_probability != nil {
+		fields = append(fields, coupon.FieldCashableProbability)
 	}
 	return fields
 }
@@ -5267,8 +5267,8 @@ func (m *CouponMutation) Field(name string) (ent.Value, bool) {
 		return m.CouponConstraint()
 	case coupon.FieldCouponScope:
 		return m.CouponScope()
-	case coupon.FieldCashableProbabilityPerMillion:
-		return m.CashableProbabilityPerMillion()
+	case coupon.FieldCashableProbability:
+		return m.CashableProbability()
 	}
 	return nil, false
 }
@@ -5316,8 +5316,8 @@ func (m *CouponMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldCouponConstraint(ctx)
 	case coupon.FieldCouponScope:
 		return m.OldCouponScope(ctx)
-	case coupon.FieldCashableProbabilityPerMillion:
-		return m.OldCashableProbabilityPerMillion(ctx)
+	case coupon.FieldCashableProbability:
+		return m.OldCashableProbability(ctx)
 	}
 	return nil, fmt.Errorf("unknown Coupon field %s", name)
 }
@@ -5460,12 +5460,12 @@ func (m *CouponMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCouponScope(v)
 		return nil
-	case coupon.FieldCashableProbabilityPerMillion:
+	case coupon.FieldCashableProbability:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCashableProbabilityPerMillion(v)
+		m.SetCashableProbability(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)
@@ -5617,8 +5617,8 @@ func (m *CouponMutation) ClearedFields() []string {
 	if m.FieldCleared(coupon.FieldCouponScope) {
 		fields = append(fields, coupon.FieldCouponScope)
 	}
-	if m.FieldCleared(coupon.FieldCashableProbabilityPerMillion) {
-		fields = append(fields, coupon.FieldCashableProbabilityPerMillion)
+	if m.FieldCleared(coupon.FieldCashableProbability) {
+		fields = append(fields, coupon.FieldCashableProbability)
 	}
 	return fields
 }
@@ -5679,8 +5679,8 @@ func (m *CouponMutation) ClearField(name string) error {
 	case coupon.FieldCouponScope:
 		m.ClearCouponScope()
 		return nil
-	case coupon.FieldCashableProbabilityPerMillion:
-		m.ClearCashableProbabilityPerMillion()
+	case coupon.FieldCashableProbability:
+		m.ClearCashableProbability()
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon nullable field %s", name)
@@ -5747,8 +5747,8 @@ func (m *CouponMutation) ResetField(name string) error {
 	case coupon.FieldCouponScope:
 		m.ResetCouponScope()
 		return nil
-	case coupon.FieldCashableProbabilityPerMillion:
-		m.ResetCashableProbabilityPerMillion()
+	case coupon.FieldCashableProbability:
+		m.ResetCashableProbability()
 		return nil
 	}
 	return fmt.Errorf("unknown Coupon field %s", name)
@@ -7198,7 +7198,6 @@ type CouponCoinMutation struct {
 	adddeleted_at *int32
 	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
-	coupon_id     *uuid.UUID
 	coin_type_id  *uuid.UUID
 	clearedFields map[string]struct{}
 	done          bool
@@ -7563,55 +7562,6 @@ func (m *CouponCoinMutation) ResetAppID() {
 	delete(m.clearedFields, couponcoin.FieldAppID)
 }
 
-// SetCouponID sets the "coupon_id" field.
-func (m *CouponCoinMutation) SetCouponID(u uuid.UUID) {
-	m.coupon_id = &u
-}
-
-// CouponID returns the value of the "coupon_id" field in the mutation.
-func (m *CouponCoinMutation) CouponID() (r uuid.UUID, exists bool) {
-	v := m.coupon_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCouponID returns the old "coupon_id" field's value of the CouponCoin entity.
-// If the CouponCoin object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *CouponCoinMutation) OldCouponID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCouponID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCouponID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCouponID: %w", err)
-	}
-	return oldValue.CouponID, nil
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (m *CouponCoinMutation) ClearCouponID() {
-	m.coupon_id = nil
-	m.clearedFields[couponcoin.FieldCouponID] = struct{}{}
-}
-
-// CouponIDCleared returns if the "coupon_id" field was cleared in this mutation.
-func (m *CouponCoinMutation) CouponIDCleared() bool {
-	_, ok := m.clearedFields[couponcoin.FieldCouponID]
-	return ok
-}
-
-// ResetCouponID resets all changes to the "coupon_id" field.
-func (m *CouponCoinMutation) ResetCouponID() {
-	m.coupon_id = nil
-	delete(m.clearedFields, couponcoin.FieldCouponID)
-}
-
 // SetCoinTypeID sets the "coin_type_id" field.
 func (m *CouponCoinMutation) SetCoinTypeID(u uuid.UUID) {
 	m.coin_type_id = &u
@@ -7680,7 +7630,7 @@ func (m *CouponCoinMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponCoinMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, couponcoin.FieldCreatedAt)
 	}
@@ -7695,9 +7645,6 @@ func (m *CouponCoinMutation) Fields() []string {
 	}
 	if m.app_id != nil {
 		fields = append(fields, couponcoin.FieldAppID)
-	}
-	if m.coupon_id != nil {
-		fields = append(fields, couponcoin.FieldCouponID)
 	}
 	if m.coin_type_id != nil {
 		fields = append(fields, couponcoin.FieldCoinTypeID)
@@ -7720,8 +7667,6 @@ func (m *CouponCoinMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case couponcoin.FieldAppID:
 		return m.AppID()
-	case couponcoin.FieldCouponID:
-		return m.CouponID()
 	case couponcoin.FieldCoinTypeID:
 		return m.CoinTypeID()
 	}
@@ -7743,8 +7688,6 @@ func (m *CouponCoinMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldEntID(ctx)
 	case couponcoin.FieldAppID:
 		return m.OldAppID(ctx)
-	case couponcoin.FieldCouponID:
-		return m.OldCouponID(ctx)
 	case couponcoin.FieldCoinTypeID:
 		return m.OldCoinTypeID(ctx)
 	}
@@ -7790,13 +7733,6 @@ func (m *CouponCoinMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
-		return nil
-	case couponcoin.FieldCouponID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCouponID(v)
 		return nil
 	case couponcoin.FieldCoinTypeID:
 		v, ok := value.(uuid.UUID)
@@ -7877,9 +7813,6 @@ func (m *CouponCoinMutation) ClearedFields() []string {
 	if m.FieldCleared(couponcoin.FieldAppID) {
 		fields = append(fields, couponcoin.FieldAppID)
 	}
-	if m.FieldCleared(couponcoin.FieldCouponID) {
-		fields = append(fields, couponcoin.FieldCouponID)
-	}
 	if m.FieldCleared(couponcoin.FieldCoinTypeID) {
 		fields = append(fields, couponcoin.FieldCoinTypeID)
 	}
@@ -7899,9 +7832,6 @@ func (m *CouponCoinMutation) ClearField(name string) error {
 	switch name {
 	case couponcoin.FieldAppID:
 		m.ClearAppID()
-		return nil
-	case couponcoin.FieldCouponID:
-		m.ClearCouponID()
 		return nil
 	case couponcoin.FieldCoinTypeID:
 		m.ClearCoinTypeID()
@@ -7928,9 +7858,6 @@ func (m *CouponCoinMutation) ResetField(name string) error {
 		return nil
 	case couponcoin.FieldAppID:
 		m.ResetAppID()
-		return nil
-	case couponcoin.FieldCouponID:
-		m.ResetCouponID()
 		return nil
 	case couponcoin.FieldCoinTypeID:
 		m.ResetCoinTypeID()

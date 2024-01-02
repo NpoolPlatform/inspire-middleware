@@ -22,8 +22,6 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
-	// FieldCouponID holds the string denoting the coupon_id field in the database.
-	FieldCouponID = "coupon_id"
 	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
 	FieldCoinTypeID = "coin_type_id"
 	// Table holds the table name of the couponcoin in the database.
@@ -38,7 +36,6 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
-	FieldCouponID,
 	FieldCoinTypeID,
 }
 
@@ -73,8 +70,6 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
-	// DefaultCouponID holds the default value on creation for the "coupon_id" field.
-	DefaultCouponID func() uuid.UUID
 	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
 	DefaultCoinTypeID func() uuid.UUID
 )

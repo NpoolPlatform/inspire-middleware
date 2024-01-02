@@ -29,7 +29,7 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		}
 
 		if info.CouponType == inspiretypes.CouponType_Discount.String() {
-			if h.CashableProbabilityPerMillion != nil && h.CashableProbabilityPerMillion.Cmp(decimal.NewFromInt(0)) > 0 {
+			if h.CashableProbability != nil && h.CashableProbability.Cmp(decimal.NewFromInt(0)) > 0 {
 				return fmt.Errorf("discount can not set probability")
 			}
 		}
@@ -37,17 +37,17 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := couponcrud.UpdateSet(
 			info.Update(),
 			&couponcrud.Req{
-				Denomination:                  h.Denomination,
-				Circulation:                   h.Circulation,
-				StartAt:                       h.StartAt,
-				EndAt:                         h.EndAt,
-				DurationDays:                  h.DurationDays,
-				Message:                       h.Message,
-				Name:                          h.Name,
-				Random:                        h.Random,
-				Threshold:                     h.Threshold,
-				CouponScope:                   h.CouponScope,
-				CashableProbabilityPerMillion: h.CashableProbabilityPerMillion,
+				Denomination:        h.Denomination,
+				Circulation:         h.Circulation,
+				StartAt:             h.StartAt,
+				EndAt:               h.EndAt,
+				DurationDays:        h.DurationDays,
+				Message:             h.Message,
+				Name:                h.Name,
+				Random:              h.Random,
+				Threshold:           h.Threshold,
+				CouponScope:         h.CouponScope,
+				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
 			return err

@@ -31,25 +31,25 @@ func init() {
 
 var (
 	ret = npool.Coupon{
-		EntID:                         uuid.NewString(),
-		CouponType:                    types.CouponType_FixAmount,
-		CouponTypeStr:                 types.CouponType_FixAmount.String(),
-		AppID:                         uuid.NewString(),
-		Denomination:                  decimal.RequireFromString("12.25").String(),
-		Circulation:                   decimal.RequireFromString("12.25").String(),
-		IssuedBy:                      uuid.NewString(),
-		StartAt:                       uint32(time.Now().Unix()),
-		EndAt:                         uint32(time.Now().Add(24 * time.Hour).Unix()),
-		DurationDays:                  234,
-		Message:                       uuid.NewString(),
-		Name:                          uuid.NewString(),
-		CouponConstraint:              types.CouponConstraint_Normal,
-		CouponConstraintStr:           types.CouponConstraint_Normal.String(),
-		CouponScope:                   types.CouponScope_Whitelist,
-		CouponScopeStr:                types.CouponScope_Whitelist.String(),
-		Allocated:                     decimal.NewFromInt(0).String(),
-		Threshold:                     decimal.NewFromInt(0).String(),
-		CashableProbabilityPerMillion: decimal.RequireFromString("0.0001").String(),
+		EntID:               uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		AppID:               uuid.NewString(),
+		Denomination:        decimal.RequireFromString("12.25").String(),
+		Circulation:         decimal.RequireFromString("12.25").String(),
+		IssuedBy:            uuid.NewString(),
+		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
+		DurationDays:        234,
+		Message:             uuid.NewString(),
+		Name:                uuid.NewString(),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Allocated:           decimal.NewFromInt(0).String(),
+		Threshold:           decimal.NewFromInt(0).String(),
+		CashableProbability: decimal.RequireFromString("0.0001").String(),
 	}
 )
 
@@ -72,7 +72,7 @@ func createCoupon(t *testing.T) {
 		WithMessage(&ret.Message, true),
 		WithName(&ret.Name, true),
 		WithCouponScope(&ret.CouponScope, true),
-		WithCashableProbabilityPerMillion(&ret.CashableProbabilityPerMillion, false),
+		WithCashableProbability(&ret.CashableProbability, false),
 	)
 	assert.Nil(t, err)
 
@@ -91,7 +91,7 @@ func updateCoupon(t *testing.T) {
 	ret.CouponScope = types.CouponScope_AllGood
 	ret.CouponScopeStr = types.CouponScope_AllGood.String()
 	ret.EndAt = uint32(time.Now().Add(24 * 30 * time.Hour).Unix())
-	ret.CashableProbabilityPerMillion = decimal.RequireFromString("0.00001").String()
+	ret.CashableProbability = decimal.RequireFromString("0.00001").String()
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -104,7 +104,7 @@ func updateCoupon(t *testing.T) {
 		WithMessage(&ret.Message, true),
 		WithName(&ret.Name, true),
 		WithCouponScope(&ret.CouponScope, true),
-		WithCashableProbabilityPerMillion(&ret.CashableProbabilityPerMillion, true),
+		WithCashableProbability(&ret.CashableProbability, true),
 	)
 	assert.Nil(t, err)
 

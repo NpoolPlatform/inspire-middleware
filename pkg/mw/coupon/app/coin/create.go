@@ -16,7 +16,6 @@ import (
 func (h *Handler) CreateCouponCoin(ctx context.Context) (*npool.CouponCoin, error) {
 	h.Conds = &couponcoincrud.Conds{
 		AppID:      &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
-		CouponID:   &cruder.Cond{Op: cruder.EQ, Val: *h.CouponID},
 		CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: *h.CoinTypeID},
 	}
 	exist, err := h.ExistCouponCoinConds(ctx)
@@ -39,7 +38,6 @@ func (h *Handler) CreateCouponCoin(ctx context.Context) (*npool.CouponCoin, erro
 				EntID:      h.EntID,
 				AppID:      h.AppID,
 				CoinTypeID: h.CoinTypeID,
-				CouponID:   h.CouponID,
 			},
 		).Save(ctx); err != nil {
 			return err

@@ -213,10 +213,10 @@ func CouponScope(v string) predicate.Coupon {
 	})
 }
 
-// CashableProbabilityPerMillion applies equality check predicate on the "cashable_probability_per_million" field. It's identical to CashableProbabilityPerMillionEQ.
-func CashableProbabilityPerMillion(v decimal.Decimal) predicate.Coupon {
+// CashableProbability applies equality check predicate on the "cashable_probability" field. It's identical to CashableProbabilityEQ.
+func CashableProbability(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.EQ(s.C(FieldCashableProbability), v))
 	})
 }
 
@@ -1771,81 +1771,81 @@ func CouponScopeContainsFold(v string) predicate.Coupon {
 	})
 }
 
-// CashableProbabilityPerMillionEQ applies the EQ predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionEQ(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityEQ applies the EQ predicate on the "cashable_probability" field.
+func CashableProbabilityEQ(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.EQ(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionNEQ applies the NEQ predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionNEQ(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityNEQ applies the NEQ predicate on the "cashable_probability" field.
+func CashableProbabilityNEQ(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.NEQ(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionIn applies the In predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionIn(vs ...decimal.Decimal) predicate.Coupon {
+// CashableProbabilityIn applies the In predicate on the "cashable_probability" field.
+func CashableProbabilityIn(vs ...decimal.Decimal) predicate.Coupon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCashableProbabilityPerMillion), v...))
+		s.Where(sql.In(s.C(FieldCashableProbability), v...))
 	})
 }
 
-// CashableProbabilityPerMillionNotIn applies the NotIn predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionNotIn(vs ...decimal.Decimal) predicate.Coupon {
+// CashableProbabilityNotIn applies the NotIn predicate on the "cashable_probability" field.
+func CashableProbabilityNotIn(vs ...decimal.Decimal) predicate.Coupon {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCashableProbabilityPerMillion), v...))
+		s.Where(sql.NotIn(s.C(FieldCashableProbability), v...))
 	})
 }
 
-// CashableProbabilityPerMillionGT applies the GT predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionGT(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityGT applies the GT predicate on the "cashable_probability" field.
+func CashableProbabilityGT(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.GT(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionGTE applies the GTE predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionGTE(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityGTE applies the GTE predicate on the "cashable_probability" field.
+func CashableProbabilityGTE(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.GTE(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionLT applies the LT predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionLT(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityLT applies the LT predicate on the "cashable_probability" field.
+func CashableProbabilityLT(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.LT(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionLTE applies the LTE predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionLTE(v decimal.Decimal) predicate.Coupon {
+// CashableProbabilityLTE applies the LTE predicate on the "cashable_probability" field.
+func CashableProbabilityLTE(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCashableProbabilityPerMillion), v))
+		s.Where(sql.LTE(s.C(FieldCashableProbability), v))
 	})
 }
 
-// CashableProbabilityPerMillionIsNil applies the IsNil predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionIsNil() predicate.Coupon {
+// CashableProbabilityIsNil applies the IsNil predicate on the "cashable_probability" field.
+func CashableProbabilityIsNil() predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCashableProbabilityPerMillion)))
+		s.Where(sql.IsNull(s.C(FieldCashableProbability)))
 	})
 }
 
-// CashableProbabilityPerMillionNotNil applies the NotNil predicate on the "cashable_probability_per_million" field.
-func CashableProbabilityPerMillionNotNil() predicate.Coupon {
+// CashableProbabilityNotNil applies the NotNil predicate on the "cashable_probability" field.
+func CashableProbabilityNotNil() predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCashableProbabilityPerMillion)))
+		s.Where(sql.NotNull(s.C(FieldCashableProbability)))
 	})
 }
 

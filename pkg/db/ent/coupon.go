@@ -55,8 +55,8 @@ type Coupon struct {
 	CouponConstraint string `json:"coupon_constraint,omitempty"`
 	// CouponScope holds the value of the "coupon_scope" field.
 	CouponScope string `json:"coupon_scope,omitempty"`
-	// CashableProbabilityPerMillion holds the value of the "cashable_probability_per_million" field.
-	CashableProbabilityPerMillion decimal.Decimal `json:"cashable_probability_per_million,omitempty"`
+	// CashableProbability holds the value of the "cashable_probability" field.
+	CashableProbability decimal.Decimal `json:"cashable_probability,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -64,7 +64,7 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold, coupon.FieldCashableProbabilityPerMillion:
+		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold, coupon.FieldCashableProbability:
 			values[i] = new(decimal.Decimal)
 		case coupon.FieldRandom:
 			values[i] = new(sql.NullBool)
@@ -209,11 +209,11 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.CouponScope = value.String
 			}
-		case coupon.FieldCashableProbabilityPerMillion:
+		case coupon.FieldCashableProbability:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field cashable_probability_per_million", values[i])
+				return fmt.Errorf("unexpected type %T for field cashable_probability", values[i])
 			} else if value != nil {
-				c.CashableProbabilityPerMillion = *value
+				c.CashableProbability = *value
 			}
 		}
 	}
@@ -300,8 +300,8 @@ func (c *Coupon) String() string {
 	builder.WriteString("coupon_scope=")
 	builder.WriteString(c.CouponScope)
 	builder.WriteString(", ")
-	builder.WriteString("cashable_probability_per_million=")
-	builder.WriteString(fmt.Sprintf("%v", c.CashableProbabilityPerMillion))
+	builder.WriteString("cashable_probability=")
+	builder.WriteString(fmt.Sprintf("%v", c.CashableProbability))
 	builder.WriteByte(')')
 	return builder.String()
 }

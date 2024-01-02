@@ -26,8 +26,6 @@ type CouponCoin struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
-	// CouponID holds the value of the "coupon_id" field.
-	CouponID uuid.UUID `json:"coupon_id,omitempty"`
 	// CoinTypeID holds the value of the "coin_type_id" field.
 	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 }
@@ -39,7 +37,7 @@ func (*CouponCoin) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case couponcoin.FieldID, couponcoin.FieldCreatedAt, couponcoin.FieldUpdatedAt, couponcoin.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case couponcoin.FieldEntID, couponcoin.FieldAppID, couponcoin.FieldCouponID, couponcoin.FieldCoinTypeID:
+		case couponcoin.FieldEntID, couponcoin.FieldAppID, couponcoin.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type CouponCoin", columns[i])
@@ -92,12 +90,6 @@ func (cc *CouponCoin) assignValues(columns []string, values []interface{}) error
 			} else if value != nil {
 				cc.AppID = *value
 			}
-		case couponcoin.FieldCouponID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field coupon_id", values[i])
-			} else if value != nil {
-				cc.CouponID = *value
-			}
 		case couponcoin.FieldCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
@@ -146,9 +138,6 @@ func (cc *CouponCoin) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", cc.AppID))
-	builder.WriteString(", ")
-	builder.WriteString("coupon_id=")
-	builder.WriteString(fmt.Sprintf("%v", cc.CouponID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", cc.CoinTypeID))

@@ -51,8 +51,8 @@ const (
 	FieldCouponConstraint = "coupon_constraint"
 	// FieldCouponScope holds the string denoting the coupon_scope field in the database.
 	FieldCouponScope = "coupon_scope"
-	// FieldCashableProbabilityPerMillion holds the string denoting the cashable_probability_per_million field in the database.
-	FieldCashableProbabilityPerMillion = "cashable_probability_per_million"
+	// FieldCashableProbability holds the string denoting the cashable_probability field in the database.
+	FieldCashableProbability = "cashable_probability"
 	// Table holds the table name of the coupon in the database.
 	Table = "coupons"
 )
@@ -79,7 +79,7 @@ var Columns = []string{
 	FieldThreshold,
 	FieldCouponConstraint,
 	FieldCouponScope,
-	FieldCashableProbabilityPerMillion,
+	FieldCashableProbability,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -141,6 +141,6 @@ var (
 	DefaultCouponConstraint string
 	// DefaultCouponScope holds the default value on creation for the "coupon_scope" field.
 	DefaultCouponScope string
-	// DefaultCashableProbabilityPerMillion holds the default value on creation for the "cashable_probability_per_million" field.
-	DefaultCashableProbabilityPerMillion decimal.Decimal
+	// DefaultCashableProbability holds the default value on creation for the "cashable_probability" field.
+	DefaultCashableProbability decimal.Decimal
 )

@@ -420,23 +420,23 @@ func (cu *CouponUpdate) ClearCouponScope() *CouponUpdate {
 	return cu
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (cu *CouponUpdate) SetCashableProbabilityPerMillion(d decimal.Decimal) *CouponUpdate {
-	cu.mutation.SetCashableProbabilityPerMillion(d)
+// SetCashableProbability sets the "cashable_probability" field.
+func (cu *CouponUpdate) SetCashableProbability(d decimal.Decimal) *CouponUpdate {
+	cu.mutation.SetCashableProbability(d)
 	return cu
 }
 
-// SetNillableCashableProbabilityPerMillion sets the "cashable_probability_per_million" field if the given value is not nil.
-func (cu *CouponUpdate) SetNillableCashableProbabilityPerMillion(d *decimal.Decimal) *CouponUpdate {
+// SetNillableCashableProbability sets the "cashable_probability" field if the given value is not nil.
+func (cu *CouponUpdate) SetNillableCashableProbability(d *decimal.Decimal) *CouponUpdate {
 	if d != nil {
-		cu.SetCashableProbabilityPerMillion(*d)
+		cu.SetCashableProbability(*d)
 	}
 	return cu
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (cu *CouponUpdate) ClearCashableProbabilityPerMillion() *CouponUpdate {
-	cu.mutation.ClearCashableProbabilityPerMillion()
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (cu *CouponUpdate) ClearCashableProbability() *CouponUpdate {
+	cu.mutation.ClearCashableProbability()
 	return cu
 }
 
@@ -803,17 +803,17 @@ func (cu *CouponUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: coupon.FieldCouponScope,
 		})
 	}
-	if value, ok := cu.mutation.CashableProbabilityPerMillion(); ok {
+	if value, ok := cu.mutation.CashableProbability(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: coupon.FieldCashableProbabilityPerMillion,
+			Column: coupon.FieldCashableProbability,
 		})
 	}
-	if cu.mutation.CashableProbabilityPerMillionCleared() {
+	if cu.mutation.CashableProbabilityCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: coupon.FieldCashableProbabilityPerMillion,
+			Column: coupon.FieldCashableProbability,
 		})
 	}
 	_spec.Modifiers = cu.modifiers
@@ -1227,23 +1227,23 @@ func (cuo *CouponUpdateOne) ClearCouponScope() *CouponUpdateOne {
 	return cuo
 }
 
-// SetCashableProbabilityPerMillion sets the "cashable_probability_per_million" field.
-func (cuo *CouponUpdateOne) SetCashableProbabilityPerMillion(d decimal.Decimal) *CouponUpdateOne {
-	cuo.mutation.SetCashableProbabilityPerMillion(d)
+// SetCashableProbability sets the "cashable_probability" field.
+func (cuo *CouponUpdateOne) SetCashableProbability(d decimal.Decimal) *CouponUpdateOne {
+	cuo.mutation.SetCashableProbability(d)
 	return cuo
 }
 
-// SetNillableCashableProbabilityPerMillion sets the "cashable_probability_per_million" field if the given value is not nil.
-func (cuo *CouponUpdateOne) SetNillableCashableProbabilityPerMillion(d *decimal.Decimal) *CouponUpdateOne {
+// SetNillableCashableProbability sets the "cashable_probability" field if the given value is not nil.
+func (cuo *CouponUpdateOne) SetNillableCashableProbability(d *decimal.Decimal) *CouponUpdateOne {
 	if d != nil {
-		cuo.SetCashableProbabilityPerMillion(*d)
+		cuo.SetCashableProbability(*d)
 	}
 	return cuo
 }
 
-// ClearCashableProbabilityPerMillion clears the value of the "cashable_probability_per_million" field.
-func (cuo *CouponUpdateOne) ClearCashableProbabilityPerMillion() *CouponUpdateOne {
-	cuo.mutation.ClearCashableProbabilityPerMillion()
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (cuo *CouponUpdateOne) ClearCashableProbability() *CouponUpdateOne {
+	cuo.mutation.ClearCashableProbability()
 	return cuo
 }
 
@@ -1640,17 +1640,17 @@ func (cuo *CouponUpdateOne) sqlSave(ctx context.Context) (_node *Coupon, err err
 			Column: coupon.FieldCouponScope,
 		})
 	}
-	if value, ok := cuo.mutation.CashableProbabilityPerMillion(); ok {
+	if value, ok := cuo.mutation.CashableProbability(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: coupon.FieldCashableProbabilityPerMillion,
+			Column: coupon.FieldCashableProbability,
 		})
 	}
-	if cuo.mutation.CashableProbabilityPerMillionCleared() {
+	if cuo.mutation.CashableProbabilityCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: coupon.FieldCashableProbabilityPerMillion,
+			Column: coupon.FieldCashableProbability,
 		})
 	}
 	_spec.Modifiers = cuo.modifiers

@@ -118,26 +118,6 @@ func (ccu *CouponCoinUpdate) ClearAppID() *CouponCoinUpdate {
 	return ccu
 }
 
-// SetCouponID sets the "coupon_id" field.
-func (ccu *CouponCoinUpdate) SetCouponID(u uuid.UUID) *CouponCoinUpdate {
-	ccu.mutation.SetCouponID(u)
-	return ccu
-}
-
-// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
-func (ccu *CouponCoinUpdate) SetNillableCouponID(u *uuid.UUID) *CouponCoinUpdate {
-	if u != nil {
-		ccu.SetCouponID(*u)
-	}
-	return ccu
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (ccu *CouponCoinUpdate) ClearCouponID() *CouponCoinUpdate {
-	ccu.mutation.ClearCouponID()
-	return ccu
-}
-
 // SetCoinTypeID sets the "coin_type_id" field.
 func (ccu *CouponCoinUpdate) SetCoinTypeID(u uuid.UUID) *CouponCoinUpdate {
 	ccu.mutation.SetCoinTypeID(u)
@@ -318,19 +298,6 @@ func (ccu *CouponCoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: couponcoin.FieldAppID,
 		})
 	}
-	if value, ok := ccu.mutation.CouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponcoin.FieldCouponID,
-		})
-	}
-	if ccu.mutation.CouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: couponcoin.FieldCouponID,
-		})
-	}
 	if value, ok := ccu.mutation.CoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -451,26 +418,6 @@ func (ccuo *CouponCoinUpdateOne) SetNillableAppID(u *uuid.UUID) *CouponCoinUpdat
 // ClearAppID clears the value of the "app_id" field.
 func (ccuo *CouponCoinUpdateOne) ClearAppID() *CouponCoinUpdateOne {
 	ccuo.mutation.ClearAppID()
-	return ccuo
-}
-
-// SetCouponID sets the "coupon_id" field.
-func (ccuo *CouponCoinUpdateOne) SetCouponID(u uuid.UUID) *CouponCoinUpdateOne {
-	ccuo.mutation.SetCouponID(u)
-	return ccuo
-}
-
-// SetNillableCouponID sets the "coupon_id" field if the given value is not nil.
-func (ccuo *CouponCoinUpdateOne) SetNillableCouponID(u *uuid.UUID) *CouponCoinUpdateOne {
-	if u != nil {
-		ccuo.SetCouponID(*u)
-	}
-	return ccuo
-}
-
-// ClearCouponID clears the value of the "coupon_id" field.
-func (ccuo *CouponCoinUpdateOne) ClearCouponID() *CouponCoinUpdateOne {
-	ccuo.mutation.ClearCouponID()
 	return ccuo
 }
 
@@ -682,19 +629,6 @@ func (ccuo *CouponCoinUpdateOne) sqlSave(ctx context.Context) (_node *CouponCoin
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: couponcoin.FieldAppID,
-		})
-	}
-	if value, ok := ccuo.mutation.CouponID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: couponcoin.FieldCouponID,
-		})
-	}
-	if ccuo.mutation.CouponIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: couponcoin.FieldCouponID,
 		})
 	}
 	if value, ok := ccuo.mutation.CoinTypeID(); ok {
