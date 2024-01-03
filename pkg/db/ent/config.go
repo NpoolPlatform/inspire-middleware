@@ -30,6 +30,7 @@ type config struct {
 type hooks struct {
 	Achievement     []ent.Hook
 	AppGoodScope    []ent.Hook
+	CashControl     []ent.Hook
 	Commission      []ent.Hook
 	Coupon          []ent.Hook
 	CouponAllocated []ent.Hook

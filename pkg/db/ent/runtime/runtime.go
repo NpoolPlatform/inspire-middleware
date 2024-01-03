@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -157,6 +158,56 @@ func init() {
 	appgoodscopeDescCouponScope := appgoodscopeFields[3].Descriptor()
 	// appgoodscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	appgoodscope.DefaultCouponScope = appgoodscopeDescCouponScope.Default.(string)
+	cashcontrolMixin := schema.CashControl{}.Mixin()
+	cashcontrol.Policy = privacy.NewPolicies(cashcontrolMixin[0], schema.CashControl{})
+	cashcontrol.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := cashcontrol.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	cashcontrolMixinFields0 := cashcontrolMixin[0].Fields()
+	_ = cashcontrolMixinFields0
+	cashcontrolMixinFields1 := cashcontrolMixin[1].Fields()
+	_ = cashcontrolMixinFields1
+	cashcontrolFields := schema.CashControl{}.Fields()
+	_ = cashcontrolFields
+	// cashcontrolDescCreatedAt is the schema descriptor for created_at field.
+	cashcontrolDescCreatedAt := cashcontrolMixinFields0[0].Descriptor()
+	// cashcontrol.DefaultCreatedAt holds the default value on creation for the created_at field.
+	cashcontrol.DefaultCreatedAt = cashcontrolDescCreatedAt.Default.(func() uint32)
+	// cashcontrolDescUpdatedAt is the schema descriptor for updated_at field.
+	cashcontrolDescUpdatedAt := cashcontrolMixinFields0[1].Descriptor()
+	// cashcontrol.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	cashcontrol.DefaultUpdatedAt = cashcontrolDescUpdatedAt.Default.(func() uint32)
+	// cashcontrol.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	cashcontrol.UpdateDefaultUpdatedAt = cashcontrolDescUpdatedAt.UpdateDefault.(func() uint32)
+	// cashcontrolDescDeletedAt is the schema descriptor for deleted_at field.
+	cashcontrolDescDeletedAt := cashcontrolMixinFields0[2].Descriptor()
+	// cashcontrol.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	cashcontrol.DefaultDeletedAt = cashcontrolDescDeletedAt.Default.(func() uint32)
+	// cashcontrolDescEntID is the schema descriptor for ent_id field.
+	cashcontrolDescEntID := cashcontrolMixinFields1[1].Descriptor()
+	// cashcontrol.DefaultEntID holds the default value on creation for the ent_id field.
+	cashcontrol.DefaultEntID = cashcontrolDescEntID.Default.(func() uuid.UUID)
+	// cashcontrolDescAppID is the schema descriptor for app_id field.
+	cashcontrolDescAppID := cashcontrolFields[0].Descriptor()
+	// cashcontrol.DefaultAppID holds the default value on creation for the app_id field.
+	cashcontrol.DefaultAppID = cashcontrolDescAppID.Default.(func() uuid.UUID)
+	// cashcontrolDescCouponID is the schema descriptor for coupon_id field.
+	cashcontrolDescCouponID := cashcontrolFields[1].Descriptor()
+	// cashcontrol.DefaultCouponID holds the default value on creation for the coupon_id field.
+	cashcontrol.DefaultCouponID = cashcontrolDescCouponID.Default.(func() uuid.UUID)
+	// cashcontrolDescControlType is the schema descriptor for control_type field.
+	cashcontrolDescControlType := cashcontrolFields[2].Descriptor()
+	// cashcontrol.DefaultControlType holds the default value on creation for the control_type field.
+	cashcontrol.DefaultControlType = cashcontrolDescControlType.Default.(string)
+	// cashcontrolDescValue is the schema descriptor for value field.
+	cashcontrolDescValue := cashcontrolFields[3].Descriptor()
+	// cashcontrol.DefaultValue holds the default value on creation for the value field.
+	cashcontrol.DefaultValue = cashcontrolDescValue.Default.(decimal.Decimal)
 	commissionMixin := schema.Commission{}.Mixin()
 	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
 	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {

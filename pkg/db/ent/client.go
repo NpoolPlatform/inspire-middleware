@@ -12,6 +12,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -36,6 +37,8 @@ type Client struct {
 	Achievement *AchievementClient
 	// AppGoodScope is the client for interacting with the AppGoodScope builders.
 	AppGoodScope *AppGoodScopeClient
+	// CashControl is the client for interacting with the CashControl builders.
+	CashControl *CashControlClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -71,6 +74,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Achievement = NewAchievementClient(c.config)
 	c.AppGoodScope = NewAppGoodScopeClient(c.config)
+	c.CashControl = NewCashControlClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
@@ -116,6 +120,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
 		AppGoodScope:    NewAppGoodScopeClient(cfg),
+		CashControl:     NewCashControlClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
@@ -147,6 +152,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:          cfg,
 		Achievement:     NewAchievementClient(cfg),
 		AppGoodScope:    NewAppGoodScopeClient(cfg),
+		CashControl:     NewCashControlClient(cfg),
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
@@ -188,6 +194,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Achievement.Use(hooks...)
 	c.AppGoodScope.Use(hooks...)
+	c.CashControl.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
@@ -380,6 +387,97 @@ func (c *AppGoodScopeClient) GetX(ctx context.Context, id uint32) *AppGoodScope 
 func (c *AppGoodScopeClient) Hooks() []Hook {
 	hooks := c.hooks.AppGoodScope
 	return append(hooks[:len(hooks):len(hooks)], appgoodscope.Hooks[:]...)
+}
+
+// CashControlClient is a client for the CashControl schema.
+type CashControlClient struct {
+	config
+}
+
+// NewCashControlClient returns a client for the CashControl from the given config.
+func NewCashControlClient(c config) *CashControlClient {
+	return &CashControlClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cashcontrol.Hooks(f(g(h())))`.
+func (c *CashControlClient) Use(hooks ...Hook) {
+	c.hooks.CashControl = append(c.hooks.CashControl, hooks...)
+}
+
+// Create returns a builder for creating a CashControl entity.
+func (c *CashControlClient) Create() *CashControlCreate {
+	mutation := newCashControlMutation(c.config, OpCreate)
+	return &CashControlCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CashControl entities.
+func (c *CashControlClient) CreateBulk(builders ...*CashControlCreate) *CashControlCreateBulk {
+	return &CashControlCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CashControl.
+func (c *CashControlClient) Update() *CashControlUpdate {
+	mutation := newCashControlMutation(c.config, OpUpdate)
+	return &CashControlUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CashControlClient) UpdateOne(cc *CashControl) *CashControlUpdateOne {
+	mutation := newCashControlMutation(c.config, OpUpdateOne, withCashControl(cc))
+	return &CashControlUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CashControlClient) UpdateOneID(id uint32) *CashControlUpdateOne {
+	mutation := newCashControlMutation(c.config, OpUpdateOne, withCashControlID(id))
+	return &CashControlUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CashControl.
+func (c *CashControlClient) Delete() *CashControlDelete {
+	mutation := newCashControlMutation(c.config, OpDelete)
+	return &CashControlDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CashControlClient) DeleteOne(cc *CashControl) *CashControlDeleteOne {
+	return c.DeleteOneID(cc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CashControlClient) DeleteOneID(id uint32) *CashControlDeleteOne {
+	builder := c.Delete().Where(cashcontrol.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CashControlDeleteOne{builder}
+}
+
+// Query returns a query builder for CashControl.
+func (c *CashControlClient) Query() *CashControlQuery {
+	return &CashControlQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CashControl entity by its id.
+func (c *CashControlClient) Get(ctx context.Context, id uint32) (*CashControl, error) {
+	return c.Query().Where(cashcontrol.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CashControlClient) GetX(ctx context.Context, id uint32) *CashControl {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CashControlClient) Hooks() []Hook {
+	hooks := c.hooks.CashControl
+	return append(hooks[:len(hooks):len(hooks)], cashcontrol.Hooks[:]...)
 }
 
 // CommissionClient is a client for the Commission schema.
