@@ -53,7 +53,7 @@ type Conds struct {
 	ControlType *cruder.Cond
 }
 
-func SetQueryConds(q *ent.CashControlQuery, conds *Conds) (*ent.CashControlQuery, error) {
+func SetQueryConds(q *ent.CashControlQuery, conds *Conds) (*ent.CashControlQuery, error) { //nolint
 	q.Where(entcashcontrol.DeletedAt(0))
 	if conds == nil {
 		return q, nil
