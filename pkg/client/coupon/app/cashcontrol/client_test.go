@@ -71,6 +71,7 @@ var (
 		CouponDenomination: coupon.Denomination,
 		ControlType:        types.ControlType_KycApproved,
 		ControlTypeStr:     types.ControlType_KycApproved.String(),
+		Value:              decimal.RequireFromString("0").String(),
 	}
 )
 
