@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/cashcontrol"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
@@ -124,6 +125,23 @@ func WithControlType(controlType *types.ControlType, must bool) func(context.Con
 			return fmt.Errorf("invalid control type")
 		}
 		h.ControlType = controlType
+		return nil
+	}
+}
+
+func WithValue(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid value")
+			}
+			return nil
+		}
+		_amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return err
+		}
+		h.Value = &_amount
 		return nil
 	}
 }

@@ -26,6 +26,7 @@ func (s *Server) CreateCashControl(ctx context.Context, in *npool.CreateCashCont
 		cashcontrol1.WithAppID(req.AppID, true),
 		cashcontrol1.WithCouponID(req.CouponID, true),
 		cashcontrol1.WithControlType(req.ControlType, true),
+		cashcontrol1.WithValue(req.Value, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

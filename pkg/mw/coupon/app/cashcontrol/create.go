@@ -25,6 +25,7 @@ func (h *createHandler) createCashControl(ctx context.Context, cli *ent.Client) 
 			AppID:       h.AppID,
 			CouponID:    h.CouponID,
 			ControlType: h.ControlType,
+			Value:       h.Value,
 		},
 	).Save(ctx); err != nil {
 		return err

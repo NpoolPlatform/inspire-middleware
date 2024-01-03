@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type Req struct {
@@ -16,6 +17,7 @@ type Req struct {
 	AppID       *uuid.UUID
 	CouponID    *uuid.UUID
 	ControlType *types.ControlType
+	Value       *decimal.Decimal
 	DeletedAt   *uint32
 }
 
@@ -34,6 +36,10 @@ func CreateSet(c *ent.CashControlCreate, req *Req) *ent.CashControlCreate {
 	}
 	if req.ControlType != nil {
 		c.SetControlType(req.ControlType.String())
+	}
+	c.SetValue(decimal.RequireFromString("0"))
+	if req.Value != nil {
+		c.SetValue(*req.Value)
 	}
 	return c
 }

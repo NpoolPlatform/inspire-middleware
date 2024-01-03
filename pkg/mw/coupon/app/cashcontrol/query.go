@@ -65,7 +65,8 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcashcontrol.FieldEntID), "ent_id"),
 			sql.As(t.C(entcashcontrol.FieldAppID), "app_id"),
 			sql.As(t.C(entcashcontrol.FieldCouponID), "coupon_id"),
-			sql.As(t.C(entcashcontrol.FieldControlType), "coupon_type"),
+			sql.As(t.C(entcashcontrol.FieldControlType), "control_type"),
+			sql.As(t.C(entcashcontrol.FieldValue), "value"),
 			sql.As(t.C(entcashcontrol.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entcashcontrol.FieldUpdatedAt), "updated_at"),
 		)
@@ -107,15 +108,19 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h queryHandler) formalizeString(value string) string {
+	amount, err := decimal.NewFromString(value)
+	if err != nil {
+		return decimal.NewFromInt(0).String()
+	}
+	return amount.String()
+}
+
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
-		denomination, err := decimal.NewFromString(info.CouponDenomination)
-		if err != nil {
-			info.CouponDenomination = decimal.NewFromInt(0).String()
-		} else {
-			info.CouponDenomination = denomination.String()
-		}
+		info.CouponDenomination = h.formalizeString(info.CouponDenomination)
+		info.Value = h.formalizeString(info.Value)
 	}
 }
 
