@@ -198,6 +198,30 @@ func (f AppGoodScopeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mu
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppGoodScopeMutation", m)
 }
 
+// The CashControlQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CashControlQueryRuleFunc func(context.Context, *ent.CashControlQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CashControlQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CashControlQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CashControlQuery", q)
+}
+
+// The CashControlMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CashControlMutationRuleFunc func(context.Context, *ent.CashControlMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CashControlMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CashControlMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CashControlMutation", m)
+}
+
 // The CommissionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommissionQueryRuleFunc func(context.Context, *ent.CommissionQuery) error
@@ -477,6 +501,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.AppGoodScopeQuery:
 		return q.Filter(), nil
+	case *ent.CashControlQuery:
+		return q.Filter(), nil
 	case *ent.CommissionQuery:
 		return q.Filter(), nil
 	case *ent.CouponQuery:
@@ -507,6 +533,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.AchievementMutation:
 		return m.Filter(), nil
 	case *ent.AppGoodScopeMutation:
+		return m.Filter(), nil
+	case *ent.CashControlMutation:
 		return m.Filter(), nil
 	case *ent.CommissionMutation:
 		return m.Filter(), nil

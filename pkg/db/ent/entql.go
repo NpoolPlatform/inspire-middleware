@@ -5,6 +5,7 @@ package ent
 import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -24,7 +25,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 12)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 13)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -76,6 +77,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   cashcontrol.Table,
+			Columns: cashcontrol.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: cashcontrol.FieldID,
+			},
+		},
+		Type: "CashControl",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			cashcontrol.FieldCreatedAt:   {Type: field.TypeUint32, Column: cashcontrol.FieldCreatedAt},
+			cashcontrol.FieldUpdatedAt:   {Type: field.TypeUint32, Column: cashcontrol.FieldUpdatedAt},
+			cashcontrol.FieldDeletedAt:   {Type: field.TypeUint32, Column: cashcontrol.FieldDeletedAt},
+			cashcontrol.FieldEntID:       {Type: field.TypeUUID, Column: cashcontrol.FieldEntID},
+			cashcontrol.FieldAppID:       {Type: field.TypeUUID, Column: cashcontrol.FieldAppID},
+			cashcontrol.FieldCouponID:    {Type: field.TypeUUID, Column: cashcontrol.FieldCouponID},
+			cashcontrol.FieldControlType: {Type: field.TypeString, Column: cashcontrol.FieldControlType},
+			cashcontrol.FieldValue:       {Type: field.TypeOther, Column: cashcontrol.FieldValue},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   commission.Table,
 			Columns: commission.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -104,7 +126,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldOrderLimit:       {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
@@ -137,7 +159,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldCashableProbability: {Type: field.TypeOther, Column: coupon.FieldCashableProbability},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponallocated.Table,
 			Columns: couponallocated.Columns,
@@ -164,7 +186,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldCashable:      {Type: field.TypeBool, Column: couponallocated.FieldCashable},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponcoin.Table,
 			Columns: couponcoin.Columns,
@@ -183,7 +205,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponcoin.FieldCoinTypeID: {Type: field.TypeUUID, Column: couponcoin.FieldCoinTypeID},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
@@ -203,7 +225,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponscope.FieldCouponScope: {Type: field.TypeString, Column: couponscope.FieldCouponScope},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   event.Table,
 			Columns: event.Columns,
@@ -229,7 +251,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldInviterLayers:  {Type: field.TypeUint32, Column: event.FieldInviterLayers},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
@@ -250,7 +272,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -272,7 +294,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -292,7 +314,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   statement.Table,
 			Columns: statement.Columns,
@@ -530,6 +552,86 @@ func (f *AppGoodScopeFilter) WhereCouponScope(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ccq *CashControlQuery) addPredicate(pred func(s *sql.Selector)) {
+	ccq.predicates = append(ccq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CashControlQuery builder.
+func (ccq *CashControlQuery) Filter() *CashControlFilter {
+	return &CashControlFilter{config: ccq.config, predicateAdder: ccq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CashControlMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CashControlMutation builder.
+func (m *CashControlMutation) Filter() *CashControlFilter {
+	return &CashControlFilter{config: m.config, predicateAdder: m}
+}
+
+// CashControlFilter provides a generic filtering capability at runtime for CashControlQuery.
+type CashControlFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CashControlFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CashControlFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(cashcontrol.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CashControlFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(cashcontrol.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CashControlFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(cashcontrol.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CashControlFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(cashcontrol.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CashControlFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(cashcontrol.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CashControlFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(cashcontrol.FieldAppID))
+}
+
+// WhereCouponID applies the entql [16]byte predicate on the coupon_id field.
+func (f *CashControlFilter) WhereCouponID(p entql.ValueP) {
+	f.Where(p.Field(cashcontrol.FieldCouponID))
+}
+
+// WhereControlType applies the entql string predicate on the control_type field.
+func (f *CashControlFilter) WhereControlType(p entql.StringP) {
+	f.Where(p.Field(cashcontrol.FieldControlType))
+}
+
+// WhereValue applies the entql other predicate on the value field.
+func (f *CashControlFilter) WhereValue(p entql.OtherP) {
+	f.Where(p.Field(cashcontrol.FieldValue))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (cq *CommissionQuery) addPredicate(pred func(s *sql.Selector)) {
 	cq.predicates = append(cq.predicates, pred)
 }
@@ -558,7 +660,7 @@ type CommissionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CommissionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -683,7 +785,7 @@ type CouponFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -823,7 +925,7 @@ type CouponAllocatedFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponAllocatedFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -933,7 +1035,7 @@ type CouponCoinFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponCoinFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1003,7 +1105,7 @@ type CouponScopeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponScopeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1078,7 +1180,7 @@ type EventFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EventFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1183,7 +1285,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1263,7 +1365,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1348,7 +1450,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1423,7 +1525,7 @@ type StatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *StatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

@@ -10,6 +10,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
@@ -38,6 +39,7 @@ const (
 	// Node types.
 	TypeAchievement     = "Achievement"
 	TypeAppGoodScope    = "AppGoodScope"
+	TypeCashControl     = "CashControl"
 	TypeCommission      = "Commission"
 	TypeCoupon          = "Coupon"
 	TypeCouponAllocated = "CouponAllocated"
@@ -2311,6 +2313,882 @@ func (m *AppGoodScopeMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AppGoodScopeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown AppGoodScope edge %s", name)
+}
+
+// CashControlMutation represents an operation that mutates the CashControl nodes in the graph.
+type CashControlMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	ent_id        *uuid.UUID
+	app_id        *uuid.UUID
+	coupon_id     *uuid.UUID
+	control_type  *string
+	value         *decimal.Decimal
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CashControl, error)
+	predicates    []predicate.CashControl
+}
+
+var _ ent.Mutation = (*CashControlMutation)(nil)
+
+// cashcontrolOption allows management of the mutation configuration using functional options.
+type cashcontrolOption func(*CashControlMutation)
+
+// newCashControlMutation creates new mutation for the CashControl entity.
+func newCashControlMutation(c config, op Op, opts ...cashcontrolOption) *CashControlMutation {
+	m := &CashControlMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCashControl,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCashControlID sets the ID field of the mutation.
+func withCashControlID(id uint32) cashcontrolOption {
+	return func(m *CashControlMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CashControl
+		)
+		m.oldValue = func(ctx context.Context) (*CashControl, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CashControl.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCashControl sets the old CashControl of the mutation.
+func withCashControl(node *CashControl) cashcontrolOption {
+	return func(m *CashControlMutation) {
+		m.oldValue = func(context.Context) (*CashControl, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CashControlMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CashControlMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CashControl entities.
+func (m *CashControlMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CashControlMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CashControlMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CashControl.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CashControlMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CashControlMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *CashControlMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *CashControlMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CashControlMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CashControlMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CashControlMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *CashControlMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *CashControlMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CashControlMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CashControlMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CashControlMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *CashControlMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *CashControlMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CashControlMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *CashControlMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *CashControlMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *CashControlMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *CashControlMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *CashControlMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *CashControlMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[cashcontrol.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *CashControlMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[cashcontrol.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *CashControlMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, cashcontrol.FieldAppID)
+}
+
+// SetCouponID sets the "coupon_id" field.
+func (m *CashControlMutation) SetCouponID(u uuid.UUID) {
+	m.coupon_id = &u
+}
+
+// CouponID returns the value of the "coupon_id" field in the mutation.
+func (m *CashControlMutation) CouponID() (r uuid.UUID, exists bool) {
+	v := m.coupon_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCouponID returns the old "coupon_id" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldCouponID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCouponID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCouponID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCouponID: %w", err)
+	}
+	return oldValue.CouponID, nil
+}
+
+// ClearCouponID clears the value of the "coupon_id" field.
+func (m *CashControlMutation) ClearCouponID() {
+	m.coupon_id = nil
+	m.clearedFields[cashcontrol.FieldCouponID] = struct{}{}
+}
+
+// CouponIDCleared returns if the "coupon_id" field was cleared in this mutation.
+func (m *CashControlMutation) CouponIDCleared() bool {
+	_, ok := m.clearedFields[cashcontrol.FieldCouponID]
+	return ok
+}
+
+// ResetCouponID resets all changes to the "coupon_id" field.
+func (m *CashControlMutation) ResetCouponID() {
+	m.coupon_id = nil
+	delete(m.clearedFields, cashcontrol.FieldCouponID)
+}
+
+// SetControlType sets the "control_type" field.
+func (m *CashControlMutation) SetControlType(s string) {
+	m.control_type = &s
+}
+
+// ControlType returns the value of the "control_type" field in the mutation.
+func (m *CashControlMutation) ControlType() (r string, exists bool) {
+	v := m.control_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldControlType returns the old "control_type" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldControlType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldControlType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldControlType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldControlType: %w", err)
+	}
+	return oldValue.ControlType, nil
+}
+
+// ClearControlType clears the value of the "control_type" field.
+func (m *CashControlMutation) ClearControlType() {
+	m.control_type = nil
+	m.clearedFields[cashcontrol.FieldControlType] = struct{}{}
+}
+
+// ControlTypeCleared returns if the "control_type" field was cleared in this mutation.
+func (m *CashControlMutation) ControlTypeCleared() bool {
+	_, ok := m.clearedFields[cashcontrol.FieldControlType]
+	return ok
+}
+
+// ResetControlType resets all changes to the "control_type" field.
+func (m *CashControlMutation) ResetControlType() {
+	m.control_type = nil
+	delete(m.clearedFields, cashcontrol.FieldControlType)
+}
+
+// SetValue sets the "value" field.
+func (m *CashControlMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *CashControlMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the CashControl entity.
+// If the CashControl object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CashControlMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// ClearValue clears the value of the "value" field.
+func (m *CashControlMutation) ClearValue() {
+	m.value = nil
+	m.clearedFields[cashcontrol.FieldValue] = struct{}{}
+}
+
+// ValueCleared returns if the "value" field was cleared in this mutation.
+func (m *CashControlMutation) ValueCleared() bool {
+	_, ok := m.clearedFields[cashcontrol.FieldValue]
+	return ok
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *CashControlMutation) ResetValue() {
+	m.value = nil
+	delete(m.clearedFields, cashcontrol.FieldValue)
+}
+
+// Where appends a list predicates to the CashControlMutation builder.
+func (m *CashControlMutation) Where(ps ...predicate.CashControl) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *CashControlMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (CashControl).
+func (m *CashControlMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CashControlMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, cashcontrol.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, cashcontrol.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, cashcontrol.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, cashcontrol.FieldEntID)
+	}
+	if m.app_id != nil {
+		fields = append(fields, cashcontrol.FieldAppID)
+	}
+	if m.coupon_id != nil {
+		fields = append(fields, cashcontrol.FieldCouponID)
+	}
+	if m.control_type != nil {
+		fields = append(fields, cashcontrol.FieldControlType)
+	}
+	if m.value != nil {
+		fields = append(fields, cashcontrol.FieldValue)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CashControlMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		return m.CreatedAt()
+	case cashcontrol.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case cashcontrol.FieldDeletedAt:
+		return m.DeletedAt()
+	case cashcontrol.FieldEntID:
+		return m.EntID()
+	case cashcontrol.FieldAppID:
+		return m.AppID()
+	case cashcontrol.FieldCouponID:
+		return m.CouponID()
+	case cashcontrol.FieldControlType:
+		return m.ControlType()
+	case cashcontrol.FieldValue:
+		return m.Value()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CashControlMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case cashcontrol.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case cashcontrol.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case cashcontrol.FieldEntID:
+		return m.OldEntID(ctx)
+	case cashcontrol.FieldAppID:
+		return m.OldAppID(ctx)
+	case cashcontrol.FieldCouponID:
+		return m.OldCouponID(ctx)
+	case cashcontrol.FieldControlType:
+		return m.OldControlType(ctx)
+	case cashcontrol.FieldValue:
+		return m.OldValue(ctx)
+	}
+	return nil, fmt.Errorf("unknown CashControl field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CashControlMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case cashcontrol.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case cashcontrol.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case cashcontrol.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
+		return nil
+	case cashcontrol.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case cashcontrol.FieldCouponID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCouponID(v)
+		return nil
+	case cashcontrol.FieldControlType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetControlType(v)
+		return nil
+	case cashcontrol.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CashControl field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CashControlMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, cashcontrol.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, cashcontrol.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, cashcontrol.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CashControlMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case cashcontrol.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case cashcontrol.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CashControlMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case cashcontrol.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case cashcontrol.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CashControl numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CashControlMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(cashcontrol.FieldAppID) {
+		fields = append(fields, cashcontrol.FieldAppID)
+	}
+	if m.FieldCleared(cashcontrol.FieldCouponID) {
+		fields = append(fields, cashcontrol.FieldCouponID)
+	}
+	if m.FieldCleared(cashcontrol.FieldControlType) {
+		fields = append(fields, cashcontrol.FieldControlType)
+	}
+	if m.FieldCleared(cashcontrol.FieldValue) {
+		fields = append(fields, cashcontrol.FieldValue)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CashControlMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CashControlMutation) ClearField(name string) error {
+	switch name {
+	case cashcontrol.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case cashcontrol.FieldCouponID:
+		m.ClearCouponID()
+		return nil
+	case cashcontrol.FieldControlType:
+		m.ClearControlType()
+		return nil
+	case cashcontrol.FieldValue:
+		m.ClearValue()
+		return nil
+	}
+	return fmt.Errorf("unknown CashControl nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CashControlMutation) ResetField(name string) error {
+	switch name {
+	case cashcontrol.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case cashcontrol.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case cashcontrol.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case cashcontrol.FieldEntID:
+		m.ResetEntID()
+		return nil
+	case cashcontrol.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case cashcontrol.FieldCouponID:
+		m.ResetCouponID()
+		return nil
+	case cashcontrol.FieldControlType:
+		m.ResetControlType()
+		return nil
+	case cashcontrol.FieldValue:
+		m.ResetValue()
+		return nil
+	}
+	return fmt.Errorf("unknown CashControl field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CashControlMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CashControlMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CashControlMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CashControlMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CashControlMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CashControlMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CashControlMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CashControl unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CashControlMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CashControl edge %s", name)
 }
 
 // CommissionMutation represents an operation that mutates the Commission nodes in the graph.

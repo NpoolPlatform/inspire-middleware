@@ -12,6 +12,9 @@ type Achievement func(*sql.Selector)
 // AppGoodScope is the predicate function for appgoodscope builders.
 type AppGoodScope func(*sql.Selector)
 
+// CashControl is the predicate function for cashcontrol builders.
+type CashControl func(*sql.Selector)
+
 // Commission is the predicate function for commission builders.
 type Commission func(*sql.Selector)
 
