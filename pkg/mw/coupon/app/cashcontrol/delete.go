@@ -8,10 +8,10 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
 	cashcontrolcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/cashcontrol"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/cashcontrol"
 )
 
-func (h *Handler) DeleteCashControl(ctx context.Context) (*npool.Scope, error) {
+func (h *Handler) DeleteCashControl(ctx context.Context) (*npool.CashControl, error) {
 	info, err := h.GetCashControl(ctx)
 	if err != nil {
 		return nil, err

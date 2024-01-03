@@ -8,7 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/cashcontrol"
 
 	"github.com/google/uuid"
 )
@@ -32,7 +32,7 @@ func (h *createHandler) createCashControl(ctx context.Context, cli *ent.Client) 
 	return nil
 }
 
-func (h *Handler) CreateCashControl(ctx context.Context) (*npool.Scope, error) {
+func (h *Handler) CreateCashControl(ctx context.Context) (*npool.CashControl, error) {
 	handler := &createHandler{
 		Handler: h,
 	}
