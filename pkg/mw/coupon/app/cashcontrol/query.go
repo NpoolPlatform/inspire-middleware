@@ -12,7 +12,7 @@ import (
 	entcashcontrol "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/cashcontrol"
 
 	"github.com/shopspring/decimal"
 )
@@ -21,7 +21,7 @@ type queryHandler struct {
 	*Handler
 	stmCount  *ent.CashControlSelect
 	stmSelect *ent.CashControlSelect
-	infos     []*npool.Scope
+	infos     []*npool.CashControl
 	total     uint32
 }
 
@@ -110,7 +110,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
-		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
 		denomination, err := decimal.NewFromString(info.CouponDenomination)
 		if err != nil {
 			info.CouponDenomination = decimal.NewFromInt(0).String()
@@ -120,10 +119,10 @@ func (h *queryHandler) formalize() {
 	}
 }
 
-func (h *Handler) GetCashControl(ctx context.Context) (*npool.Scope, error) {
+func (h *Handler) GetCashControl(ctx context.Context) (*npool.CashControl, error) {
 	handler := &queryHandler{
 		Handler: h,
-		infos:   []*npool.Scope{},
+		infos:   []*npool.CashControl{},
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -149,10 +148,10 @@ func (h *Handler) GetCashControl(ctx context.Context) (*npool.Scope, error) {
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetCashControls(ctx context.Context) ([]*npool.Scope, uint32, error) {
+func (h *Handler) GetCashControls(ctx context.Context) ([]*npool.CashControl, uint32, error) {
 	handler := &queryHandler{
 		Handler: h,
-		infos:   []*npool.Scope{},
+		infos:   []*npool.CashControl{},
 	}
 
 	var err error
@@ -186,7 +185,7 @@ func (h *Handler) GetCashControls(ctx context.Context) ([]*npool.Scope, uint32, 
 	return handler.infos, handler.total, nil
 }
 
-func (h *Handler) GetCashControlOnly(ctx context.Context) (*npool.Scope, error) {
+func (h *Handler) GetCashControlOnly(ctx context.Context) (*npool.CashControl, error) {
 	h.Limit = 1
 	infos, _, err := h.GetCashControls(ctx)
 	if err != nil {
