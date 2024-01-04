@@ -78,7 +78,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcoupon.FieldThreshold), "threshold"),
 			sql.As(t.C(entcoupon.FieldCouponConstraint), "coupon_constraint"),
 			sql.As(t.C(entcoupon.FieldRandom), "random"),
-			sql.As(t.C(entcoupon.FieldCashableProbability), "cashable_probability_per_million"),
+			sql.As(t.C(entcoupon.FieldCashableProbability), "cashable_probability"),
 			sql.As(t.C(entcoupon.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entcoupon.FieldUpdatedAt), "updated_at"),
 		)
