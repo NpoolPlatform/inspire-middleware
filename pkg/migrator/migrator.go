@@ -119,14 +119,14 @@ func Migrate(ctx context.Context) error {
 	var err error
 	var conn *sql.DB
 
-	logger.Sugar().Infow("Migrate", "Start", "...")
+	logger.Sugar().Warnf("Migrate", "Start", "...")
 	err = redis2.TryLock(lockKey(), 0)
 	if err != nil {
 		return err
 	}
 	defer func(err *error) {
 		_ = redis2.Unlock(lockKey())
-		logger.Sugar().Infow("Migrate", "Done", "...", "error", err)
+		logger.Sugar().Warnf("Migrate", "Done", "...", "error", err)
 	}(&err)
 
 	conn, err = open(servicename.ServiceDomain)
