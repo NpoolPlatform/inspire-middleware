@@ -118,6 +118,7 @@ func (h queryHandler) formalizeString(value string) string {
 
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
+		info.ControlType = types.ControlType(types.ControlType_value[info.ControlTypeStr])
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponDenomination = h.formalizeString(info.CouponDenomination)
 		info.Value = h.formalizeString(info.Value)
