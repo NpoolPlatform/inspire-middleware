@@ -156,6 +156,9 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 			}
 			return nil
 		}
+		if *startAt == 0 {
+			return fmt.Errorf("invalid startat")
+		}
 		h.StartAt = startAt
 		return nil
 	}
@@ -168,6 +171,9 @@ func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
 				return fmt.Errorf("invalid endat")
 			}
 			return nil
+		}
+		if *endAt == 0 {
+			return fmt.Errorf("invalid endat")
 		}
 		h.EndAt = endAt
 		return nil

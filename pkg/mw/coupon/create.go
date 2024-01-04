@@ -15,6 +15,10 @@ import (
 )
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+	if *h.EndAt <= *h.StartAt {
+		return nil, fmt.Errorf("endat less than startat")
+	}
+
 	id := uuid.New()
 	if h.EntID == nil {
 		h.EntID = &id

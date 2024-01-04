@@ -28,6 +28,22 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return err
 		}
 
+		if h.StartAt != nil && h.EndAt != nil {
+			if *h.EndAt <= *h.StartAt {
+				return fmt.Errorf("endat less than startat")
+			}
+		}
+		if h.StartAt != nil {
+			if info.EndAt <= *h.StartAt {
+				return fmt.Errorf("endat less than startat")
+			}
+		}
+		if h.EndAt != nil {
+			if *h.EndAt <= info.StartAt {
+				return fmt.Errorf("endat less than startat")
+			}
+		}
+
 		if info.CouponType == inspiretypes.CouponType_Discount.String() {
 			if h.CashableProbability != nil && h.CashableProbability.Cmp(decimal.NewFromInt(0)) > 0 {
 				return fmt.Errorf("discount can not set probability")
