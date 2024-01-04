@@ -37,6 +37,10 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		now := time.Now().Unix()
+		if now < int64(coupon.StartAt) || now > int64(coupon.EndAt) {
+			return fmt.Errorf("coupon can not be issued in current time")
+		}
 		h.coupon = coupon
 		return nil
 	})
