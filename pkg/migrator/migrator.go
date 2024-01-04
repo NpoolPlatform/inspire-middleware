@@ -10,12 +10,10 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	constant "github.com/NpoolPlatform/go-service-framework/pkg/mysql/const"
-	"github.com/shopspring/decimal"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
@@ -77,56 +75,16 @@ func open(hostname string) (conn *sql.DB, err error) {
 	return conn, nil
 }
 
-func migrateCashProbability(ctx context.Context, tx *ent.Tx) error {
-	r, err := tx.QueryContext(ctx, "select id from coupons where cashable_probability is null")
-	if err != nil {
-		return err
-	}
-
-	type w struct {
-		ID uint32
-	}
-	ids := []uint32{}
-	for r.Next() {
-		_w := &w{}
-		if err := r.Scan(&_w.ID); err != nil {
-			return err
-		}
-		ids = append(ids, _w.ID)
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-
-	coupons, err := tx.Coupon.Query().Where(entcoupon.IDIn(ids...)).All(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, coupon := range coupons {
-		if _, err := tx.
-			Coupon.
-			UpdateOneID(coupon.ID).
-			SetCashableProbability(decimal.RequireFromString("0")).
-			Save(ctx); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func Migrate(ctx context.Context) error {
 	var err error
 	var conn *sql.DB
 
-	logger.Sugar().Warnf("Migrate", "Start", "...")
 	err = redis2.TryLock(lockKey(), 0)
 	if err != nil {
 		return err
 	}
 	defer func(err *error) {
 		_ = redis2.Unlock(lockKey())
-		logger.Sugar().Warnf("Migrate", "Done", "...", "error", err)
 	}(&err)
 
 	conn, err = open(servicename.ServiceDomain)
@@ -139,9 +97,6 @@ func Migrate(ctx context.Context) error {
 		}
 	}()
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := migrateCashProbability(ctx, tx); err != nil {
-			return err
-		}
 		return nil
 	})
 	return nil
