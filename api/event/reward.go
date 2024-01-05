@@ -18,8 +18,9 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 		event1.WithUserID(&in.UserID, true),
 		event1.WithEventType(&in.EventType, true),
 		event1.WithGoodID(in.GoodID, false),
+		event1.WithAppGoodID(in.AppGoodID, false),
 		event1.WithConsecutive(&in.Consecutive, true),
-		event1.WithAmount(&in.Amount, true),
+		event1.WithAmount(&in.Amount, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -30,7 +30,11 @@ func (h *rewardHandler) condGood() error {
 		if h.GoodID == nil {
 			return fmt.Errorf("need goodid")
 		}
+		if h.AppGoodID == nil {
+			return fmt.Errorf("need appgoodid")
+		}
 		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
+		h.Conds.AppGoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.AppGoodID}
 	}
 	return nil
 }
@@ -187,6 +191,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 
 	appID := h.AppID.String()
 	goodID := h.GoodID.String()
+	appGoodID := h.AppGoodID.String()
 	amount := h.Amount.String()
 
 	for ; i < ev.InviterLayers && j >= 0; i++ {
@@ -196,6 +201,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 			WithUserID(&inviterIDs[j], true),
 			WithEventType(h.EventType, true),
 			WithGoodID(&goodID, true),
+			WithAppGoodID(&appGoodID, true),
 			WithConsecutive(h.Consecutive, true),
 			WithAmount(&amount, true),
 		)

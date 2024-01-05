@@ -27,10 +27,10 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		event1.WithAppID(&_req.AppID, true),
 		event1.WithUserID(&_req.UserID, true),
 		event1.WithEventType(&_req.EventType, true),
-		event1.WithGoodID(_req.GoodID, true),
-		event1.WithAppGoodID(_req.AppGoodID, true),
+		event1.WithGoodID(_req.GoodID, false),
+		event1.WithAppGoodID(_req.AppGoodID, false),
 		event1.WithConsecutive(&_req.Consecutive, true),
-		event1.WithAmount(&_req.Amount, true),
+		event1.WithAmount(&_req.Amount, false),
 	)
 	if err != nil {
 		return err
