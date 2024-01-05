@@ -30,7 +30,7 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		event1.WithGoodID(_req.GoodID, false),
 		event1.WithAppGoodID(_req.AppGoodID, false),
 		event1.WithConsecutive(&_req.Consecutive, true),
-		event1.WithAmount(&_req.Amount, false),
+		event1.WithAmount(&_req.Amount, true),
 	)
 	if err != nil {
 		return err
