@@ -2,15 +2,16 @@ package event
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
+	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -31,12 +32,33 @@ func init() {
 }
 
 var (
+	coupon = couponmwpb.Coupon{
+		EntID:               uuid.NewString(),
+		CouponType:          types.CouponType_FixAmount,
+		CouponTypeStr:       types.CouponType_FixAmount.String(),
+		AppID:               uuid.NewString(),
+		Denomination:        decimal.RequireFromString("12.25").String(),
+		Circulation:         decimal.RequireFromString("12.25").String(),
+		IssuedBy:            uuid.NewString(),
+		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
+		DurationDays:        234,
+		Message:             uuid.NewString(),
+		Name:                uuid.NewString(),
+		CouponConstraint:    types.CouponConstraint_Normal,
+		CouponConstraintStr: types.CouponConstraint_Normal.String(),
+		CouponScope:         types.CouponScope_Whitelist,
+		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Allocated:           decimal.NewFromInt(0).String(),
+		Threshold:           decimal.NewFromInt(0).String(),
+		CashableProbability: decimal.RequireFromString("0.0001").String(),
+	}
 	ret = npool.Event{
 		EntID:          uuid.NewString(),
 		AppID:          uuid.NewString(),
 		EventType:      basetypes.UsedFor_Signup,
 		EventTypeStr:   basetypes.UsedFor_Signup.String(),
-		CouponIDs:      []string{uuid.NewString()},
+		CouponIDs:      []string{coupon.EntID},
 		Credits:        decimal.RequireFromString("12.25").String(),
 		CreditsPerUSD:  decimal.RequireFromString("12.25").String(),
 		MaxConsecutive: 1,
@@ -45,34 +67,30 @@ var (
 )
 
 func setup(t *testing.T) func(*testing.T) {
-	ret.EventTypeStr = ret.EventType.String()
-	b, _ := json.Marshal(ret.CouponIDs)
-	ret.CouponIDsStr = string(b)
-	goodID := uuid.NewString()
-	ret.GoodID = &goodID
-
-	couponType := types.CouponType_FixAmount
-	denomination := decimal.RequireFromString("12.25").String()
-	circulation := decimal.RequireFromString("1225").String()
-	userID := uuid.NewString()
-	name := uuid.NewString()
-	message := uuid.NewString()
-
 	h1, err := coupon1.NewHandler(
 		context.Background(),
-		coupon1.WithEntID(&ret.CouponIDs[0], true),
-		coupon1.WithCouponType(&couponType, true),
-		coupon1.WithAppID(&ret.AppID, true),
-		coupon1.WithDenomination(&denomination, true),
-		coupon1.WithCirculation(&circulation, true),
-		coupon1.WithIssuedBy(&userID, true),
-		coupon1.WithMessage(&message, true),
-		coupon1.WithName(&name, true),
+		coupon1.WithEntID(&coupon.EntID, true),
+		coupon1.WithAppID(&coupon.AppID, true),
+		coupon1.WithName(&coupon.Name, true),
+		coupon1.WithMessage(&coupon.Message, true),
+		coupon1.WithCouponType(&coupon.CouponType, true),
+		coupon1.WithDenomination(&coupon.Denomination, true),
+		coupon1.WithCouponScope(&coupon.CouponScope, true),
+		coupon1.WithCirculation(&coupon.Circulation, true),
+		coupon1.WithDurationDays(&coupon.DurationDays, true),
+		coupon1.WithIssuedBy(&coupon.IssuedBy, true),
+		coupon1.WithStartAt(&coupon.StartAt, true),
+		coupon1.WithEndAt(&coupon.EndAt, true),
+		coupon1.WithCashableProbability(&coupon.CashableProbability, true),
 	)
 	assert.Nil(t, err)
 
 	info, err := h1.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
+		coupon.ID = info.ID
+		coupon.CreatedAt = info.CreatedAt
+		coupon.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, &coupon, info)
 		h1.ID = &info.ID
 	}
 
@@ -91,7 +109,6 @@ func createEvent(t *testing.T) {
 		WithCredits(&ret.Credits, true),
 		WithCreditsPerUSD(&ret.CreditsPerUSD, true),
 		WithMaxConsecutive(&ret.MaxConsecutive, true),
-		WithGoodID(ret.GoodID, true),
 		WithInviterLayers(&ret.InviterLayers, true),
 	)
 	assert.Nil(t, err)
@@ -101,6 +118,7 @@ func createEvent(t *testing.T) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
 		ret.UpdatedAt = info.UpdatedAt
+		ret.CouponIDsStr = info.CouponIDsStr
 		assert.Equal(t, info, &ret)
 	}
 }
@@ -143,7 +161,6 @@ func getEvents(t *testing.T) {
 		EntIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.EntID}},
 		AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		EventType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.EventType)},
-		GoodID:    &basetypes.StringVal{Op: cruder.EQ, Value: *ret.GoodID},
 	}
 
 	handler, err := NewHandler(
