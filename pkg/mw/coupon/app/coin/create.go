@@ -15,15 +15,14 @@ import (
 
 func (h *Handler) CreateCouponCoin(ctx context.Context) (*npool.CouponCoin, error) {
 	h.Conds = &couponcoincrud.Conds{
-		AppID:      &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
-		CoinTypeID: &cruder.Cond{Op: cruder.EQ, Val: *h.CoinTypeID},
+		AppID: &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 	}
 	exist, err := h.ExistCouponCoinConds(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if exist {
-		return nil, fmt.Errorf("coupon coin already exist")
+		return nil, fmt.Errorf("can only set one coin")
 	}
 
 	id := uuid.New()
