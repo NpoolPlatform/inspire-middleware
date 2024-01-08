@@ -262,8 +262,6 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 			if must {
 				return fmt.Errorf("invalid amount")
 			}
-			_amount := decimal.RequireFromString("0")
-			h.Amount = &_amount
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
