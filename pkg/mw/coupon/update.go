@@ -28,19 +28,20 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return err
 		}
 
+		err1 := fmt.Errorf("endat less than startat")
 		if h.StartAt != nil && h.EndAt != nil {
 			if *h.EndAt <= *h.StartAt {
-				return fmt.Errorf("endat less than startat")
+				return err1
 			}
 		}
 		if h.StartAt != nil {
 			if info.EndAt <= *h.StartAt {
-				return fmt.Errorf("endat less than startat")
+				return err1
 			}
 		}
 		if h.EndAt != nil {
 			if *h.EndAt <= info.StartAt {
-				return fmt.Errorf("endat less than startat")
+				return err1
 			}
 		}
 
@@ -63,6 +64,7 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				Random:              h.Random,
 				Threshold:           h.Threshold,
 				CouponScope:         h.CouponScope,
+				CouponConstraint:    h.CouponConstraint,
 				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
