@@ -122,6 +122,9 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	if req.CouponScope != nil {
 		u.SetCouponScope(req.CouponScope.String())
 	}
+	if req.CouponConstraint != nil {
+		u.SetCouponConstraint(req.CouponConstraint.String())
+	}
 	if req.CashableProbability != nil {
 		u.SetCashableProbability(*req.CashableProbability)
 	}
