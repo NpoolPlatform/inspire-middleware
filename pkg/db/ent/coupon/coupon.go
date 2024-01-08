@@ -23,8 +23,6 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
-	// FieldUserID holds the string denoting the user_id field in the database.
-	FieldUserID = "user_id"
 	// FieldDenomination holds the string denoting the denomination field in the database.
 	FieldDenomination = "denomination"
 	// FieldCirculation holds the string denoting the circulation field in the database.
@@ -35,6 +33,8 @@ const (
 	FieldIssuedBy = "issued_by"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
+	// FieldEndAt holds the string denoting the end_at field in the database.
+	FieldEndAt = "end_at"
 	// FieldDurationDays holds the string denoting the duration_days field in the database.
 	FieldDurationDays = "duration_days"
 	// FieldMessage holds the string denoting the message field in the database.
@@ -51,6 +51,8 @@ const (
 	FieldCouponConstraint = "coupon_constraint"
 	// FieldCouponScope holds the string denoting the coupon_scope field in the database.
 	FieldCouponScope = "coupon_scope"
+	// FieldCashableProbability holds the string denoting the cashable_probability field in the database.
+	FieldCashableProbability = "cashable_probability"
 	// Table holds the table name of the coupon in the database.
 	Table = "coupons"
 )
@@ -63,12 +65,12 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
-	FieldUserID,
 	FieldDenomination,
 	FieldCirculation,
 	FieldRandom,
 	FieldIssuedBy,
 	FieldStartAt,
+	FieldEndAt,
 	FieldDurationDays,
 	FieldMessage,
 	FieldName,
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldThreshold,
 	FieldCouponConstraint,
 	FieldCouponScope,
+	FieldCashableProbability,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -110,16 +113,18 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
-	// DefaultUserID holds the default value on creation for the "user_id" field.
-	DefaultUserID func() uuid.UUID
 	// DefaultDenomination holds the default value on creation for the "denomination" field.
 	DefaultDenomination decimal.Decimal
 	// DefaultCirculation holds the default value on creation for the "circulation" field.
 	DefaultCirculation decimal.Decimal
 	// DefaultRandom holds the default value on creation for the "random" field.
 	DefaultRandom bool
+	// DefaultIssuedBy holds the default value on creation for the "issued_by" field.
+	DefaultIssuedBy func() uuid.UUID
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
+	// DefaultEndAt holds the default value on creation for the "end_at" field.
+	DefaultEndAt uint32
 	// DefaultDurationDays holds the default value on creation for the "duration_days" field.
 	DefaultDurationDays uint32
 	// DefaultMessage holds the default value on creation for the "message" field.
@@ -136,4 +141,6 @@ var (
 	DefaultCouponConstraint string
 	// DefaultCouponScope holds the default value on creation for the "coupon_scope" field.
 	DefaultCouponScope string
+	// DefaultCashableProbability holds the default value on creation for the "cashable_probability" field.
+	DefaultCashableProbability decimal.Decimal
 )

@@ -15,6 +15,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -41,6 +42,8 @@ type Client struct {
 	Coupon *CouponClient
 	// CouponAllocated is the client for interacting with the CouponAllocated builders.
 	CouponAllocated *CouponAllocatedClient
+	// CouponCoin is the client for interacting with the CouponCoin builders.
+	CouponCoin *CouponCoinClient
 	// CouponScope is the client for interacting with the CouponScope builders.
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
@@ -71,6 +74,7 @@ func (c *Client) init() {
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
+	c.CouponCoin = NewCouponCoinClient(c.config)
 	c.CouponScope = NewCouponScopeClient(c.config)
 	c.Event = NewEventClient(c.config)
 	c.InvitationCode = NewInvitationCodeClient(c.config)
@@ -115,6 +119,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
+		CouponCoin:      NewCouponCoinClient(cfg),
 		CouponScope:     NewCouponScopeClient(cfg),
 		Event:           NewEventClient(cfg),
 		InvitationCode:  NewInvitationCodeClient(cfg),
@@ -145,6 +150,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Commission:      NewCommissionClient(cfg),
 		Coupon:          NewCouponClient(cfg),
 		CouponAllocated: NewCouponAllocatedClient(cfg),
+		CouponCoin:      NewCouponCoinClient(cfg),
 		CouponScope:     NewCouponScopeClient(cfg),
 		Event:           NewEventClient(cfg),
 		InvitationCode:  NewInvitationCodeClient(cfg),
@@ -185,6 +191,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
+	c.CouponCoin.Use(hooks...)
 	c.CouponScope.Use(hooks...)
 	c.Event.Use(hooks...)
 	c.InvitationCode.Use(hooks...)
@@ -646,6 +653,97 @@ func (c *CouponAllocatedClient) GetX(ctx context.Context, id uint32) *CouponAllo
 func (c *CouponAllocatedClient) Hooks() []Hook {
 	hooks := c.hooks.CouponAllocated
 	return append(hooks[:len(hooks):len(hooks)], couponallocated.Hooks[:]...)
+}
+
+// CouponCoinClient is a client for the CouponCoin schema.
+type CouponCoinClient struct {
+	config
+}
+
+// NewCouponCoinClient returns a client for the CouponCoin from the given config.
+func NewCouponCoinClient(c config) *CouponCoinClient {
+	return &CouponCoinClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `couponcoin.Hooks(f(g(h())))`.
+func (c *CouponCoinClient) Use(hooks ...Hook) {
+	c.hooks.CouponCoin = append(c.hooks.CouponCoin, hooks...)
+}
+
+// Create returns a builder for creating a CouponCoin entity.
+func (c *CouponCoinClient) Create() *CouponCoinCreate {
+	mutation := newCouponCoinMutation(c.config, OpCreate)
+	return &CouponCoinCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CouponCoin entities.
+func (c *CouponCoinClient) CreateBulk(builders ...*CouponCoinCreate) *CouponCoinCreateBulk {
+	return &CouponCoinCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CouponCoin.
+func (c *CouponCoinClient) Update() *CouponCoinUpdate {
+	mutation := newCouponCoinMutation(c.config, OpUpdate)
+	return &CouponCoinUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponCoinClient) UpdateOne(cc *CouponCoin) *CouponCoinUpdateOne {
+	mutation := newCouponCoinMutation(c.config, OpUpdateOne, withCouponCoin(cc))
+	return &CouponCoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponCoinClient) UpdateOneID(id uint32) *CouponCoinUpdateOne {
+	mutation := newCouponCoinMutation(c.config, OpUpdateOne, withCouponCoinID(id))
+	return &CouponCoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CouponCoin.
+func (c *CouponCoinClient) Delete() *CouponCoinDelete {
+	mutation := newCouponCoinMutation(c.config, OpDelete)
+	return &CouponCoinDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponCoinClient) DeleteOne(cc *CouponCoin) *CouponCoinDeleteOne {
+	return c.DeleteOneID(cc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CouponCoinClient) DeleteOneID(id uint32) *CouponCoinDeleteOne {
+	builder := c.Delete().Where(couponcoin.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponCoinDeleteOne{builder}
+}
+
+// Query returns a query builder for CouponCoin.
+func (c *CouponCoinClient) Query() *CouponCoinQuery {
+	return &CouponCoinQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CouponCoin entity by its id.
+func (c *CouponCoinClient) Get(ctx context.Context, id uint32) (*CouponCoin, error) {
+	return c.Query().Where(couponcoin.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponCoinClient) GetX(ctx context.Context, id uint32) *CouponCoin {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponCoinClient) Hooks() []Hook {
+	hooks := c.hooks.CouponCoin
+	return append(hooks[:len(hooks):len(hooks)], couponcoin.Hooks[:]...)
 }
 
 // CouponScopeClient is a client for the CouponScope schema.

@@ -93,20 +93,6 @@ func (cc *CouponCreate) SetNillableAppID(u *uuid.UUID) *CouponCreate {
 	return cc
 }
 
-// SetUserID sets the "user_id" field.
-func (cc *CouponCreate) SetUserID(u uuid.UUID) *CouponCreate {
-	cc.mutation.SetUserID(u)
-	return cc
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (cc *CouponCreate) SetNillableUserID(u *uuid.UUID) *CouponCreate {
-	if u != nil {
-		cc.SetUserID(*u)
-	}
-	return cc
-}
-
 // SetDenomination sets the "denomination" field.
 func (cc *CouponCreate) SetDenomination(d decimal.Decimal) *CouponCreate {
 	cc.mutation.SetDenomination(d)
@@ -155,6 +141,14 @@ func (cc *CouponCreate) SetIssuedBy(u uuid.UUID) *CouponCreate {
 	return cc
 }
 
+// SetNillableIssuedBy sets the "issued_by" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableIssuedBy(u *uuid.UUID) *CouponCreate {
+	if u != nil {
+		cc.SetIssuedBy(*u)
+	}
+	return cc
+}
+
 // SetStartAt sets the "start_at" field.
 func (cc *CouponCreate) SetStartAt(u uint32) *CouponCreate {
 	cc.mutation.SetStartAt(u)
@@ -165,6 +159,20 @@ func (cc *CouponCreate) SetStartAt(u uint32) *CouponCreate {
 func (cc *CouponCreate) SetNillableStartAt(u *uint32) *CouponCreate {
 	if u != nil {
 		cc.SetStartAt(*u)
+	}
+	return cc
+}
+
+// SetEndAt sets the "end_at" field.
+func (cc *CouponCreate) SetEndAt(u uint32) *CouponCreate {
+	cc.mutation.SetEndAt(u)
+	return cc
+}
+
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableEndAt(u *uint32) *CouponCreate {
+	if u != nil {
+		cc.SetEndAt(*u)
 	}
 	return cc
 }
@@ -277,6 +285,20 @@ func (cc *CouponCreate) SetCouponScope(s string) *CouponCreate {
 func (cc *CouponCreate) SetNillableCouponScope(s *string) *CouponCreate {
 	if s != nil {
 		cc.SetCouponScope(*s)
+	}
+	return cc
+}
+
+// SetCashableProbability sets the "cashable_probability" field.
+func (cc *CouponCreate) SetCashableProbability(d decimal.Decimal) *CouponCreate {
+	cc.mutation.SetCashableProbability(d)
+	return cc
+}
+
+// SetNillableCashableProbability sets the "cashable_probability" field if the given value is not nil.
+func (cc *CouponCreate) SetNillableCashableProbability(d *decimal.Decimal) *CouponCreate {
+	if d != nil {
+		cc.SetCashableProbability(*d)
 	}
 	return cc
 }
@@ -401,13 +423,6 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultAppID()
 		cc.mutation.SetAppID(v)
 	}
-	if _, ok := cc.mutation.UserID(); !ok {
-		if coupon.DefaultUserID == nil {
-			return fmt.Errorf("ent: uninitialized coupon.DefaultUserID (forgotten import ent/runtime?)")
-		}
-		v := coupon.DefaultUserID()
-		cc.mutation.SetUserID(v)
-	}
 	if _, ok := cc.mutation.Denomination(); !ok {
 		v := coupon.DefaultDenomination
 		cc.mutation.SetDenomination(v)
@@ -420,9 +435,20 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultRandom
 		cc.mutation.SetRandom(v)
 	}
+	if _, ok := cc.mutation.IssuedBy(); !ok {
+		if coupon.DefaultIssuedBy == nil {
+			return fmt.Errorf("ent: uninitialized coupon.DefaultIssuedBy (forgotten import ent/runtime?)")
+		}
+		v := coupon.DefaultIssuedBy()
+		cc.mutation.SetIssuedBy(v)
+	}
 	if _, ok := cc.mutation.StartAt(); !ok {
 		v := coupon.DefaultStartAt
 		cc.mutation.SetStartAt(v)
+	}
+	if _, ok := cc.mutation.EndAt(); !ok {
+		v := coupon.DefaultEndAt
+		cc.mutation.SetEndAt(v)
 	}
 	if _, ok := cc.mutation.DurationDays(); !ok {
 		v := coupon.DefaultDurationDays
@@ -456,6 +482,10 @@ func (cc *CouponCreate) defaults() error {
 		v := coupon.DefaultCouponScope
 		cc.mutation.SetCouponScope(v)
 	}
+	if _, ok := cc.mutation.CashableProbability(); !ok {
+		v := coupon.DefaultCashableProbability
+		cc.mutation.SetCashableProbability(v)
+	}
 	return nil
 }
 
@@ -472,9 +502,6 @@ func (cc *CouponCreate) check() error {
 	}
 	if _, ok := cc.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Coupon.ent_id"`)}
-	}
-	if _, ok := cc.mutation.IssuedBy(); !ok {
-		return &ValidationError{Name: "issued_by", err: errors.New(`ent: missing required field "Coupon.issued_by"`)}
 	}
 	return nil
 }
@@ -550,14 +577,6 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 		})
 		_node.AppID = value
 	}
-	if value, ok := cc.mutation.UserID(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coupon.FieldUserID,
-		})
-		_node.UserID = value
-	}
 	if value, ok := cc.mutation.Denomination(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -597,6 +616,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldStartAt,
 		})
 		_node.StartAt = value
+	}
+	if value, ok := cc.mutation.EndAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: coupon.FieldEndAt,
+		})
+		_node.EndAt = value
 	}
 	if value, ok := cc.mutation.DurationDays(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -661,6 +688,14 @@ func (cc *CouponCreate) createSpec() (*Coupon, *sqlgraph.CreateSpec) {
 			Column: coupon.FieldCouponScope,
 		})
 		_node.CouponScope = value
+	}
+	if value, ok := cc.mutation.CashableProbability(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeOther,
+			Value:  value,
+			Column: coupon.FieldCashableProbability,
+		})
+		_node.CashableProbability = value
 	}
 	return _node, _spec
 }
@@ -800,24 +835,6 @@ func (u *CouponUpsert) ClearAppID() *CouponUpsert {
 	return u
 }
 
-// SetUserID sets the "user_id" field.
-func (u *CouponUpsert) SetUserID(v uuid.UUID) *CouponUpsert {
-	u.Set(coupon.FieldUserID, v)
-	return u
-}
-
-// UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *CouponUpsert) UpdateUserID() *CouponUpsert {
-	u.SetExcluded(coupon.FieldUserID)
-	return u
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (u *CouponUpsert) ClearUserID() *CouponUpsert {
-	u.SetNull(coupon.FieldUserID)
-	return u
-}
-
 // SetDenomination sets the "denomination" field.
 func (u *CouponUpsert) SetDenomination(v decimal.Decimal) *CouponUpsert {
 	u.Set(coupon.FieldDenomination, v)
@@ -884,6 +901,12 @@ func (u *CouponUpsert) UpdateIssuedBy() *CouponUpsert {
 	return u
 }
 
+// ClearIssuedBy clears the value of the "issued_by" field.
+func (u *CouponUpsert) ClearIssuedBy() *CouponUpsert {
+	u.SetNull(coupon.FieldIssuedBy)
+	return u
+}
+
 // SetStartAt sets the "start_at" field.
 func (u *CouponUpsert) SetStartAt(v uint32) *CouponUpsert {
 	u.Set(coupon.FieldStartAt, v)
@@ -905,6 +928,30 @@ func (u *CouponUpsert) AddStartAt(v uint32) *CouponUpsert {
 // ClearStartAt clears the value of the "start_at" field.
 func (u *CouponUpsert) ClearStartAt() *CouponUpsert {
 	u.SetNull(coupon.FieldStartAt)
+	return u
+}
+
+// SetEndAt sets the "end_at" field.
+func (u *CouponUpsert) SetEndAt(v uint32) *CouponUpsert {
+	u.Set(coupon.FieldEndAt, v)
+	return u
+}
+
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateEndAt() *CouponUpsert {
+	u.SetExcluded(coupon.FieldEndAt)
+	return u
+}
+
+// AddEndAt adds v to the "end_at" field.
+func (u *CouponUpsert) AddEndAt(v uint32) *CouponUpsert {
+	u.Add(coupon.FieldEndAt, v)
+	return u
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *CouponUpsert) ClearEndAt() *CouponUpsert {
+	u.SetNull(coupon.FieldEndAt)
 	return u
 }
 
@@ -1058,6 +1105,24 @@ func (u *CouponUpsert) ClearCouponScope() *CouponUpsert {
 	return u
 }
 
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsert) SetCashableProbability(v decimal.Decimal) *CouponUpsert {
+	u.Set(coupon.FieldCashableProbability, v)
+	return u
+}
+
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsert) UpdateCashableProbability() *CouponUpsert {
+	u.SetExcluded(coupon.FieldCashableProbability)
+	return u
+}
+
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsert) ClearCashableProbability() *CouponUpsert {
+	u.SetNull(coupon.FieldCashableProbability)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1206,27 +1271,6 @@ func (u *CouponUpsertOne) ClearAppID() *CouponUpsertOne {
 	})
 }
 
-// SetUserID sets the "user_id" field.
-func (u *CouponUpsertOne) SetUserID(v uuid.UUID) *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetUserID(v)
-	})
-}
-
-// UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *CouponUpsertOne) UpdateUserID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateUserID()
-	})
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (u *CouponUpsertOne) ClearUserID() *CouponUpsertOne {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearUserID()
-	})
-}
-
 // SetDenomination sets the "denomination" field.
 func (u *CouponUpsertOne) SetDenomination(v decimal.Decimal) *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
@@ -1304,6 +1348,13 @@ func (u *CouponUpsertOne) UpdateIssuedBy() *CouponUpsertOne {
 	})
 }
 
+// ClearIssuedBy clears the value of the "issued_by" field.
+func (u *CouponUpsertOne) ClearIssuedBy() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearIssuedBy()
+	})
+}
+
 // SetStartAt sets the "start_at" field.
 func (u *CouponUpsertOne) SetStartAt(v uint32) *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
@@ -1329,6 +1380,34 @@ func (u *CouponUpsertOne) UpdateStartAt() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearStartAt() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetEndAt sets the "end_at" field.
+func (u *CouponUpsertOne) SetEndAt(v uint32) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetEndAt(v)
+	})
+}
+
+// AddEndAt adds v to the "end_at" field.
+func (u *CouponUpsertOne) AddEndAt(v uint32) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.AddEndAt(v)
+	})
+}
+
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateEndAt() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateEndAt()
+	})
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *CouponUpsertOne) ClearEndAt() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearEndAt()
 	})
 }
 
@@ -1504,6 +1583,27 @@ func (u *CouponUpsertOne) UpdateCouponScope() *CouponUpsertOne {
 func (u *CouponUpsertOne) ClearCouponScope() *CouponUpsertOne {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponScope()
+	})
+}
+
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsertOne) SetCashableProbability(v decimal.Decimal) *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCashableProbability(v)
+	})
+}
+
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsertOne) UpdateCashableProbability() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCashableProbability()
+	})
+}
+
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsertOne) ClearCashableProbability() *CouponUpsertOne {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCashableProbability()
 	})
 }
 
@@ -1820,27 +1920,6 @@ func (u *CouponUpsertBulk) ClearAppID() *CouponUpsertBulk {
 	})
 }
 
-// SetUserID sets the "user_id" field.
-func (u *CouponUpsertBulk) SetUserID(v uuid.UUID) *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.SetUserID(v)
-	})
-}
-
-// UpdateUserID sets the "user_id" field to the value that was provided on create.
-func (u *CouponUpsertBulk) UpdateUserID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.UpdateUserID()
-	})
-}
-
-// ClearUserID clears the value of the "user_id" field.
-func (u *CouponUpsertBulk) ClearUserID() *CouponUpsertBulk {
-	return u.Update(func(s *CouponUpsert) {
-		s.ClearUserID()
-	})
-}
-
 // SetDenomination sets the "denomination" field.
 func (u *CouponUpsertBulk) SetDenomination(v decimal.Decimal) *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
@@ -1918,6 +1997,13 @@ func (u *CouponUpsertBulk) UpdateIssuedBy() *CouponUpsertBulk {
 	})
 }
 
+// ClearIssuedBy clears the value of the "issued_by" field.
+func (u *CouponUpsertBulk) ClearIssuedBy() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearIssuedBy()
+	})
+}
+
 // SetStartAt sets the "start_at" field.
 func (u *CouponUpsertBulk) SetStartAt(v uint32) *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
@@ -1943,6 +2029,34 @@ func (u *CouponUpsertBulk) UpdateStartAt() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearStartAt() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearStartAt()
+	})
+}
+
+// SetEndAt sets the "end_at" field.
+func (u *CouponUpsertBulk) SetEndAt(v uint32) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetEndAt(v)
+	})
+}
+
+// AddEndAt adds v to the "end_at" field.
+func (u *CouponUpsertBulk) AddEndAt(v uint32) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.AddEndAt(v)
+	})
+}
+
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateEndAt() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateEndAt()
+	})
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *CouponUpsertBulk) ClearEndAt() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearEndAt()
 	})
 }
 
@@ -2118,6 +2232,27 @@ func (u *CouponUpsertBulk) UpdateCouponScope() *CouponUpsertBulk {
 func (u *CouponUpsertBulk) ClearCouponScope() *CouponUpsertBulk {
 	return u.Update(func(s *CouponUpsert) {
 		s.ClearCouponScope()
+	})
+}
+
+// SetCashableProbability sets the "cashable_probability" field.
+func (u *CouponUpsertBulk) SetCashableProbability(v decimal.Decimal) *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.SetCashableProbability(v)
+	})
+}
+
+// UpdateCashableProbability sets the "cashable_probability" field to the value that was provided on create.
+func (u *CouponUpsertBulk) UpdateCashableProbability() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.UpdateCashableProbability()
+	})
+}
+
+// ClearCashableProbability clears the value of the "cashable_probability" field.
+func (u *CouponUpsertBulk) ClearCashableProbability() *CouponUpsertBulk {
+	return u.Update(func(s *CouponUpsert) {
+		s.ClearCashableProbability()
 	})
 }
 

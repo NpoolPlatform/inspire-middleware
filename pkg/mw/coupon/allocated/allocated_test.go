@@ -41,6 +41,9 @@ var (
 		Circulation:         decimal.RequireFromString("100").String(),
 		Allocated:           decimal.RequireFromString("10").String(),
 		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
+		Threshold:           decimal.RequireFromString("0").String(),
+		UsedByOrderID:       uuid.Nil.String(),
 		DurationDays:        27,
 		CouponID:            uuid.NewString(),
 		CouponName:          uuid.NewString(),
@@ -66,7 +69,10 @@ var (
 		Circulation:         ret.Circulation,
 		Allocated:           decimal.RequireFromString("20").String(),
 		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               ret.EndAt,
 		DurationDays:        27,
+		Threshold:           decimal.RequireFromString("0").String(),
+		UsedByOrderID:       uuid.Nil.String(),
 		CouponConstraint:    ret.CouponConstraint,
 		CouponConstraintStr: ret.CouponConstraint.String(),
 		CouponScope:         ret.CouponScope,
@@ -89,6 +95,7 @@ func setup(t *testing.T) func(*testing.T) {
 		coupon1.WithCirculation(&ret.Circulation, true),
 		coupon1.WithIssuedBy(&ret.UserID, true),
 		coupon1.WithStartAt(&ret.StartAt, true),
+		coupon1.WithEndAt(&ret.EndAt, true),
 		coupon1.WithDurationDays(&ret.DurationDays, true),
 		coupon1.WithMessage(&ret.Message, true),
 		coupon1.WithName(&ret.CouponName, true),
@@ -147,14 +154,14 @@ func createCoupon(t *testing.T) {
 
 func updateCoupon(t *testing.T) {
 	orderID := uuid.NewString()
-	ret.UsedByOrderID = &orderID
+	ret.UsedByOrderID = orderID
 	ret.Used = true
 
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithUsed(&ret.Used, true),
-		WithUsedByOrderID(ret.UsedByOrderID, true),
+		WithUsedByOrderID(&ret.UsedByOrderID, true),
 	)
 	assert.Nil(t, err)
 
@@ -168,13 +175,13 @@ func updateCoupon(t *testing.T) {
 
 func updateCoupons(t *testing.T) {
 	orderID := uuid.NewString()
-	ret1.UsedByOrderID = &orderID
+	ret1.UsedByOrderID = orderID
 	ret1.Used = true
 
 	reqs := []*npool.CouponReq{{
 		ID:            &ret1.ID,
 		Used:          &ret1.Used,
-		UsedByOrderID: ret1.UsedByOrderID,
+		UsedByOrderID: &ret1.UsedByOrderID,
 	}}
 	handler, err := NewHandler(
 		context.Background(),
@@ -211,7 +218,7 @@ func getCoupons(t *testing.T) {
 		AppID:         &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		UserID:        &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
 		CouponID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.CouponID},
-		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: *ret.UsedByOrderID},
+		UsedByOrderID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.UsedByOrderID},
 	}
 
 	handler, err := NewHandler(

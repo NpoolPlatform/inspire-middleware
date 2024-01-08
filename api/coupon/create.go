@@ -32,12 +32,13 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		coupon1.WithCirculation(req.Circulation, true),
 		coupon1.WithIssuedBy(req.IssuedBy, true),
 		coupon1.WithStartAt(req.StartAt, true),
+		coupon1.WithEndAt(req.EndAt, true),
 		coupon1.WithDurationDays(req.DurationDays, true),
-		coupon1.WithUserID(req.UserID, false),
 		coupon1.WithThreshold(req.Threshold, false),
 		coupon1.WithCouponConstraint(req.CouponConstraint, false),
 		coupon1.WithCouponScope(req.CouponScope, false),
 		coupon1.WithRandom(req.Random, false),
+		coupon1.WithCashableProbability(req.CashableProbability, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

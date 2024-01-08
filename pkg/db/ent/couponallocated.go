@@ -43,6 +43,8 @@ type CouponAllocated struct {
 	StartAt uint32 `json:"start_at,omitempty"`
 	// CouponScope holds the value of the "coupon_scope" field.
 	CouponScope string `json:"coupon_scope,omitempty"`
+	// Cashable holds the value of the "cashable" field.
+	Cashable bool `json:"cashable,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,7 +54,7 @@ func (*CouponAllocated) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case couponallocated.FieldDenomination:
 			values[i] = new(decimal.Decimal)
-		case couponallocated.FieldUsed:
+		case couponallocated.FieldUsed, couponallocated.FieldCashable:
 			values[i] = new(sql.NullBool)
 		case couponallocated.FieldID, couponallocated.FieldCreatedAt, couponallocated.FieldUpdatedAt, couponallocated.FieldDeletedAt, couponallocated.FieldUsedAt, couponallocated.FieldStartAt:
 			values[i] = new(sql.NullInt64)
@@ -159,6 +161,12 @@ func (ca *CouponAllocated) assignValues(columns []string, values []interface{}) 
 			} else if value.Valid {
 				ca.CouponScope = value.String
 			}
+		case couponallocated.FieldCashable:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field cashable", values[i])
+			} else if value.Valid {
+				ca.Cashable = value.Bool
+			}
 		}
 	}
 	return nil
@@ -225,6 +233,9 @@ func (ca *CouponAllocated) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coupon_scope=")
 	builder.WriteString(ca.CouponScope)
+	builder.WriteString(", ")
+	builder.WriteString("cashable=")
+	builder.WriteString(fmt.Sprintf("%v", ca.Cashable))
 	builder.WriteByte(')')
 	return builder.String()
 }

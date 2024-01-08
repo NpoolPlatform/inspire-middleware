@@ -16,7 +16,6 @@ import (
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
-	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -78,6 +77,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcouponallocated.FieldUpdatedAt), "updated_at"),
 			sql.As(t.C(entcouponallocated.FieldDenomination), "denomination"),
 			sql.As(t.C(entcouponallocated.FieldCouponScope), "coupon_scope"),
+			sql.As(t.C(entcouponallocated.FieldCashable), "cashable"),
 		)
 }
 
@@ -135,6 +135,14 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h queryHandler) formalizeString(value string) string {
+	amount, err := decimal.NewFromString(value)
+	if err != nil {
+		return decimal.NewFromInt(0).String()
+	}
+	return amount.String()
+}
+
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EndAt = info.StartAt + info.DurationDays*timedef.SecondsPerDay
@@ -143,52 +151,10 @@ func (h *queryHandler) formalize() {
 		info.CouponType = types.CouponType(types.CouponType_value[info.CouponTypeStr])
 		info.CouponConstraint = types.CouponConstraint(types.CouponConstraint_value[info.CouponConstraintStr])
 		info.CouponScope = types.CouponScope(types.CouponScope_value[info.CouponScopeStr])
-		if info.CouponName == "" {
-			continue
-		}
-		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
-			info.GoodID = nil
-		}
-		if info.UsedByOrderID != nil && *info.UsedByOrderID == uuid.Nil.String() {
-			info.UsedByOrderID = nil
-		}
-		if info.AppGoodID != nil && *info.AppGoodID == uuid.Nil.String() {
-			info.AppGoodID = nil
-		}
-		amount, err := decimal.NewFromString(info.Denomination)
-		if err != nil {
-			info.Denomination = decimal.NewFromInt(0).String()
-		} else {
-			info.Denomination = amount.String()
-		}
-		amount, err = decimal.NewFromString(info.Circulation)
-		if err != nil {
-			info.Circulation = decimal.NewFromInt(0).String()
-		} else {
-			info.Circulation = amount.String()
-		}
-		amount, err = decimal.NewFromString(info.Allocated)
-		if err != nil {
-			info.Allocated = decimal.NewFromInt(0).String()
-		} else {
-			info.Allocated = amount.String()
-		}
-		switch info.CouponConstraint {
-		case types.CouponConstraint_PaymentThreshold:
-		case types.CouponConstraint_GoodThreshold:
-		default:
-			info.Threshold = nil
-		}
-		if info.Threshold != nil {
-			amount, err = decimal.NewFromString(*info.Threshold)
-			if err != nil {
-				_amount := decimal.NewFromInt(0).String()
-				info.Threshold = &_amount
-			} else {
-				_amount := amount.String()
-				info.Threshold = &_amount
-			}
-		}
+		info.Denomination = h.formalizeString(info.Denomination)
+		info.Circulation = h.formalizeString(info.Circulation)
+		info.Allocated = h.formalizeString(info.Allocated)
+		info.Threshold = h.formalizeString(info.Threshold)
 	}
 }
 

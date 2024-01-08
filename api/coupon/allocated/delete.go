@@ -19,12 +19,13 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 			"DeleteCoupon",
 			"In", in,
 		)
-		return &npool.DeleteCouponResponse{}, status.Error(codes.InvalidArgument, "invalid info")
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, "invalid info")
 	}
 
 	handler, err := allocated1.NewHandler(
 		ctx,
-		allocated1.WithID(req.ID, true),
+		allocated1.WithID(req.ID, false),
+		allocated1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -32,7 +33,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	info, err := handler.DeleteCoupon(ctx)
@@ -42,7 +43,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 			"In", in,
 			"Err", err,
 		)
-		return &npool.DeleteCouponResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
 	return &npool.DeleteCouponResponse{

@@ -171,6 +171,13 @@ func CouponScope(v string) predicate.CouponAllocated {
 	})
 }
 
+// Cashable applies equality check predicate on the "cashable" field. It's identical to CashableEQ.
+func Cashable(v bool) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCashable), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
@@ -1111,6 +1118,34 @@ func CouponScopeEqualFold(v string) predicate.CouponAllocated {
 func CouponScopeContainsFold(v string) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCouponScope), v))
+	})
+}
+
+// CashableEQ applies the EQ predicate on the "cashable" field.
+func CashableEQ(v bool) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCashable), v))
+	})
+}
+
+// CashableNEQ applies the NEQ predicate on the "cashable" field.
+func CashableNEQ(v bool) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCashable), v))
+	})
+}
+
+// CashableIsNil applies the IsNil predicate on the "cashable" field.
+func CashableIsNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCashable)))
+	})
+}
+
+// CashableNotNil applies the NotNil predicate on the "cashable" field.
+func CashableNotNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCashable)))
 	})
 }
 

@@ -51,11 +51,14 @@ var (
 		DurationDays:        365,
 		IssuedBy:            uuid.NewString(),
 		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
 		CouponConstraint:    types.CouponConstraint_Normal,
 		CouponConstraintStr: types.CouponConstraint_Normal.String(),
-		Allocated:           "0",
 		CouponScope:         types.CouponScope_Whitelist,
 		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Allocated:           decimal.NewFromInt(0).String(),
+		Threshold:           decimal.NewFromInt(0).String(),
+		CashableProbability: decimal.RequireFromString("0.0001").String(),
 	}
 
 	ret = npool.Scope{
@@ -74,17 +77,19 @@ var (
 
 func setup(t *testing.T) func(*testing.T) {
 	info, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
-		EntID:        &coupon.EntID,
-		AppID:        &coupon.AppID,
-		Name:         &coupon.Name,
-		Message:      &coupon.Message,
-		CouponType:   &coupon.CouponType,
-		Denomination: &coupon.Denomination,
-		Circulation:  &coupon.Circulation,
-		DurationDays: &coupon.DurationDays,
-		IssuedBy:     &coupon.IssuedBy,
-		StartAt:      &coupon.StartAt,
-		CouponScope:  &coupon.CouponScope,
+		EntID:               &coupon.EntID,
+		AppID:               &coupon.AppID,
+		Name:                &coupon.Name,
+		Message:             &coupon.Message,
+		CouponType:          &coupon.CouponType,
+		Denomination:        &coupon.Denomination,
+		Circulation:         &coupon.Circulation,
+		DurationDays:        &coupon.DurationDays,
+		IssuedBy:            &coupon.IssuedBy,
+		StartAt:             &coupon.StartAt,
+		EndAt:               &coupon.EndAt,
+		CouponScope:         &coupon.CouponScope,
+		CashableProbability: &coupon.CashableProbability,
 	})
 	if assert.Nil(t, err) {
 		coupon.ID = info.ID

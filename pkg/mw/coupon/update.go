@@ -2,12 +2,15 @@ package coupon
 
 import (
 	"context"
+	"fmt"
 
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
+	"github.com/shopspring/decimal"
 )
 
 func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
@@ -25,25 +28,45 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			return err
 		}
 
-		req := &couponcrud.Req{
-			Denomination: h.Denomination,
-			Circulation:  h.Circulation,
-			StartAt:      h.StartAt,
-			DurationDays: h.DurationDays,
-			Message:      h.Message,
-			Name:         h.Name,
-			Random:       h.Random,
-			Threshold:    h.Threshold,
-			CouponScope:  h.CouponScope,
+		err1 := fmt.Errorf("endat less than startat")
+		if h.StartAt != nil && h.EndAt != nil {
+			if *h.EndAt <= *h.StartAt {
+				return err1
+			}
 		}
-		if h.Allocated != nil {
-			allocated := info.Allocated.Add(*h.Allocated)
-			req.Allocated = &allocated
+		if h.StartAt != nil {
+			if info.EndAt <= *h.StartAt {
+				return err1
+			}
+		}
+		if h.EndAt != nil {
+			if *h.EndAt <= info.StartAt {
+				return err1
+			}
+		}
+
+		if info.CouponType == inspiretypes.CouponType_Discount.String() {
+			if h.CashableProbability != nil && h.CashableProbability.Cmp(decimal.NewFromInt(0)) > 0 {
+				return fmt.Errorf("discount can not set probability")
+			}
 		}
 
 		if _, err := couponcrud.UpdateSet(
 			info.Update(),
-			req,
+			&couponcrud.Req{
+				Denomination:        h.Denomination,
+				Circulation:         h.Circulation,
+				StartAt:             h.StartAt,
+				EndAt:               h.EndAt,
+				DurationDays:        h.DurationDays,
+				Message:             h.Message,
+				Name:                h.Name,
+				Random:              h.Random,
+				Threshold:           h.Threshold,
+				CouponScope:         h.CouponScope,
+				CouponConstraint:    h.CouponConstraint,
+				CashableProbability: h.CashableProbability,
+			},
 		).Save(_ctx); err != nil {
 			return err
 		}

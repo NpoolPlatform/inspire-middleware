@@ -12,30 +12,28 @@ import (
 )
 
 type Req struct {
-	ID               *uint32
-	EntID            *uuid.UUID
-	CouponType       *types.CouponType
-	AppID            *uuid.UUID
-	UserID           *uuid.UUID
-	Denomination     *decimal.Decimal
-	Circulation      *decimal.Decimal
-	IssuedBy         *uuid.UUID
-	StartAt          *uint32
-	DurationDays     *uint32
-	Message          *string
-	Name             *string
-	CouponConstraint *types.CouponConstraint
-	CouponScope      *types.CouponScope
-	Threshold        *decimal.Decimal
-	Allocated        *decimal.Decimal
-	Random           *bool
-	DeletedAt        *uint32
+	ID                  *uint32
+	EntID               *uuid.UUID
+	CouponType          *types.CouponType
+	AppID               *uuid.UUID
+	Denomination        *decimal.Decimal
+	Circulation         *decimal.Decimal
+	IssuedBy            *uuid.UUID
+	StartAt             *uint32
+	EndAt               *uint32
+	DurationDays        *uint32
+	Message             *string
+	Name                *string
+	CouponConstraint    *types.CouponConstraint
+	CouponScope         *types.CouponScope
+	Threshold           *decimal.Decimal
+	Allocated           *decimal.Decimal
+	Random              *bool
+	CashableProbability *decimal.Decimal
+	DeletedAt           *uint32
 }
 
 func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
-	if req.ID != nil {
-		c.SetID(*req.ID)
-	}
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -44,9 +42,6 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	}
 	if req.AppID != nil {
 		c.SetAppID(*req.AppID)
-	}
-	if req.UserID != nil {
-		c.SetUserID(*req.UserID)
 	}
 	if req.Denomination != nil {
 		c.SetDenomination(*req.Denomination)
@@ -59,6 +54,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	}
 	if req.StartAt != nil {
 		c.SetStartAt(*req.StartAt)
+	}
+	if req.EndAt != nil {
+		c.SetEndAt(*req.EndAt)
 	}
 	if req.DurationDays != nil {
 		c.SetDurationDays(*req.DurationDays)
@@ -84,6 +82,9 @@ func CreateSet(c *ent.CouponCreate, req *Req) *ent.CouponCreate {
 	if req.Random != nil {
 		c.SetRandom(*req.Random)
 	}
+	if req.CashableProbability != nil {
+		c.SetCashableProbability(*req.CashableProbability)
+	}
 	return c
 }
 
@@ -96,6 +97,9 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	}
 	if req.StartAt != nil {
 		u.SetStartAt(*req.StartAt)
+	}
+	if req.EndAt != nil {
+		u.SetEndAt(*req.EndAt)
 	}
 	if req.DurationDays != nil {
 		u.SetDurationDays(*req.DurationDays)
@@ -117,6 +121,12 @@ func UpdateSet(u *ent.CouponUpdateOne, req *Req) *ent.CouponUpdateOne {
 	}
 	if req.CouponScope != nil {
 		u.SetCouponScope(req.CouponScope.String())
+	}
+	if req.CouponConstraint != nil {
+		u.SetCouponConstraint(req.CouponConstraint.String())
+	}
+	if req.CashableProbability != nil {
+		u.SetCashableProbability(*req.CashableProbability)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
@@ -185,18 +195,6 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 			q.Where(entcoupon.AppID(id))
 		default:
 			return nil, fmt.Errorf("invalid appid field")
-		}
-	}
-	if conds.UserID != nil {
-		id, ok := conds.UserID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid userid")
-		}
-		switch conds.UserID.Op {
-		case cruder.EQ:
-			q.Where(entcoupon.UserID(id))
-		default:
-			return nil, fmt.Errorf("invalid userid field")
 		}
 	}
 	return q, nil

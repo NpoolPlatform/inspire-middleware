@@ -15,6 +15,10 @@ import (
 )
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+	if *h.EndAt <= *h.StartAt {
+		return nil, fmt.Errorf("endat less than startat")
+	}
+
 	id := uuid.New()
 	if h.EntID == nil {
 		h.EntID = &id
@@ -29,21 +33,16 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 { //nolint
 			return nil, fmt.Errorf("100 discounat not allowed")
 		}
-	case types.CouponType_SpecialOffer:
-		if h.UserID == nil {
-			return nil, fmt.Errorf("userid is must")
-		}
-		if h.Denomination.Cmp(*h.Circulation) != 0 {
-			return nil, fmt.Errorf("denomination != circulation")
+		if h.CashableProbability != nil {
+			return nil, fmt.Errorf("probability must set with fix amount")
 		}
 	}
 
 	if h.CouponConstraint != nil {
 		switch *h.CouponConstraint {
-		case types.CouponConstraint_GoodThreshold:
-			fallthrough //nolint
-		case types.CouponConstraint_GoodOnly:
-			fallthrough //nolint
+		case types.CouponConstraint_Normal:
+			threshold := decimal.RequireFromString("0")
+			h.Threshold = &threshold
 		case types.CouponConstraint_PaymentThreshold:
 			if h.Threshold == nil {
 				return nil, fmt.Errorf("threshold is must")
@@ -55,22 +54,22 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		if _, err := couponcrud.CreateSet(
 			cli.Coupon.Create(),
 			&couponcrud.Req{
-				EntID:            h.EntID,
-				CouponType:       h.CouponType,
-				AppID:            h.AppID,
-				UserID:           h.UserID,
-				Denomination:     h.Denomination,
-				Circulation:      h.Circulation,
-				IssuedBy:         h.IssuedBy,
-				StartAt:          h.StartAt,
-				DurationDays:     h.DurationDays,
-				Message:          h.Message,
-				Name:             h.Name,
-				CouponConstraint: h.CouponConstraint,
-				CouponScope:      h.CouponScope,
-				Threshold:        h.Threshold,
-				Allocated:        h.Allocated,
-				Random:           h.Random,
+				EntID:               h.EntID,
+				CouponType:          h.CouponType,
+				AppID:               h.AppID,
+				Denomination:        h.Denomination,
+				Circulation:         h.Circulation,
+				IssuedBy:            h.IssuedBy,
+				StartAt:             h.StartAt,
+				EndAt:               h.EndAt,
+				DurationDays:        h.DurationDays,
+				Message:             h.Message,
+				Name:                h.Name,
+				CouponConstraint:    h.CouponConstraint,
+				CouponScope:         h.CouponScope,
+				Threshold:           h.Threshold,
+				Random:              h.Random,
+				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
 			return err

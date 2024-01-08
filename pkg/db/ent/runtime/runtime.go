@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -280,26 +281,30 @@ func init() {
 	couponDescAppID := couponFields[0].Descriptor()
 	// coupon.DefaultAppID holds the default value on creation for the app_id field.
 	coupon.DefaultAppID = couponDescAppID.Default.(func() uuid.UUID)
-	// couponDescUserID is the schema descriptor for user_id field.
-	couponDescUserID := couponFields[1].Descriptor()
-	// coupon.DefaultUserID holds the default value on creation for the user_id field.
-	coupon.DefaultUserID = couponDescUserID.Default.(func() uuid.UUID)
 	// couponDescDenomination is the schema descriptor for denomination field.
-	couponDescDenomination := couponFields[2].Descriptor()
+	couponDescDenomination := couponFields[1].Descriptor()
 	// coupon.DefaultDenomination holds the default value on creation for the denomination field.
 	coupon.DefaultDenomination = couponDescDenomination.Default.(decimal.Decimal)
 	// couponDescCirculation is the schema descriptor for circulation field.
-	couponDescCirculation := couponFields[3].Descriptor()
+	couponDescCirculation := couponFields[2].Descriptor()
 	// coupon.DefaultCirculation holds the default value on creation for the circulation field.
 	coupon.DefaultCirculation = couponDescCirculation.Default.(decimal.Decimal)
 	// couponDescRandom is the schema descriptor for random field.
-	couponDescRandom := couponFields[4].Descriptor()
+	couponDescRandom := couponFields[3].Descriptor()
 	// coupon.DefaultRandom holds the default value on creation for the random field.
 	coupon.DefaultRandom = couponDescRandom.Default.(bool)
+	// couponDescIssuedBy is the schema descriptor for issued_by field.
+	couponDescIssuedBy := couponFields[4].Descriptor()
+	// coupon.DefaultIssuedBy holds the default value on creation for the issued_by field.
+	coupon.DefaultIssuedBy = couponDescIssuedBy.Default.(func() uuid.UUID)
 	// couponDescStartAt is the schema descriptor for start_at field.
-	couponDescStartAt := couponFields[6].Descriptor()
+	couponDescStartAt := couponFields[5].Descriptor()
 	// coupon.DefaultStartAt holds the default value on creation for the start_at field.
 	coupon.DefaultStartAt = couponDescStartAt.Default.(uint32)
+	// couponDescEndAt is the schema descriptor for end_at field.
+	couponDescEndAt := couponFields[6].Descriptor()
+	// coupon.DefaultEndAt holds the default value on creation for the end_at field.
+	coupon.DefaultEndAt = couponDescEndAt.Default.(uint32)
 	// couponDescDurationDays is the schema descriptor for duration_days field.
 	couponDescDurationDays := couponFields[7].Descriptor()
 	// coupon.DefaultDurationDays holds the default value on creation for the duration_days field.
@@ -332,6 +337,10 @@ func init() {
 	couponDescCouponScope := couponFields[14].Descriptor()
 	// coupon.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	coupon.DefaultCouponScope = couponDescCouponScope.Default.(string)
+	// couponDescCashableProbability is the schema descriptor for cashable_probability field.
+	couponDescCashableProbability := couponFields[15].Descriptor()
+	// coupon.DefaultCashableProbability holds the default value on creation for the cashable_probability field.
+	coupon.DefaultCashableProbability = couponDescCashableProbability.Default.(decimal.Decimal)
 	couponallocatedMixin := schema.CouponAllocated{}.Mixin()
 	couponallocated.Policy = privacy.NewPolicies(couponallocatedMixin[0], schema.CouponAllocated{})
 	couponallocated.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -402,6 +411,52 @@ func init() {
 	couponallocatedDescCouponScope := couponallocatedFields[8].Descriptor()
 	// couponallocated.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponallocated.DefaultCouponScope = couponallocatedDescCouponScope.Default.(string)
+	// couponallocatedDescCashable is the schema descriptor for cashable field.
+	couponallocatedDescCashable := couponallocatedFields[9].Descriptor()
+	// couponallocated.DefaultCashable holds the default value on creation for the cashable field.
+	couponallocated.DefaultCashable = couponallocatedDescCashable.Default.(bool)
+	couponcoinMixin := schema.CouponCoin{}.Mixin()
+	couponcoin.Policy = privacy.NewPolicies(couponcoinMixin[0], schema.CouponCoin{})
+	couponcoin.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := couponcoin.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	couponcoinMixinFields0 := couponcoinMixin[0].Fields()
+	_ = couponcoinMixinFields0
+	couponcoinMixinFields1 := couponcoinMixin[1].Fields()
+	_ = couponcoinMixinFields1
+	couponcoinFields := schema.CouponCoin{}.Fields()
+	_ = couponcoinFields
+	// couponcoinDescCreatedAt is the schema descriptor for created_at field.
+	couponcoinDescCreatedAt := couponcoinMixinFields0[0].Descriptor()
+	// couponcoin.DefaultCreatedAt holds the default value on creation for the created_at field.
+	couponcoin.DefaultCreatedAt = couponcoinDescCreatedAt.Default.(func() uint32)
+	// couponcoinDescUpdatedAt is the schema descriptor for updated_at field.
+	couponcoinDescUpdatedAt := couponcoinMixinFields0[1].Descriptor()
+	// couponcoin.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	couponcoin.DefaultUpdatedAt = couponcoinDescUpdatedAt.Default.(func() uint32)
+	// couponcoin.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	couponcoin.UpdateDefaultUpdatedAt = couponcoinDescUpdatedAt.UpdateDefault.(func() uint32)
+	// couponcoinDescDeletedAt is the schema descriptor for deleted_at field.
+	couponcoinDescDeletedAt := couponcoinMixinFields0[2].Descriptor()
+	// couponcoin.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	couponcoin.DefaultDeletedAt = couponcoinDescDeletedAt.Default.(func() uint32)
+	// couponcoinDescEntID is the schema descriptor for ent_id field.
+	couponcoinDescEntID := couponcoinMixinFields1[1].Descriptor()
+	// couponcoin.DefaultEntID holds the default value on creation for the ent_id field.
+	couponcoin.DefaultEntID = couponcoinDescEntID.Default.(func() uuid.UUID)
+	// couponcoinDescAppID is the schema descriptor for app_id field.
+	couponcoinDescAppID := couponcoinFields[0].Descriptor()
+	// couponcoin.DefaultAppID holds the default value on creation for the app_id field.
+	couponcoin.DefaultAppID = couponcoinDescAppID.Default.(func() uuid.UUID)
+	// couponcoinDescCoinTypeID is the schema descriptor for coin_type_id field.
+	couponcoinDescCoinTypeID := couponcoinFields[1].Descriptor()
+	// couponcoin.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	couponcoin.DefaultCoinTypeID = couponcoinDescCoinTypeID.Default.(func() uuid.UUID)
 	couponscopeMixin := schema.CouponScope{}.Mixin()
 	couponscope.Policy = privacy.NewPolicies(couponscopeMixin[0], schema.CouponScope{})
 	couponscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {

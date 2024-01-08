@@ -27,8 +27,6 @@ type Coupon struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID uuid.UUID `json:"user_id,omitempty"`
 	// Denomination holds the value of the "denomination" field.
 	Denomination decimal.Decimal `json:"denomination,omitempty"`
 	// Circulation holds the value of the "circulation" field.
@@ -39,6 +37,8 @@ type Coupon struct {
 	IssuedBy uuid.UUID `json:"issued_by,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
+	// EndAt holds the value of the "end_at" field.
+	EndAt uint32 `json:"end_at,omitempty"`
 	// DurationDays holds the value of the "duration_days" field.
 	DurationDays uint32 `json:"duration_days,omitempty"`
 	// Message holds the value of the "message" field.
@@ -55,6 +55,8 @@ type Coupon struct {
 	CouponConstraint string `json:"coupon_constraint,omitempty"`
 	// CouponScope holds the value of the "coupon_scope" field.
 	CouponScope string `json:"coupon_scope,omitempty"`
+	// CashableProbability holds the value of the "cashable_probability" field.
+	CashableProbability decimal.Decimal `json:"cashable_probability,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -62,15 +64,15 @@ func (*Coupon) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold:
+		case coupon.FieldDenomination, coupon.FieldCirculation, coupon.FieldAllocated, coupon.FieldThreshold, coupon.FieldCashableProbability:
 			values[i] = new(decimal.Decimal)
 		case coupon.FieldRandom:
 			values[i] = new(sql.NullBool)
-		case coupon.FieldID, coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldDurationDays:
+		case coupon.FieldID, coupon.FieldCreatedAt, coupon.FieldUpdatedAt, coupon.FieldDeletedAt, coupon.FieldStartAt, coupon.FieldEndAt, coupon.FieldDurationDays:
 			values[i] = new(sql.NullInt64)
 		case coupon.FieldMessage, coupon.FieldName, coupon.FieldCouponType, coupon.FieldCouponConstraint, coupon.FieldCouponScope:
 			values[i] = new(sql.NullString)
-		case coupon.FieldEntID, coupon.FieldAppID, coupon.FieldUserID, coupon.FieldIssuedBy:
+		case coupon.FieldEntID, coupon.FieldAppID, coupon.FieldIssuedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Coupon", columns[i])
@@ -123,12 +125,6 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				c.AppID = *value
 			}
-		case coupon.FieldUserID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value != nil {
-				c.UserID = *value
-			}
 		case coupon.FieldDenomination:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field denomination", values[i])
@@ -158,6 +154,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field start_at", values[i])
 			} else if value.Valid {
 				c.StartAt = uint32(value.Int64)
+			}
+		case coupon.FieldEndAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
+			} else if value.Valid {
+				c.EndAt = uint32(value.Int64)
 			}
 		case coupon.FieldDurationDays:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -207,6 +209,12 @@ func (c *Coupon) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				c.CouponScope = value.String
 			}
+		case coupon.FieldCashableProbability:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field cashable_probability", values[i])
+			} else if value != nil {
+				c.CashableProbability = *value
+			}
 		}
 	}
 	return nil
@@ -250,9 +258,6 @@ func (c *Coupon) String() string {
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", c.AppID))
 	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", c.UserID))
-	builder.WriteString(", ")
 	builder.WriteString("denomination=")
 	builder.WriteString(fmt.Sprintf("%v", c.Denomination))
 	builder.WriteString(", ")
@@ -267,6 +272,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", c.StartAt))
+	builder.WriteString(", ")
+	builder.WriteString("end_at=")
+	builder.WriteString(fmt.Sprintf("%v", c.EndAt))
 	builder.WriteString(", ")
 	builder.WriteString("duration_days=")
 	builder.WriteString(fmt.Sprintf("%v", c.DurationDays))
@@ -291,6 +299,9 @@ func (c *Coupon) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("coupon_scope=")
 	builder.WriteString(c.CouponScope)
+	builder.WriteString(", ")
+	builder.WriteString("cashable_probability=")
+	builder.WriteString(fmt.Sprintf("%v", c.CashableProbability))
 	builder.WriteByte(')')
 	return builder.String()
 }

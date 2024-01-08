@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
+	"github.com/shopspring/decimal"
 
 	couponmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/coupon"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
@@ -40,13 +41,14 @@ func init() {
 
 var coupon = &couponmwpb.Coupon{
 	EntID:               uuid.NewString(),
-	CouponType:          types.CouponType_Discount,
-	CouponTypeStr:       types.CouponType_Discount.String(),
+	CouponType:          types.CouponType_FixAmount,
+	CouponTypeStr:       types.CouponType_FixAmount.String(),
 	AppID:               uuid.NewString(),
-	Denomination:        "10.01",
-	Circulation:         "100.1",
+	Denomination:        "10",
+	Circulation:         "100",
 	IssuedBy:            uuid.NewString(),
 	StartAt:             uint32(time.Now().Unix()),
+	EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
 	DurationDays:        30,
 	Message:             "Test coupon message",
 	Name:                "Test coupon name",
@@ -55,12 +57,14 @@ var coupon = &couponmwpb.Coupon{
 	CouponConstraintStr: types.CouponConstraint_Normal.String(),
 	CouponScope:         types.CouponScope_Whitelist,
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
+	Threshold:           decimal.RequireFromString("0").String(),
+	CashableProbability: decimal.RequireFromString("0").String(),
 }
 
 var ret = &npool.Coupon{
 	EntID:               uuid.NewString(),
-	CouponType:          types.CouponType_Discount,
-	CouponTypeStr:       types.CouponType_Discount.String(),
+	CouponType:          types.CouponType_FixAmount,
+	CouponTypeStr:       types.CouponType_FixAmount.String(),
 	AppID:               coupon.AppID,
 	CouponID:            coupon.EntID,
 	UserID:              uuid.NewString(),
@@ -74,21 +78,25 @@ var ret = &npool.Coupon{
 	CouponScope:         types.CouponScope_Whitelist,
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
 	Valid:               true,
-	Allocated:           "1",
+	Allocated:           "10",
+	UsedByOrderID:       uuid.Nil.String(),
+	Threshold:           decimal.RequireFromString("0").String(),
 }
 
 func createCoupon(t *testing.T) {
 	info1, err := couponmwcli.CreateCoupon(context.Background(), &couponmwpb.CouponReq{
-		EntID:        &coupon.EntID,
-		CouponType:   &coupon.CouponType,
-		AppID:        &coupon.AppID,
-		Denomination: &coupon.Denomination,
-		Circulation:  &coupon.Circulation,
-		IssuedBy:     &coupon.IssuedBy,
-		StartAt:      &coupon.StartAt,
-		DurationDays: &coupon.DurationDays,
-		Message:      &coupon.Message,
-		Name:         &coupon.Name,
+		EntID:               &coupon.EntID,
+		CouponType:          &coupon.CouponType,
+		AppID:               &coupon.AppID,
+		Denomination:        &coupon.Denomination,
+		Circulation:         &coupon.Circulation,
+		IssuedBy:            &coupon.IssuedBy,
+		StartAt:             &coupon.StartAt,
+		EndAt:               &coupon.EndAt,
+		DurationDays:        &coupon.DurationDays,
+		Message:             &coupon.Message,
+		Name:                &coupon.Name,
+		CashableProbability: &coupon.CashableProbability,
 	})
 	if assert.Nil(t, err) {
 		coupon.ID = info1.ID
@@ -119,12 +127,12 @@ func updateCoupon(t *testing.T) {
 	orderID := uuid.NewString()
 
 	ret.Used = used
-	ret.UsedByOrderID = &orderID
+	ret.UsedByOrderID = orderID
 
 	info, err := UpdateCoupon(context.Background(), &npool.CouponReq{
 		ID:            &ret.ID,
 		Used:          &ret.Used,
-		UsedByOrderID: ret.UsedByOrderID,
+		UsedByOrderID: &ret.UsedByOrderID,
 	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt

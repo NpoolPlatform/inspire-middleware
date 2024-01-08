@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
+	"github.com/shopspring/decimal"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
@@ -38,37 +39,43 @@ func init() {
 
 var ret = &npool.Coupon{
 	EntID:               uuid.NewString(),
-	CouponType:          types.CouponType_Discount,
-	CouponTypeStr:       types.CouponType_Discount.String(),
+	CouponType:          types.CouponType_FixAmount,
+	CouponTypeStr:       types.CouponType_FixAmount.String(),
 	AppID:               uuid.NewString(),
-	Denomination:        "10.01",
-	Circulation:         "100.1",
+	Denomination:        decimal.RequireFromString("12.25").String(),
+	Circulation:         decimal.RequireFromString("12.25").String(),
 	IssuedBy:            uuid.NewString(),
 	StartAt:             uint32(time.Now().Unix()),
-	DurationDays:        30,
-	Message:             "Test coupon message",
-	Name:                "Test coupon name",
-	Allocated:           "0",
+	EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
+	DurationDays:        234,
+	Message:             uuid.NewString(),
+	Name:                uuid.NewString(),
 	CouponConstraint:    types.CouponConstraint_Normal,
 	CouponConstraintStr: types.CouponConstraint_Normal.String(),
 	CouponScope:         types.CouponScope_Whitelist,
 	CouponScopeStr:      types.CouponScope_Whitelist.String(),
+	Allocated:           decimal.NewFromInt(0).String(),
+	Threshold:           decimal.NewFromInt(0).String(),
+	CashableProbability: decimal.RequireFromString("0.0001").String(),
 }
 
 func createDiscount(t *testing.T) {
 	info, err := CreateCoupon(context.Background(), &npool.CouponReq{
-		EntID:            &ret.EntID,
-		CouponType:       &ret.CouponType,
-		AppID:            &ret.AppID,
-		Denomination:     &ret.Denomination,
-		Circulation:      &ret.Circulation,
-		IssuedBy:         &ret.IssuedBy,
-		StartAt:          &ret.StartAt,
-		DurationDays:     &ret.DurationDays,
-		Message:          &ret.Message,
-		Name:             &ret.Name,
-		CouponConstraint: &ret.CouponConstraint,
-		CouponScope:      &ret.CouponScope,
+		EntID:               &ret.EntID,
+		CouponType:          &ret.CouponType,
+		AppID:               &ret.AppID,
+		Denomination:        &ret.Denomination,
+		Circulation:         &ret.Circulation,
+		IssuedBy:            &ret.IssuedBy,
+		StartAt:             &ret.StartAt,
+		EndAt:               &ret.EndAt,
+		DurationDays:        &ret.DurationDays,
+		Message:             &ret.Message,
+		Name:                &ret.Name,
+		CouponConstraint:    &ret.CouponConstraint,
+		CouponScope:         &ret.CouponScope,
+		Random:              &ret.Random,
+		CashableProbability: &ret.CashableProbability,
 	})
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
@@ -83,14 +90,17 @@ func updateDiscount(t *testing.T) {
 	ret.Circulation = "200.4"
 	ret.CouponScope = types.CouponScope_AllGood
 	ret.CouponScopeStr = types.CouponScope_AllGood.String()
-	ret.Allocated = "1"
+	ret.EndAt = uint32(time.Now().Add(24 * 30 * time.Hour).Unix())
+	ret.CashableProbability = decimal.RequireFromString("0.00001").String()
 
 	info, err := UpdateCoupon(context.Background(), &npool.CouponReq{
-		ID:           &ret.ID,
-		Denomination: &ret.Denomination,
-		Circulation:  &ret.Circulation,
-		CouponScope:  &ret.CouponScope,
-		Allocated:    &ret.Allocated,
+		ID:                  &ret.ID,
+		StartAt:             &ret.StartAt,
+		EndAt:               &ret.EndAt,
+		Denomination:        &ret.Denomination,
+		Circulation:         &ret.Circulation,
+		CouponScope:         &ret.CouponScope,
+		CashableProbability: &ret.CashableProbability,
 	})
 	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
@@ -100,8 +110,8 @@ func updateDiscount(t *testing.T) {
 
 func getDiscount(t *testing.T) {
 	infos, total, err := GetCoupons(context.Background(), &npool.Conds{
-		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
+		CouponType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.CouponType)},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(1))

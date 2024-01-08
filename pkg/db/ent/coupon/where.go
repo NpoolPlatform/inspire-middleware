@@ -115,13 +115,6 @@ func AppID(v uuid.UUID) predicate.Coupon {
 	})
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
-}
-
 // Denomination applies equality check predicate on the "denomination" field. It's identical to DenominationEQ.
 func Denomination(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
@@ -154,6 +147,13 @@ func IssuedBy(v uuid.UUID) predicate.Coupon {
 func StartAt(v uint32) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldStartAt), v))
+	})
+}
+
+// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
+func EndAt(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
 	})
 }
 
@@ -210,6 +210,13 @@ func CouponConstraint(v string) predicate.Coupon {
 func CouponScope(v string) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCouponScope), v))
+	})
+}
+
+// CashableProbability applies equality check predicate on the "cashable_probability" field. It's identical to CashableProbabilityEQ.
+func CashableProbability(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCashableProbability), v))
 	})
 }
 
@@ -547,84 +554,6 @@ func AppIDNotNil() predicate.Coupon {
 	})
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldUserID), v...))
-	})
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uuid.UUID) predicate.Coupon {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldUserID), v...))
-	})
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uuid.UUID) predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUserID), v))
-	})
-}
-
-// UserIDIsNil applies the IsNil predicate on the "user_id" field.
-func UserIDIsNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldUserID)))
-	})
-}
-
-// UserIDNotNil applies the NotNil predicate on the "user_id" field.
-func UserIDNotNil() predicate.Coupon {
-	return predicate.Coupon(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldUserID)))
-	})
-}
-
 // DenominationEQ applies the EQ predicate on the "denomination" field.
 func DenominationEQ(v decimal.Decimal) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
@@ -873,6 +802,20 @@ func IssuedByLTE(v uuid.UUID) predicate.Coupon {
 	})
 }
 
+// IssuedByIsNil applies the IsNil predicate on the "issued_by" field.
+func IssuedByIsNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIssuedBy)))
+	})
+}
+
+// IssuedByNotNil applies the NotNil predicate on the "issued_by" field.
+func IssuedByNotNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIssuedBy)))
+	})
+}
+
 // StartAtEQ applies the EQ predicate on the "start_at" field.
 func StartAtEQ(v uint32) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
@@ -948,6 +891,84 @@ func StartAtIsNil() predicate.Coupon {
 func StartAtNotNil() predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldStartAt)))
+	})
+}
+
+// EndAtEQ applies the EQ predicate on the "end_at" field.
+func EndAtEQ(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtNEQ applies the NEQ predicate on the "end_at" field.
+func EndAtNEQ(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtIn applies the In predicate on the "end_at" field.
+func EndAtIn(vs ...uint32) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEndAt), v...))
+	})
+}
+
+// EndAtNotIn applies the NotIn predicate on the "end_at" field.
+func EndAtNotIn(vs ...uint32) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEndAt), v...))
+	})
+}
+
+// EndAtGT applies the GT predicate on the "end_at" field.
+func EndAtGT(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtGTE applies the GTE predicate on the "end_at" field.
+func EndAtGTE(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtLT applies the LT predicate on the "end_at" field.
+func EndAtLT(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtLTE applies the LTE predicate on the "end_at" field.
+func EndAtLTE(v uint32) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtIsNil applies the IsNil predicate on the "end_at" field.
+func EndAtIsNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEndAt)))
+	})
+}
+
+// EndAtNotNil applies the NotNil predicate on the "end_at" field.
+func EndAtNotNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEndAt)))
 	})
 }
 
@@ -1747,6 +1768,84 @@ func CouponScopeEqualFold(v string) predicate.Coupon {
 func CouponScopeContainsFold(v string) predicate.Coupon {
 	return predicate.Coupon(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCouponScope), v))
+	})
+}
+
+// CashableProbabilityEQ applies the EQ predicate on the "cashable_probability" field.
+func CashableProbabilityEQ(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityNEQ applies the NEQ predicate on the "cashable_probability" field.
+func CashableProbabilityNEQ(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityIn applies the In predicate on the "cashable_probability" field.
+func CashableProbabilityIn(vs ...decimal.Decimal) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCashableProbability), v...))
+	})
+}
+
+// CashableProbabilityNotIn applies the NotIn predicate on the "cashable_probability" field.
+func CashableProbabilityNotIn(vs ...decimal.Decimal) predicate.Coupon {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCashableProbability), v...))
+	})
+}
+
+// CashableProbabilityGT applies the GT predicate on the "cashable_probability" field.
+func CashableProbabilityGT(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityGTE applies the GTE predicate on the "cashable_probability" field.
+func CashableProbabilityGTE(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityLT applies the LT predicate on the "cashable_probability" field.
+func CashableProbabilityLT(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityLTE applies the LTE predicate on the "cashable_probability" field.
+func CashableProbabilityLTE(v decimal.Decimal) predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCashableProbability), v))
+	})
+}
+
+// CashableProbabilityIsNil applies the IsNil predicate on the "cashable_probability" field.
+func CashableProbabilityIsNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCashableProbability)))
+	})
+}
+
+// CashableProbabilityNotNil applies the NotNil predicate on the "cashable_probability" field.
+func CashableProbabilityNotNil() predicate.Coupon {
+	return predicate.Coupon(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCashableProbability)))
 	})
 }
 

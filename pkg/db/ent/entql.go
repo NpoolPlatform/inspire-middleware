@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -23,7 +24,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 11)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 12)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -114,25 +115,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Coupon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			coupon.FieldCreatedAt:        {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
-			coupon.FieldUpdatedAt:        {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
-			coupon.FieldDeletedAt:        {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
-			coupon.FieldEntID:            {Type: field.TypeUUID, Column: coupon.FieldEntID},
-			coupon.FieldAppID:            {Type: field.TypeUUID, Column: coupon.FieldAppID},
-			coupon.FieldUserID:           {Type: field.TypeUUID, Column: coupon.FieldUserID},
-			coupon.FieldDenomination:     {Type: field.TypeOther, Column: coupon.FieldDenomination},
-			coupon.FieldCirculation:      {Type: field.TypeOther, Column: coupon.FieldCirculation},
-			coupon.FieldRandom:           {Type: field.TypeBool, Column: coupon.FieldRandom},
-			coupon.FieldIssuedBy:         {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
-			coupon.FieldStartAt:          {Type: field.TypeUint32, Column: coupon.FieldStartAt},
-			coupon.FieldDurationDays:     {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
-			coupon.FieldMessage:          {Type: field.TypeString, Column: coupon.FieldMessage},
-			coupon.FieldName:             {Type: field.TypeString, Column: coupon.FieldName},
-			coupon.FieldAllocated:        {Type: field.TypeOther, Column: coupon.FieldAllocated},
-			coupon.FieldCouponType:       {Type: field.TypeString, Column: coupon.FieldCouponType},
-			coupon.FieldThreshold:        {Type: field.TypeOther, Column: coupon.FieldThreshold},
-			coupon.FieldCouponConstraint: {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
-			coupon.FieldCouponScope:      {Type: field.TypeString, Column: coupon.FieldCouponScope},
+			coupon.FieldCreatedAt:           {Type: field.TypeUint32, Column: coupon.FieldCreatedAt},
+			coupon.FieldUpdatedAt:           {Type: field.TypeUint32, Column: coupon.FieldUpdatedAt},
+			coupon.FieldDeletedAt:           {Type: field.TypeUint32, Column: coupon.FieldDeletedAt},
+			coupon.FieldEntID:               {Type: field.TypeUUID, Column: coupon.FieldEntID},
+			coupon.FieldAppID:               {Type: field.TypeUUID, Column: coupon.FieldAppID},
+			coupon.FieldDenomination:        {Type: field.TypeOther, Column: coupon.FieldDenomination},
+			coupon.FieldCirculation:         {Type: field.TypeOther, Column: coupon.FieldCirculation},
+			coupon.FieldRandom:              {Type: field.TypeBool, Column: coupon.FieldRandom},
+			coupon.FieldIssuedBy:            {Type: field.TypeUUID, Column: coupon.FieldIssuedBy},
+			coupon.FieldStartAt:             {Type: field.TypeUint32, Column: coupon.FieldStartAt},
+			coupon.FieldEndAt:               {Type: field.TypeUint32, Column: coupon.FieldEndAt},
+			coupon.FieldDurationDays:        {Type: field.TypeUint32, Column: coupon.FieldDurationDays},
+			coupon.FieldMessage:             {Type: field.TypeString, Column: coupon.FieldMessage},
+			coupon.FieldName:                {Type: field.TypeString, Column: coupon.FieldName},
+			coupon.FieldAllocated:           {Type: field.TypeOther, Column: coupon.FieldAllocated},
+			coupon.FieldCouponType:          {Type: field.TypeString, Column: coupon.FieldCouponType},
+			coupon.FieldThreshold:           {Type: field.TypeOther, Column: coupon.FieldThreshold},
+			coupon.FieldCouponConstraint:    {Type: field.TypeString, Column: coupon.FieldCouponConstraint},
+			coupon.FieldCouponScope:         {Type: field.TypeString, Column: coupon.FieldCouponScope},
+			coupon.FieldCashableProbability: {Type: field.TypeOther, Column: coupon.FieldCashableProbability},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -159,9 +161,29 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldUsedByOrderID: {Type: field.TypeUUID, Column: couponallocated.FieldUsedByOrderID},
 			couponallocated.FieldStartAt:       {Type: field.TypeUint32, Column: couponallocated.FieldStartAt},
 			couponallocated.FieldCouponScope:   {Type: field.TypeString, Column: couponallocated.FieldCouponScope},
+			couponallocated.FieldCashable:      {Type: field.TypeBool, Column: couponallocated.FieldCashable},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   couponcoin.Table,
+			Columns: couponcoin.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: couponcoin.FieldID,
+			},
+		},
+		Type: "CouponCoin",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			couponcoin.FieldCreatedAt:  {Type: field.TypeUint32, Column: couponcoin.FieldCreatedAt},
+			couponcoin.FieldUpdatedAt:  {Type: field.TypeUint32, Column: couponcoin.FieldUpdatedAt},
+			couponcoin.FieldDeletedAt:  {Type: field.TypeUint32, Column: couponcoin.FieldDeletedAt},
+			couponcoin.FieldEntID:      {Type: field.TypeUUID, Column: couponcoin.FieldEntID},
+			couponcoin.FieldAppID:      {Type: field.TypeUUID, Column: couponcoin.FieldAppID},
+			couponcoin.FieldCoinTypeID: {Type: field.TypeUUID, Column: couponcoin.FieldCoinTypeID},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
@@ -181,7 +203,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponscope.FieldCouponScope: {Type: field.TypeString, Column: couponscope.FieldCouponScope},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   event.Table,
 			Columns: event.Columns,
@@ -207,7 +229,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldInviterLayers:  {Type: field.TypeUint32, Column: event.FieldInviterLayers},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
@@ -228,7 +250,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -250,7 +272,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -270,7 +292,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   statement.Table,
 			Columns: statement.Columns,
@@ -697,11 +719,6 @@ func (f *CouponFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(coupon.FieldAppID))
 }
 
-// WhereUserID applies the entql [16]byte predicate on the user_id field.
-func (f *CouponFilter) WhereUserID(p entql.ValueP) {
-	f.Where(p.Field(coupon.FieldUserID))
-}
-
 // WhereDenomination applies the entql other predicate on the denomination field.
 func (f *CouponFilter) WhereDenomination(p entql.OtherP) {
 	f.Where(p.Field(coupon.FieldDenomination))
@@ -725,6 +742,11 @@ func (f *CouponFilter) WhereIssuedBy(p entql.ValueP) {
 // WhereStartAt applies the entql uint32 predicate on the start_at field.
 func (f *CouponFilter) WhereStartAt(p entql.Uint32P) {
 	f.Where(p.Field(coupon.FieldStartAt))
+}
+
+// WhereEndAt applies the entql uint32 predicate on the end_at field.
+func (f *CouponFilter) WhereEndAt(p entql.Uint32P) {
+	f.Where(p.Field(coupon.FieldEndAt))
 }
 
 // WhereDurationDays applies the entql uint32 predicate on the duration_days field.
@@ -765,6 +787,11 @@ func (f *CouponFilter) WhereCouponConstraint(p entql.StringP) {
 // WhereCouponScope applies the entql string predicate on the coupon_scope field.
 func (f *CouponFilter) WhereCouponScope(p entql.StringP) {
 	f.Where(p.Field(coupon.FieldCouponScope))
+}
+
+// WhereCashableProbability applies the entql other predicate on the cashable_probability field.
+func (f *CouponFilter) WhereCashableProbability(p entql.OtherP) {
+	f.Where(p.Field(coupon.FieldCashableProbability))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -872,6 +899,81 @@ func (f *CouponAllocatedFilter) WhereCouponScope(p entql.StringP) {
 	f.Where(p.Field(couponallocated.FieldCouponScope))
 }
 
+// WhereCashable applies the entql bool predicate on the cashable field.
+func (f *CouponAllocatedFilter) WhereCashable(p entql.BoolP) {
+	f.Where(p.Field(couponallocated.FieldCashable))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ccq *CouponCoinQuery) addPredicate(pred func(s *sql.Selector)) {
+	ccq.predicates = append(ccq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CouponCoinQuery builder.
+func (ccq *CouponCoinQuery) Filter() *CouponCoinFilter {
+	return &CouponCoinFilter{config: ccq.config, predicateAdder: ccq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CouponCoinMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CouponCoinMutation builder.
+func (m *CouponCoinMutation) Filter() *CouponCoinFilter {
+	return &CouponCoinFilter{config: m.config, predicateAdder: m}
+}
+
+// CouponCoinFilter provides a generic filtering capability at runtime for CouponCoinQuery.
+type CouponCoinFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CouponCoinFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CouponCoinFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(couponcoin.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CouponCoinFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponcoin.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CouponCoinFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponcoin.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CouponCoinFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(couponcoin.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CouponCoinFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(couponcoin.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CouponCoinFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(couponcoin.FieldAppID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *CouponCoinFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(couponcoin.FieldCoinTypeID))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (csq *CouponScopeQuery) addPredicate(pred func(s *sql.Selector)) {
 	csq.predicates = append(csq.predicates, pred)
@@ -901,7 +1003,7 @@ type CouponScopeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponScopeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -976,7 +1078,7 @@ type EventFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EventFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1081,7 +1183,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1161,7 +1263,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1246,7 +1348,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1321,7 +1423,7 @@ type StatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *StatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

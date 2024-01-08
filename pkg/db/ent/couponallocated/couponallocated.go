@@ -39,6 +39,8 @@ const (
 	FieldStartAt = "start_at"
 	// FieldCouponScope holds the string denoting the coupon_scope field in the database.
 	FieldCouponScope = "coupon_scope"
+	// FieldCashable holds the string denoting the cashable field in the database.
+	FieldCashable = "cashable"
 	// Table holds the table name of the couponallocated in the database.
 	Table = "coupon_allocateds"
 )
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldUsedByOrderID,
 	FieldStartAt,
 	FieldCouponScope,
+	FieldCashable,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -108,4 +111,6 @@ var (
 	DefaultStartAt uint32
 	// DefaultCouponScope holds the default value on creation for the "coupon_scope" field.
 	DefaultCouponScope string
+	// DefaultCashable holds the default value on creation for the "cashable" field.
+	DefaultCashable bool
 )

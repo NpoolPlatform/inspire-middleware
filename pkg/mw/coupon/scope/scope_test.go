@@ -44,11 +44,14 @@ var (
 		DurationDays:        365,
 		IssuedBy:            uuid.NewString(),
 		StartAt:             uint32(time.Now().Unix()),
+		EndAt:               uint32(time.Now().Add(24 * time.Hour).Unix()),
 		CouponConstraint:    types.CouponConstraint_Normal,
 		CouponConstraintStr: types.CouponConstraint_Normal.String(),
-		Allocated:           "0",
 		CouponScope:         types.CouponScope_Whitelist,
 		CouponScopeStr:      types.CouponScope_Whitelist.String(),
+		Allocated:           decimal.NewFromInt(0).String(),
+		Threshold:           decimal.NewFromInt(0).String(),
+		CashableProbability: decimal.RequireFromString("0.0001").String(),
 	}
 
 	ret = npool.Scope{
@@ -79,6 +82,8 @@ func setup(t *testing.T) func(*testing.T) {
 		coupon1.WithDurationDays(&coupon.DurationDays, true),
 		coupon1.WithIssuedBy(&coupon.IssuedBy, true),
 		coupon1.WithStartAt(&coupon.StartAt, true),
+		coupon1.WithEndAt(&coupon.EndAt, true),
+		coupon1.WithCashableProbability(&coupon.CashableProbability, true),
 	)
 	assert.Nil(t, err)
 
