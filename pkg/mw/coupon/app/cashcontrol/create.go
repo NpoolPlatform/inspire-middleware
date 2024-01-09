@@ -48,7 +48,7 @@ func (h *Handler) CreateCashControl(ctx context.Context) (*npool.CashControl, er
 		return nil, err
 	}
 	if exist {
-		return nil, fmt.Errorf("coupon type %v already exist", *h.ControlType)
+		return nil, fmt.Errorf("control type %v already exist", *h.ControlType)
 	}
 
 	id := uuid.New()
