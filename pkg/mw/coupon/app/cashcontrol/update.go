@@ -2,6 +2,7 @@ package cashcontrol
 
 import (
 	"context"
+	"fmt"
 
 	cashcontrolcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -10,7 +11,15 @@ import (
 )
 
 func (h *Handler) UpdateCashControl(ctx context.Context) (*npool.CashControl, error) {
-	err := db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+	info, err := h.GetCashControl(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if info == nil {
+		return nil, fmt.Errorf("invalid cashcontrol")
+	}
+
+	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		if _, err := cashcontrolcrud.UpdateSet(
 			cli.CashControl.UpdateOneID(*h.ID),
 			&cashcontrolcrud.Req{
