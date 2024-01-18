@@ -69,8 +69,8 @@ var (
 		CouponType:         coupon.CouponType,
 		CouponTypeStr:      coupon.CouponType.String(),
 		CouponDenomination: coupon.Denomination,
-		ControlType:        types.ControlType_KycApproved,
-		ControlTypeStr:     types.ControlType_KycApproved.String(),
+		ControlType:        types.ControlType_CreditThreshold,
+		ControlTypeStr:     types.ControlType_CreditThreshold.String(),
 		Value:              decimal.RequireFromString("0").String(),
 	}
 )
@@ -112,6 +112,18 @@ func createCashControl(t *testing.T) {
 	if assert.Nil(t, err) {
 		ret.ID = info.ID
 		ret.CreatedAt = info.CreatedAt
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, &ret, info)
+	}
+}
+
+func updateCashControl(t *testing.T) {
+	ret.Value = decimal.RequireFromString("10000").String()
+	info, err := UpdateCashControl(context.Background(), &npool.CashControlReq{
+		ID:    &ret.ID,
+		Value: &ret.Value,
+	})
+	if assert.Nil(t, err) {
 		ret.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, &ret, info)
 	}
@@ -178,6 +190,7 @@ func TestCashControl(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createCashControl", createCashControl)
+	t.Run("updateCashControl", updateCashControl)
 	t.Run("getCashControl", getCashControl)
 	t.Run("getCashControls", getCashControls)
 	t.Run("existCashControlConds", existCashControlConds)

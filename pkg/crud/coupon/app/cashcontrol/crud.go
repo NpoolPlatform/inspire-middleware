@@ -45,6 +45,9 @@ func CreateSet(c *ent.CashControlCreate, req *Req) *ent.CashControlCreate {
 }
 
 func UpdateSet(u *ent.CashControlUpdateOne, req *Req) *ent.CashControlUpdateOne {
+	if req.Value != nil {
+		u.SetValue(*req.Value)
+	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}

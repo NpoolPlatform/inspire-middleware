@@ -141,6 +141,9 @@ func WithValue(value *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return err
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("invalid value")
+		}
 		h.Value = &_amount
 		return nil
 	}

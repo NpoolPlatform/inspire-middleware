@@ -48,6 +48,22 @@ func CreateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.Ca
 	return info.(*npool.CashControl), nil
 }
 
+func UpdateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.CashControl, error) {
+	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+		resp, err := cli.UpdateCashControl(ctx, &npool.UpdateCashControlRequest{
+			Info: in,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.CashControl), nil
+}
+
 func GetCashControls(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.CashControl, uint32, error) {
 	var total uint32
 	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
