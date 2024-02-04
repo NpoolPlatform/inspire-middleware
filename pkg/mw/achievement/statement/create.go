@@ -254,9 +254,15 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if req.EntID == nil {
 					req.EntID = &id
 				}
-				key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateInspireAchievementStatement, *req.AppID, *req.UserID, *req.OrderID)
+				key := fmt.Sprintf("%v:%v:%v:%v:%v",
+					basetypes.Prefix_PrefixCreateInspireAchievementStatement,
+					*req.AppID,
+					*req.UserID,
+					*req.OrderID,
+					*req.CoinTypeID,
+				)
 				if _, ok := statements[key]; ok {
-					return fmt.Errorf("duplicate order")
+					return fmt.Errorf("duplicate order payment")
 				}
 				statements[key] = struct{}{}
 
