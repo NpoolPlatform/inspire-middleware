@@ -259,7 +259,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 					*req.AppID,
 					*req.UserID,
 					*req.OrderID,
-					*req.CoinTypeID,
+					*req.PaymentCoinTypeID,
 				)
 				if _, ok := statements[key]; ok {
 					return fmt.Errorf("duplicate order payment")
