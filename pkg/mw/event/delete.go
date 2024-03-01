@@ -19,6 +19,8 @@ func (h *Handler) DeleteEvent(ctx context.Context) (*npool.Event, error) {
 		return nil, nil
 	}
 
+	h.ID = &info.ID
+
 	now := uint32(time.Now().Unix())
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if _, err := eventcrud.UpdateSet(
