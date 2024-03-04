@@ -238,6 +238,8 @@ func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 	case basetypes.UsedFor_Signup:
 		fallthrough //nolint
 	case basetypes.UsedFor_Purchase:
+		fallthrough //nolint
+	case basetypes.UsedFor_SimulateOrderProfit:
 		return handler.rewardSelf(ctx)
 	case basetypes.UsedFor_AffiliateSignup:
 		fallthrough //nolint

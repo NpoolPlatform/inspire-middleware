@@ -24,7 +24,8 @@ func (s *Server) DeleteEvent(ctx context.Context, in *npool.DeleteEventRequest) 
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(req.ID, true),
+		event1.WithID(req.ID, false),
+		event1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
