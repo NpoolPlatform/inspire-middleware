@@ -12,7 +12,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
 	cashcontrol "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/cashcontrol"
-	couponcoin "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/coin"
 	scope1 "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/scope"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/scope"
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
@@ -40,7 +39,6 @@ func Register(server grpc.ServiceRegistrar) {
 	calculate.Register(server)
 	event.Register(server)
 	statement.Register(server)
-	couponcoin.Register(server)
 	cashcontrol.Register(server)
 }
 

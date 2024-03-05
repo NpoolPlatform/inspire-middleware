@@ -24,9 +24,6 @@ type Coupon func(*sql.Selector)
 // CouponAllocated is the predicate function for couponallocated builders.
 type CouponAllocated func(*sql.Selector)
 
-// CouponCoin is the predicate function for couponcoin builders.
-type CouponCoin func(*sql.Selector)
-
 // CouponScope is the predicate function for couponscope builders.
 type CouponScope func(*sql.Selector)
 

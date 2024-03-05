@@ -87,19 +87,6 @@ func (f CouponAllocatedFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	return f(ctx, mv)
 }
 
-// The CouponCoinFunc type is an adapter to allow the use of ordinary
-// function as CouponCoin mutator.
-type CouponCoinFunc func(context.Context, *ent.CouponCoinMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f CouponCoinFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.CouponCoinMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponCoinMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The CouponScopeFunc type is an adapter to allow the use of ordinary
 // function as CouponScope mutator.
 type CouponScopeFunc func(context.Context, *ent.CouponScopeMutation) (ent.Value, error)
