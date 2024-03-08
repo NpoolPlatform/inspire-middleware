@@ -75,7 +75,7 @@ var (
 		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "coupon_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "control_type", Type: field.TypeString, Nullable: true, Default: "DefaultCashControlType"},
+		{Name: "control_type", Type: field.TypeString, Nullable: true, Default: "DefaultControlType"},
 		{Name: "value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 	}
 	// CashControlsTable holds the schema information for the "cash_controls" table.
@@ -103,7 +103,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1704254175},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -137,7 +137,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1704254175},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
@@ -176,7 +176,7 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1704254175},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 		{Name: "cashable", Type: field.TypeBool, Nullable: true, Default: false},
 	}
@@ -190,29 +190,6 @@ var (
 				Name:    "couponallocated_ent_id",
 				Unique:  true,
 				Columns: []*schema.Column{CouponAllocatedsColumns[4]},
-			},
-		},
-	}
-	// CouponCoinsColumns holds the columns for the "coupon_coins" table.
-	CouponCoinsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
-		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
-	}
-	// CouponCoinsTable holds the schema information for the "coupon_coins" table.
-	CouponCoinsTable = &schema.Table{
-		Name:       "coupon_coins",
-		Columns:    CouponCoinsColumns,
-		PrimaryKey: []*schema.Column{CouponCoinsColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "couponcoin_ent_id",
-				Unique:  true,
-				Columns: []*schema.Column{CouponCoinsColumns[4]},
 			},
 		},
 	}
@@ -400,7 +377,6 @@ var (
 		CommissionsTable,
 		CouponsTable,
 		CouponAllocatedsTable,
-		CouponCoinsTable,
 		CouponScopesTable,
 		EventsTable,
 		InvitationCodesTable,

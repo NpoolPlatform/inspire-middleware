@@ -69,6 +69,9 @@ func (h *Handler) DeleteAchievement(ctx context.Context) (*npool.Achievement, er
 	if handler.info == nil {
 		return nil, nil
 	}
+	if handler.info == nil {
+		return nil, nil
+	}
 	if err := handler.getStatementIDs(ctx); err != nil {
 		return nil, err
 	}
