@@ -9,9 +9,11 @@ import (
 	"time"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	regmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
+	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
@@ -93,6 +95,28 @@ var _reg5 = regmwpb.RegistrationReq{
 }
 
 var percent1 = "30"
+
+var appConfig = appconfigmwpb.AppConfig{
+	EntID:            uuid.NewString(),
+	AppID:            reg1.AppID,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
+	CommissionType:   types.CommissionType_LegacyCommission,
+	SettleBenefit:    false,
+	StartAt:          uint32(time.Now().Unix()),
+}
+
+var _appConfig = appconfigmwpb.AppConfigReq{
+	EntID:            &appConfig.EntID,
+	AppID:            &appConfig.AppID,
+	SettleMode:       &appConfig.SettleMode,
+	SettleAmountType: &appConfig.SettleAmountType,
+	SettleInterval:   &appConfig.SettleInterval,
+	CommissionType:   &appConfig.CommissionType,
+	SettleBenefit:    &appConfig.SettleBenefit,
+	StartAt:          &appConfig.StartAt,
+}
 
 var comm1 = commmwpb.Commission{
 	AppID:            reg1.AppID,
@@ -483,6 +507,27 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		h11.ID = &info11.ID
 	}
 
+	h12, err := appconfig1.NewHandler(
+		context.Background(),
+		appconfig1.WithEntID(_appConfig.EntID, true),
+		appconfig1.WithAppID(_appConfig.AppID, true),
+		appconfig1.WithSettleInterval(_appConfig.SettleInterval, true),
+		appconfig1.WithSettleMode(_appConfig.SettleMode, true),
+		appconfig1.WithSettleAmountType(_appConfig.SettleAmountType, true),
+		appconfig1.WithCommissionType(_appConfig.CommissionType, true),
+		appconfig1.WithSettleBenefit(_appConfig.SettleBenefit, true),
+		appconfig1.WithStartAt(_appConfig.StartAt, true),
+	)
+	assert.Nil(t, err)
+
+	_, err = h12.CreateAppConfig(context.Background())
+	if assert.Nil(t, err) {
+		info12, err := h12.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			h12.ID = &info12.ID
+		}
+	}
+
 	return func(*testing.T) {
 		_, _ = _h1.DeleteInvitationCode(context.Background())
 		_, _ = _h2.DeleteInvitationCode(context.Background())
@@ -500,6 +545,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		_, _ = h9.DeleteCommission(context.Background())
 		_, _ = h10.DeleteCommission(context.Background())
 		_, _ = h11.DeleteCommission(context.Background())
+		_, _ = h12.DeleteAppConfig(context.Background())
 	}
 }
 

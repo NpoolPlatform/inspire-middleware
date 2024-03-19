@@ -10,10 +10,12 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	ivcodemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 	regmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
+	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/client/app/config"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/client/commission"
 	ivcodemwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/invitation/invitationcode"
 	registra1 "github.com/NpoolPlatform/inspire-middleware/pkg/client/invitation/registration"
@@ -100,6 +102,28 @@ var _reg5 = regmwpb.RegistrationReq{
 	AppID:     &reg5.AppID,
 	InviterID: &reg5.InviterID,
 	InviteeID: &reg5.InviteeID,
+}
+
+var config1 = appconfigmwpb.AppConfig{
+	EntID:            uuid.NewString(),
+	AppID:            reg1.AppID,
+	CommissionType:   types.CommissionType_LegacyCommission,
+	SettleAmountType: types.SettleAmountType_SettleByPercent,
+	SettleMode:       types.SettleMode_SettleWithPaymentAmount,
+	SettleInterval:   types.SettleInterval_SettleEveryOrder,
+	SettleBenefit:    false,
+	StartAt:          uint32(time.Now().Unix()),
+}
+
+var _config1 = appconfigmwpb.AppConfigReq{
+	EntID:            &config1.EntID,
+	AppID:            &config1.AppID,
+	CommissionType:   &config1.CommissionType,
+	SettleAmountType: &config1.SettleAmountType,
+	SettleMode:       &config1.SettleMode,
+	SettleInterval:   &config1.SettleInterval,
+	SettleBenefit:    &config1.SettleBenefit,
+	StartAt:          &config1.StartAt,
 }
 
 var percent1 = "30"
@@ -318,6 +342,9 @@ func calculate(t *testing.T) {
 	_, err = commission1.CreateCommission(context.Background(), &_comm5)
 	assert.Nil(t, err)
 	_, err = commission1.CreateCommission(context.Background(), &_comm6)
+	assert.Nil(t, err)
+
+	_, err = appconfig1.CreateAppConfig(context.Background(), &_config1)
 	assert.Nil(t, err)
 
 	orderID := uuid.NewString()

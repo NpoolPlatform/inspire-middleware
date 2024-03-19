@@ -92,7 +92,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	if err != nil {
 		return nil, err
 	}
-	if appconfigs == nil {
+	if len(appconfigs) == 0 {
 		return nil, fmt.Errorf("invalid appconfig")
 	}
 	appconfig := appconfigs[0]

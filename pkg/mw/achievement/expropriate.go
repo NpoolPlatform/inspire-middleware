@@ -259,7 +259,7 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 		}
 
 		if _, err := achievementusercrud.UpdateSet(
-			tx.AchievementUser.UpdateOneID(achievement.ID),
+			tx.AchievementUser.UpdateOneID(achievementUser.ID),
 			&achievementusercrud.Req{
 				TotalCommission:      &totalUserCommission,
 				SelfCommission:       &selfUserCommission,
@@ -275,8 +275,9 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 
 func (h *Handler) ExpropriateAchievement(ctx context.Context) error {
 	handler := &expropriateHandler{
-		Handler:      h,
-		achievements: map[string]*npool.Achievement{},
+		Handler:          h,
+		achievements:     map[string]*npool.Achievement{},
+		achievementUsers: map[string]*achievementusermwpb.AchievementUser{},
 	}
 	if err := handler.getStatements(ctx); err != nil {
 		return err
