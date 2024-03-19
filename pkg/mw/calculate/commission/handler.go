@@ -4,6 +4,9 @@ import (
 	"context"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	appcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
+	appgoodcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 	commissionmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	registrationmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
@@ -11,12 +14,15 @@ import (
 )
 
 type Handler struct {
-	SettleType       types.SettleType
-	SettleAmountType types.SettleAmountType
-	Inviters         []*registrationmwpb.Registration
-	Commissions      []*commissionmwpb.Commission
-	PaymentAmount    decimal.Decimal
-	GoodValue        decimal.Decimal
+	SettleType               types.SettleType
+	SettleAmountType         types.SettleAmountType
+	Inviters                 []*registrationmwpb.Registration
+	AppConfig                *appconfigmwpb.AppConfig
+	Commissions              []*commissionmwpb.Commission
+	AppCommissionConfigs     []*appcommissionconfigmwpb.AppCommissionConfig
+	AppGoodCommissionConfigs []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig
+	PaymentAmount            decimal.Decimal
+	GoodValue                decimal.Decimal
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -50,9 +56,30 @@ func WithInviters(inviters []*registrationmwpb.Registration) func(context.Contex
 	}
 }
 
+func WithAppConfig(value *appconfigmwpb.AppConfig) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.AppConfig = value
+		return nil
+	}
+}
+
 func WithCommissions(commissions []*commissionmwpb.Commission) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Commissions = commissions
+		return nil
+	}
+}
+
+func WithAppCommissionConfigs(commissions []*appcommissionconfigmwpb.AppCommissionConfig) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.AppCommissionConfigs = commissions
+		return nil
+	}
+}
+
+func WithAppGoodCommissionConfigs(commissions []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.AppGoodCommissionConfigs = commissions
 		return nil
 	}
 }

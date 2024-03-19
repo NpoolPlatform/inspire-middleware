@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -29,6 +30,9 @@ type Req struct {
 	Amount                 *decimal.Decimal
 	USDAmount              *decimal.Decimal
 	Commission             *decimal.Decimal
+	AppConfigID            *uuid.UUID
+	CommissionConfigID     *uuid.UUID
+	CommissionConfigType   *types.CommissionConfigType
 }
 
 func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
@@ -80,25 +84,37 @@ func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
 	if req.Units != nil {
 		c.SetUnitsV1(*req.Units)
 	}
+	if req.AppConfigID != nil {
+		c.SetAppConfigID(*req.AppConfigID)
+	}
+	if req.CommissionConfigID != nil {
+		c.SetCommissionConfigID(*req.CommissionConfigID)
+	}
+	if req.CommissionConfigType != nil {
+		c.SetCommissionConfigType(req.CommissionConfigType.String())
+	}
 	return c
 }
 
 type Conds struct {
-	EntID               *cruder.Cond
-	EntIDs              *cruder.Cond
-	IDs                 *cruder.Cond
-	AppID               *cruder.Cond
-	UserID              *cruder.Cond
-	DirectContributorID *cruder.Cond
-	GoodID              *cruder.Cond
-	AppGoodID           *cruder.Cond
-	OrderID             *cruder.Cond
-	SelfOrder           *cruder.Cond
-	PaymentID           *cruder.Cond
-	CoinTypeID          *cruder.Cond
-	PaymentCoinTypeID   *cruder.Cond
-	CreatedAt           *cruder.Cond
-	UserIDs             *cruder.Cond
+	EntID                *cruder.Cond
+	EntIDs               *cruder.Cond
+	IDs                  *cruder.Cond
+	AppID                *cruder.Cond
+	UserID               *cruder.Cond
+	DirectContributorID  *cruder.Cond
+	GoodID               *cruder.Cond
+	AppGoodID            *cruder.Cond
+	OrderID              *cruder.Cond
+	SelfOrder            *cruder.Cond
+	PaymentID            *cruder.Cond
+	CoinTypeID           *cruder.Cond
+	PaymentCoinTypeID    *cruder.Cond
+	CreatedAt            *cruder.Cond
+	UserIDs              *cruder.Cond
+	AppConfigID          *cruder.Cond
+	CommissionConfigID   *cruder.Cond
+	CommissionConfigType *cruder.Cond
 }
 
 func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, error) { //nolint
@@ -272,6 +288,42 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 			q.Where(entstatement.PaymentCoinTypeID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.AppConfigID != nil {
+		id, ok := conds.AppConfigID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid appconfigid")
+		}
+		switch conds.AppConfigID.Op {
+		case cruder.EQ:
+			q.Where(entstatement.AppConfigID(id))
+		default:
+			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.CommissionConfigID != nil {
+		id, ok := conds.CommissionConfigID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid commissionconfigid")
+		}
+		switch conds.CommissionConfigID.Op {
+		case cruder.EQ:
+			q.Where(entstatement.CommissionConfigID(id))
+		default:
+			return nil, fmt.Errorf("invalid statement field")
+		}
+	}
+	if conds.CommissionConfigType != nil {
+		commissionConfigType, ok := conds.CommissionConfigType.Val.(types.CommissionConfigType)
+		if !ok {
+			return nil, fmt.Errorf("invalid commissionconfigtype")
+		}
+		switch conds.CommissionConfigType.Op {
+		case cruder.EQ:
+			q.Where(entstatement.CommissionConfigType(commissionConfigType.String()))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
 		}
 	}
 	return q, nil

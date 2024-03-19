@@ -10,10 +10,13 @@ import (
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	achievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement"
+	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	statement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/statement"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
+	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -23,8 +26,9 @@ import (
 
 type expropriateHandler struct {
 	*Handler
-	statements   []*statementmwpb.Statement
-	achievements map[string]*npool.Achievement
+	statements       []*statementmwpb.Statement
+	achievements     map[string]*npool.Achievement
+	achievementUsers map[string]*achievementusermwpb.AchievementUser
 }
 
 func (h *expropriateHandler) getStatements(ctx context.Context) error {
@@ -89,6 +93,35 @@ func (h *expropriateHandler) getAchievements(ctx context.Context) error {
 
 	for _, achievement := range achievements {
 		h.achievements[achievement.UserID] = achievement
+	}
+
+	return nil
+}
+
+func (h *expropriateHandler) getAchievementUsers(ctx context.Context) error {
+	ids := []string{}
+	for _, statement := range h.statements {
+		ids = append(ids, statement.UserID)
+	}
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithConds(&achievementusermwpb.Conds{
+			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.statements[0].AppID},
+			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: ids},
+		}),
+		achievementuser1.WithLimit(int32(len(ids))),
+	)
+	if err != nil {
+		return err
+	}
+
+	achievementusers, _, err := handler.GetAchievementUsers(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, achievementuser := range achievementusers {
+		h.achievementUsers[achievementuser.UserID] = achievementuser
 	}
 
 	return nil
@@ -190,6 +223,52 @@ func (h *expropriateHandler) expropriate(ctx context.Context, tx *ent.Tx) error 
 			Save(ctx); err != nil {
 			return err
 		}
+
+		achievementUser, ok := h.achievementUsers[statement.UserID]
+		if !ok {
+			continue
+		}
+
+		totalUserCommission, err := decimal.NewFromString(achievementUser.TotalCommission)
+		if err != nil {
+			return err
+		}
+
+		selfUserCommission, err := decimal.NewFromString(achievementUser.SelfCommission)
+		if err != nil {
+			return err
+		}
+
+		directConsumeAmount, err := decimal.NewFromString(achievementUser.DirectConsumeAmount)
+		if err != nil {
+			return err
+		}
+
+		inviteeConsumeAmount, err := decimal.NewFromString(achievementUser.InviteeConsumeAmount)
+		if err != nil {
+			return err
+		}
+
+		totalUserCommission = totalUserCommission.Sub(orderCommission)
+
+		if statement.SelfOrder {
+			selfUserCommission = selfUserCommission.Sub(orderCommission)
+			directConsumeAmount = directConsumeAmount.Sub(orderAmount)
+		} else {
+			inviteeConsumeAmount = inviteeConsumeAmount.Sub(orderAmount)
+		}
+
+		if _, err := achievementusercrud.UpdateSet(
+			tx.AchievementUser.UpdateOneID(achievement.ID),
+			&achievementusercrud.Req{
+				TotalCommission:      &totalUserCommission,
+				SelfCommission:       &selfUserCommission,
+				DirectConsumeAmount:  &directConsumeAmount,
+				InviteeConsumeAmount: &inviteeConsumeAmount,
+			},
+		).Save(ctx); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -206,6 +285,9 @@ func (h *Handler) ExpropriateAchievement(ctx context.Context) error {
 		return nil
 	}
 	if err := handler.getAchievements(ctx); err != nil {
+		return err
+	}
+	if err := handler.getAchievementUsers(ctx); err != nil {
 		return err
 	}
 

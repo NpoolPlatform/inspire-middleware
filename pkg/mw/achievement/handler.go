@@ -8,17 +8,19 @@ import (
 	achievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
 
 type Handler struct {
-	ID      *uint32
-	EntID   *uuid.UUID
-	OrderID *uuid.UUID
-	Conds   *achievementcrud.Conds
-	Offset  int32
-	Limit   int32
+	ID            *uint32
+	EntID         *uuid.UUID
+	OrderID       *uuid.UUID
+	PaymentAmount *decimal.Decimal
+	Conds         *achievementcrud.Conds
+	Offset        int32
+	Limit         int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -74,6 +76,23 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.OrderID = &_id
+		return nil
+	}
+}
+
+func WithPaymentAmount(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid paymentamount")
+			}
+			return nil
+		}
+		_amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return err
+		}
+		h.PaymentAmount = &_amount
 		return nil
 	}
 }
