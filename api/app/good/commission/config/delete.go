@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) DeleteCommissionConfig(ctx context.Context, in *npool.DeleteAppGoodCommissionConfigRequest) (*npool.DeleteAppGoodCommissionConfigResponse, error) {
+func (s *Server) DeleteAppGoodCommissionConfig(ctx context.Context, in *npool.DeleteAppGoodCommissionConfigRequest) (*npool.DeleteAppGoodCommissionConfigResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(

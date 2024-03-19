@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) UpdateCommissionConfig(ctx context.Context, in *npool.UpdateAppGoodCommissionConfigRequest) (*npool.UpdateAppGoodCommissionConfigResponse, error) {
+func (s *Server) UpdateAppGoodCommissionConfig(ctx context.Context, in *npool.UpdateAppGoodCommissionConfigRequest) (*npool.UpdateAppGoodCommissionConfigResponse, error) {
 	req := in.GetInfo()
 	if req == nil {
 		logger.Sugar().Errorw(

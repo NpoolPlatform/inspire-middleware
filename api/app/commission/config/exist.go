@@ -12,14 +12,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ExistCommissionConfigConds(ctx context.Context, in *npool.ExistAppCommissionConfigCondsRequest) (*npool.ExistAppCommissionConfigCondsResponse, error) {
+func (s *Server) ExistAppCommissionConfigConds(ctx context.Context, in *npool.ExistAppCommissionConfigCondsRequest) (*npool.ExistAppCommissionConfigCondsResponse, error) {
 	handler, err := commissionconfig1.NewHandler(
 		ctx,
 		commissionconfig1.WithConds(in.GetConds()),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"ExistCommissionConfigConds",
+			"ExistAppCommissionConfigConds",
 			"In", in,
 			"Err", err,
 		)
@@ -29,7 +29,7 @@ func (s *Server) ExistCommissionConfigConds(ctx context.Context, in *npool.Exist
 	info, err := handler.ExistCommissionConfigs(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"ExistCommissionConfigConds",
+			"ExistAppCommissionConfigConds",
 			"In", in,
 			"Err", err,
 		)

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) CloneCommissionConfigs(ctx context.Context, in *npool.CloneAppGoodCommissionConfigsRequest) (*npool.CloneAppGoodCommissionConfigsResponse, error) {
+func (s *Server) CloneAppGoodCommissionConfigs(ctx context.Context, in *npool.CloneAppGoodCommissionConfigsRequest) (*npool.CloneAppGoodCommissionConfigsResponse, error) {
 	handler, err := commission1.NewHandler(
 		ctx,
 		commission1.WithAppID(&in.AppID, true),

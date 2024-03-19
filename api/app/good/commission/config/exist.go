@@ -12,7 +12,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ExistCommissionConfigConds(ctx context.Context, in *npool.ExistAppGoodCommissionConfigCondsRequest) (*npool.ExistAppGoodCommissionConfigCondsResponse, error) {
+func (s *Server) ExistAppGoodCommissionConfigConds(
+	ctx context.Context,
+	in *npool.ExistAppGoodCommissionConfigCondsRequest,
+) (*npool.ExistAppGoodCommissionConfigCondsResponse, error) {
 	handler, err := commissionconfig1.NewHandler(
 		ctx,
 		commissionconfig1.WithConds(in.GetConds()),

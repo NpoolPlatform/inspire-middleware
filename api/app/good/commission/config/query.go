@@ -12,14 +12,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) GetCommissionConfig(ctx context.Context, in *npool.GetAppGoodCommissionConfigRequest) (*npool.GetAppGoodCommissionConfigResponse, error) {
+func (s *Server) GetAppGoodCommissionConfig(ctx context.Context, in *npool.GetAppGoodCommissionConfigRequest) (*npool.GetAppGoodCommissionConfigResponse, error) {
 	handler, err := config1.NewHandler(
 		ctx,
 		config1.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetCommissionConfig",
+			"GetAppGoodCommissionConfig",
 			"In", in,
 			"Err", err,
 		)
@@ -29,7 +29,7 @@ func (s *Server) GetCommissionConfig(ctx context.Context, in *npool.GetAppGoodCo
 	info, err := handler.GetCommissionConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetCommissionConfig",
+			"GetAppGoodCommissionConfig",
 			"In", in,
 			"Err", err,
 		)
@@ -41,7 +41,7 @@ func (s *Server) GetCommissionConfig(ctx context.Context, in *npool.GetAppGoodCo
 	}, nil
 }
 
-func (s *Server) GetCommissionConfigs(ctx context.Context, in *npool.GetAppGoodCommissionConfigsRequest) (*npool.GetAppGoodCommissionConfigsResponse, error) {
+func (s *Server) GetAppGoodCommissionConfigs(ctx context.Context, in *npool.GetAppGoodCommissionConfigsRequest) (*npool.GetAppGoodCommissionConfigsResponse, error) {
 	handler, err := config1.NewHandler(
 		ctx,
 		config1.WithConds(in.GetConds()),
@@ -50,7 +50,7 @@ func (s *Server) GetCommissionConfigs(ctx context.Context, in *npool.GetAppGoodC
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetCommissionConfigs",
+			"GetAppGoodCommissionConfigs",
 			"In", in,
 			"Err", err,
 		)
@@ -60,7 +60,7 @@ func (s *Server) GetCommissionConfigs(ctx context.Context, in *npool.GetAppGoodC
 	infos, total, err := handler.GetCommissionConfigs(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"GetCommissionConfigs",
+			"GetAppGoodCommissionConfigs",
 			"In", in,
 			"Err", err,
 		)
