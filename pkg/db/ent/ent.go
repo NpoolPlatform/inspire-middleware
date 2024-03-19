@@ -11,6 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
@@ -42,18 +46,22 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		achievement.Table:     achievement.ValidColumn,
-		appgoodscope.Table:    appgoodscope.ValidColumn,
-		cashcontrol.Table:     cashcontrol.ValidColumn,
-		commission.Table:      commission.ValidColumn,
-		coupon.Table:          coupon.ValidColumn,
-		couponallocated.Table: couponallocated.ValidColumn,
-		couponscope.Table:     couponscope.ValidColumn,
-		event.Table:           event.ValidColumn,
-		invitationcode.Table:  invitationcode.ValidColumn,
-		pubsubmessage.Table:   pubsubmessage.ValidColumn,
-		registration.Table:    registration.ValidColumn,
-		statement.Table:       statement.ValidColumn,
+		achievement.Table:             achievement.ValidColumn,
+		achievementuser.Table:         achievementuser.ValidColumn,
+		appcommissionconfig.Table:     appcommissionconfig.ValidColumn,
+		appconfig.Table:               appconfig.ValidColumn,
+		appgoodcommissionconfig.Table: appgoodcommissionconfig.ValidColumn,
+		appgoodscope.Table:            appgoodscope.ValidColumn,
+		cashcontrol.Table:             cashcontrol.ValidColumn,
+		commission.Table:              commission.ValidColumn,
+		coupon.Table:                  coupon.ValidColumn,
+		couponallocated.Table:         couponallocated.ValidColumn,
+		couponscope.Table:             couponscope.ValidColumn,
+		event.Table:                   event.ValidColumn,
+		invitationcode.Table:          invitationcode.ValidColumn,
+		pubsubmessage.Table:           pubsubmessage.ValidColumn,
+		registration.Table:            registration.ValidColumn,
+		statement.Table:               statement.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

@@ -303,6 +303,48 @@ func (sc *StatementCreate) SetNillableCommission(d *decimal.Decimal) *StatementC
 	return sc
 }
 
+// SetAppConfigID sets the "app_config_id" field.
+func (sc *StatementCreate) SetAppConfigID(u uuid.UUID) *StatementCreate {
+	sc.mutation.SetAppConfigID(u)
+	return sc
+}
+
+// SetNillableAppConfigID sets the "app_config_id" field if the given value is not nil.
+func (sc *StatementCreate) SetNillableAppConfigID(u *uuid.UUID) *StatementCreate {
+	if u != nil {
+		sc.SetAppConfigID(*u)
+	}
+	return sc
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (sc *StatementCreate) SetCommissionConfigID(u uuid.UUID) *StatementCreate {
+	sc.mutation.SetCommissionConfigID(u)
+	return sc
+}
+
+// SetNillableCommissionConfigID sets the "commission_config_id" field if the given value is not nil.
+func (sc *StatementCreate) SetNillableCommissionConfigID(u *uuid.UUID) *StatementCreate {
+	if u != nil {
+		sc.SetCommissionConfigID(*u)
+	}
+	return sc
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (sc *StatementCreate) SetCommissionConfigType(s string) *StatementCreate {
+	sc.mutation.SetCommissionConfigType(s)
+	return sc
+}
+
+// SetNillableCommissionConfigType sets the "commission_config_type" field if the given value is not nil.
+func (sc *StatementCreate) SetNillableCommissionConfigType(s *string) *StatementCreate {
+	if s != nil {
+		sc.SetCommissionConfigType(*s)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *StatementCreate) SetID(u uint32) *StatementCreate {
 	sc.mutation.SetID(u)
@@ -506,6 +548,24 @@ func (sc *StatementCreate) defaults() error {
 	if _, ok := sc.mutation.Commission(); !ok {
 		v := statement.DefaultCommission
 		sc.mutation.SetCommission(v)
+	}
+	if _, ok := sc.mutation.AppConfigID(); !ok {
+		if statement.DefaultAppConfigID == nil {
+			return fmt.Errorf("ent: uninitialized statement.DefaultAppConfigID (forgotten import ent/runtime?)")
+		}
+		v := statement.DefaultAppConfigID()
+		sc.mutation.SetAppConfigID(v)
+	}
+	if _, ok := sc.mutation.CommissionConfigID(); !ok {
+		if statement.DefaultCommissionConfigID == nil {
+			return fmt.Errorf("ent: uninitialized statement.DefaultCommissionConfigID (forgotten import ent/runtime?)")
+		}
+		v := statement.DefaultCommissionConfigID()
+		sc.mutation.SetCommissionConfigID(v)
+	}
+	if _, ok := sc.mutation.CommissionConfigType(); !ok {
+		v := statement.DefaultCommissionConfigType
+		sc.mutation.SetCommissionConfigType(v)
 	}
 	return nil
 }
@@ -717,6 +777,30 @@ func (sc *StatementCreate) createSpec() (*Statement, *sqlgraph.CreateSpec) {
 			Column: statement.FieldCommission,
 		})
 		_node.Commission = value
+	}
+	if value, ok := sc.mutation.AppConfigID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppConfigID,
+		})
+		_node.AppConfigID = value
+	}
+	if value, ok := sc.mutation.CommissionConfigID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldCommissionConfigID,
+		})
+		_node.CommissionConfigID = value
+	}
+	if value, ok := sc.mutation.CommissionConfigType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: statement.FieldCommissionConfigType,
+		})
+		_node.CommissionConfigType = value
 	}
 	return _node, _spec
 }
@@ -1129,6 +1213,60 @@ func (u *StatementUpsert) UpdateCommission() *StatementUpsert {
 // ClearCommission clears the value of the "commission" field.
 func (u *StatementUpsert) ClearCommission() *StatementUpsert {
 	u.SetNull(statement.FieldCommission)
+	return u
+}
+
+// SetAppConfigID sets the "app_config_id" field.
+func (u *StatementUpsert) SetAppConfigID(v uuid.UUID) *StatementUpsert {
+	u.Set(statement.FieldAppConfigID, v)
+	return u
+}
+
+// UpdateAppConfigID sets the "app_config_id" field to the value that was provided on create.
+func (u *StatementUpsert) UpdateAppConfigID() *StatementUpsert {
+	u.SetExcluded(statement.FieldAppConfigID)
+	return u
+}
+
+// ClearAppConfigID clears the value of the "app_config_id" field.
+func (u *StatementUpsert) ClearAppConfigID() *StatementUpsert {
+	u.SetNull(statement.FieldAppConfigID)
+	return u
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (u *StatementUpsert) SetCommissionConfigID(v uuid.UUID) *StatementUpsert {
+	u.Set(statement.FieldCommissionConfigID, v)
+	return u
+}
+
+// UpdateCommissionConfigID sets the "commission_config_id" field to the value that was provided on create.
+func (u *StatementUpsert) UpdateCommissionConfigID() *StatementUpsert {
+	u.SetExcluded(statement.FieldCommissionConfigID)
+	return u
+}
+
+// ClearCommissionConfigID clears the value of the "commission_config_id" field.
+func (u *StatementUpsert) ClearCommissionConfigID() *StatementUpsert {
+	u.SetNull(statement.FieldCommissionConfigID)
+	return u
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (u *StatementUpsert) SetCommissionConfigType(v string) *StatementUpsert {
+	u.Set(statement.FieldCommissionConfigType, v)
+	return u
+}
+
+// UpdateCommissionConfigType sets the "commission_config_type" field to the value that was provided on create.
+func (u *StatementUpsert) UpdateCommissionConfigType() *StatementUpsert {
+	u.SetExcluded(statement.FieldCommissionConfigType)
+	return u
+}
+
+// ClearCommissionConfigType clears the value of the "commission_config_type" field.
+func (u *StatementUpsert) ClearCommissionConfigType() *StatementUpsert {
+	u.SetNull(statement.FieldCommissionConfigType)
 	return u
 }
 
@@ -1599,6 +1737,69 @@ func (u *StatementUpsertOne) UpdateCommission() *StatementUpsertOne {
 func (u *StatementUpsertOne) ClearCommission() *StatementUpsertOne {
 	return u.Update(func(s *StatementUpsert) {
 		s.ClearCommission()
+	})
+}
+
+// SetAppConfigID sets the "app_config_id" field.
+func (u *StatementUpsertOne) SetAppConfigID(v uuid.UUID) *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetAppConfigID(v)
+	})
+}
+
+// UpdateAppConfigID sets the "app_config_id" field to the value that was provided on create.
+func (u *StatementUpsertOne) UpdateAppConfigID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateAppConfigID()
+	})
+}
+
+// ClearAppConfigID clears the value of the "app_config_id" field.
+func (u *StatementUpsertOne) ClearAppConfigID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearAppConfigID()
+	})
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (u *StatementUpsertOne) SetCommissionConfigID(v uuid.UUID) *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetCommissionConfigID(v)
+	})
+}
+
+// UpdateCommissionConfigID sets the "commission_config_id" field to the value that was provided on create.
+func (u *StatementUpsertOne) UpdateCommissionConfigID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateCommissionConfigID()
+	})
+}
+
+// ClearCommissionConfigID clears the value of the "commission_config_id" field.
+func (u *StatementUpsertOne) ClearCommissionConfigID() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearCommissionConfigID()
+	})
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (u *StatementUpsertOne) SetCommissionConfigType(v string) *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetCommissionConfigType(v)
+	})
+}
+
+// UpdateCommissionConfigType sets the "commission_config_type" field to the value that was provided on create.
+func (u *StatementUpsertOne) UpdateCommissionConfigType() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateCommissionConfigType()
+	})
+}
+
+// ClearCommissionConfigType clears the value of the "commission_config_type" field.
+func (u *StatementUpsertOne) ClearCommissionConfigType() *StatementUpsertOne {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearCommissionConfigType()
 	})
 }
 
@@ -2234,6 +2435,69 @@ func (u *StatementUpsertBulk) UpdateCommission() *StatementUpsertBulk {
 func (u *StatementUpsertBulk) ClearCommission() *StatementUpsertBulk {
 	return u.Update(func(s *StatementUpsert) {
 		s.ClearCommission()
+	})
+}
+
+// SetAppConfigID sets the "app_config_id" field.
+func (u *StatementUpsertBulk) SetAppConfigID(v uuid.UUID) *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetAppConfigID(v)
+	})
+}
+
+// UpdateAppConfigID sets the "app_config_id" field to the value that was provided on create.
+func (u *StatementUpsertBulk) UpdateAppConfigID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateAppConfigID()
+	})
+}
+
+// ClearAppConfigID clears the value of the "app_config_id" field.
+func (u *StatementUpsertBulk) ClearAppConfigID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearAppConfigID()
+	})
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (u *StatementUpsertBulk) SetCommissionConfigID(v uuid.UUID) *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetCommissionConfigID(v)
+	})
+}
+
+// UpdateCommissionConfigID sets the "commission_config_id" field to the value that was provided on create.
+func (u *StatementUpsertBulk) UpdateCommissionConfigID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateCommissionConfigID()
+	})
+}
+
+// ClearCommissionConfigID clears the value of the "commission_config_id" field.
+func (u *StatementUpsertBulk) ClearCommissionConfigID() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearCommissionConfigID()
+	})
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (u *StatementUpsertBulk) SetCommissionConfigType(v string) *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.SetCommissionConfigType(v)
+	})
+}
+
+// UpdateCommissionConfigType sets the "commission_config_type" field to the value that was provided on create.
+func (u *StatementUpsertBulk) UpdateCommissionConfigType() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.UpdateCommissionConfigType()
+	})
+}
+
+// ClearCommissionConfigType clears the value of the "commission_config_type" field.
+func (u *StatementUpsertBulk) ClearCommissionConfigType() *StatementUpsertBulk {
+	return u.Update(func(s *StatementUpsert) {
+		s.ClearCommissionConfigType()
 	})
 }
 

@@ -41,6 +41,122 @@ var (
 			},
 		},
 	}
+	// ArchivementUsersColumns holds the columns for the "archivement_users" table.
+	ArchivementUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "total_commission", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_commission", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "direct_consume_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "invitee_consume_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "direct_invites", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "indirect_invites", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// ArchivementUsersTable holds the schema information for the "archivement_users" table.
+	ArchivementUsersTable = &schema.Table{
+		Name:       "archivement_users",
+		Columns:    ArchivementUsersColumns,
+		PrimaryKey: []*schema.Column{ArchivementUsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "achievementuser_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{ArchivementUsersColumns[4]},
+			},
+		},
+	}
+	// AppCommissionConfigsColumns holds the columns for the "app_commission_configs" table.
+	AppCommissionConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
+	}
+	// AppCommissionConfigsTable holds the schema information for the "app_commission_configs" table.
+	AppCommissionConfigsTable = &schema.Table{
+		Name:       "app_commission_configs",
+		Columns:    AppCommissionConfigsColumns,
+		PrimaryKey: []*schema.Column{AppCommissionConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appcommissionconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppCommissionConfigsColumns[4]},
+			},
+		},
+	}
+	// AppConfigsColumns holds the columns for the "app_configs" table.
+	AppConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
+		{Name: "settle_amount_type", Type: field.TypeString, Nullable: true, Default: "SettleByPercent"},
+		{Name: "settle_interval", Type: field.TypeString, Nullable: true, Default: "DefaultSettleInterval"},
+		{Name: "commission_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionType"},
+		{Name: "settle_benefit", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+	}
+	// AppConfigsTable holds the schema information for the "app_configs" table.
+	AppConfigsTable = &schema.Table{
+		Name:       "app_configs",
+		Columns:    AppConfigsColumns,
+		PrimaryKey: []*schema.Column{AppConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppConfigsColumns[4]},
+			},
+		},
+	}
+	// AppGoodCommissionConfigsColumns holds the columns for the "app_good_commission_configs" table.
+	AppGoodCommissionConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
+	}
+	// AppGoodCommissionConfigsTable holds the schema information for the "app_good_commission_configs" table.
+	AppGoodCommissionConfigsTable = &schema.Table{
+		Name:       "app_good_commission_configs",
+		Columns:    AppGoodCommissionConfigsColumns,
+		PrimaryKey: []*schema.Column{AppGoodCommissionConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appgoodcommissionconfig_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppGoodCommissionConfigsColumns[4]},
+			},
+		},
+	}
 	// AppGoodScopesColumns holds the columns for the "app_good_scopes" table.
 	AppGoodScopesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -103,7 +219,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -137,7 +253,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
@@ -176,7 +292,7 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1709626481},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 		{Name: "cashable", Type: field.TypeBool, Nullable: true, Default: false},
 	}
@@ -355,6 +471,9 @@ var (
 		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "usd_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "commission", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "app_config_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "commission_config_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "commission_config_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionConfigType"},
 	}
 	// ArchivementDetailsTable holds the schema information for the "archivement_details" table.
 	ArchivementDetailsTable = &schema.Table{
@@ -372,6 +491,10 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ArchivementGeneralsTable,
+		ArchivementUsersTable,
+		AppCommissionConfigsTable,
+		AppConfigsTable,
+		AppGoodCommissionConfigsTable,
 		AppGoodScopesTable,
 		CashControlsTable,
 		CommissionsTable,
@@ -389,6 +512,9 @@ var (
 func init() {
 	ArchivementGeneralsTable.Annotation = &entsql.Annotation{
 		Table: "archivement_generals",
+	}
+	ArchivementUsersTable.Annotation = &entsql.Annotation{
+		Table: "archivement_users",
 	}
 	ArchivementDetailsTable.Annotation = &entsql.Annotation{
 		Table: "archivement_details",

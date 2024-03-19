@@ -6,6 +6,10 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
@@ -107,6 +111,270 @@ func init() {
 	achievementDescSelfCommission := achievementFields[10].Descriptor()
 	// achievement.DefaultSelfCommission holds the default value on creation for the self_commission field.
 	achievement.DefaultSelfCommission = achievementDescSelfCommission.Default.(decimal.Decimal)
+	achievementuserMixin := schema.AchievementUser{}.Mixin()
+	achievementuser.Policy = privacy.NewPolicies(achievementuserMixin[0], schema.AchievementUser{})
+	achievementuser.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := achievementuser.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	achievementuserMixinFields0 := achievementuserMixin[0].Fields()
+	_ = achievementuserMixinFields0
+	achievementuserMixinFields1 := achievementuserMixin[1].Fields()
+	_ = achievementuserMixinFields1
+	achievementuserFields := schema.AchievementUser{}.Fields()
+	_ = achievementuserFields
+	// achievementuserDescCreatedAt is the schema descriptor for created_at field.
+	achievementuserDescCreatedAt := achievementuserMixinFields0[0].Descriptor()
+	// achievementuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	achievementuser.DefaultCreatedAt = achievementuserDescCreatedAt.Default.(func() uint32)
+	// achievementuserDescUpdatedAt is the schema descriptor for updated_at field.
+	achievementuserDescUpdatedAt := achievementuserMixinFields0[1].Descriptor()
+	// achievementuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	achievementuser.DefaultUpdatedAt = achievementuserDescUpdatedAt.Default.(func() uint32)
+	// achievementuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	achievementuser.UpdateDefaultUpdatedAt = achievementuserDescUpdatedAt.UpdateDefault.(func() uint32)
+	// achievementuserDescDeletedAt is the schema descriptor for deleted_at field.
+	achievementuserDescDeletedAt := achievementuserMixinFields0[2].Descriptor()
+	// achievementuser.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	achievementuser.DefaultDeletedAt = achievementuserDescDeletedAt.Default.(func() uint32)
+	// achievementuserDescEntID is the schema descriptor for ent_id field.
+	achievementuserDescEntID := achievementuserMixinFields1[1].Descriptor()
+	// achievementuser.DefaultEntID holds the default value on creation for the ent_id field.
+	achievementuser.DefaultEntID = achievementuserDescEntID.Default.(func() uuid.UUID)
+	// achievementuserDescAppID is the schema descriptor for app_id field.
+	achievementuserDescAppID := achievementuserFields[0].Descriptor()
+	// achievementuser.DefaultAppID holds the default value on creation for the app_id field.
+	achievementuser.DefaultAppID = achievementuserDescAppID.Default.(func() uuid.UUID)
+	// achievementuserDescUserID is the schema descriptor for user_id field.
+	achievementuserDescUserID := achievementuserFields[1].Descriptor()
+	// achievementuser.DefaultUserID holds the default value on creation for the user_id field.
+	achievementuser.DefaultUserID = achievementuserDescUserID.Default.(func() uuid.UUID)
+	// achievementuserDescTotalCommission is the schema descriptor for total_commission field.
+	achievementuserDescTotalCommission := achievementuserFields[2].Descriptor()
+	// achievementuser.DefaultTotalCommission holds the default value on creation for the total_commission field.
+	achievementuser.DefaultTotalCommission = achievementuserDescTotalCommission.Default.(decimal.Decimal)
+	// achievementuserDescSelfCommission is the schema descriptor for self_commission field.
+	achievementuserDescSelfCommission := achievementuserFields[3].Descriptor()
+	// achievementuser.DefaultSelfCommission holds the default value on creation for the self_commission field.
+	achievementuser.DefaultSelfCommission = achievementuserDescSelfCommission.Default.(decimal.Decimal)
+	// achievementuserDescDirectConsumeAmount is the schema descriptor for direct_consume_amount field.
+	achievementuserDescDirectConsumeAmount := achievementuserFields[4].Descriptor()
+	// achievementuser.DefaultDirectConsumeAmount holds the default value on creation for the direct_consume_amount field.
+	achievementuser.DefaultDirectConsumeAmount = achievementuserDescDirectConsumeAmount.Default.(decimal.Decimal)
+	// achievementuserDescInviteeConsumeAmount is the schema descriptor for invitee_consume_amount field.
+	achievementuserDescInviteeConsumeAmount := achievementuserFields[5].Descriptor()
+	// achievementuser.DefaultInviteeConsumeAmount holds the default value on creation for the invitee_consume_amount field.
+	achievementuser.DefaultInviteeConsumeAmount = achievementuserDescInviteeConsumeAmount.Default.(decimal.Decimal)
+	// achievementuserDescDirectInvites is the schema descriptor for direct_invites field.
+	achievementuserDescDirectInvites := achievementuserFields[6].Descriptor()
+	// achievementuser.DefaultDirectInvites holds the default value on creation for the direct_invites field.
+	achievementuser.DefaultDirectInvites = achievementuserDescDirectInvites.Default.(uint32)
+	// achievementuserDescIndirectInvites is the schema descriptor for indirect_invites field.
+	achievementuserDescIndirectInvites := achievementuserFields[7].Descriptor()
+	// achievementuser.DefaultIndirectInvites holds the default value on creation for the indirect_invites field.
+	achievementuser.DefaultIndirectInvites = achievementuserDescIndirectInvites.Default.(uint32)
+	appcommissionconfigMixin := schema.AppCommissionConfig{}.Mixin()
+	appcommissionconfig.Policy = privacy.NewPolicies(appcommissionconfigMixin[0], schema.AppCommissionConfig{})
+	appcommissionconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := appcommissionconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	appcommissionconfigMixinFields0 := appcommissionconfigMixin[0].Fields()
+	_ = appcommissionconfigMixinFields0
+	appcommissionconfigMixinFields1 := appcommissionconfigMixin[1].Fields()
+	_ = appcommissionconfigMixinFields1
+	appcommissionconfigFields := schema.AppCommissionConfig{}.Fields()
+	_ = appcommissionconfigFields
+	// appcommissionconfigDescCreatedAt is the schema descriptor for created_at field.
+	appcommissionconfigDescCreatedAt := appcommissionconfigMixinFields0[0].Descriptor()
+	// appcommissionconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appcommissionconfig.DefaultCreatedAt = appcommissionconfigDescCreatedAt.Default.(func() uint32)
+	// appcommissionconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	appcommissionconfigDescUpdatedAt := appcommissionconfigMixinFields0[1].Descriptor()
+	// appcommissionconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appcommissionconfig.DefaultUpdatedAt = appcommissionconfigDescUpdatedAt.Default.(func() uint32)
+	// appcommissionconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appcommissionconfig.UpdateDefaultUpdatedAt = appcommissionconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// appcommissionconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	appcommissionconfigDescDeletedAt := appcommissionconfigMixinFields0[2].Descriptor()
+	// appcommissionconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	appcommissionconfig.DefaultDeletedAt = appcommissionconfigDescDeletedAt.Default.(func() uint32)
+	// appcommissionconfigDescEntID is the schema descriptor for ent_id field.
+	appcommissionconfigDescEntID := appcommissionconfigMixinFields1[1].Descriptor()
+	// appcommissionconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	appcommissionconfig.DefaultEntID = appcommissionconfigDescEntID.Default.(func() uuid.UUID)
+	// appcommissionconfigDescAppID is the schema descriptor for app_id field.
+	appcommissionconfigDescAppID := appcommissionconfigFields[0].Descriptor()
+	// appcommissionconfig.DefaultAppID holds the default value on creation for the app_id field.
+	appcommissionconfig.DefaultAppID = appcommissionconfigDescAppID.Default.(func() uuid.UUID)
+	// appcommissionconfigDescThresholdAmount is the schema descriptor for threshold_amount field.
+	appcommissionconfigDescThresholdAmount := appcommissionconfigFields[1].Descriptor()
+	// appcommissionconfig.DefaultThresholdAmount holds the default value on creation for the threshold_amount field.
+	appcommissionconfig.DefaultThresholdAmount = appcommissionconfigDescThresholdAmount.Default.(decimal.Decimal)
+	// appcommissionconfigDescAmountOrPercent is the schema descriptor for amount_or_percent field.
+	appcommissionconfigDescAmountOrPercent := appcommissionconfigFields[2].Descriptor()
+	// appcommissionconfig.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
+	appcommissionconfig.DefaultAmountOrPercent = appcommissionconfigDescAmountOrPercent.Default.(decimal.Decimal)
+	// appcommissionconfigDescStartAt is the schema descriptor for start_at field.
+	appcommissionconfigDescStartAt := appcommissionconfigFields[3].Descriptor()
+	// appcommissionconfig.DefaultStartAt holds the default value on creation for the start_at field.
+	appcommissionconfig.DefaultStartAt = appcommissionconfigDescStartAt.Default.(uint32)
+	// appcommissionconfigDescEndAt is the schema descriptor for end_at field.
+	appcommissionconfigDescEndAt := appcommissionconfigFields[4].Descriptor()
+	// appcommissionconfig.DefaultEndAt holds the default value on creation for the end_at field.
+	appcommissionconfig.DefaultEndAt = appcommissionconfigDescEndAt.Default.(uint32)
+	// appcommissionconfigDescInvites is the schema descriptor for invites field.
+	appcommissionconfigDescInvites := appcommissionconfigFields[5].Descriptor()
+	// appcommissionconfig.DefaultInvites holds the default value on creation for the invites field.
+	appcommissionconfig.DefaultInvites = appcommissionconfigDescInvites.Default.(uint32)
+	// appcommissionconfigDescSettleType is the schema descriptor for settle_type field.
+	appcommissionconfigDescSettleType := appcommissionconfigFields[6].Descriptor()
+	// appcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
+	appcommissionconfig.DefaultSettleType = appcommissionconfigDescSettleType.Default.(string)
+	appconfigMixin := schema.AppConfig{}.Mixin()
+	appconfig.Policy = privacy.NewPolicies(appconfigMixin[0], schema.AppConfig{})
+	appconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := appconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	appconfigMixinFields0 := appconfigMixin[0].Fields()
+	_ = appconfigMixinFields0
+	appconfigMixinFields1 := appconfigMixin[1].Fields()
+	_ = appconfigMixinFields1
+	appconfigFields := schema.AppConfig{}.Fields()
+	_ = appconfigFields
+	// appconfigDescCreatedAt is the schema descriptor for created_at field.
+	appconfigDescCreatedAt := appconfigMixinFields0[0].Descriptor()
+	// appconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appconfig.DefaultCreatedAt = appconfigDescCreatedAt.Default.(func() uint32)
+	// appconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	appconfigDescUpdatedAt := appconfigMixinFields0[1].Descriptor()
+	// appconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appconfig.DefaultUpdatedAt = appconfigDescUpdatedAt.Default.(func() uint32)
+	// appconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appconfig.UpdateDefaultUpdatedAt = appconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// appconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	appconfigDescDeletedAt := appconfigMixinFields0[2].Descriptor()
+	// appconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	appconfig.DefaultDeletedAt = appconfigDescDeletedAt.Default.(func() uint32)
+	// appconfigDescEntID is the schema descriptor for ent_id field.
+	appconfigDescEntID := appconfigMixinFields1[1].Descriptor()
+	// appconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	appconfig.DefaultEntID = appconfigDescEntID.Default.(func() uuid.UUID)
+	// appconfigDescAppID is the schema descriptor for app_id field.
+	appconfigDescAppID := appconfigFields[0].Descriptor()
+	// appconfig.DefaultAppID holds the default value on creation for the app_id field.
+	appconfig.DefaultAppID = appconfigDescAppID.Default.(func() uuid.UUID)
+	// appconfigDescSettleMode is the schema descriptor for settle_mode field.
+	appconfigDescSettleMode := appconfigFields[1].Descriptor()
+	// appconfig.DefaultSettleMode holds the default value on creation for the settle_mode field.
+	appconfig.DefaultSettleMode = appconfigDescSettleMode.Default.(string)
+	// appconfigDescSettleAmountType is the schema descriptor for settle_amount_type field.
+	appconfigDescSettleAmountType := appconfigFields[2].Descriptor()
+	// appconfig.DefaultSettleAmountType holds the default value on creation for the settle_amount_type field.
+	appconfig.DefaultSettleAmountType = appconfigDescSettleAmountType.Default.(string)
+	// appconfigDescSettleInterval is the schema descriptor for settle_interval field.
+	appconfigDescSettleInterval := appconfigFields[3].Descriptor()
+	// appconfig.DefaultSettleInterval holds the default value on creation for the settle_interval field.
+	appconfig.DefaultSettleInterval = appconfigDescSettleInterval.Default.(string)
+	// appconfigDescCommissionType is the schema descriptor for commission_type field.
+	appconfigDescCommissionType := appconfigFields[4].Descriptor()
+	// appconfig.DefaultCommissionType holds the default value on creation for the commission_type field.
+	appconfig.DefaultCommissionType = appconfigDescCommissionType.Default.(string)
+	// appconfigDescSettleBenefit is the schema descriptor for settle_benefit field.
+	appconfigDescSettleBenefit := appconfigFields[5].Descriptor()
+	// appconfig.DefaultSettleBenefit holds the default value on creation for the settle_benefit field.
+	appconfig.DefaultSettleBenefit = appconfigDescSettleBenefit.Default.(bool)
+	// appconfigDescStartAt is the schema descriptor for start_at field.
+	appconfigDescStartAt := appconfigFields[6].Descriptor()
+	// appconfig.DefaultStartAt holds the default value on creation for the start_at field.
+	appconfig.DefaultStartAt = appconfigDescStartAt.Default.(uint32)
+	// appconfigDescEndAt is the schema descriptor for end_at field.
+	appconfigDescEndAt := appconfigFields[7].Descriptor()
+	// appconfig.DefaultEndAt holds the default value on creation for the end_at field.
+	appconfig.DefaultEndAt = appconfigDescEndAt.Default.(uint32)
+	appgoodcommissionconfigMixin := schema.AppGoodCommissionConfig{}.Mixin()
+	appgoodcommissionconfig.Policy = privacy.NewPolicies(appgoodcommissionconfigMixin[0], schema.AppGoodCommissionConfig{})
+	appgoodcommissionconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := appgoodcommissionconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	appgoodcommissionconfigMixinFields0 := appgoodcommissionconfigMixin[0].Fields()
+	_ = appgoodcommissionconfigMixinFields0
+	appgoodcommissionconfigMixinFields1 := appgoodcommissionconfigMixin[1].Fields()
+	_ = appgoodcommissionconfigMixinFields1
+	appgoodcommissionconfigFields := schema.AppGoodCommissionConfig{}.Fields()
+	_ = appgoodcommissionconfigFields
+	// appgoodcommissionconfigDescCreatedAt is the schema descriptor for created_at field.
+	appgoodcommissionconfigDescCreatedAt := appgoodcommissionconfigMixinFields0[0].Descriptor()
+	// appgoodcommissionconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appgoodcommissionconfig.DefaultCreatedAt = appgoodcommissionconfigDescCreatedAt.Default.(func() uint32)
+	// appgoodcommissionconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	appgoodcommissionconfigDescUpdatedAt := appgoodcommissionconfigMixinFields0[1].Descriptor()
+	// appgoodcommissionconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appgoodcommissionconfig.DefaultUpdatedAt = appgoodcommissionconfigDescUpdatedAt.Default.(func() uint32)
+	// appgoodcommissionconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appgoodcommissionconfig.UpdateDefaultUpdatedAt = appgoodcommissionconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// appgoodcommissionconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	appgoodcommissionconfigDescDeletedAt := appgoodcommissionconfigMixinFields0[2].Descriptor()
+	// appgoodcommissionconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	appgoodcommissionconfig.DefaultDeletedAt = appgoodcommissionconfigDescDeletedAt.Default.(func() uint32)
+	// appgoodcommissionconfigDescEntID is the schema descriptor for ent_id field.
+	appgoodcommissionconfigDescEntID := appgoodcommissionconfigMixinFields1[1].Descriptor()
+	// appgoodcommissionconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	appgoodcommissionconfig.DefaultEntID = appgoodcommissionconfigDescEntID.Default.(func() uuid.UUID)
+	// appgoodcommissionconfigDescAppID is the schema descriptor for app_id field.
+	appgoodcommissionconfigDescAppID := appgoodcommissionconfigFields[0].Descriptor()
+	// appgoodcommissionconfig.DefaultAppID holds the default value on creation for the app_id field.
+	appgoodcommissionconfig.DefaultAppID = appgoodcommissionconfigDescAppID.Default.(func() uuid.UUID)
+	// appgoodcommissionconfigDescGoodID is the schema descriptor for good_id field.
+	appgoodcommissionconfigDescGoodID := appgoodcommissionconfigFields[1].Descriptor()
+	// appgoodcommissionconfig.DefaultGoodID holds the default value on creation for the good_id field.
+	appgoodcommissionconfig.DefaultGoodID = appgoodcommissionconfigDescGoodID.Default.(func() uuid.UUID)
+	// appgoodcommissionconfigDescAppGoodID is the schema descriptor for app_good_id field.
+	appgoodcommissionconfigDescAppGoodID := appgoodcommissionconfigFields[2].Descriptor()
+	// appgoodcommissionconfig.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	appgoodcommissionconfig.DefaultAppGoodID = appgoodcommissionconfigDescAppGoodID.Default.(func() uuid.UUID)
+	// appgoodcommissionconfigDescThresholdAmount is the schema descriptor for threshold_amount field.
+	appgoodcommissionconfigDescThresholdAmount := appgoodcommissionconfigFields[3].Descriptor()
+	// appgoodcommissionconfig.DefaultThresholdAmount holds the default value on creation for the threshold_amount field.
+	appgoodcommissionconfig.DefaultThresholdAmount = appgoodcommissionconfigDescThresholdAmount.Default.(decimal.Decimal)
+	// appgoodcommissionconfigDescAmountOrPercent is the schema descriptor for amount_or_percent field.
+	appgoodcommissionconfigDescAmountOrPercent := appgoodcommissionconfigFields[4].Descriptor()
+	// appgoodcommissionconfig.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
+	appgoodcommissionconfig.DefaultAmountOrPercent = appgoodcommissionconfigDescAmountOrPercent.Default.(decimal.Decimal)
+	// appgoodcommissionconfigDescStartAt is the schema descriptor for start_at field.
+	appgoodcommissionconfigDescStartAt := appgoodcommissionconfigFields[5].Descriptor()
+	// appgoodcommissionconfig.DefaultStartAt holds the default value on creation for the start_at field.
+	appgoodcommissionconfig.DefaultStartAt = appgoodcommissionconfigDescStartAt.Default.(uint32)
+	// appgoodcommissionconfigDescEndAt is the schema descriptor for end_at field.
+	appgoodcommissionconfigDescEndAt := appgoodcommissionconfigFields[6].Descriptor()
+	// appgoodcommissionconfig.DefaultEndAt holds the default value on creation for the end_at field.
+	appgoodcommissionconfig.DefaultEndAt = appgoodcommissionconfigDescEndAt.Default.(uint32)
+	// appgoodcommissionconfigDescInvites is the schema descriptor for invites field.
+	appgoodcommissionconfigDescInvites := appgoodcommissionconfigFields[7].Descriptor()
+	// appgoodcommissionconfig.DefaultInvites holds the default value on creation for the invites field.
+	appgoodcommissionconfig.DefaultInvites = appgoodcommissionconfigDescInvites.Default.(uint32)
+	// appgoodcommissionconfigDescSettleType is the schema descriptor for settle_type field.
+	appgoodcommissionconfigDescSettleType := appgoodcommissionconfigFields[8].Descriptor()
+	// appgoodcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
+	appgoodcommissionconfig.DefaultSettleType = appgoodcommissionconfigDescSettleType.Default.(string)
 	appgoodscopeMixin := schema.AppGoodScope{}.Mixin()
 	appgoodscope.Policy = privacy.NewPolicies(appgoodscopeMixin[0], schema.AppGoodScope{})
 	appgoodscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -829,6 +1097,18 @@ func init() {
 	statementDescCommission := statementFields[15].Descriptor()
 	// statement.DefaultCommission holds the default value on creation for the commission field.
 	statement.DefaultCommission = statementDescCommission.Default.(decimal.Decimal)
+	// statementDescAppConfigID is the schema descriptor for app_config_id field.
+	statementDescAppConfigID := statementFields[16].Descriptor()
+	// statement.DefaultAppConfigID holds the default value on creation for the app_config_id field.
+	statement.DefaultAppConfigID = statementDescAppConfigID.Default.(func() uuid.UUID)
+	// statementDescCommissionConfigID is the schema descriptor for commission_config_id field.
+	statementDescCommissionConfigID := statementFields[17].Descriptor()
+	// statement.DefaultCommissionConfigID holds the default value on creation for the commission_config_id field.
+	statement.DefaultCommissionConfigID = statementDescCommissionConfigID.Default.(func() uuid.UUID)
+	// statementDescCommissionConfigType is the schema descriptor for commission_config_type field.
+	statementDescCommissionConfigType := statementFields[18].Descriptor()
+	// statement.DefaultCommissionConfigType holds the default value on creation for the commission_config_type field.
+	statement.DefaultCommissionConfigType = statementDescCommissionConfigType.Default.(string)
 }
 
 const (

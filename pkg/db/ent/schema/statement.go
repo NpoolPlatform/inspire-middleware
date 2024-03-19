@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
 	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -25,6 +26,7 @@ func (Statement) Mixin() []ent.Mixin {
 }
 
 // Fields of the Statement.
+//nolint:funlen
 func (Statement) Fields() []ent.Field {
 	return []ent.Field{
 		field.
@@ -124,6 +126,22 @@ func (Statement) Fields() []ent.Field {
 			}).
 			Optional().
 			Default(decimal.Decimal{}),
+		field.
+			UUID("app_config_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
+			UUID("commission_config_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
+			String("commission_config_type").
+			Optional().
+			Default(types.CommissionConfigType_DefaultCommissionConfigType.String()),
 	}
 }
 

@@ -1,0 +1,90 @@
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/field"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/mixin"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
+	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
+)
+
+// AchievementUser holds the schema definition for the AchievementUser entity.
+type AchievementUser struct {
+	ent.Schema
+}
+
+func (AchievementUser) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.TimeMixin{},
+		crudermixin.AutoIDMixin{},
+	}
+}
+
+// Fields of the AchievementUser.
+func (AchievementUser) Fields() []ent.Field {
+	return []ent.Field{
+		field.
+			UUID("app_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
+			UUID("user_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
+			Other("total_commission", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("self_commission", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("direct_consume_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Other("invitee_consume_amount", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
+			Optional().
+			Default(decimal.Decimal{}),
+		field.
+			Uint32("direct_invites").
+			Optional().
+			Default(0),
+		field.
+			Uint32("indirect_invites").
+			Optional().
+			Default(0),
+	}
+}
+
+// Edges of the AchievementUser.
+func (AchievementUser) Edges() []ent.Edge {
+	return nil
+}
+
+func (AchievementUser) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{Table: "archivement_users"},
+	}
+}
