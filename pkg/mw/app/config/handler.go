@@ -235,7 +235,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.CommissionType != nil {
 			h.Conds.CommissionType = &cruder.Cond{
 				Op:  conds.GetCommissionType().GetOp(),
-				Val: types.SettleType(conds.GetCommissionType().GetValue()),
+				Val: types.CommissionType(conds.GetCommissionType().GetValue()),
 			}
 		}
 		if conds.SettleBenefit != nil {

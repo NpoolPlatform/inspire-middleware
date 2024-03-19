@@ -48,11 +48,14 @@ var ret = &statementmwpb.Statement{
 }
 
 var ret2 = &npool.AchievementUser{
-	AppID:               ret.AppID,
-	UserID:              ret.UserID,
-	TotalCommission:     "3030.3",
-	SelfCommission:      "3030.3",
-	DirectConsumeAmount: "10000",
+	AppID:                ret.AppID,
+	UserID:               ret.UserID,
+	TotalCommission:      "3030.3",
+	SelfCommission:       "3030.3",
+	DirectConsumeAmount:  "20000",
+	DirectInvites:        "0",
+	IndirectInvites:      "0",
+	InviteeConsumeAmount: "0",
 }
 
 func setup(t *testing.T) func(*testing.T) {

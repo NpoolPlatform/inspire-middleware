@@ -39,7 +39,7 @@ var (
 		SettleInterval:      types.SettleInterval_SettleYearly,
 		SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
 		CommissionType:      types.CommissionType_LayeredCommission,
-		CommissionTypeStr:   types.CommissionType_LegacyCommission.String(),
+		CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
 		SettleBenefit:       false,
 		StartAt:             uint32(time.Now().Unix()),
 	}
@@ -63,12 +63,15 @@ func createAppConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.CreateAppConfig(context.Background())
+	_, err = handler.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			ret.ID = info.ID
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
