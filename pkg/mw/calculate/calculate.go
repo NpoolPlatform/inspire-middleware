@@ -103,8 +103,10 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		inviterIDs: []string{},
 	}
 
+	commissionConfigType := types.CommissionConfigType_WithoutCommission
 	switch appconfig.CommissionType {
 	case types.CommissionType_LegacyCommission:
+		commissionConfigType = types.CommissionConfigType_LegacyCommissionConfig
 		fallthrough //nolint
 	case types.CommissionType_LayeredCommission:
 		err := handler.getLayeredInviters(ctx)
@@ -254,6 +256,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 
 	commMap := map[string]*commission2.Commission{}
 	for _, comm := range _comms {
+		fmt.Println("_comms: ", _comms)
 		commMap[comm.UserID] = comm
 	}
 
@@ -265,7 +268,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 
 		commission := decimal.NewFromInt(0).String()
 		commissionConfigID := uuid.Nil.String()
-		commissionConfigType := types.CommissionConfigType_DefaultCommissionConfigType
 		comm, ok := commMap[inviter.InviterID]
 		if ok && h.HasCommission {
 			commission = comm.Amount
@@ -297,7 +299,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 
 	commission := decimal.NewFromInt(0).String()
 	commissionConfigID := uuid.Nil.String()
-	commissionConfigType := types.CommissionConfigType_DefaultCommissionConfigType
 	comm, ok := commMap[h.UserID.String()]
 	if ok && h.HasCommission {
 		commission = comm.Amount
@@ -324,6 +325,10 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		CommissionConfigID:     commissionConfigID,
 		CommissionConfigType:   commissionConfigType,
 	})
+
+	for _, statement := range statements {
+		fmt.Println("statement: ", statement)
+	}
 
 	return statements, nil
 }
