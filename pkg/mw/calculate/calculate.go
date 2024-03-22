@@ -256,7 +256,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 
 	commMap := map[string]*commission2.Commission{}
 	for _, comm := range _comms {
-		fmt.Println("_comms: ", _comms)
 		commMap[comm.UserID] = comm
 	}
 
@@ -325,10 +324,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		CommissionConfigID:     commissionConfigID,
 		CommissionConfigType:   commissionConfigType,
 	})
-
-	for _, statement := range statements {
-		fmt.Println("statement: ", statement)
-	}
 
 	return statements, nil
 }

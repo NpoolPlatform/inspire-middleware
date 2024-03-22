@@ -37,6 +37,8 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 			Where(
 				entcommissionconfig.AppID(*h.AppID),
 				entcommissionconfig.AppGoodID(*h.AppGoodID),
+				entcommissionconfig.ThresholdAmount(*h.ThresholdAmount),
+				entcommissionconfig.Invites(*h.Invites),
 				entcommissionconfig.SettleType(h.SettleType.String()),
 				entcommissionconfig.EndAt(0),
 				entcommissionconfig.DeletedAt(0),
