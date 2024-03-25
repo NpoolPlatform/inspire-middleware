@@ -123,6 +123,13 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 			return err
 		}
 	}
+	req := &registrationcrud.Req{
+		AppID:     h.AppID,
+		InviterID: h.InviterID,
+	}
+	if err := h.createOrAddInvites(ctx, tx, req); err != nil {
+		return err
+	}
 
 	return nil
 }
