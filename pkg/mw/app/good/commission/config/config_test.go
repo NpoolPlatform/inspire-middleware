@@ -39,6 +39,7 @@ var (
 		SettleTypeStr:   types.SettleType_GoodOrderPayment.String(),
 		AmountOrPercent: decimal.RequireFromString("12.25").String(),
 		ThresholdAmount: decimal.RequireFromString("12.26").String(),
+		Invites:         uint32(1),
 		StartAt:         uint32(time.Now().Unix()),
 	}
 )
@@ -57,6 +58,7 @@ func createCommissionConfig(t *testing.T) {
 		WithSettleType(&ret.SettleType, true),
 		WithThresholdAmount(&ret.ThresholdAmount, true),
 		WithAmountOrPercent(&ret.AmountOrPercent, true),
+		WithInvites(&ret.Invites, true),
 		WithStartAt(&ret.StartAt, true),
 	)
 	assert.Nil(t, err)

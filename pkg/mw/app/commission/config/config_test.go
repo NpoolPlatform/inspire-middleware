@@ -38,6 +38,7 @@ var (
 		AmountOrPercent: decimal.RequireFromString("12.25").String(),
 		ThresholdAmount: decimal.RequireFromString("12.26").String(),
 		StartAt:         uint32(time.Now().Unix()),
+		Invites:         uint32(1),
 	}
 )
 
@@ -54,6 +55,7 @@ func createCommissionConfig(t *testing.T) {
 		WithThresholdAmount(&ret.ThresholdAmount, true),
 		WithAmountOrPercent(&ret.AmountOrPercent, true),
 		WithStartAt(&ret.StartAt, true),
+		WithInvites(&ret.Invites, true),
 	)
 	assert.Nil(t, err)
 
