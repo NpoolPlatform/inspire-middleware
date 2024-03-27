@@ -352,7 +352,7 @@ func WithCommissionConfigType(value *types.CommissionConfigType, must bool) func
 		case types.CommissionConfigType_AppCommissionConfig:
 		case types.CommissionConfigType_AppGoodCommissionConfig:
 		case types.CommissionConfigType_LegacyCommissionConfig:
-		case types.CommissionConfigType_WithoutCommission:
+		case types.CommissionConfigType_WithoutCommissionConfig:
 		default:
 			return fmt.Errorf("invalid commissionconfigtype")
 		}
@@ -572,7 +572,7 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				case types.CommissionConfigType_AppCommissionConfig:
 				case types.CommissionConfigType_AppGoodCommissionConfig:
 				case types.CommissionConfigType_LegacyCommissionConfig:
-				case types.CommissionConfigType_WithoutCommission:
+				case types.CommissionConfigType_WithoutCommissionConfig:
 				default:
 					return fmt.Errorf("invalid commissionconfigtype")
 				}

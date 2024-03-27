@@ -3,6 +3,7 @@ package calculate
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	appcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/commission/config"
 	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
@@ -49,6 +50,16 @@ func (h *calculateHandler) getLayeredInviters(ctx context.Context) error {
 	return nil
 }
 
+func (h *calculateHandler) getUserSelf() {
+	inviter := &registrationmwpb.Registration{
+		AppID:     h.AppID.String(),
+		InviterID: h.UserID.String(),
+		InviteeID: h.UserID.String(),
+	}
+	h.inviters = []*registrationmwpb.Registration{inviter}
+	h.inviterIDs = []string{h.UserID.String()}
+}
+
 func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 	handler, err := registration1.NewHandler(
 		ctx,
@@ -72,6 +83,42 @@ func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 	return nil
 }
 
+func sortAppGoodCommissionConfig(byValue []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig) {
+	sort.Slice(byValue, func(i, j int) bool {
+		decI, errI := decimal.NewFromString(byValue[i].ThresholdAmount)
+		if errI != nil {
+			return false
+		}
+		decJ, errJ := decimal.NewFromString(byValue[j].ThresholdAmount)
+		if errJ != nil {
+			return false
+		}
+
+		if byValue[i].Invites != byValue[j].Invites {
+			return byValue[i].Invites < byValue[j].Invites
+		}
+		return decI.LessThan(decJ)
+	})
+}
+
+func sortAppCommissionConfig(byValue []*appcommissionconfigmwpb.AppCommissionConfig) {
+	sort.Slice(byValue, func(i, j int) bool {
+		decI, errI := decimal.NewFromString(byValue[i].ThresholdAmount)
+		if errI != nil {
+			return false
+		}
+		decJ, errJ := decimal.NewFromString(byValue[j].ThresholdAmount)
+		if errJ != nil {
+			return false
+		}
+
+		if byValue[i].Invites != byValue[j].Invites {
+			return byValue[i].Invites < byValue[j].Invites
+		}
+		return decI.LessThan(decJ)
+	})
+}
+
 //nolint
 func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, error) {
 	h1, err := appconfig1.NewHandler(
@@ -92,10 +139,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	if err != nil {
 		return nil, err
 	}
-	if len(appconfigs) == 0 {
-		return nil, fmt.Errorf("invalid appconfig")
-	}
-	appconfig := appconfigs[0]
 
 	handler := &calculateHandler{
 		Handler:    h,
@@ -103,7 +146,13 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		inviterIDs: []string{},
 	}
 
-	commissionConfigType := types.CommissionConfigType_WithoutCommission
+	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
+
+	if len(appconfigs) == 0 {
+		return handler.generateStatements(map[string]*commission2.Commission{}, "", commissionConfigType)
+	}
+	appconfig := appconfigs[0]
+
 	switch appconfig.CommissionType {
 	case types.CommissionType_LegacyCommission:
 		commissionConfigType = types.CommissionConfigType_LegacyCommissionConfig
@@ -118,6 +167,8 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		if err != nil {
 			return nil, err
 		}
+	case types.CommissionType_WithoutCommission:
+		handler.getUserSelf()
 	default:
 		return nil, fmt.Errorf("invalid commissiontype")
 	}
@@ -190,6 +241,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 				return nil, err
 			}
 			if goodcomms != nil {
+				sortAppGoodCommissionConfig(goodcomms)
 				handler, err := commission2.NewHandler(
 					ctx,
 					commission2.WithSettleType(h.SettleType),
@@ -231,6 +283,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			}
 
 			if appcomms != nil {
+				sortAppCommissionConfig(appcomms)
 				handler, err := commission2.NewHandler(
 					ctx,
 					commission2.WithSettleType(h.SettleType),
@@ -259,8 +312,16 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		commMap[comm.UserID] = comm
 	}
 
+	return handler.generateStatements(commMap, appconfigs[0].EntID, commissionConfigType)
+}
+
+func (h *calculateHandler) generateStatements(
+	commMap map[string]*commission2.Commission,
+	appConfigID string,
+	commissionConfigType types.CommissionConfigType,
+) ([]*statementmwpb.Statement, error) {
 	statements := []*statementmwpb.Statement{}
-	for _, inviter := range handler.inviters {
+	for _, inviter := range h.inviters {
 		if inviter.InviterID == uuid.Nil.String() {
 			continue
 		}
@@ -268,10 +329,12 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		commission := decimal.NewFromInt(0).String()
 		commissionConfigID := uuid.Nil.String()
 		comm, ok := commMap[inviter.InviterID]
-		if ok && h.HasCommission {
-			commission = comm.Amount
+		if ok {
 			commissionConfigID = comm.CommissionConfigID
 			commissionConfigType = comm.CommissionConfigType
+		}
+		if ok && h.HasCommission {
+			commission = comm.Amount
 		}
 
 		statements = append(statements, &statementmwpb.Statement{
@@ -290,7 +353,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			Amount:                 h.GoodValue.String(),
 			USDAmount:              h.GoodValueUSD.String(),
 			Commission:             commission,
-			AppConfigID:            appconfig.EntID,
+			AppConfigID:            appConfigID,
 			CommissionConfigID:     commissionConfigID,
 			CommissionConfigType:   commissionConfigType,
 		})
@@ -320,7 +383,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		Amount:                 h.GoodValue.String(),
 		USDAmount:              h.GoodValueUSD.String(),
 		Commission:             commission,
-		AppConfigID:            appconfig.EntID,
+		AppConfigID:            appConfigID,
 		CommissionConfigID:     commissionConfigID,
 		CommissionConfigType:   commissionConfigType,
 	})

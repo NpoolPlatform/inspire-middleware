@@ -165,74 +165,84 @@ func (h *calculateHandler) getInvites(ctx context.Context, userID string) (uint3
 }
 
 //nolint:dupl
-func (h *calculateHandler) getAppGoodCommLevelConf(ctx context.Context, userID string) (*appgoodcommissionconfig.AppGoodCommissionConfig, error) {
+func (h *calculateHandler) getAppGoodCommLevelConf(ctx context.Context, userID string) (*appgoodcommissionconfig.AppGoodCommissionConfig, bool, error) {
 	invites, err := h.getInvites(ctx, userID)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	_comm := &appgoodcommissionconfig.AppGoodCommissionConfig{}
+	useful := false
 	percent := decimal.NewFromInt(0)
-	for _, comm := range h.AppGoodCommissionConfigs {
+	for i, comm := range h.AppGoodCommissionConfigs {
+		if i == 0 {
+			_comm = comm
+		}
 		if invites < comm.Invites {
-			continue
+			break
 		}
 		thresholdAmount, err := decimal.NewFromString(comm.GetThresholdAmount())
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		if h.PaymentAmount.Cmp(thresholdAmount) < 0 {
-			continue
+			break
 		}
 		_percent, err := decimal.NewFromString(comm.GetAmountOrPercent())
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		if _percent.Cmp(percent) > 0 {
 			percent = _percent
 			_comm = comm
+			useful = true
 		}
 	}
 	if percent.Cmp(decimal.NewFromInt(0)) < 0 {
-		return nil, nil
+		return _comm, false, nil
 	}
-	return _comm, nil
+	return _comm, useful, nil
 }
 
 //nolint:dupl
-func (h *calculateHandler) getAppCommLevelConf(ctx context.Context, userID string) (*appcommissionconfig.AppCommissionConfig, error) {
+func (h *calculateHandler) getAppCommLevelConf(ctx context.Context, userID string) (*appcommissionconfig.AppCommissionConfig, bool, error) {
 	invites, err := h.getInvites(ctx, userID)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	_comm := &appcommissionconfig.AppCommissionConfig{}
+	useful := false
 	percent := decimal.NewFromInt(0)
-	for _, comm := range h.AppCommissionConfigs {
+	for i, comm := range h.AppCommissionConfigs {
+		if i == 0 {
+			_comm = comm
+		}
 		if invites < comm.Invites {
-			continue
+			break
 		}
 		thresholdAmount, err := decimal.NewFromString(comm.GetThresholdAmount())
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		if h.PaymentAmount.Cmp(thresholdAmount) < 0 {
 			continue
 		}
 		_percent, err := decimal.NewFromString(comm.GetAmountOrPercent())
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		if _percent.Cmp(percent) > 0 {
 			percent = _percent
 			_comm = comm
+			useful = true
 		}
 	}
 	if percent.Cmp(decimal.NewFromInt(0)) < 0 {
-		return nil, nil
+		return _comm, false, nil
 	}
-	return _comm, nil
+	return _comm, useful, nil
 }
 
-//nolint:dupl
+//nolint:dupl,funlen
 func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, error) {
 	_comms := []*Commission{}
 	handler := &calculateHandler{
@@ -249,22 +259,22 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 
 		var err error
 
-		comm1, err := handler.getAppCommLevelConf(ctx, inviter.InviteeID)
+		comm1, comm1Useful, err := handler.getAppCommLevelConf(ctx, inviter.InviteeID)
 		if err != nil {
 			return nil, err
 		}
-		if comm1 != nil {
+		if comm1 != nil && comm1Useful {
 			percent1, err = decimal.NewFromString(comm1.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		comm2, err := handler.getAppCommLevelConf(ctx, inviter.InviterID)
+		comm2, comm2Useful, err := handler.getAppCommLevelConf(ctx, inviter.InviterID)
 		if err != nil {
 			return nil, err
 		}
-		if comm2 != nil {
+		if comm2 != nil && comm2Useful {
 			percent2, err = decimal.NewFromString(comm2.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
@@ -276,6 +286,15 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		}
 
 		if percent2.Cmp(percent1) == 0 {
+			_comms = append(_comms, &Commission{
+				AppConfigID:             h.AppConfig.EntID,
+				CommissionConfigID:      comm1.EntID,
+				CommissionConfigType:    types.CommissionConfigType_AppCommissionConfig,
+				AppID:                   inviter.AppID,
+				UserID:                  inviter.InviterID,
+				DirectContributorUserID: &inviter.InviteeID,
+				Amount:                  "0",
+			})
 			continue
 		}
 
@@ -285,7 +304,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return _comms, nil
+			amount = decimal.NewFromInt(0)
 		}
 
 		_comms = append(_comms, &Commission{
@@ -299,7 +318,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		})
 	}
 
-	commLast, err := handler.getAppCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
+	commLast, commLastUseful, err := handler.getAppCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
 	if err != nil {
 		return nil, err
 	}
@@ -310,6 +329,9 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	percent, err := decimal.NewFromString(commLast.GetAmountOrPercent())
 	if err != nil {
 		return nil, err
+	}
+	if !commLastUseful {
+		percent = decimal.NewFromInt(0)
 	}
 
 	amount := h.PaymentAmount
@@ -335,7 +357,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	return _comms, nil
 }
 
-//nolint:dupl
+//nolint:dupl,funlen
 func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commission, error) {
 	_comms := []*Commission{}
 	handler := &calculateHandler{
@@ -352,22 +374,22 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 
 		var err error
 
-		comm1, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviteeID)
+		comm1, comm1Useful, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviteeID)
 		if err != nil {
 			return nil, err
 		}
-		if comm1 != nil {
+		if comm1 != nil && comm1Useful {
 			percent1, err = decimal.NewFromString(comm1.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		comm2, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviterID)
+		comm2, comm2Useful, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviterID)
 		if err != nil {
 			return nil, err
 		}
-		if comm2 != nil {
+		if comm2 != nil && comm2Useful {
 			percent2, err = decimal.NewFromString(comm2.GetAmountOrPercent())
 			if err != nil {
 				return nil, err
@@ -379,6 +401,15 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		}
 
 		if percent2.Cmp(percent1) == 0 {
+			_comms = append(_comms, &Commission{
+				AppConfigID:             h.AppConfig.EntID,
+				CommissionConfigID:      comm1.EntID,
+				CommissionConfigType:    types.CommissionConfigType_AppGoodCommissionConfig,
+				AppID:                   inviter.AppID,
+				UserID:                  inviter.InviterID,
+				DirectContributorUserID: &inviter.InviteeID,
+				Amount:                  "0",
+			})
 			continue
 		}
 
@@ -388,7 +419,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return _comms, nil
+			amount = decimal.NewFromInt(0)
 		}
 
 		_comms = append(_comms, &Commission{
@@ -402,7 +433,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		})
 	}
 
-	commLast, err := handler.getAppGoodCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
+	commLast, commLastUseful, err := handler.getAppGoodCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
 	if err != nil {
 		return nil, err
 	}
@@ -414,6 +445,9 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 	if err != nil {
 		return nil, err
 	}
+	if !commLastUseful {
+		percent = decimal.NewFromInt(0)
+	}
 
 	amount := h.PaymentAmount
 	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
@@ -421,7 +455,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return _comms, nil
+		amount = decimal.NewFromInt(0)
 	}
 
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {

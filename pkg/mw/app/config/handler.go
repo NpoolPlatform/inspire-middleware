@@ -156,6 +156,7 @@ func WithCommissionType(commissionType *types.CommissionType, must bool) func(co
 		case types.CommissionType_LayeredCommission:
 		case types.CommissionType_DirectCommission:
 		case types.CommissionType_LegacyCommission:
+		case types.CommissionType_WithoutCommission:
 		default:
 			return fmt.Errorf("invalid commissiontype")
 		}
