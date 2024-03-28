@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
@@ -128,40 +127,22 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 }
 
 func (h *calculateHandler) getInvites(ctx context.Context, userID string) (uint32, error) {
-	totalInvites := uint32(0)
-	offset := int32(0)
-
-	for {
-		handler, err := registration1.NewHandler(
-			ctx,
-			registration1.WithConds(&registrationmwpb.Conds{
-				AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.AppConfig.AppID},
-				InviteeID: &basetypes.StringVal{Op: cruder.EQ, Value: userID},
-			}),
-			registration1.WithOffset(offset),
-			registration1.WithLimit(constant.DefaultRowLimit),
-		)
-		if err != nil {
-			return 0, nil
-		}
-		inviters, total, err := handler.GetRegistrations(ctx)
-		if err != nil {
-			return uint32(0), err
-		}
-		for _, inviter := range inviters {
-			_total, err := h.getInvites(ctx, inviter.InviteeID)
-			if err != nil {
-				return uint32(0), err
-			}
-			totalInvites += 1 + _total
-		}
-		if total < uint32(constant.DefaultRowLimit) {
-			break
-		}
-		offset += constant.DefaultRowLimit
+	userIDs := []string{userID}
+	handler, err := registration1.NewHandler(
+		ctx,
+		registration1.WithConds(&registrationmwpb.Conds{
+			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppConfig.AppID},
+			InviterIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: userIDs},
+		}),
+	)
+	if err != nil {
+		return 0, nil
 	}
-
-	return totalInvites, nil
+	_, total, err := handler.GetSubordinates(ctx)
+	if err != nil {
+		return uint32(0), err
+	}
+	return total, nil
 }
 
 //nolint:dupl
@@ -209,6 +190,7 @@ func (h *calculateHandler) getAppCommLevelConf(ctx context.Context, userID strin
 	if err != nil {
 		return nil, false, err
 	}
+
 	_comm := &appcommissionconfig.AppCommissionConfig{}
 	useful := false
 	percent := decimal.NewFromInt(0)
@@ -248,7 +230,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	handler := &calculateHandler{
 		Handler: h,
 	}
-
 	for _, inviter := range h.Inviters {
 		if inviter.InviterID == uuid.Nil.String() {
 			break
@@ -274,6 +255,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		if err != nil {
 			return nil, err
 		}
+
 		if comm2 != nil && comm2Useful {
 			percent2, err = decimal.NewFromString(comm2.GetAmountOrPercent())
 			if err != nil {
@@ -322,6 +304,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	if err != nil {
 		return nil, err
 	}
+
 	if commLast == nil {
 		return _comms, nil
 	}
@@ -340,19 +323,22 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return _comms, nil
+		amount = decimal.NewFromInt(0)
 	}
 
+	amountLast := "0"
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {
-		_comms = append(_comms, &Commission{
-			AppConfigID:          h.AppConfig.EntID,
-			CommissionConfigID:   commLast.EntID,
-			CommissionConfigType: types.CommissionConfigType_AppCommissionConfig,
-			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
-			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
-			Amount:               amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
-		})
+		amountLast = amount.Mul(percent).Div(decimal.NewFromInt(100)).String() //nolint
 	}
+
+	_comms = append(_comms, &Commission{
+		AppConfigID:          h.AppConfig.EntID,
+		CommissionConfigID:   commLast.EntID,
+		CommissionConfigType: types.CommissionConfigType_AppCommissionConfig,
+		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
+		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		Amount:               amountLast,
+	})
 
 	return _comms, nil
 }

@@ -50,16 +50,6 @@ func (h *calculateHandler) getLayeredInviters(ctx context.Context) error {
 	return nil
 }
 
-func (h *calculateHandler) getUserSelf() {
-	inviter := &registrationmwpb.Registration{
-		AppID:     h.AppID.String(),
-		InviterID: h.UserID.String(),
-		InviteeID: h.UserID.String(),
-	}
-	h.inviters = []*registrationmwpb.Registration{inviter}
-	h.inviterIDs = []string{h.UserID.String()}
-}
-
 func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 	handler, err := registration1.NewHandler(
 		ctx,
@@ -168,7 +158,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			return nil, err
 		}
 	case types.CommissionType_WithoutCommission:
-		handler.getUserSelf()
 	default:
 		return nil, fmt.Errorf("invalid commissiontype")
 	}
@@ -240,7 +229,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			if err != nil {
 				return nil, err
 			}
-			if goodcomms != nil {
+			if len(goodcomms) > 0 {
 				sortAppGoodCommissionConfig(goodcomms)
 				handler, err := commission2.NewHandler(
 					ctx,
@@ -281,8 +270,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			if err != nil {
 				return nil, err
 			}
-
-			if appcomms != nil {
+			if len(appcomms) > 0 {
 				sortAppCommissionConfig(appcomms)
 				handler, err := commission2.NewHandler(
 					ctx,
@@ -302,6 +290,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 					return nil, err
 				}
 			}
+		case types.CommissionType_WithoutCommission:
 		default:
 			return nil, fmt.Errorf("invalid commissiontype")
 		}
