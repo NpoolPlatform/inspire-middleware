@@ -17,6 +17,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 				AmountOrPercent: h.AmountOrPercent,
 				StartAt:         h.StartAt,
 				ThresholdAmount: h.ThresholdAmount,
+				Invites:         h.Invites,
 			},
 		).Save(_ctx); err != nil {
 			return err
