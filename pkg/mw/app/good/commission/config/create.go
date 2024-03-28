@@ -70,5 +70,5 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 		return nil, err
 	}
 
-	return h.GetCommissionConfig(ctx)
+	return nil, nil
 }

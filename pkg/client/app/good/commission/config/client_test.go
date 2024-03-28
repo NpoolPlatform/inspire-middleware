@@ -53,7 +53,7 @@ var ret = &npool.AppGoodCommissionConfig{
 }
 
 func create(t *testing.T) {
-	info, err := CreateCommissionConfig(context.Background(), &npool.AppGoodCommissionConfigReq{
+	_, err := CreateCommissionConfig(context.Background(), &npool.AppGoodCommissionConfigReq{
 		EntID:           &ret.EntID,
 		AppID:           &ret.AppID,
 		GoodID:          &ret.GoodID,
@@ -65,10 +65,15 @@ func create(t *testing.T) {
 		StartAt:         &ret.StartAt,
 	})
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		info, err := GetCommissionConfigOnly(context.Background(), &npool.Conds{
+			EntID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.EntID},
+		})
+		if assert.Nil(t, err) {
+			ret.ID = info.ID
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 
