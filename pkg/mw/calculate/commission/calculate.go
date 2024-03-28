@@ -84,7 +84,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 
 		_comms = append(_comms, &Commission{
 			AppConfigID:             h.AppConfig.EntID,
-			CommissionConfigID:      comm1.EntID,
+			CommissionConfigID:      comm2.EntID,
 			CommissionConfigType:    types.CommissionConfigType_LegacyCommissionConfig,
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
