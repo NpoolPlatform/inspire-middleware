@@ -72,12 +72,14 @@ func UpdateSet(u *ent.AppCommissionConfigUpdateOne, req *Req) *ent.AppCommission
 }
 
 type Conds struct {
-	EntID      *cruder.Cond
-	AppID      *cruder.Cond
-	SettleType *cruder.Cond
-	StartAt    *cruder.Cond
-	EndAt      *cruder.Cond
-	EntIDs     *cruder.Cond
+	EntID           *cruder.Cond
+	AppID           *cruder.Cond
+	SettleType      *cruder.Cond
+	StartAt         *cruder.Cond
+	EndAt           *cruder.Cond
+	EntIDs          *cruder.Cond
+	ThresholdAmount *cruder.Cond
+	Invites         *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommissionConfigQuery, error) { //nolint
@@ -93,6 +95,8 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.EntID(id))
+		case cruder.NEQ:
+			q.Where(entappcommissionconfig.EntIDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
@@ -173,6 +177,30 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entappcommissionconfig.EntIDIn(ids...))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.ThresholdAmount != nil {
+		id, ok := conds.ThresholdAmount.Val.(decimal.Decimal)
+		if !ok {
+			return nil, fmt.Errorf("invalid thresholdamount")
+		}
+		switch conds.ThresholdAmount.Op {
+		case cruder.EQ:
+			q.Where(entappcommissionconfig.ThresholdAmount(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.Invites != nil {
+		id, ok := conds.Invites.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid invites")
+		}
+		switch conds.Invites.Op {
+		case cruder.EQ:
+			q.Where(entappcommissionconfig.Invites(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
