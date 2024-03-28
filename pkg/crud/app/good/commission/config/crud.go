@@ -80,17 +80,19 @@ func UpdateSet(u *ent.AppGoodCommissionConfigUpdateOne, req *Req) *ent.AppGoodCo
 }
 
 type Conds struct {
-	EntID      *cruder.Cond
-	AppID      *cruder.Cond
-	UserID     *cruder.Cond
-	GoodID     *cruder.Cond
-	AppGoodID  *cruder.Cond
-	SettleType *cruder.Cond
-	StartAt    *cruder.Cond
-	EndAt      *cruder.Cond
-	EntIDs     *cruder.Cond
-	GoodIDs    *cruder.Cond
-	AppGoodIDs *cruder.Cond
+	EntID           *cruder.Cond
+	AppID           *cruder.Cond
+	UserID          *cruder.Cond
+	GoodID          *cruder.Cond
+	AppGoodID       *cruder.Cond
+	SettleType      *cruder.Cond
+	StartAt         *cruder.Cond
+	EndAt           *cruder.Cond
+	EntIDs          *cruder.Cond
+	GoodIDs         *cruder.Cond
+	AppGoodIDs      *cruder.Cond
+	ThresholdAmount *cruder.Cond
+	Invites         *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppGoodCommissionConfigQuery, error) { //nolint
@@ -106,6 +108,8 @@ func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppG
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entappgoodcommissionconfig.EntID(id))
+		case cruder.NEQ:
+			q.Where(entappgoodcommissionconfig.EntIDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
@@ -234,6 +238,30 @@ func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppG
 		switch conds.GoodIDs.Op {
 		case cruder.IN:
 			q.Where(entappgoodcommissionconfig.GoodIDIn(ids...))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.ThresholdAmount != nil {
+		id, ok := conds.ThresholdAmount.Val.(decimal.Decimal)
+		if !ok {
+			return nil, fmt.Errorf("invalid thresholdamount")
+		}
+		switch conds.ThresholdAmount.Op {
+		case cruder.EQ:
+			q.Where(entappgoodcommissionconfig.ThresholdAmount(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.Invites != nil {
+		id, ok := conds.Invites.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid invites")
+		}
+		switch conds.Invites.Op {
+		case cruder.EQ:
+			q.Where(entappgoodcommissionconfig.Invites(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
