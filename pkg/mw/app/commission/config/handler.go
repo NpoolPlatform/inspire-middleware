@@ -160,9 +160,6 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 				return fmt.Errorf("invalid invites")
 			}
 		}
-		if *value < uint32(0) {
-			return fmt.Errorf("invalid invites")
-		}
 		h.Invites = value
 		return nil
 	}

@@ -73,6 +73,9 @@ func UpdateSet(u *ent.AppGoodCommissionConfigUpdateOne, req *Req) *ent.AppGoodCo
 	if req.ThresholdAmount != nil {
 		u.SetThresholdAmount(*req.ThresholdAmount)
 	}
+	if req.Invites != nil {
+		u.SetInvites(*req.Invites)
+	}
 	if req.DeletedAt != nil {
 		u = u.SetDeletedAt(*req.DeletedAt)
 	}
