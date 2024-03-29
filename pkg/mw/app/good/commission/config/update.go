@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -34,9 +35,11 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 	}
 
 	endAt := uint32(0)
+	entID := uuid.MustParse(info.EntID)
+	appID := uuid.MustParse(info.AppID)
 	h.Conds = &commissionconfigcrud.Conds{
-		EntID:           &cruder.Cond{Op: cruder.NEQ, Val: info.EntID},
-		AppID:           &cruder.Cond{Op: cruder.EQ, Val: info.AppID},
+		EntID:           &cruder.Cond{Op: cruder.NEQ, Val: entID},
+		AppID:           &cruder.Cond{Op: cruder.EQ, Val: appID},
 		ThresholdAmount: &cruder.Cond{Op: cruder.EQ, Val: *h.ThresholdAmount},
 		Invites:         &cruder.Cond{Op: cruder.EQ, Val: *h.Invites},
 		EndAt:           &cruder.Cond{Op: cruder.EQ, Val: endAt},
