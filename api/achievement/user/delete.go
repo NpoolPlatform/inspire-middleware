@@ -23,7 +23,8 @@ func (s *Server) DeleteAchievementUser(ctx context.Context, in *npool.DeleteAchi
 	}
 	handler, err := achievement1.NewHandler(
 		ctx,
-		achievement1.WithID(req.ID, true),
+		achievement1.WithID(req.ID, false),
+		achievement1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
