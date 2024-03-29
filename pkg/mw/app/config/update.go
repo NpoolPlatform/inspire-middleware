@@ -10,7 +10,16 @@ import (
 )
 
 func (h *Handler) UpdateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
-	err := db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
+	info, err := h.GetAppConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if info == nil {
+		return nil, nil
+	}
+	h.ID = &info.ID
+
+	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
 		if _, err := appconfigcrud.UpdateSet(
 			tx.AppConfig.UpdateOneID(*h.ID),
 			&appconfigcrud.Req{

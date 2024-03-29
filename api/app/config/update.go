@@ -23,7 +23,8 @@ func (s *Server) UpdateAppConfig(ctx context.Context, in *npool.UpdateAppConfigR
 	}
 	handler, err := config1.NewHandler(
 		ctx,
-		config1.WithID(req.ID, true),
+		config1.WithID(req.ID, false),
+		config1.WithEntID(req.EntID, false),
 		config1.WithStartAt(req.StartAt, false),
 	)
 	if err != nil {
