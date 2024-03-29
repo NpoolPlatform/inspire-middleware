@@ -97,6 +97,9 @@ func WithThresholdAmount(value *string, must bool) func(context.Context, *Handle
 		if err != nil {
 			return err
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("invalid thresholdamount")
+		}
 		h.ThresholdAmount = &_amount
 		return nil
 	}
@@ -156,6 +159,9 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 			if must {
 				return fmt.Errorf("invalid invites")
 			}
+		}
+		if *value < uint32(0) {
+			return fmt.Errorf("invalid invites")
 		}
 		h.Invites = value
 		return nil

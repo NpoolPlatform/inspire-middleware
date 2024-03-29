@@ -126,6 +126,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	}
 }
 
+//nolint:dupl
 func WithThresholdAmount(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
@@ -137,6 +138,9 @@ func WithThresholdAmount(value *string, must bool) func(context.Context, *Handle
 		_amount, err := decimal.NewFromString(*value)
 		if err != nil {
 			return err
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("invalid thresholdamount")
 		}
 		h.ThresholdAmount = &_amount
 		return nil
@@ -266,11 +270,15 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 				return fmt.Errorf("invalid invites")
 			}
 		}
+		if *value < uint32(0) {
+			return fmt.Errorf("invalid invites")
+		}
 		h.Invites = value
 		return nil
 	}
 }
 
+//nolint:dupl
 func WithScalePercent(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
