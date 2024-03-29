@@ -65,8 +65,8 @@ func UpdateSet(u *ent.AchievementUserUpdateOne, req *Req) *ent.AchievementUserUp
 	if req.DirectInvites != nil {
 		u = u.SetDirectInvites(*req.DirectInvites)
 	}
-	if req.DirectInvites != nil {
-		u = u.SetDirectInvites(*req.DirectInvites)
+	if req.IndirectInvites != nil {
+		u = u.SetIndirectInvites(*req.IndirectInvites)
 	}
 	if req.DirectConsumeAmount != nil {
 		u = u.SetDirectConsumeAmount(*req.DirectConsumeAmount)

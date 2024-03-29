@@ -103,7 +103,7 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	handler.AppID = h.AppID
-	handler.InviteeID = h.InviteeID
+	handler.InviteeID = h.InviterID
 
 	inviters, _, err := handler.GetSortedInviters(ctx)
 	if err != nil {
@@ -180,6 +180,7 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 		).Save(_ctx); err != nil {
 			return err
 		}
+
 		if err := handler.addInvites(ctx, tx); err != nil {
 			return err
 		}
