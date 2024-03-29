@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 
 	commissionconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/commission/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -38,6 +39,14 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 		ThresholdAmount: &cruder.Cond{Op: cruder.EQ, Val: *h.ThresholdAmount},
 		Invites:         &cruder.Cond{Op: cruder.EQ, Val: *h.Invites},
 		EndAt:           &cruder.Cond{Op: cruder.EQ, Val: endAt},
+	}
+
+	exist, err := h.ExistCommissionConfigs(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if exist {
+		return nil, fmt.Errorf("exist same config")
 	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
