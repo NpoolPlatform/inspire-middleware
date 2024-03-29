@@ -37,9 +37,13 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 	endAt := uint32(0)
 	entID := uuid.MustParse(info.EntID)
 	appID := uuid.MustParse(info.AppID)
+	goodID := uuid.MustParse(info.GoodID)
+	appgoodID := uuid.MustParse(info.AppGoodID)
 	h.Conds = &commissionconfigcrud.Conds{
 		EntID:           &cruder.Cond{Op: cruder.NEQ, Val: entID},
 		AppID:           &cruder.Cond{Op: cruder.EQ, Val: appID},
+		GoodID:          &cruder.Cond{Op: cruder.EQ, Val: goodID},
+		AppGoodID:       &cruder.Cond{Op: cruder.EQ, Val: appgoodID},
 		ThresholdAmount: &cruder.Cond{Op: cruder.EQ, Val: *h.ThresholdAmount},
 		Invites:         &cruder.Cond{Op: cruder.EQ, Val: *h.Invites},
 		EndAt:           &cruder.Cond{Op: cruder.EQ, Val: endAt},
