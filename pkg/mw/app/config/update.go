@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 
 	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -15,7 +16,7 @@ func (h *Handler) UpdateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		return nil, err
 	}
 	if info == nil {
-		return nil, nil
+		return nil, fmt.Errorf("invalid appconfig")
 	}
 	h.ID = &info.ID
 

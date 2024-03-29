@@ -19,7 +19,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 		return nil, err
 	}
 	if info == nil {
-		return nil, nil
+		return nil, fmt.Errorf("invalid appcommissionconfig")
 	}
 	h.ID = &info.ID
 	if h.ThresholdAmount == nil {

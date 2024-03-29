@@ -19,7 +19,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 		return nil, err
 	}
 	if info == nil {
-		return nil, nil
+		return nil, fmt.Errorf("invalid appgoodcommissionconfig")
 	}
 	h.ID = &info.ID
 
