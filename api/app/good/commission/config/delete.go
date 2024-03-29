@@ -23,7 +23,8 @@ func (s *Server) DeleteAppGoodCommissionConfig(ctx context.Context, in *npool.De
 	}
 	handler, err := config1.NewHandler(
 		ctx,
-		config1.WithID(req.ID, true),
+		config1.WithID(req.ID, false),
+		config1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

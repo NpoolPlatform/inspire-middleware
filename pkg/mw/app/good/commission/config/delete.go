@@ -18,6 +18,7 @@ func (h *Handler) DeleteCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 	if info == nil {
 		return nil, nil
 	}
+	h.ID = &info.ID
 
 	now := uint32(time.Now().Unix())
 	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {

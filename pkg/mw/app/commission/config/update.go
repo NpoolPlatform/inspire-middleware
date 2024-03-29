@@ -19,6 +19,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 	if info == nil {
 		return nil, nil
 	}
+	h.ID = &info.ID
 	if h.ThresholdAmount != nil && h.Invites != nil {
 		endAt := uint32(0)
 		h.Conds = &commissionconfigcrud.Conds{
