@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appcommissionconfig "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	appgoodcommissionconfig "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
-	registrationmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -127,22 +127,25 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 }
 
 func (h *calculateHandler) getInvites(ctx context.Context, userID string) (uint32, error) {
-	userIDs := []string{userID}
-	handler, err := registration1.NewHandler(
+	handler, err := achievementuser1.NewHandler(
 		ctx,
-		registration1.WithConds(&registrationmwpb.Conds{
-			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppConfig.AppID},
-			InviterIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: userIDs},
+		achievementuser1.WithConds(&achievementusermwpb.Conds{
+			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppConfig.AppID},
+			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: userID},
 		}),
 	)
 	if err != nil {
 		return 0, nil
 	}
-	_, total, err := handler.GetSubordinates(ctx)
+	achivmentUsers, _, err := handler.GetAchievementUsers(ctx)
 	if err != nil {
 		return uint32(0), err
 	}
-	return total, nil
+	if len(achivmentUsers) == 0 {
+		return uint32(0), nil
+	}
+
+	return achivmentUsers[0].DirectInvites + achivmentUsers[0].IndirectInvites, nil
 }
 
 //nolint:dupl

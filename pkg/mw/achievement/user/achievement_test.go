@@ -53,8 +53,8 @@ var ret2 = &npool.AchievementUser{
 	TotalCommission:      "3030.3",
 	SelfCommission:       "3030.3",
 	DirectConsumeAmount:  "20000",
-	DirectInvites:        "0",
-	IndirectInvites:      "0",
+	DirectInvites:        uint32(0),
+	IndirectInvites:      uint32(0),
 	InviteeConsumeAmount: "0",
 }
 
