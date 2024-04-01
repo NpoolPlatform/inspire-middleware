@@ -183,7 +183,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
 
 	if len(appconfigs) == 0 {
-		return handler.generateStatements(map[string]*commission2.Commission{}, "", commissionConfigType)
+		return handler.generateStatements(map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 	}
 	appconfig := appconfigs[0]
 
