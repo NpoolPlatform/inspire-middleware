@@ -176,11 +176,10 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		_req.SelfCommission = &commission
 	}
 
-	if err := h.createOrAddAchievementUser(ctx, tx, _req, req); err != nil {
-		return nil
-	}
-
 	if info == nil {
+		if err := h.createOrAddAchievementUser(ctx, tx, _req, req); err != nil {
+			return nil
+		}
 		if _, err = achievementcrud.CreateSet(
 			tx.Achievement.Create(),
 			_req,
