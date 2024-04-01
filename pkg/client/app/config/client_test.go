@@ -110,7 +110,7 @@ func getAppConfigOnly(t *testing.T) {
 func deleteAppConfig(t *testing.T) {
 	info, err := DeleteAppConfig(context.Background(), ret.ID)
 	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
+		assert.Equal(t, info, ret)
 	}
 
 	info, err = GetAppConfig(context.Background(), ret.EntID)
