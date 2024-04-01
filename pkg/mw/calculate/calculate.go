@@ -293,6 +293,8 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 					commission2.WithPaymentAmount(h.PaymentAmount.String()),
 					commission2.WithGoodValue(h.GoodValue.String()),
 					commission2.WithAchievementUsers(achievementUsers),
+					commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
+					commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
 				)
 				if err != nil {
 					return nil, err
@@ -335,6 +337,8 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 					commission2.WithPaymentAmount(h.PaymentAmount.String()),
 					commission2.WithGoodValue(h.GoodValue.String()),
 					commission2.WithAchievementUsers(achievementUsers),
+					commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
+					commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
 				)
 				if err != nil {
 					return nil, err
