@@ -319,6 +319,9 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		Statement.
 		UpdateOneID(info.ID).
 		SetCommission(*req.Commission).
+		SetCommissionConfigID(*req.CommissionConfigID).
+		SetCommissionConfigType(req.CommissionConfigType.String()).
+		SetAppConfigID(*req.AppConfigID).
 		Save(ctx); err != nil {
 		return "", err
 	}
