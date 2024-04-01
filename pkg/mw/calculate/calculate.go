@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	appcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/commission/config"
 	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	appgoodcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/good/commission/config"
@@ -12,6 +13,7 @@ import (
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
+	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	appgoodcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
@@ -109,6 +111,35 @@ func sortAppCommissionConfig(byValue []*appcommissionconfigmwpb.AppCommissionCon
 	})
 }
 
+func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]*achievementusermwpb.AchievementUser, error) {
+	achievementUserMap := map[string]*achievementusermwpb.AchievementUser{}
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithConds(&achievementusermwpb.Conds{
+			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
+		}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	achievmentUsers, _, err := handler.GetAchievementUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(achievmentUsers) == 0 {
+		return achievementUserMap, nil
+	}
+	for _, id := range h.inviterIDs {
+		for _, achievementUser := range achievmentUsers {
+			if achievementUser.UserID == id {
+				achievementUserMap[id] = achievementUser
+			}
+		}
+	}
+	return achievementUserMap, nil
+}
+
 //nolint
 func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, error) {
 	h1, err := appconfig1.NewHandler(
@@ -162,6 +193,11 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		return nil, fmt.Errorf("invalid commissiontype")
 	}
 
+	achievementUsers, err := handler.getAchievementUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	_comms := []*commission2.Commission{}
 	if h.HasCommission {
 		switch appconfig.CommissionType {
@@ -197,6 +233,9 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 				commission2.WithCommissions(comms),
 				commission2.WithPaymentAmount(h.PaymentAmount.String()),
 				commission2.WithGoodValue(h.GoodValue.String()),
+				commission2.WithAchievementUsers(achievementUsers),
+				commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
+				commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
 			)
 			if err != nil {
 				return nil, err
@@ -240,6 +279,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 					commission2.WithAppGoodCommissionConfigs(goodcomms),
 					commission2.WithPaymentAmount(h.PaymentAmount.String()),
 					commission2.WithGoodValue(h.GoodValue.String()),
+					commission2.WithAchievementUsers(achievementUsers),
 				)
 				if err != nil {
 					return nil, err
@@ -281,6 +321,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 					commission2.WithAppCommissionConfigs(appcomms),
 					commission2.WithPaymentAmount(h.PaymentAmount.String()),
 					commission2.WithGoodValue(h.GoodValue.String()),
+					commission2.WithAchievementUsers(achievementUsers),
 				)
 				if err != nil {
 					return nil, err

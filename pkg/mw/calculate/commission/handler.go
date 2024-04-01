@@ -4,6 +4,7 @@ import (
 	"context"
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	appgoodcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
@@ -21,8 +22,11 @@ type Handler struct {
 	Commissions              []*commissionmwpb.Commission
 	AppCommissionConfigs     []*appcommissionconfigmwpb.AppCommissionConfig
 	AppGoodCommissionConfigs []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig
+	AchievementUsers         map[string]*achievementusermwpb.AchievementUser
 	PaymentAmount            decimal.Decimal
+	PaymentCoinUSDCurrency   decimal.Decimal
 	GoodValue                decimal.Decimal
+	GoodValueUSD             decimal.Decimal
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -84,6 +88,13 @@ func WithAppGoodCommissionConfigs(commissions []*appgoodcommissionconfigmwpb.App
 	}
 }
 
+func WithAchievementUsers(values map[string]*achievementusermwpb.AchievementUser) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.AchievementUsers = values
+		return nil
+	}
+}
+
 func WithPaymentAmount(value string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		amount, err := decimal.NewFromString(value)
@@ -95,6 +106,17 @@ func WithPaymentAmount(value string) func(context.Context, *Handler) error {
 	}
 }
 
+func WithPaymentCoinUSDCurrency(value string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		amount, err := decimal.NewFromString(value)
+		if err != nil {
+			return err
+		}
+		h.PaymentCoinUSDCurrency = amount
+		return nil
+	}
+}
+
 func WithGoodValue(value string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		amount, err := decimal.NewFromString(value)
@@ -102,6 +124,17 @@ func WithGoodValue(value string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.GoodValue = amount
+		return nil
+	}
+}
+
+func WithGoodValueUSD(value string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		amount, err := decimal.NewFromString(value)
+		if err != nil {
+			return err
+		}
+		h.GoodValueUSD = amount
 		return nil
 	}
 }

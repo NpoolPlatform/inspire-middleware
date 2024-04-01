@@ -4,11 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appcommissionconfig "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	appgoodcommissionconfig "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
@@ -126,36 +122,36 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	return _comms, nil
 }
 
-func (h *calculateHandler) getInvites(ctx context.Context, userID string) (uint32, error) {
-	handler, err := achievementuser1.NewHandler(
-		ctx,
-		achievementuser1.WithConds(&achievementusermwpb.Conds{
-			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppConfig.AppID},
-			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: userID},
-		}),
-	)
-	if err != nil {
-		return 0, nil
-	}
-	achivmentUsers, _, err := handler.GetAchievementUsers(ctx)
-	if err != nil {
-		return uint32(0), err
-	}
-	if len(achivmentUsers) == 0 {
-		return uint32(0), nil
+func (h *calculateHandler) getInvites(userID string) uint32 {
+	achivmentUser, ok := h.AchievementUsers[userID]
+	if !ok {
+		return uint32(0)
 	}
 
-	return achivmentUsers[0].DirectInvites + achivmentUsers[0].IndirectInvites, nil
+	return achivmentUser.DirectInvites + achivmentUser.IndirectInvites
 }
 
-//nolint:dupl
-func (h *calculateHandler) getAppGoodCommLevelConf(ctx context.Context, userID string) (*appgoodcommissionconfig.AppGoodCommissionConfig, bool, error) {
-	invites, err := h.getInvites(ctx, userID)
-	if err != nil {
-		return nil, false, err
-	}
+func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommissionconfig.AppGoodCommissionConfig, bool, error) {
+	invites := h.getInvites(userID)
 	_comm := &appgoodcommissionconfig.AppGoodCommissionConfig{}
 	useful := false
+	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
+		amount = h.GoodValueUSD
+	}
+	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	achivmentUser, ok := h.AchievementUsers[userID]
+	if ok {
+		directConsumeAmount, err := decimal.NewFromString(achivmentUser.DirectConsumeAmount)
+		if err != nil {
+			return nil, false, err
+		}
+		inviteeConsumeAmount, err := decimal.NewFromString(achivmentUser.InviteeConsumeAmount)
+		if err != nil {
+			return nil, false, err
+		}
+		consumeAmount = directConsumeAmount.Add(inviteeConsumeAmount).Add(amount)
+	}
 	percent := decimal.NewFromInt(0)
 	for i, comm := range h.AppGoodCommissionConfigs {
 		if i == 0 {
@@ -168,7 +164,7 @@ func (h *calculateHandler) getAppGoodCommLevelConf(ctx context.Context, userID s
 		if err != nil {
 			return nil, false, err
 		}
-		if h.PaymentAmount.Cmp(thresholdAmount) < 0 {
+		if consumeAmount.Cmp(thresholdAmount) < 0 {
 			break
 		}
 		_percent, err := decimal.NewFromString(comm.GetAmountOrPercent())
@@ -187,13 +183,8 @@ func (h *calculateHandler) getAppGoodCommLevelConf(ctx context.Context, userID s
 	return _comm, useful, nil
 }
 
-//nolint:dupl
-func (h *calculateHandler) getAppCommLevelConf(ctx context.Context, userID string) (*appcommissionconfig.AppCommissionConfig, bool, error) {
-	invites, err := h.getInvites(ctx, userID)
-	if err != nil {
-		return nil, false, err
-	}
-
+func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissionconfig.AppCommissionConfig, bool, error) {
+	invites := h.getInvites(userID)
 	_comm := &appcommissionconfig.AppCommissionConfig{}
 	useful := false
 	percent := decimal.NewFromInt(0)
@@ -243,7 +234,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 
 		var err error
 
-		comm1, comm1Useful, err := handler.getAppCommLevelConf(ctx, inviter.InviteeID)
+		comm1, comm1Useful, err := handler.getAppCommLevelConf(inviter.InviteeID)
 		if err != nil {
 			return nil, err
 		}
@@ -254,7 +245,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 			}
 		}
 
-		comm2, comm2Useful, err := handler.getAppCommLevelConf(ctx, inviter.InviterID)
+		comm2, comm2Useful, err := handler.getAppCommLevelConf(inviter.InviterID)
 		if err != nil {
 			return nil, err
 		}
@@ -303,7 +294,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		})
 	}
 
-	commLast, commLastUseful, err := handler.getAppCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
+	commLast, commLastUseful, err := handler.getAppCommLevelConf(h.Inviters[len(h.Inviters)-1].InviteeID)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +354,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 
 		var err error
 
-		comm1, comm1Useful, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviteeID)
+		comm1, comm1Useful, err := handler.getAppGoodCommLevelConf(inviter.InviteeID)
 		if err != nil {
 			return nil, err
 		}
@@ -374,7 +365,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 			}
 		}
 
-		comm2, comm2Useful, err := handler.getAppGoodCommLevelConf(ctx, inviter.InviterID)
+		comm2, comm2Useful, err := handler.getAppGoodCommLevelConf(inviter.InviterID)
 		if err != nil {
 			return nil, err
 		}
@@ -422,7 +413,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		})
 	}
 
-	commLast, commLastUseful, err := handler.getAppGoodCommLevelConf(ctx, h.Inviters[len(h.Inviters)-1].InviteeID)
+	commLast, commLastUseful, err := handler.getAppGoodCommLevelConf(h.Inviters[len(h.Inviters)-1].InviteeID)
 	if err != nil {
 		return nil, err
 	}
