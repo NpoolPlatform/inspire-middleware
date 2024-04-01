@@ -72,6 +72,9 @@ func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 	}
 	h.inviters = inviters
 	h.inviterIDs = []string{h.UserID.String()}
+	if len(inviters) != 0 {
+		h.inviterIDs = append(h.inviterIDs, inviters[0].InviterID)
+	}
 	return nil
 }
 
@@ -119,6 +122,8 @@ func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]
 			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
 		}),
+		achievementuser1.WithOffset(0),
+		achievementuser1.WithLimit(int32(len(h.inviterIDs))),
 	)
 	if err != nil {
 		return nil, err
