@@ -159,8 +159,9 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	h1, err := appconfig1.NewHandler(
 		ctx,
 		appconfig1.WithConds(&appconfigmwpb.Conds{
-			AppID: &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-			EndAt: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+			EndAt:   &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+			StartAt: &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 		}),
 		appconfig1.WithOffset(0),
 		appconfig1.WithLimit(1),
