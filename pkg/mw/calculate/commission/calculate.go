@@ -131,6 +131,7 @@ func (h *calculateHandler) getInvites(userID string) uint32 {
 	return achivmentUser.DirectInvites + achivmentUser.IndirectInvites
 }
 
+//nolint:dupl
 func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommissionconfig.AppGoodCommissionConfig, bool, error) {
 	invites := h.getInvites(userID)
 	_comm := &appgoodcommissionconfig.AppGoodCommissionConfig{}
@@ -183,11 +184,30 @@ func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommi
 	return _comm, useful, nil
 }
 
+//nolint:dupl
 func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissionconfig.AppCommissionConfig, bool, error) {
 	invites := h.getInvites(userID)
 	_comm := &appcommissionconfig.AppCommissionConfig{}
 	useful := false
+	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
+		amount = h.GoodValueUSD
+	}
+	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	achivmentUser, ok := h.AchievementUsers[userID]
+	if ok {
+		directConsumeAmount, err := decimal.NewFromString(achivmentUser.DirectConsumeAmount)
+		if err != nil {
+			return nil, false, err
+		}
+		inviteeConsumeAmount, err := decimal.NewFromString(achivmentUser.InviteeConsumeAmount)
+		if err != nil {
+			return nil, false, err
+		}
+		consumeAmount = directConsumeAmount.Add(inviteeConsumeAmount).Add(amount)
+	}
 	percent := decimal.NewFromInt(0)
+
 	for i, comm := range h.AppCommissionConfigs {
 		if i == 0 {
 			_comm = comm
@@ -199,7 +219,7 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 		if err != nil {
 			return nil, false, err
 		}
-		if h.PaymentAmount.Cmp(thresholdAmount) < 0 {
+		if consumeAmount.Cmp(thresholdAmount) < 0 {
 			continue
 		}
 		_percent, err := decimal.NewFromString(comm.GetAmountOrPercent())
