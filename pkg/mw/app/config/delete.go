@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
@@ -16,8 +17,9 @@ func (h *Handler) DeleteAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		return nil, err
 	}
 	if info == nil {
-		return nil, nil
+		return nil, fmt.Errorf("invalid appconfig")
 	}
+	h.ID = &info.ID
 
 	now := uint32(time.Now().Unix())
 	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {

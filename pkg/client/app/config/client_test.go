@@ -107,6 +107,17 @@ func getAppConfigOnly(t *testing.T) {
 	}
 }
 
+func deleteAppConfig(t *testing.T) {
+	info, err := DeleteAppConfig(context.Background(), ret.ID)
+	if assert.Nil(t, err) {
+		assert.Equal(t, info, &ret)
+	}
+
+	info, err = GetAppConfig(context.Background(), ret.EntID)
+	assert.Nil(t, err)
+	assert.Nil(t, info)
+}
+
 func TestAppConfig(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
@@ -125,4 +136,5 @@ func TestAppConfig(t *testing.T) {
 	t.Run("update", update)
 	t.Run("getAppConfigOnly", getAppConfigOnly)
 	t.Run("getAppConfigs", getAppConfigs)
+	t.Run("deleteAppConfig", deleteAppConfig)
 }
