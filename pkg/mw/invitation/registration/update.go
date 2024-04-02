@@ -10,8 +10,10 @@ import (
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"github.com/google/uuid"
@@ -19,7 +21,10 @@ import (
 
 type updateHandler struct {
 	*Handler
-	registration *npool.Registration
+	registration   *npool.Registration
+	subInviterIDs  []string
+	addInviterIDs  []string
+	inviteeInvites uint32
 }
 
 func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, req *registrationcrud.Req) error {
@@ -49,12 +54,19 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 	invites := uint32(1)
 	directInvites := info.DirectInvites
 	indirectInvites := info.IndirectInvites
-	if h.InviterID == req.InviterID && directInvites != uint32(0) {
-		directInvites -= invites
-		_req.DirectInvites = &directInvites
+	oldInviterID := uuid.MustParse(h.registration.InviterID)
+	if oldInviterID == *req.InviterID {
+		if directInvites != uint32(0) {
+			directInvites -= invites
+			_req.DirectInvites = &directInvites
+		}
+		if indirectInvites != uint32(0) {
+			indirectInvites -= h.inviteeInvites
+			_req.IndirectInvites = &indirectInvites
+		}
 	}
-	if h.InviterID != req.InviterID && indirectInvites != uint32(0) {
-		indirectInvites -= invites
+	if oldInviterID != *req.InviterID && indirectInvites != uint32(0) {
+		indirectInvites = indirectInvites - invites - h.inviteeInvites
 		_req.IndirectInvites = &indirectInvites
 	}
 
@@ -68,7 +80,29 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 	return nil
 }
 
-//nolint:dupl
+func (h *updateHandler) getTotalInvites(ctx context.Context) error {
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithConds(&achievementusermwpb.Conds{
+			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.registration.AppID},
+			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: h.registration.InviteeID},
+		}),
+		achievementuser1.WithLimit(int32(1)),
+	)
+	if err != nil {
+		return nil
+	}
+	achivmentUsers, _, err := handler.GetAchievementUsers(ctx)
+	if err != nil {
+		return err
+	}
+	if len(achivmentUsers) == 0 {
+		return nil
+	}
+	h.inviteeInvites = achivmentUsers[0].DirectInvites + achivmentUsers[0].IndirectInvites
+	return nil
+}
+
 func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req *registrationcrud.Req) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v",
@@ -125,12 +159,15 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 
 	directInvites := info.DirectInvites
 	indirectInvites := info.IndirectInvites
-	if h.InviterID == req.InviterID {
-		invites += directInvites
-		_req.DirectInvites = &invites
+
+	if h.InviterID.String() == req.InviterID.String() {
+		directInvites += invites
+		_req.DirectInvites = &directInvites
+		indirectInvites += h.inviteeInvites
+		_req.IndirectInvites = &indirectInvites
 	} else {
-		invites += indirectInvites
-		_req.IndirectInvites = &invites
+		indirectInvites = indirectInvites + invites + h.inviteeInvites
+		_req.IndirectInvites = &indirectInvites
 	}
 
 	if _, err := achievementusercrud.UpdateSet(
@@ -143,27 +180,12 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 	return nil
 }
 
-//nolint:dupl
 func (h *updateHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
-	handler, err := NewHandler(ctx)
-	if err != nil {
-		return err
-	}
-
-	inviteeID := uuid.MustParse(h.registration.InviteeID)
-	handler.AppID = h.AppID
-	handler.InviteeID = &inviteeID
-
-	inviters, _, err := handler.GetSortedInviters(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, inviter := range inviters {
-		if inviter.InviterID == uuid.Nil.String() {
+	for _, inviter := range h.addInviterIDs {
+		if inviter == uuid.Nil.String() {
 			continue
 		}
-		inviterID := uuid.MustParse(inviter.InviterID)
+		inviterID := uuid.MustParse(inviter)
 		req := &registrationcrud.Req{
 			AppID:     h.AppID,
 			InviterID: &inviterID,
@@ -176,27 +198,12 @@ func (h *updateHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-//nolint:dupl
 func (h *updateHandler) subInvites(ctx context.Context, tx *ent.Tx) error {
-	handler, err := NewHandler(ctx)
-	if err != nil {
-		return err
-	}
-
-	inviteeID := uuid.MustParse(h.registration.InviteeID)
-	handler.AppID = h.AppID
-	handler.InviteeID = &inviteeID
-
-	inviters, _, err := handler.GetSortedInviters(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, inviter := range inviters {
-		if inviter.InviterID == uuid.Nil.String() {
+	for _, inviter := range h.subInviterIDs {
+		if inviter == uuid.Nil.String() {
 			continue
 		}
-		inviterID := uuid.MustParse(inviter.InviterID)
+		inviterID := uuid.MustParse(inviter)
 		req := &registrationcrud.Req{
 			AppID:     h.AppID,
 			InviterID: &inviterID,
@@ -207,6 +214,22 @@ func (h *updateHandler) subInvites(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	return nil
+}
+
+func (h *updateHandler) getInviters(ctx context.Context, inviterID *uuid.UUID) ([]string, error) {
+	handler, err := NewHandler(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	handler.AppID = h.AppID
+	handler.InviteeID = inviterID
+
+	_, inviterIDs, err := handler.GetSortedInviters(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return inviterIDs, nil
 }
 
 func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, error) {
@@ -226,11 +249,36 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 	}
 
 	handler := &updateHandler{
-		Handler:      h,
-		registration: info,
+		Handler:        h,
+		registration:   info,
+		subInviterIDs:  []string{},
+		addInviterIDs:  []string{},
+		inviteeInvites: uint32(0),
 	}
 
+	if err := handler.getTotalInvites(ctx); err != nil {
+		return nil, err
+	}
+
+	inviteeID := uuid.MustParse(handler.registration.InviterID)
+	subInviters, err := handler.getInviters(ctx, &inviteeID)
+	if err != nil {
+		return nil, err
+	}
+
+	addInviters, err := handler.getInviters(ctx, h.InviterID)
+	if err != nil {
+		return nil, err
+	}
+
+	handler.subInviterIDs = subInviters
+	handler.addInviterIDs = addInviters
+
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.subInvites(ctx, tx); err != nil {
+			return nil
+		}
+
 		if _, err := registrationcrud.UpdateSet(
 			tx.Registration.UpdateOneID(*h.ID),
 			&registrationcrud.Req{
@@ -239,13 +287,10 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 		).Save(_ctx); err != nil {
 			return err
 		}
-
-		if err := handler.subInvites(ctx, tx); err != nil {
-			return nil
-		}
 		if err := handler.addInvites(ctx, tx); err != nil {
 			return nil
 		}
+
 		return nil
 	})
 	if err != nil {

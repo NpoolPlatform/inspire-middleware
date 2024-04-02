@@ -21,7 +21,6 @@ type createHandler struct {
 	*Handler
 }
 
-//nolint:dupl
 func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req *registrationcrud.Req) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v",
