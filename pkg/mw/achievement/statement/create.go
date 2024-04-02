@@ -384,7 +384,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", nil
 	}
 	if info.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig {
-		return "", nil
+		return info.EntID, nil
 	}
 
 	amount, err := decimal.NewFromString(info.Amount)
