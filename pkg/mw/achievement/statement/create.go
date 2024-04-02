@@ -119,6 +119,90 @@ func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.
 	return nil
 }
 
+func (h *createHandler) createOrReconcileAchievementUser(ctx context.Context, tx *ent.Tx, areq *achievementcrud.Req, sreq *statementcrud.Req) error {
+	key := fmt.Sprintf(
+		"%v:%v:%v",
+		basetypes.Prefix_PrefixCreateInspireAchievement,
+		*areq.AppID,
+		*areq.UserID,
+	)
+	if err := redis2.TryLock(key, 0); err != nil {
+		return err
+	}
+	defer func() {
+		_ = redis2.Unlock(key)
+	}()
+
+	stm, err := achievementusercrud.SetQueryConds(
+		tx.AchievementUser.Query(),
+		&achievementusercrud.Conds{
+			AppID:  &cruder.Cond{Op: cruder.EQ, Val: *areq.AppID},
+			UserID: &cruder.Cond{Op: cruder.EQ, Val: *areq.UserID},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	info, err := stm.Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return err
+		}
+	}
+
+	_req := &achievementusercrud.Req{
+		AppID:           areq.AppID,
+		UserID:          areq.UserID,
+		TotalCommission: areq.TotalCommission,
+		SelfCommission:  areq.SelfCommission,
+	}
+
+	if sreq.SelfOrder != nil && *sreq.SelfOrder {
+		_req.DirectConsumeAmount = areq.TotalAmount
+	} else {
+		_req.InviteeConsumeAmount = areq.TotalAmount
+	}
+
+	if info == nil {
+		if _, err = achievementusercrud.CreateSet(
+			tx.AchievementUser.Create(),
+			_req,
+		).Save(ctx); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	totalCommission := info.TotalCommission
+	if _req.TotalCommission != nil {
+		totalCommission = _req.TotalCommission.Add(totalCommission)
+	}
+	_req.TotalCommission = &totalCommission
+
+	selfCommission := info.SelfCommission
+	if _req.SelfCommission != nil {
+		selfCommission = _req.SelfCommission.Add(selfCommission)
+	}
+	_req.SelfCommission = &selfCommission
+
+	_req = &achievementusercrud.Req{
+		AppID:           areq.AppID,
+		UserID:          areq.UserID,
+		TotalCommission: &totalCommission,
+		SelfCommission:  &selfCommission,
+	}
+
+	if _, err := achievementusercrud.UpdateSet(
+		tx.AchievementUser.UpdateOneID(info.ID),
+		_req,
+	).Save(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 //nolint:funlen
 func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, req *statementcrud.Req, commissionOnly bool) error {
 	key := fmt.Sprintf(
@@ -223,6 +307,10 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 
 		selfCommission := _req.SelfCommission.Add(info.SelfCommission)
 		_req.SelfCommission = &selfCommission
+	}
+
+	if err := h.createOrReconcileAchievementUser(ctx, tx, _req, req); err != nil {
+		return nil
 	}
 
 	if _, err := achievementcrud.UpdateSet(
