@@ -12,6 +12,7 @@ import (
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 
@@ -292,6 +293,9 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		}
 	}
 	if info == nil {
+		return "", nil
+	}
+	if info.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig {
 		return "", nil
 	}
 
