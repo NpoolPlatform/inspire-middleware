@@ -29,8 +29,8 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		commission1.WithSettleAmountType(req.SettleAmountType, true),
 		commission1.WithSettleInterval(req.SettleInterval, true),
 		commission1.WithCommissionType(req.CommissionType, true),
-		commission1.WithSettleBenefit(req.SettleBenefit, true),
-		commission1.WithStartAt(req.StartAt, true),
+		commission1.WithSettleBenefit(req.SettleBenefit, false),
+		commission1.WithStartAt(req.StartAt, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
