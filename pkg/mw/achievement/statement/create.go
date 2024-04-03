@@ -34,12 +34,12 @@ func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *st
 	return nil
 }
 
-func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.Tx, areq *achievementcrud.Req, sreq *statementcrud.Req) error {
+func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.Tx, sreq *statementcrud.Req, commissionOnly bool) error {
 	key := fmt.Sprintf(
 		"%v:%v:%v",
 		basetypes.Prefix_PrefixCreateInspireAchievement,
-		*areq.AppID,
-		*areq.UserID,
+		*sreq.AppID,
+		*sreq.UserID,
 	)
 	if err := redis2.TryLock(key, 0); err != nil {
 		return err
@@ -51,8 +51,8 @@ func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.
 	stm, err := achievementusercrud.SetQueryConds(
 		tx.AchievementUser.Query(),
 		&achievementusercrud.Conds{
-			AppID:  &cruder.Cond{Op: cruder.EQ, Val: *areq.AppID},
-			UserID: &cruder.Cond{Op: cruder.EQ, Val: *areq.UserID},
+			AppID:  &cruder.Cond{Op: cruder.EQ, Val: *sreq.AppID},
+			UserID: &cruder.Cond{Op: cruder.EQ, Val: *sreq.UserID},
 		},
 	)
 	if err != nil {
@@ -66,17 +66,19 @@ func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.
 		}
 	}
 
+	commission := sreq.Commission.Mul(*sreq.PaymentCoinUSDCurrency)
+
 	_req := &achievementusercrud.Req{
-		AppID:           areq.AppID,
-		UserID:          areq.UserID,
-		TotalCommission: areq.TotalCommission,
-		SelfCommission:  areq.SelfCommission,
+		AppID:           sreq.AppID,
+		UserID:          sreq.UserID,
+		TotalCommission: &commission,
 	}
 
 	if sreq.SelfOrder != nil && *sreq.SelfOrder {
-		_req.DirectConsumeAmount = areq.TotalAmount
+		_req.SelfCommission = &commission
+		_req.DirectConsumeAmount = sreq.USDAmount
 	} else {
-		_req.InviteeConsumeAmount = areq.TotalAmount
+		_req.InviteeConsumeAmount = sreq.USDAmount
 	}
 
 	if info == nil {
@@ -101,96 +103,14 @@ func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.
 	}
 	_req.SelfCommission = &selfCommission
 
-	if sreq.SelfOrder != nil && *sreq.SelfOrder {
-		directConsumeAmount := info.DirectConsumeAmount.Add(*sreq.USDAmount)
-		_req.DirectConsumeAmount = &directConsumeAmount
-	} else {
-		inviteeConsumeAmount := info.InviteeConsumeAmount.Add(*sreq.USDAmount)
-		_req.InviteeConsumeAmount = &inviteeConsumeAmount
-	}
-
-	if _, err := achievementusercrud.UpdateSet(
-		tx.AchievementUser.UpdateOneID(info.ID),
-		_req,
-	).Save(ctx); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (h *createHandler) createOrReconcileAchievementUser(ctx context.Context, tx *ent.Tx, areq *achievementcrud.Req, sreq *statementcrud.Req) error {
-	key := fmt.Sprintf(
-		"%v:%v:%v",
-		basetypes.Prefix_PrefixCreateInspireAchievement,
-		*areq.AppID,
-		*areq.UserID,
-	)
-	if err := redis2.TryLock(key, 0); err != nil {
-		return err
-	}
-	defer func() {
-		_ = redis2.Unlock(key)
-	}()
-
-	stm, err := achievementusercrud.SetQueryConds(
-		tx.AchievementUser.Query(),
-		&achievementusercrud.Conds{
-			AppID:  &cruder.Cond{Op: cruder.EQ, Val: *areq.AppID},
-			UserID: &cruder.Cond{Op: cruder.EQ, Val: *areq.UserID},
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	info, err := stm.Only(ctx)
-	if err != nil {
-		if !ent.IsNotFound(err) {
-			return err
+	if !commissionOnly {
+		if sreq.SelfOrder != nil && *sreq.SelfOrder {
+			directConsumeAmount := info.DirectConsumeAmount.Add(*sreq.USDAmount)
+			_req.DirectConsumeAmount = &directConsumeAmount
+		} else {
+			inviteeConsumeAmount := info.InviteeConsumeAmount.Add(*sreq.USDAmount)
+			_req.InviteeConsumeAmount = &inviteeConsumeAmount
 		}
-	}
-
-	_req := &achievementusercrud.Req{
-		AppID:           areq.AppID,
-		UserID:          areq.UserID,
-		TotalCommission: areq.TotalCommission,
-		SelfCommission:  areq.SelfCommission,
-	}
-
-	if sreq.SelfOrder != nil && *sreq.SelfOrder {
-		_req.DirectConsumeAmount = areq.TotalAmount
-	} else {
-		_req.InviteeConsumeAmount = areq.TotalAmount
-	}
-
-	if info == nil {
-		if _, err = achievementusercrud.CreateSet(
-			tx.AchievementUser.Create(),
-			_req,
-		).Save(ctx); err != nil {
-			return err
-		}
-		return nil
-	}
-
-	totalCommission := info.TotalCommission
-	if _req.TotalCommission != nil {
-		totalCommission = _req.TotalCommission.Add(totalCommission)
-	}
-	_req.TotalCommission = &totalCommission
-
-	selfCommission := info.SelfCommission
-	if _req.SelfCommission != nil {
-		selfCommission = _req.SelfCommission.Add(selfCommission)
-	}
-	_req.SelfCommission = &selfCommission
-
-	_req = &achievementusercrud.Req{
-		AppID:           areq.AppID,
-		UserID:          areq.UserID,
-		TotalCommission: &totalCommission,
-		SelfCommission:  &selfCommission,
 	}
 
 	if _, err := achievementusercrud.UpdateSet(
@@ -262,15 +182,13 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 	}
 
 	if info == nil {
-		if err := h.createOrAddAchievementUser(ctx, tx, _req, req); err != nil {
-			return nil
-		}
 		if _, err = achievementcrud.CreateSet(
 			tx.Achievement.Create(),
 			_req,
 		).Save(ctx); err != nil {
 			return err
 		}
+
 		return nil
 	}
 
@@ -309,16 +227,13 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		_req.SelfCommission = &selfCommission
 	}
 
-	if err := h.createOrReconcileAchievementUser(ctx, tx, _req, req); err != nil {
-		return nil
-	}
-
 	if _, err := achievementcrud.UpdateSet(
 		tx.Achievement.UpdateOneID(info.ID),
 		_req,
 	).Save(ctx); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -421,6 +336,10 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 
+	if err := h.createOrAddAchievementUser(ctx, tx, req, true); err != nil {
+		return "", err
+	}
+
 	return info.EntID, nil
 }
 
@@ -470,6 +389,9 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 					return err
 				}
 				if err := handler.createOrAddAchievement(_ctx, tx, req, false); err != nil {
+					return err
+				}
+				if err := handler.createOrAddAchievementUser(ctx, tx, req, false); err != nil {
 					return err
 				}
 				ids = append(ids, id)
