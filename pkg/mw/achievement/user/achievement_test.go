@@ -9,6 +9,7 @@ import (
 
 	statement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/statement"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
@@ -29,22 +30,26 @@ func init() {
 }
 
 var ret = &statementmwpb.Statement{
-	EntID:                  uuid.NewString(),
-	AppID:                  uuid.NewString(),
-	UserID:                 uuid.NewString(),
-	DirectContributorID:    uuid.NewString(),
-	GoodID:                 uuid.NewString(),
-	AppGoodID:              uuid.NewString(),
-	OrderID:                uuid.NewString(),
-	SelfOrder:              true,
-	PaymentID:              uuid.NewString(),
-	CoinTypeID:             uuid.NewString(),
-	PaymentCoinTypeID:      uuid.NewString(),
-	PaymentCoinUSDCurrency: "10.101",
-	Units:                  "10",
-	Amount:                 "10000",
-	USDAmount:              "20000",
-	Commission:             "300",
+	EntID:                   uuid.NewString(),
+	AppID:                   uuid.NewString(),
+	UserID:                  uuid.NewString(),
+	DirectContributorID:     uuid.NewString(),
+	GoodID:                  uuid.NewString(),
+	AppGoodID:               uuid.NewString(),
+	OrderID:                 uuid.NewString(),
+	SelfOrder:               true,
+	PaymentID:               uuid.NewString(),
+	CoinTypeID:              uuid.NewString(),
+	PaymentCoinTypeID:       uuid.NewString(),
+	PaymentCoinUSDCurrency:  "10.101",
+	Units:                   "10",
+	Amount:                  "10000",
+	USDAmount:               "20000",
+	Commission:              "300",
+	AppConfigID:             uuid.NewString(),
+	CommissionConfigID:      uuid.NewString(),
+	CommissionConfigType:    inspiretypes.CommissionConfigType_LegacyCommissionConfig,
+	CommissionConfigTypeStr: inspiretypes.CommissionConfigType_LegacyCommissionConfig.String(),
 }
 
 var ret2 = &npool.AchievementUser{
@@ -77,6 +82,9 @@ func setup(t *testing.T) func(*testing.T) {
 		statement1.WithAmount(&ret.Amount, true),
 		statement1.WithUSDAmount(&ret.USDAmount, true),
 		statement1.WithCommission(&ret.Commission, true),
+		statement1.WithAppConfigID(&ret.AppConfigID, true),
+		statement1.WithCommissionConfigID(&ret.CommissionConfigID, true),
+		statement1.WithCommissionConfigType(&ret.CommissionConfigType, true),
 	)
 	assert.Nil(t, err)
 

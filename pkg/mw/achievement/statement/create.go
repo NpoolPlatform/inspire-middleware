@@ -274,6 +274,9 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req, false); err != nil {
 			return err
 		}
+		if err := handler.createOrAddAchievementUser(ctx, tx, &handler.Req, false); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
