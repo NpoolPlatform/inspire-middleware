@@ -195,7 +195,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			return nil, err
 		}
 		if len(handler.inviters) == 0 {
-			return handler.generateStatements(map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
+			return handler.generateStatements(map[string]*commission2.Commission{}, appconfig.EntID, commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
 	default:
