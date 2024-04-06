@@ -71,18 +71,10 @@ func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 		return err
 	}
 
-	h.inviters = inviters
-
-	h.inviterIDs = []string{h.UserID.String()}
-
 	if len(inviters) == 0 {
-		h.inviters = []*registrationmwpb.Registration{{
-			InviterID: uuid.Nil.String(),
-			InviteeID: h.UserID.String(),
-		}}
 		return nil
 	}
-
+	h.inviters = inviters
 	h.inviterIDs = append(h.inviterIDs, inviters[0].InviterID)
 	return nil
 }
@@ -201,6 +193,9 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 		err := handler.getDirectInviters(ctx)
 		if err != nil {
 			return nil, err
+		}
+		if len(handler.inviters) == 0 {
+			return handler.generateStatements(map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
 	default:
