@@ -246,6 +246,9 @@ func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handle
 		if err != nil {
 			return err
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return fmt.Errorf("invalid amountorpercent")
+		}
 		h.AmountOrPercent = &_amount
 		return nil
 	}
