@@ -234,6 +234,7 @@ func WithSettleType(settleType *types.SettleType, must bool) func(context.Contex
 	}
 }
 
+//nolint:dupl
 func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
