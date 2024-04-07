@@ -76,8 +76,10 @@ func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.
 
 	if sreq.SelfOrder != nil && *sreq.SelfOrder {
 		_req.SelfCommission = &commission
-		_req.DirectConsumeAmount = sreq.USDAmount
-	} else {
+		if !commissionOnly {
+			_req.DirectConsumeAmount = sreq.USDAmount
+		}
+	} else if !commissionOnly {
 		_req.InviteeConsumeAmount = sreq.USDAmount
 	}
 
@@ -397,7 +399,7 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err := handler.createOrAddAchievementUser(ctx, tx, req, false); err != nil {
 					return err
 				}
-				ids = append(ids, id)
+				ids = append(ids, *req.EntID)
 				return nil
 			}
 			if err := _f(); err != nil {
