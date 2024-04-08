@@ -153,6 +153,7 @@ func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommi
 		}
 		consumeAmount = directConsumeAmount.Add(inviteeConsumeAmount).Add(amount)
 	}
+
 	percent := decimal.NewFromInt(0)
 	for i, comm := range h.AppGoodCommissionConfigs {
 		if i == 0 {
@@ -206,8 +207,8 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 		}
 		consumeAmount = directConsumeAmount.Add(inviteeConsumeAmount).Add(amount)
 	}
-	percent := decimal.NewFromInt(0)
 
+	percent := decimal.NewFromInt(0)
 	for i, comm := range h.AppCommissionConfigs {
 		if i == 0 {
 			_comm = comm
@@ -284,7 +285,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		if percent2.Cmp(percent1) == 0 {
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
-				CommissionConfigID:      comm1.EntID,
+				CommissionConfigID:      comm2.EntID,
 				CommissionConfigType:    types.CommissionConfigType_AppCommissionConfig,
 				AppID:                   inviter.AppID,
 				UserID:                  inviter.InviterID,
@@ -305,7 +306,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 
 		_comms = append(_comms, &Commission{
 			AppConfigID:             h.AppConfig.EntID,
-			CommissionConfigID:      comm1.EntID,
+			CommissionConfigID:      comm2.EntID,
 			CommissionConfigType:    types.CommissionConfigType_AppCommissionConfig,
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
@@ -403,7 +404,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		if percent2.Cmp(percent1) == 0 {
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
-				CommissionConfigID:      comm1.EntID,
+				CommissionConfigID:      comm2.EntID,
 				CommissionConfigType:    types.CommissionConfigType_AppGoodCommissionConfig,
 				AppID:                   inviter.AppID,
 				UserID:                  inviter.InviterID,
@@ -424,7 +425,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 
 		_comms = append(_comms, &Commission{
 			AppConfigID:             h.AppConfig.EntID,
-			CommissionConfigID:      comm1.EntID,
+			CommissionConfigID:      comm2.EntID,
 			CommissionConfigType:    types.CommissionConfigType_AppGoodCommissionConfig,
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
@@ -458,16 +459,19 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		amount = decimal.NewFromInt(0)
 	}
 
+	amountLast := "0"
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {
-		_comms = append(_comms, &Commission{
-			AppConfigID:          h.AppConfig.EntID,
-			CommissionConfigID:   commLast.EntID,
-			CommissionConfigType: types.CommissionConfigType_AppGoodCommissionConfig,
-			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
-			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
-			Amount:               amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
-		})
+		amountLast = amount.Mul(percent).Div(decimal.NewFromInt(100)).String() //nolint
 	}
+
+	_comms = append(_comms, &Commission{
+		AppConfigID:          h.AppConfig.EntID,
+		CommissionConfigID:   commLast.EntID,
+		CommissionConfigType: types.CommissionConfigType_AppGoodCommissionConfig,
+		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
+		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		Amount:               amountLast,
+	})
 
 	return _comms, nil
 }
