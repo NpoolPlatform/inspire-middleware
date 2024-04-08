@@ -205,6 +205,20 @@ func (agccc *AppGoodCommissionConfigCreate) SetNillableSettleType(s *string) *Ap
 	return agccc
 }
 
+// SetDisabled sets the "disabled" field.
+func (agccc *AppGoodCommissionConfigCreate) SetDisabled(b bool) *AppGoodCommissionConfigCreate {
+	agccc.mutation.SetDisabled(b)
+	return agccc
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (agccc *AppGoodCommissionConfigCreate) SetNillableDisabled(b *bool) *AppGoodCommissionConfigCreate {
+	if b != nil {
+		agccc.SetDisabled(*b)
+	}
+	return agccc
+}
+
 // SetID sets the "id" field.
 func (agccc *AppGoodCommissionConfigCreate) SetID(u uint32) *AppGoodCommissionConfigCreate {
 	agccc.mutation.SetID(u)
@@ -363,6 +377,10 @@ func (agccc *AppGoodCommissionConfigCreate) defaults() error {
 		v := appgoodcommissionconfig.DefaultSettleType
 		agccc.mutation.SetSettleType(v)
 	}
+	if _, ok := agccc.mutation.Disabled(); !ok {
+		v := appgoodcommissionconfig.DefaultDisabled
+		agccc.mutation.SetDisabled(v)
+	}
 	return nil
 }
 
@@ -517,6 +535,14 @@ func (agccc *AppGoodCommissionConfigCreate) createSpec() (*AppGoodCommissionConf
 			Column: appgoodcommissionconfig.FieldSettleType,
 		})
 		_node.SettleType = value
+	}
+	if value, ok := agccc.mutation.Disabled(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldDisabled,
+		})
+		_node.Disabled = value
 	}
 	return _node, _spec
 }
@@ -815,6 +841,24 @@ func (u *AppGoodCommissionConfigUpsert) UpdateSettleType() *AppGoodCommissionCon
 // ClearSettleType clears the value of the "settle_type" field.
 func (u *AppGoodCommissionConfigUpsert) ClearSettleType() *AppGoodCommissionConfigUpsert {
 	u.SetNull(appgoodcommissionconfig.FieldSettleType)
+	return u
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppGoodCommissionConfigUpsert) SetDisabled(v bool) *AppGoodCommissionConfigUpsert {
+	u.Set(appgoodcommissionconfig.FieldDisabled, v)
+	return u
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsert) UpdateDisabled() *AppGoodCommissionConfigUpsert {
+	u.SetExcluded(appgoodcommissionconfig.FieldDisabled)
+	return u
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppGoodCommissionConfigUpsert) ClearDisabled() *AppGoodCommissionConfigUpsert {
+	u.SetNull(appgoodcommissionconfig.FieldDisabled)
 	return u
 }
 
@@ -1152,6 +1196,27 @@ func (u *AppGoodCommissionConfigUpsertOne) UpdateSettleType() *AppGoodCommission
 func (u *AppGoodCommissionConfigUpsertOne) ClearSettleType() *AppGoodCommissionConfigUpsertOne {
 	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
 		s.ClearSettleType()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppGoodCommissionConfigUpsertOne) SetDisabled(v bool) *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsertOne) UpdateDisabled() *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppGoodCommissionConfigUpsertOne) ClearDisabled() *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.ClearDisabled()
 	})
 }
 
@@ -1654,6 +1719,27 @@ func (u *AppGoodCommissionConfigUpsertBulk) UpdateSettleType() *AppGoodCommissio
 func (u *AppGoodCommissionConfigUpsertBulk) ClearSettleType() *AppGoodCommissionConfigUpsertBulk {
 	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
 		s.ClearSettleType()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppGoodCommissionConfigUpsertBulk) SetDisabled(v bool) *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsertBulk) UpdateDisabled() *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppGoodCommissionConfigUpsertBulk) ClearDisabled() *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.ClearDisabled()
 	})
 }
 

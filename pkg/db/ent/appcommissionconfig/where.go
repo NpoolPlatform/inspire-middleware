@@ -157,6 +157,13 @@ func SettleType(v string) predicate.AppCommissionConfig {
 	})
 }
 
+// Disabled applies equality check predicate on the "disabled" field. It's identical to DisabledEQ.
+func Disabled(v bool) predicate.AppCommissionConfig {
+	return predicate.AppCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDisabled), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.AppCommissionConfig {
 	return predicate.AppCommissionConfig(func(s *sql.Selector) {
@@ -991,6 +998,34 @@ func SettleTypeEqualFold(v string) predicate.AppCommissionConfig {
 func SettleTypeContainsFold(v string) predicate.AppCommissionConfig {
 	return predicate.AppCommissionConfig(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldSettleType), v))
+	})
+}
+
+// DisabledEQ applies the EQ predicate on the "disabled" field.
+func DisabledEQ(v bool) predicate.AppCommissionConfig {
+	return predicate.AppCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDisabled), v))
+	})
+}
+
+// DisabledNEQ applies the NEQ predicate on the "disabled" field.
+func DisabledNEQ(v bool) predicate.AppCommissionConfig {
+	return predicate.AppCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDisabled), v))
+	})
+}
+
+// DisabledIsNil applies the IsNil predicate on the "disabled" field.
+func DisabledIsNil() predicate.AppCommissionConfig {
+	return predicate.AppCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDisabled)))
+	})
+}
+
+// DisabledNotNil applies the NotNil predicate on the "disabled" field.
+func DisabledNotNil() predicate.AppCommissionConfig {
+	return predicate.AppCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDisabled)))
 	})
 }
 

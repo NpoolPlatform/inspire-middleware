@@ -260,6 +260,26 @@ func (accu *AppCommissionConfigUpdate) ClearSettleType() *AppCommissionConfigUpd
 	return accu
 }
 
+// SetDisabled sets the "disabled" field.
+func (accu *AppCommissionConfigUpdate) SetDisabled(b bool) *AppCommissionConfigUpdate {
+	accu.mutation.SetDisabled(b)
+	return accu
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (accu *AppCommissionConfigUpdate) SetNillableDisabled(b *bool) *AppCommissionConfigUpdate {
+	if b != nil {
+		accu.SetDisabled(*b)
+	}
+	return accu
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (accu *AppCommissionConfigUpdate) ClearDisabled() *AppCommissionConfigUpdate {
+	accu.mutation.ClearDisabled()
+	return accu
+}
+
 // Mutation returns the AppCommissionConfigMutation object of the builder.
 func (accu *AppCommissionConfigUpdate) Mutation() *AppCommissionConfigMutation {
 	return accu.mutation
@@ -519,6 +539,19 @@ func (accu *AppCommissionConfigUpdate) sqlSave(ctx context.Context) (n int, err 
 			Column: appcommissionconfig.FieldSettleType,
 		})
 	}
+	if value, ok := accu.mutation.Disabled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appcommissionconfig.FieldDisabled,
+		})
+	}
+	if accu.mutation.DisabledCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: appcommissionconfig.FieldDisabled,
+		})
+	}
 	_spec.Modifiers = accu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, accu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -767,6 +800,26 @@ func (accuo *AppCommissionConfigUpdateOne) SetNillableSettleType(s *string) *App
 // ClearSettleType clears the value of the "settle_type" field.
 func (accuo *AppCommissionConfigUpdateOne) ClearSettleType() *AppCommissionConfigUpdateOne {
 	accuo.mutation.ClearSettleType()
+	return accuo
+}
+
+// SetDisabled sets the "disabled" field.
+func (accuo *AppCommissionConfigUpdateOne) SetDisabled(b bool) *AppCommissionConfigUpdateOne {
+	accuo.mutation.SetDisabled(b)
+	return accuo
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (accuo *AppCommissionConfigUpdateOne) SetNillableDisabled(b *bool) *AppCommissionConfigUpdateOne {
+	if b != nil {
+		accuo.SetDisabled(*b)
+	}
+	return accuo
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (accuo *AppCommissionConfigUpdateOne) ClearDisabled() *AppCommissionConfigUpdateOne {
+	accuo.mutation.ClearDisabled()
 	return accuo
 }
 
@@ -1057,6 +1110,19 @@ func (accuo *AppCommissionConfigUpdateOne) sqlSave(ctx context.Context) (_node *
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: appcommissionconfig.FieldSettleType,
+		})
+	}
+	if value, ok := accuo.mutation.Disabled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appcommissionconfig.FieldDisabled,
+		})
+	}
+	if accuo.mutation.DisabledCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: appcommissionconfig.FieldDisabled,
 		})
 	}
 	_spec.Modifiers = accuo.modifiers

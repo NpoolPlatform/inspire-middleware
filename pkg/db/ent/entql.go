@@ -104,6 +104,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appcommissionconfig.FieldEndAt:           {Type: field.TypeUint32, Column: appcommissionconfig.FieldEndAt},
 			appcommissionconfig.FieldInvites:         {Type: field.TypeUint32, Column: appcommissionconfig.FieldInvites},
 			appcommissionconfig.FieldSettleType:      {Type: field.TypeString, Column: appcommissionconfig.FieldSettleType},
+			appcommissionconfig.FieldDisabled:        {Type: field.TypeBool, Column: appcommissionconfig.FieldDisabled},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -155,6 +156,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appgoodcommissionconfig.FieldEndAt:           {Type: field.TypeUint32, Column: appgoodcommissionconfig.FieldEndAt},
 			appgoodcommissionconfig.FieldInvites:         {Type: field.TypeUint32, Column: appgoodcommissionconfig.FieldInvites},
 			appgoodcommissionconfig.FieldSettleType:      {Type: field.TypeString, Column: appgoodcommissionconfig.FieldSettleType},
+			appgoodcommissionconfig.FieldDisabled:        {Type: field.TypeBool, Column: appgoodcommissionconfig.FieldDisabled},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -753,6 +755,11 @@ func (f *AppCommissionConfigFilter) WhereSettleType(p entql.StringP) {
 	f.Where(p.Field(appcommissionconfig.FieldSettleType))
 }
 
+// WhereDisabled applies the entql bool predicate on the disabled field.
+func (f *AppCommissionConfigFilter) WhereDisabled(p entql.BoolP) {
+	f.Where(p.Field(appcommissionconfig.FieldDisabled))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (acq *AppConfigQuery) addPredicate(pred func(s *sql.Selector)) {
 	acq.predicates = append(acq.predicates, pred)
@@ -956,6 +963,11 @@ func (f *AppGoodCommissionConfigFilter) WhereInvites(p entql.Uint32P) {
 // WhereSettleType applies the entql string predicate on the settle_type field.
 func (f *AppGoodCommissionConfigFilter) WhereSettleType(p entql.StringP) {
 	f.Where(p.Field(appgoodcommissionconfig.FieldSettleType))
+}
+
+// WhereDisabled applies the entql bool predicate on the disabled field.
+func (f *AppGoodCommissionConfigFilter) WhereDisabled(p entql.BoolP) {
+	f.Where(p.Field(appgoodcommissionconfig.FieldDisabled))
 }
 
 // addPredicate implements the predicateAdder interface.

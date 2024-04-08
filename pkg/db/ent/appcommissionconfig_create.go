@@ -177,6 +177,20 @@ func (accc *AppCommissionConfigCreate) SetNillableSettleType(s *string) *AppComm
 	return accc
 }
 
+// SetDisabled sets the "disabled" field.
+func (accc *AppCommissionConfigCreate) SetDisabled(b bool) *AppCommissionConfigCreate {
+	accc.mutation.SetDisabled(b)
+	return accc
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (accc *AppCommissionConfigCreate) SetNillableDisabled(b *bool) *AppCommissionConfigCreate {
+	if b != nil {
+		accc.SetDisabled(*b)
+	}
+	return accc
+}
+
 // SetID sets the "id" field.
 func (accc *AppCommissionConfigCreate) SetID(u uint32) *AppCommissionConfigCreate {
 	accc.mutation.SetID(u)
@@ -321,6 +335,10 @@ func (accc *AppCommissionConfigCreate) defaults() error {
 		v := appcommissionconfig.DefaultSettleType
 		accc.mutation.SetSettleType(v)
 	}
+	if _, ok := accc.mutation.Disabled(); !ok {
+		v := appcommissionconfig.DefaultDisabled
+		accc.mutation.SetDisabled(v)
+	}
 	return nil
 }
 
@@ -459,6 +477,14 @@ func (accc *AppCommissionConfigCreate) createSpec() (*AppCommissionConfig, *sqlg
 			Column: appcommissionconfig.FieldSettleType,
 		})
 		_node.SettleType = value
+	}
+	if value, ok := accc.mutation.Disabled(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: appcommissionconfig.FieldDisabled,
+		})
+		_node.Disabled = value
 	}
 	return _node, _spec
 }
@@ -721,6 +747,24 @@ func (u *AppCommissionConfigUpsert) UpdateSettleType() *AppCommissionConfigUpser
 // ClearSettleType clears the value of the "settle_type" field.
 func (u *AppCommissionConfigUpsert) ClearSettleType() *AppCommissionConfigUpsert {
 	u.SetNull(appcommissionconfig.FieldSettleType)
+	return u
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppCommissionConfigUpsert) SetDisabled(v bool) *AppCommissionConfigUpsert {
+	u.Set(appcommissionconfig.FieldDisabled, v)
+	return u
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsert) UpdateDisabled() *AppCommissionConfigUpsert {
+	u.SetExcluded(appcommissionconfig.FieldDisabled)
+	return u
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppCommissionConfigUpsert) ClearDisabled() *AppCommissionConfigUpsert {
+	u.SetNull(appcommissionconfig.FieldDisabled)
 	return u
 }
 
@@ -1016,6 +1060,27 @@ func (u *AppCommissionConfigUpsertOne) UpdateSettleType() *AppCommissionConfigUp
 func (u *AppCommissionConfigUpsertOne) ClearSettleType() *AppCommissionConfigUpsertOne {
 	return u.Update(func(s *AppCommissionConfigUpsert) {
 		s.ClearSettleType()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppCommissionConfigUpsertOne) SetDisabled(v bool) *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsertOne) UpdateDisabled() *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppCommissionConfigUpsertOne) ClearDisabled() *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.ClearDisabled()
 	})
 }
 
@@ -1476,6 +1541,27 @@ func (u *AppCommissionConfigUpsertBulk) UpdateSettleType() *AppCommissionConfigU
 func (u *AppCommissionConfigUpsertBulk) ClearSettleType() *AppCommissionConfigUpsertBulk {
 	return u.Update(func(s *AppCommissionConfigUpsert) {
 		s.ClearSettleType()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *AppCommissionConfigUpsertBulk) SetDisabled(v bool) *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsertBulk) UpdateDisabled() *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (u *AppCommissionConfigUpsertBulk) ClearDisabled() *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.ClearDisabled()
 	})
 }
 

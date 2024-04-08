@@ -239,6 +239,10 @@ func init() {
 	appcommissionconfigDescSettleType := appcommissionconfigFields[6].Descriptor()
 	// appcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
 	appcommissionconfig.DefaultSettleType = appcommissionconfigDescSettleType.Default.(string)
+	// appcommissionconfigDescDisabled is the schema descriptor for disabled field.
+	appcommissionconfigDescDisabled := appcommissionconfigFields[7].Descriptor()
+	// appcommissionconfig.DefaultDisabled holds the default value on creation for the disabled field.
+	appcommissionconfig.DefaultDisabled = appcommissionconfigDescDisabled.Default.(bool)
 	appconfigMixin := schema.AppConfig{}.Mixin()
 	appconfig.Policy = privacy.NewPolicies(appconfigMixin[0], schema.AppConfig{})
 	appconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -375,6 +379,10 @@ func init() {
 	appgoodcommissionconfigDescSettleType := appgoodcommissionconfigFields[8].Descriptor()
 	// appgoodcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
 	appgoodcommissionconfig.DefaultSettleType = appgoodcommissionconfigDescSettleType.Default.(string)
+	// appgoodcommissionconfigDescDisabled is the schema descriptor for disabled field.
+	appgoodcommissionconfigDescDisabled := appgoodcommissionconfigFields[9].Descriptor()
+	// appgoodcommissionconfig.DefaultDisabled holds the default value on creation for the disabled field.
+	appgoodcommissionconfig.DefaultDisabled = appgoodcommissionconfigDescDisabled.Default.(bool)
 	appgoodscopeMixin := schema.AppGoodScope{}.Mixin()
 	appgoodscope.Policy = privacy.NewPolicies(appgoodscopeMixin[0], schema.AppGoodScope{})
 	appgoodscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {

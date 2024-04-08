@@ -2704,6 +2704,7 @@ type AppCommissionConfigMutation struct {
 	invites           *uint32
 	addinvites        *int32
 	settle_type       *string
+	disabled          *bool
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*AppCommissionConfig, error)
@@ -3424,6 +3425,55 @@ func (m *AppCommissionConfigMutation) ResetSettleType() {
 	delete(m.clearedFields, appcommissionconfig.FieldSettleType)
 }
 
+// SetDisabled sets the "disabled" field.
+func (m *AppCommissionConfigMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the value of the "disabled" field in the mutation.
+func (m *AppCommissionConfigMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old "disabled" field's value of the AppCommissionConfig entity.
+// If the AppCommissionConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppCommissionConfigMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (m *AppCommissionConfigMutation) ClearDisabled() {
+	m.disabled = nil
+	m.clearedFields[appcommissionconfig.FieldDisabled] = struct{}{}
+}
+
+// DisabledCleared returns if the "disabled" field was cleared in this mutation.
+func (m *AppCommissionConfigMutation) DisabledCleared() bool {
+	_, ok := m.clearedFields[appcommissionconfig.FieldDisabled]
+	return ok
+}
+
+// ResetDisabled resets all changes to the "disabled" field.
+func (m *AppCommissionConfigMutation) ResetDisabled() {
+	m.disabled = nil
+	delete(m.clearedFields, appcommissionconfig.FieldDisabled)
+}
+
 // Where appends a list predicates to the AppCommissionConfigMutation builder.
 func (m *AppCommissionConfigMutation) Where(ps ...predicate.AppCommissionConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -3443,7 +3493,7 @@ func (m *AppCommissionConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppCommissionConfigMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, appcommissionconfig.FieldCreatedAt)
 	}
@@ -3477,6 +3527,9 @@ func (m *AppCommissionConfigMutation) Fields() []string {
 	if m.settle_type != nil {
 		fields = append(fields, appcommissionconfig.FieldSettleType)
 	}
+	if m.disabled != nil {
+		fields = append(fields, appcommissionconfig.FieldDisabled)
+	}
 	return fields
 }
 
@@ -3507,6 +3560,8 @@ func (m *AppCommissionConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.Invites()
 	case appcommissionconfig.FieldSettleType:
 		return m.SettleType()
+	case appcommissionconfig.FieldDisabled:
+		return m.Disabled()
 	}
 	return nil, false
 }
@@ -3538,6 +3593,8 @@ func (m *AppCommissionConfigMutation) OldField(ctx context.Context, name string)
 		return m.OldInvites(ctx)
 	case appcommissionconfig.FieldSettleType:
 		return m.OldSettleType(ctx)
+	case appcommissionconfig.FieldDisabled:
+		return m.OldDisabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown AppCommissionConfig field %s", name)
 }
@@ -3623,6 +3680,13 @@ func (m *AppCommissionConfigMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSettleType(v)
+		return nil
+	case appcommissionconfig.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
 		return nil
 	}
 	return fmt.Errorf("unknown AppCommissionConfig field %s", name)
@@ -3750,6 +3814,9 @@ func (m *AppCommissionConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appcommissionconfig.FieldSettleType) {
 		fields = append(fields, appcommissionconfig.FieldSettleType)
 	}
+	if m.FieldCleared(appcommissionconfig.FieldDisabled) {
+		fields = append(fields, appcommissionconfig.FieldDisabled)
+	}
 	return fields
 }
 
@@ -3784,6 +3851,9 @@ func (m *AppCommissionConfigMutation) ClearField(name string) error {
 		return nil
 	case appcommissionconfig.FieldSettleType:
 		m.ClearSettleType()
+		return nil
+	case appcommissionconfig.FieldDisabled:
+		m.ClearDisabled()
 		return nil
 	}
 	return fmt.Errorf("unknown AppCommissionConfig nullable field %s", name)
@@ -3825,6 +3895,9 @@ func (m *AppCommissionConfigMutation) ResetField(name string) error {
 		return nil
 	case appcommissionconfig.FieldSettleType:
 		m.ResetSettleType()
+		return nil
+	case appcommissionconfig.FieldDisabled:
+		m.ResetDisabled()
 		return nil
 	}
 	return fmt.Errorf("unknown AppCommissionConfig field %s", name)
@@ -5139,6 +5212,7 @@ type AppGoodCommissionConfigMutation struct {
 	invites           *uint32
 	addinvites        *int32
 	settle_type       *string
+	disabled          *bool
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*AppGoodCommissionConfig, error)
@@ -5957,6 +6031,55 @@ func (m *AppGoodCommissionConfigMutation) ResetSettleType() {
 	delete(m.clearedFields, appgoodcommissionconfig.FieldSettleType)
 }
 
+// SetDisabled sets the "disabled" field.
+func (m *AppGoodCommissionConfigMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the value of the "disabled" field in the mutation.
+func (m *AppGoodCommissionConfigMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old "disabled" field's value of the AppGoodCommissionConfig entity.
+// If the AppGoodCommissionConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodCommissionConfigMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ClearDisabled clears the value of the "disabled" field.
+func (m *AppGoodCommissionConfigMutation) ClearDisabled() {
+	m.disabled = nil
+	m.clearedFields[appgoodcommissionconfig.FieldDisabled] = struct{}{}
+}
+
+// DisabledCleared returns if the "disabled" field was cleared in this mutation.
+func (m *AppGoodCommissionConfigMutation) DisabledCleared() bool {
+	_, ok := m.clearedFields[appgoodcommissionconfig.FieldDisabled]
+	return ok
+}
+
+// ResetDisabled resets all changes to the "disabled" field.
+func (m *AppGoodCommissionConfigMutation) ResetDisabled() {
+	m.disabled = nil
+	delete(m.clearedFields, appgoodcommissionconfig.FieldDisabled)
+}
+
 // Where appends a list predicates to the AppGoodCommissionConfigMutation builder.
 func (m *AppGoodCommissionConfigMutation) Where(ps ...predicate.AppGoodCommissionConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -5976,7 +6099,7 @@ func (m *AppGoodCommissionConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppGoodCommissionConfigMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldCreatedAt)
 	}
@@ -6016,6 +6139,9 @@ func (m *AppGoodCommissionConfigMutation) Fields() []string {
 	if m.settle_type != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldSettleType)
 	}
+	if m.disabled != nil {
+		fields = append(fields, appgoodcommissionconfig.FieldDisabled)
+	}
 	return fields
 }
 
@@ -6050,6 +6176,8 @@ func (m *AppGoodCommissionConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.Invites()
 	case appgoodcommissionconfig.FieldSettleType:
 		return m.SettleType()
+	case appgoodcommissionconfig.FieldDisabled:
+		return m.Disabled()
 	}
 	return nil, false
 }
@@ -6085,6 +6213,8 @@ func (m *AppGoodCommissionConfigMutation) OldField(ctx context.Context, name str
 		return m.OldInvites(ctx)
 	case appgoodcommissionconfig.FieldSettleType:
 		return m.OldSettleType(ctx)
+	case appgoodcommissionconfig.FieldDisabled:
+		return m.OldDisabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown AppGoodCommissionConfig field %s", name)
 }
@@ -6184,6 +6314,13 @@ func (m *AppGoodCommissionConfigMutation) SetField(name string, value ent.Value)
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSettleType(v)
+		return nil
+	case appgoodcommissionconfig.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
 		return nil
 	}
 	return fmt.Errorf("unknown AppGoodCommissionConfig field %s", name)
@@ -6317,6 +6454,9 @@ func (m *AppGoodCommissionConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appgoodcommissionconfig.FieldSettleType) {
 		fields = append(fields, appgoodcommissionconfig.FieldSettleType)
 	}
+	if m.FieldCleared(appgoodcommissionconfig.FieldDisabled) {
+		fields = append(fields, appgoodcommissionconfig.FieldDisabled)
+	}
 	return fields
 }
 
@@ -6357,6 +6497,9 @@ func (m *AppGoodCommissionConfigMutation) ClearField(name string) error {
 		return nil
 	case appgoodcommissionconfig.FieldSettleType:
 		m.ClearSettleType()
+		return nil
+	case appgoodcommissionconfig.FieldDisabled:
+		m.ClearDisabled()
 		return nil
 	}
 	return fmt.Errorf("unknown AppGoodCommissionConfig nullable field %s", name)
@@ -6404,6 +6547,9 @@ func (m *AppGoodCommissionConfigMutation) ResetField(name string) error {
 		return nil
 	case appgoodcommissionconfig.FieldSettleType:
 		m.ResetSettleType()
+		return nil
+	case appgoodcommissionconfig.FieldDisabled:
+		m.ResetDisabled()
 		return nil
 	}
 	return fmt.Errorf("unknown AppGoodCommissionConfig field %s", name)

@@ -39,6 +39,8 @@ type AppCommissionConfig struct {
 	Invites uint32 `json:"invites,omitempty"`
 	// SettleType holds the value of the "settle_type" field.
 	SettleType string `json:"settle_type,omitempty"`
+	// Disabled holds the value of the "disabled" field.
+	Disabled bool `json:"disabled,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -48,6 +50,8 @@ func (*AppCommissionConfig) scanValues(columns []string) ([]interface{}, error) 
 		switch columns[i] {
 		case appcommissionconfig.FieldThresholdAmount, appcommissionconfig.FieldAmountOrPercent:
 			values[i] = new(decimal.Decimal)
+		case appcommissionconfig.FieldDisabled:
+			values[i] = new(sql.NullBool)
 		case appcommissionconfig.FieldID, appcommissionconfig.FieldCreatedAt, appcommissionconfig.FieldUpdatedAt, appcommissionconfig.FieldDeletedAt, appcommissionconfig.FieldStartAt, appcommissionconfig.FieldEndAt, appcommissionconfig.FieldInvites:
 			values[i] = new(sql.NullInt64)
 		case appcommissionconfig.FieldSettleType:
@@ -141,6 +145,12 @@ func (acc *AppCommissionConfig) assignValues(columns []string, values []interfac
 			} else if value.Valid {
 				acc.SettleType = value.String
 			}
+		case appcommissionconfig.FieldDisabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field disabled", values[i])
+			} else if value.Valid {
+				acc.Disabled = value.Bool
+			}
 		}
 	}
 	return nil
@@ -201,6 +211,9 @@ func (acc *AppCommissionConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("settle_type=")
 	builder.WriteString(acc.SettleType)
+	builder.WriteString(", ")
+	builder.WriteString("disabled=")
+	builder.WriteString(fmt.Sprintf("%v", acc.Disabled))
 	builder.WriteByte(')')
 	return builder.String()
 }

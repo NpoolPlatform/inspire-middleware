@@ -43,6 +43,8 @@ type AppGoodCommissionConfig struct {
 	Invites uint32 `json:"invites,omitempty"`
 	// SettleType holds the value of the "settle_type" field.
 	SettleType string `json:"settle_type,omitempty"`
+	// Disabled holds the value of the "disabled" field.
+	Disabled bool `json:"disabled,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,6 +54,8 @@ func (*AppGoodCommissionConfig) scanValues(columns []string) ([]interface{}, err
 		switch columns[i] {
 		case appgoodcommissionconfig.FieldThresholdAmount, appgoodcommissionconfig.FieldAmountOrPercent:
 			values[i] = new(decimal.Decimal)
+		case appgoodcommissionconfig.FieldDisabled:
+			values[i] = new(sql.NullBool)
 		case appgoodcommissionconfig.FieldID, appgoodcommissionconfig.FieldCreatedAt, appgoodcommissionconfig.FieldUpdatedAt, appgoodcommissionconfig.FieldDeletedAt, appgoodcommissionconfig.FieldStartAt, appgoodcommissionconfig.FieldEndAt, appgoodcommissionconfig.FieldInvites:
 			values[i] = new(sql.NullInt64)
 		case appgoodcommissionconfig.FieldSettleType:
@@ -157,6 +161,12 @@ func (agcc *AppGoodCommissionConfig) assignValues(columns []string, values []int
 			} else if value.Valid {
 				agcc.SettleType = value.String
 			}
+		case appgoodcommissionconfig.FieldDisabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field disabled", values[i])
+			} else if value.Valid {
+				agcc.Disabled = value.Bool
+			}
 		}
 	}
 	return nil
@@ -223,6 +233,9 @@ func (agcc *AppGoodCommissionConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("settle_type=")
 	builder.WriteString(agcc.SettleType)
+	builder.WriteString(", ")
+	builder.WriteString("disabled=")
+	builder.WriteString(fmt.Sprintf("%v", agcc.Disabled))
 	builder.WriteByte(')')
 	return builder.String()
 }

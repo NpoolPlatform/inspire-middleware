@@ -80,10 +80,11 @@ var (
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
+		{Name: "disabled", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// AppCommissionConfigsTable holds the schema information for the "app_commission_configs" table.
 	AppCommissionConfigsTable = &schema.Table{
@@ -111,7 +112,7 @@ var (
 		{Name: "settle_interval", Type: field.TypeString, Nullable: true, Default: "DefaultSettleInterval"},
 		{Name: "commission_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionType"},
 		{Name: "settle_benefit", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
@@ -139,10 +140,11 @@ var (
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
+		{Name: "disabled", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// AppGoodCommissionConfigsTable holds the schema information for the "app_good_commission_configs" table.
 	AppGoodCommissionConfigsTable = &schema.Table{
@@ -219,7 +221,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -253,7 +255,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
@@ -292,7 +294,7 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1710331274},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1712486068},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 		{Name: "cashable", Type: field.TypeBool, Nullable: true, Default: false},
 	}

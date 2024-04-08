@@ -35,6 +35,8 @@ const (
 	FieldInvites = "invites"
 	// FieldSettleType holds the string denoting the settle_type field in the database.
 	FieldSettleType = "settle_type"
+	// FieldDisabled holds the string denoting the disabled field in the database.
+	FieldDisabled = "disabled"
 	// Table holds the table name of the appcommissionconfig in the database.
 	Table = "app_commission_configs"
 )
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldEndAt,
 	FieldInvites,
 	FieldSettleType,
+	FieldDisabled,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -98,4 +101,6 @@ var (
 	DefaultInvites uint32
 	// DefaultSettleType holds the default value on creation for the "settle_type" field.
 	DefaultSettleType string
+	// DefaultDisabled holds the default value on creation for the "disabled" field.
+	DefaultDisabled bool
 )

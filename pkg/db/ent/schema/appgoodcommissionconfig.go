@@ -77,6 +77,10 @@ func (AppGoodCommissionConfig) Fields() []ent.Field {
 			String("settle_type").
 			Optional().
 			Default(types.SettleType_DefaultSettleType.String()),
+		field.
+			Bool("disabled").
+			Optional().
+			Default(false),
 	}
 }
 
