@@ -30,6 +30,7 @@ type Handler struct {
 	FromAppGoodID   *uuid.UUID
 	ToAppGoodID     *uuid.UUID
 	ScalePercent    *decimal.Decimal
+	Disabled        *bool
 	Conds           *commissionconfigcrud.Conds
 	Offset          int32
 	Limit           int32
@@ -300,6 +301,18 @@ func WithScalePercent(value *string, must bool) func(context.Context, *Handler) 
 	}
 }
 
+func WithDisabled(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid disabled")
+			}
+		}
+		h.Disabled = value
+		return nil
+	}
+}
+
 //nolint:funlen
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
@@ -405,6 +418,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.AppGoodIDs = &cruder.Cond{
 				Op:  conds.GetAppGoodIDs().GetOp(),
 				Val: ids,
+			}
+		}
+		if conds.Disabled != nil {
+			h.Conds.Disabled = &cruder.Cond{
+				Op:  conds.GetDisabled().GetOp(),
+				Val: conds.GetDisabled().GetValue(),
 			}
 		}
 		return nil

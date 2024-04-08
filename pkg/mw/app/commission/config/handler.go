@@ -23,6 +23,7 @@ type Handler struct {
 	StartAt         *uint32
 	Invites         *uint32
 	SettleType      *types.SettleType
+	Disabled        *bool
 	Conds           *commissionconfigcrud.Conds
 	Offset          int32
 	Limit           int32
@@ -170,6 +171,18 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 	}
 }
 
+func WithDisabled(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid disabled")
+			}
+		}
+		h.Disabled = value
+		return nil
+	}
+}
+
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &commissionconfigcrud.Conds{}
@@ -226,6 +239,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.EntIDs = &cruder.Cond{
 				Op:  conds.GetEntIDs().GetOp(),
 				Val: ids,
+			}
+		}
+		if conds.Disabled != nil {
+			h.Conds.Disabled = &cruder.Cond{
+				Op:  conds.GetDisabled().GetOp(),
+				Val: conds.GetDisabled().GetValue(),
 			}
 		}
 		return nil

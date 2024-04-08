@@ -60,6 +60,7 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 				StartAt:         h.StartAt,
 				Invites:         h.Invites,
 				SettleType:      h.SettleType,
+				Disabled:        h.Disabled,
 			},
 		).Save(_ctx); err != nil {
 			return err

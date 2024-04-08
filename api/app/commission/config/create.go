@@ -30,6 +30,7 @@ func (s *Server) CreateAppCommissionConfig(ctx context.Context, in *npool.Create
 		config1.WithStartAt(req.StartAt, true),
 		config1.WithInvites(req.Invites, true),
 		config1.WithSettleType(req.SettleType, true),
+		config1.WithDisabled(req.Disabled, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

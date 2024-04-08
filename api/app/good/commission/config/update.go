@@ -29,6 +29,7 @@ func (s *Server) UpdateAppGoodCommissionConfig(ctx context.Context, in *npool.Up
 		config1.WithStartAt(req.StartAt, false),
 		config1.WithThresholdAmount(req.ThresholdAmount, false),
 		config1.WithInvites(req.Invites, false),
+		config1.WithDisabled(req.Disabled, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

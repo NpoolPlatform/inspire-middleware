@@ -65,6 +65,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 				StartAt:         h.StartAt,
 				ThresholdAmount: h.ThresholdAmount,
 				Invites:         h.Invites,
+				Disabled:        h.Disabled,
 			},
 		).Save(_ctx); err != nil {
 			return err

@@ -48,6 +48,7 @@ var ret = &npool.AppCommissionConfig{
 	AmountOrPercent: percent,
 	ThresholdAmount: decimal.NewFromInt(0).String(),
 	StartAt:         uint32(time.Now().Unix()) + 10000,
+	Disabled:        false,
 }
 
 func create(t *testing.T) {
@@ -59,6 +60,7 @@ func create(t *testing.T) {
 		Invites:         &ret.Invites,
 		AmountOrPercent: &ret.AmountOrPercent,
 		StartAt:         &ret.StartAt,
+		Disabled:        &ret.Disabled,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetCommissionConfigOnly(context.Background(), &npool.Conds{

@@ -25,6 +25,7 @@ type Req struct {
 	StartAt         *uint32
 	Invites         *uint32
 	SettleType      *types.SettleType
+	Disabled        *bool
 	DeletedAt       *uint32
 }
 
@@ -60,6 +61,9 @@ func CreateSet(c *ent.AppGoodCommissionConfigCreate, req *Req) *ent.AppGoodCommi
 	if req.ThresholdAmount != nil {
 		c.SetThresholdAmount(*req.ThresholdAmount)
 	}
+	if req.Disabled != nil {
+		c.SetDisabled(*req.Disabled)
+	}
 	return c
 }
 
@@ -75,6 +79,9 @@ func UpdateSet(u *ent.AppGoodCommissionConfigUpdateOne, req *Req) *ent.AppGoodCo
 	}
 	if req.Invites != nil {
 		u.SetInvites(*req.Invites)
+	}
+	if req.Disabled != nil {
+		u.SetDisabled(*req.Disabled)
 	}
 	if req.DeletedAt != nil {
 		u = u.SetDeletedAt(*req.DeletedAt)
@@ -96,6 +103,7 @@ type Conds struct {
 	AppGoodIDs      *cruder.Cond
 	ThresholdAmount *cruder.Cond
 	Invites         *cruder.Cond
+	Disabled        *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppGoodCommissionConfigQuery, error) { //nolint
@@ -265,6 +273,18 @@ func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppG
 		switch conds.Invites.Op {
 		case cruder.EQ:
 			q.Where(entappgoodcommissionconfig.Invites(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.Disabled != nil {
+		value, ok := conds.Disabled.Val.(bool)
+		if !ok {
+			return nil, fmt.Errorf("invalid disabled")
+		}
+		switch conds.Disabled.Op {
+		case cruder.EQ:
+			q.Where(entappgoodcommissionconfig.Disabled(value))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}
