@@ -1499,7 +1499,7 @@ func TestCalculate(t *testing.T) {
 
 	t.Run("calculateAppCommission", calculateAppCommission)
 
-	addConfig := addAppGoodCommissionConfig
+	addConfig := addAppGoodCommissionConfig(t)
 	defer addConfig(t)
 	t.Run("calculateAppGoodCommission1", calculateAppGoodCommission)
 
