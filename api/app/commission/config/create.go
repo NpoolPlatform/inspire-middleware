@@ -27,7 +27,7 @@ func (s *Server) CreateAppCommissionConfig(ctx context.Context, in *npool.Create
 		config1.WithAppID(req.AppID, true),
 		config1.WithThresholdAmount(req.ThresholdAmount, true),
 		config1.WithAmountOrPercent(req.AmountOrPercent, true),
-		config1.WithStartAt(req.StartAt, true),
+		config1.WithStartAt(req.StartAt, false),
 		config1.WithInvites(req.Invites, true),
 		config1.WithSettleType(req.SettleType, true),
 		config1.WithDisabled(req.Disabled, false),

@@ -29,6 +29,10 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 	if h.EntID == nil {
 		h.EntID = &id
 	}
+	if h.StartAt == nil {
+		startAt := uint32(time.Now().Unix())
+		h.StartAt = &startAt
+	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
