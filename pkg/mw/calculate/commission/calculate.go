@@ -27,6 +27,7 @@ type calculateHandler struct {
 	*Handler
 }
 
+//nolint:funlen
 func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	commMap := map[string]*npool.Commission{}
 	for _, comm := range h.Commissions {
@@ -66,6 +67,19 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		}
 
 		if percent2.Cmp(percent1) == 0 {
+			commissionConfigID := uuid.Nil.String()
+			if comm2 != nil {
+				commissionConfigID = comm2.EntID
+			}
+			_comms = append(_comms, &Commission{
+				AppConfigID:             h.AppConfig.EntID,
+				CommissionConfigID:      commissionConfigID,
+				CommissionConfigType:    types.CommissionConfigType_LegacyCommissionConfig,
+				AppID:                   inviter.AppID,
+				UserID:                  inviter.InviterID,
+				DirectContributorUserID: &inviter.InviteeID,
+				Amount:                  "0",
+			})
 			continue
 		}
 
@@ -75,7 +89,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return _comms, nil
+			amount = decimal.NewFromInt(0)
 		}
 
 		_comms = append(_comms, &Commission{
@@ -105,7 +119,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-		return _comms, nil
+		amount = decimal.NewFromInt(0)
 	}
 
 	amountLast := "0"
