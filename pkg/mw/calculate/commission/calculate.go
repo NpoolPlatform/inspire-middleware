@@ -265,6 +265,9 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 				return nil, err
 			}
 		}
+		if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
+			percent1 = decimal.NewFromInt(0)
+		}
 
 		comm2, comm2Useful, err := handler.getAppCommLevelConf(inviter.InviterID)
 		if err != nil {
@@ -313,6 +316,18 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 			DirectContributorUserID: &inviter.InviteeID,
 			Amount:                  amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
+	}
+
+	if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
+		_comms = append(_comms, &Commission{
+			AppConfigID:          h.AppConfig.EntID,
+			CommissionConfigID:   uuid.Nil.String(),
+			CommissionConfigType: types.CommissionConfigType_WithoutCommissionConfig,
+			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
+			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+			Amount:               "0",
+		})
+		return _comms, nil
 	}
 
 	commLast, commLastUseful, err := handler.getAppCommLevelConf(h.Inviters[len(h.Inviters)-1].InviteeID)
@@ -385,6 +400,9 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 				return nil, err
 			}
 		}
+		if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
+			percent1 = decimal.NewFromInt(0)
+		}
 
 		comm2, comm2Useful, err := handler.getAppGoodCommLevelConf(inviter.InviterID)
 		if err != nil {
@@ -432,6 +450,18 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 			DirectContributorUserID: &inviter.InviteeID,
 			Amount:                  amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
+	}
+
+	if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
+		_comms = append(_comms, &Commission{
+			AppConfigID:          h.AppConfig.EntID,
+			CommissionConfigID:   uuid.Nil.String(),
+			CommissionConfigType: types.CommissionConfigType_WithoutCommissionConfig,
+			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
+			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+			Amount:               "0",
+		})
+		return _comms, nil
 	}
 
 	commLast, commLastUseful, err := handler.getAppGoodCommLevelConf(h.Inviters[len(h.Inviters)-1].InviteeID)
