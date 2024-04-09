@@ -108,16 +108,19 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		return _comms, nil
 	}
 
+	amountLast := "0"
 	if percent.Cmp(decimal.NewFromInt(0)) > 0 {
-		_comms = append(_comms, &Commission{
-			AppConfigID:          h.AppConfig.EntID,
-			CommissionConfigID:   commLast.EntID,
-			CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
-			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
-			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
-			Amount:               amount.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
-		})
+		amountLast = amount.Mul(percent).Div(decimal.NewFromInt(100)).String() //nolint
 	}
+
+	_comms = append(_comms, &Commission{
+		AppConfigID:          h.AppConfig.EntID,
+		CommissionConfigID:   commLast.EntID,
+		CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
+		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
+		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		Amount:               amountLast,
+	})
 
 	return _comms, nil
 }
