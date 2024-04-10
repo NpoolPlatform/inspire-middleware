@@ -176,6 +176,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
 
 	if len(appconfigs) == 0 {
+		fmt.Println("----------------appconfig == nil")
 		return handler.generateStatements(map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 	}
 	appconfig := appconfigs[0]
@@ -195,6 +196,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			return nil, err
 		}
 		if len(handler.inviters) == 0 {
+			fmt.Println("------ direct commission, only order user self ------")
 			return handler.generateStatements(map[string]*commission2.Commission{}, appconfig.EntID, commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
@@ -280,6 +282,10 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			}
 			if len(goodcomms) > 0 {
 				sortAppGoodCommissionConfig(goodcomms)
+				fmt.Println("------ use app good commission config ------")
+				for _, item := range goodcomms {
+					fmt.Println("------ app good commission config: ", item)
+				}
 				handler, err := commission2.NewHandler(
 					ctx,
 					commission2.WithSettleType(h.SettleType),
@@ -325,6 +331,10 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 			}
 			if len(appcomms) > 0 {
 				sortAppCommissionConfig(appcomms)
+				fmt.Println("------ use app commission config ------")
+				for _, item := range appcomms {
+					fmt.Println("------ app commission config: ", item)
+				}
 				handler, err := commission2.NewHandler(
 					ctx,
 					commission2.WithSettleType(h.SettleType),
