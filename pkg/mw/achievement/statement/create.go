@@ -320,7 +320,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 	if req.Commission.Cmp(commission) == 0 {
-		if req.Commission.Cmp(decimal.NewFromInt(0)) == 0 && info.CommissionConfigID != uuid.Nil.String() {
+		if req.Commission.Cmp(decimal.NewFromInt(0)) == 0 && info.CommissionConfigID == uuid.Nil.String() {
 			if _, err := tx.
 				Statement.
 				UpdateOneID(info.ID).
