@@ -30,8 +30,10 @@ type calculateHandler struct {
 //nolint:funlen
 func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	commMap := map[string]*npool.Commission{}
+	fmt.Println("=========== calculate commission config ================")
 	for _, comm := range h.Commissions {
 		commMap[comm.UserID] = comm
+		fmt.Println("====== commission config: ", comm)
 	}
 
 	_comms := []*Commission{}
@@ -53,6 +55,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 				return nil, err
 			}
 		}
+		fmt.Println("------comm1: ", comm1)
 
 		comm2, ok := commMap[inviter.InviterID]
 		if ok {
@@ -61,16 +64,19 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 				return nil, err
 			}
 		}
+		fmt.Println("------comm2: ", comm2)
 
 		if percent2.Cmp(percent1) < 0 {
 			return nil, fmt.Errorf("%v/%v < %v/%v (%v)", inviter.InviterID, percent2, inviter.InviteeID, percent1, comm1.GetGoodID())
 		}
 
 		if percent2.Cmp(percent1) == 0 {
+			fmt.Println("----------- percent2 == percent1 ----------")
 			commissionConfigID := uuid.Nil.String()
 			if comm2 != nil {
 				commissionConfigID = comm2.EntID
 			}
+			fmt.Println("------commissionConfigID: ", commissionConfigID)
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
 				CommissionConfigID:      commissionConfigID,
