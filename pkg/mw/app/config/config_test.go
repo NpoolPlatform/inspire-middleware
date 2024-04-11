@@ -42,6 +42,7 @@ var (
 		CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
 		SettleBenefit:       false,
 		StartAt:             uint32(time.Now().Unix()),
+		MaxLevelCount:       uint32(5),
 	}
 )
 
@@ -60,6 +61,7 @@ func createAppConfig(t *testing.T) {
 		WithSettleInterval(&ret.SettleInterval, true),
 		WithSettleBenefit(&ret.SettleBenefit, true),
 		WithStartAt(&ret.StartAt, true),
+		WithMaxLevelCount(&ret.MaxLevelCount, true),
 	)
 	assert.Nil(t, err)
 
