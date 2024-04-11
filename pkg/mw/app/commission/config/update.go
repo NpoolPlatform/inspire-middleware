@@ -10,7 +10,6 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 )
 
 func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommissionConfig, error) {
@@ -22,16 +21,6 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 		return nil, fmt.Errorf("invalid appcommissionconfig")
 	}
 	h.ID = &info.ID
-	if h.ThresholdAmount == nil {
-		_amount, err := decimal.NewFromString(info.ThresholdAmount)
-		if err != nil {
-			return nil, err
-		}
-		h.ThresholdAmount = &_amount
-	}
-	if h.Invites == nil {
-		h.Invites = &info.Invites
-	}
 	if h.Level == nil {
 		h.Level = &info.Level
 	}
@@ -40,12 +29,10 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 	entID := uuid.MustParse(info.EntID)
 	appID := uuid.MustParse(info.AppID)
 	h.Conds = &commissionconfigcrud.Conds{
-		EntID:           &cruder.Cond{Op: cruder.NEQ, Val: entID},
-		AppID:           &cruder.Cond{Op: cruder.EQ, Val: appID},
-		ThresholdAmount: &cruder.Cond{Op: cruder.EQ, Val: *h.ThresholdAmount},
-		Invites:         &cruder.Cond{Op: cruder.EQ, Val: *h.Invites},
-		Level:           &cruder.Cond{Op: cruder.EQ, Val: *h.Level},
-		EndAt:           &cruder.Cond{Op: cruder.EQ, Val: endAt},
+		EntID: &cruder.Cond{Op: cruder.NEQ, Val: entID},
+		AppID: &cruder.Cond{Op: cruder.EQ, Val: appID},
+		Level: &cruder.Cond{Op: cruder.EQ, Val: *h.Level},
+		EndAt: &cruder.Cond{Op: cruder.EQ, Val: endAt},
 	}
 
 	exist, err := h.ExistCommissionConfigs(ctx)
