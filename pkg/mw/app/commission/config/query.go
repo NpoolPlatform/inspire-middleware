@@ -168,7 +168,7 @@ func (h *Handler) GetCommissionConfigs(ctx context.Context) ([]*npool.AppCommiss
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
-			Order(ent.Desc(entcommissionconfig.FieldLevel)).
+			Order(ent.Asc(entcommissionconfig.FieldLevel)).
 			Offset(int(handler.Offset)).
 			Limit(int(handler.Limit))
 		return handler.scan(_ctx)
