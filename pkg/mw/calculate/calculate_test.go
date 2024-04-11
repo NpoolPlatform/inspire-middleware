@@ -109,6 +109,7 @@ var appConfig = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_LegacyCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
+	MaxLevelCount:    uint32(5),
 }
 
 var _appConfig = appconfigmwpb.AppConfigReq{
@@ -120,6 +121,7 @@ var _appConfig = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig.CommissionType,
 	SettleBenefit:    &appConfig.SettleBenefit,
 	StartAt:          &appConfig.StartAt,
+	MaxLevelCount:    &appConfig.MaxLevelCount,
 }
 
 var appConfig2 = appconfigmwpb.AppConfig{
@@ -131,6 +133,7 @@ var appConfig2 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_LayeredCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
+	MaxLevelCount:    uint32(5),
 }
 
 var _appConfig2 = appconfigmwpb.AppConfigReq{
@@ -142,6 +145,7 @@ var _appConfig2 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig2.CommissionType,
 	SettleBenefit:    &appConfig2.SettleBenefit,
 	StartAt:          &appConfig2.StartAt,
+	MaxLevelCount:    &appConfig2.MaxLevelCount,
 }
 
 var appConfig3 = appconfigmwpb.AppConfig{
@@ -153,6 +157,7 @@ var appConfig3 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_DirectCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
+	MaxLevelCount:    uint32(5),
 }
 
 var _appConfig3 = appconfigmwpb.AppConfigReq{
@@ -164,6 +169,7 @@ var _appConfig3 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig3.CommissionType,
 	SettleBenefit:    &appConfig3.SettleBenefit,
 	StartAt:          &appConfig3.StartAt,
+	MaxLevelCount:    &appConfig3.MaxLevelCount,
 }
 
 var appConfig4 = appconfigmwpb.AppConfig{
@@ -175,6 +181,7 @@ var appConfig4 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_WithoutCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
+	MaxLevelCount:    uint32(6),
 }
 
 var _appConfig4 = appconfigmwpb.AppConfigReq{
@@ -186,6 +193,7 @@ var _appConfig4 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig4.CommissionType,
 	SettleBenefit:    &appConfig4.SettleBenefit,
 	StartAt:          &appConfig4.StartAt,
+	MaxLevelCount:    &appConfig4.MaxLevelCount,
 }
 
 var comm1 = commmwpb.Commission{
@@ -345,6 +353,7 @@ var appcommconfig1 = appcommconfigmwpb.AppCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(1),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(1),
 }
 
 var _appcommconfig1 = appcommconfigmwpb.AppCommissionConfigReq{
@@ -355,6 +364,7 @@ var _appcommconfig1 = appcommconfigmwpb.AppCommissionConfigReq{
 	StartAt:         &appcommconfig1.StartAt,
 	Invites:         &appcommconfig1.Invites,
 	SettleType:      &appcommconfig1.SettleType,
+	Level:           &appcommconfig1.Level,
 }
 
 var appcommconfig2 = appcommconfigmwpb.AppCommissionConfig{
@@ -365,6 +375,7 @@ var appcommconfig2 = appcommconfigmwpb.AppCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(5),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(3),
 }
 
 var _appcommconfig2 = appcommconfigmwpb.AppCommissionConfigReq{
@@ -375,6 +386,7 @@ var _appcommconfig2 = appcommconfigmwpb.AppCommissionConfigReq{
 	StartAt:         &appcommconfig2.StartAt,
 	Invites:         &appcommconfig2.Invites,
 	SettleType:      &appcommconfig2.SettleType,
+	Level:           &appcommconfig2.Level,
 }
 
 var appcommconfig3 = appcommconfigmwpb.AppCommissionConfig{
@@ -385,6 +397,7 @@ var appcommconfig3 = appcommconfigmwpb.AppCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(3),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(2),
 }
 
 var _appcommconfig3 = appcommconfigmwpb.AppCommissionConfigReq{
@@ -395,6 +408,7 @@ var _appcommconfig3 = appcommconfigmwpb.AppCommissionConfigReq{
 	StartAt:         &appcommconfig3.StartAt,
 	Invites:         &appcommconfig3.Invites,
 	SettleType:      &appcommconfig3.SettleType,
+	Level:           &appcommconfig3.Level,
 }
 
 func setup(t *testing.T) func(*testing.T) { //nolint
@@ -647,6 +661,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig.StartAt, true),
+		appconfig1.WithMaxLevelCount(_appConfig.MaxLevelCount, true),
 	)
 	assert.Nil(t, err)
 
@@ -667,6 +682,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appcommissionconfig1.WithInvites(_appcommconfig1.Invites, true),
 		appcommissionconfig1.WithSettleType(_appcommconfig1.SettleType, true),
 		appcommissionconfig1.WithStartAt(_appcommconfig1.StartAt, true),
+		appcommissionconfig1.WithLevel(_appcommconfig1.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -687,6 +703,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appcommissionconfig1.WithInvites(_appcommconfig2.Invites, true),
 		appcommissionconfig1.WithSettleType(_appcommconfig2.SettleType, true),
 		appcommissionconfig1.WithStartAt(_appcommconfig2.StartAt, true),
+		appcommissionconfig1.WithLevel(_appcommconfig2.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -707,6 +724,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appcommissionconfig1.WithInvites(_appcommconfig3.Invites, true),
 		appcommissionconfig1.WithSettleType(_appcommconfig3.SettleType, true),
 		appcommissionconfig1.WithStartAt(_appcommconfig3.StartAt, true),
+		appcommissionconfig1.WithLevel(_appcommconfig3.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -753,6 +771,7 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig2.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig2.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig2.StartAt, true),
+		appconfig1.WithMaxLevelCount(_appConfig2.MaxLevelCount, true),
 	)
 	assert.Nil(t, err)
 
@@ -780,6 +799,7 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig3.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig3.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig3.StartAt, true),
+		appconfig1.WithMaxLevelCount(_appConfig3.MaxLevelCount, true),
 	)
 	assert.Nil(t, err)
 
@@ -807,6 +827,7 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig4.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig4.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig4.StartAt, true),
+		appconfig1.WithMaxLevelCount(_appConfig4.MaxLevelCount, true),
 	)
 	assert.Nil(t, err)
 
@@ -833,6 +854,7 @@ var appgoodcommconfig1 = appgoodcommconfigmwpb.AppGoodCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(1),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(1),
 }
 
 var _appgoodcommconfig1 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
@@ -845,6 +867,7 @@ var _appgoodcommconfig1 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
 	StartAt:         &appgoodcommconfig1.StartAt,
 	Invites:         &appgoodcommconfig1.Invites,
 	SettleType:      &appgoodcommconfig1.SettleType,
+	Level:           &appgoodcommconfig1.Level,
 }
 
 var appgoodcommconfig2 = appgoodcommconfigmwpb.AppGoodCommissionConfig{
@@ -857,6 +880,7 @@ var appgoodcommconfig2 = appgoodcommconfigmwpb.AppGoodCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(5),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(3),
 }
 
 var _appgoodcommconfig2 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
@@ -869,6 +893,7 @@ var _appgoodcommconfig2 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
 	StartAt:         &appgoodcommconfig2.StartAt,
 	Invites:         &appgoodcommconfig2.Invites,
 	SettleType:      &appgoodcommconfig2.SettleType,
+	Level:           &appgoodcommconfig2.Level,
 }
 
 var appgoodcommconfig3 = appgoodcommconfigmwpb.AppGoodCommissionConfig{
@@ -881,6 +906,7 @@ var appgoodcommconfig3 = appgoodcommconfigmwpb.AppGoodCommissionConfig{
 	StartAt:         uint32(time.Now().Unix()),
 	Invites:         uint32(3),
 	SettleType:      types.SettleType_GoodOrderPayment,
+	Level:           uint32(2),
 }
 
 var _appgoodcommconfig3 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
@@ -893,6 +919,7 @@ var _appgoodcommconfig3 = appgoodcommconfigmwpb.AppGoodCommissionConfigReq{
 	StartAt:         &appgoodcommconfig3.StartAt,
 	Invites:         &appgoodcommconfig3.Invites,
 	SettleType:      &appgoodcommconfig3.SettleType,
+	Level:           &appgoodcommconfig3.Level,
 }
 
 func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
@@ -907,6 +934,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 		appgoodcommissionconfig1.WithInvites(_appgoodcommconfig1.Invites, true),
 		appgoodcommissionconfig1.WithSettleType(_appgoodcommconfig1.SettleType, true),
 		appgoodcommissionconfig1.WithStartAt(_appgoodcommconfig1.StartAt, true),
+		appgoodcommissionconfig1.WithLevel(_appgoodcommconfig1.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -929,6 +957,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 		appgoodcommissionconfig1.WithInvites(_appgoodcommconfig2.Invites, true),
 		appgoodcommissionconfig1.WithSettleType(_appgoodcommconfig2.SettleType, true),
 		appgoodcommissionconfig1.WithStartAt(_appgoodcommconfig2.StartAt, true),
+		appgoodcommissionconfig1.WithLevel(_appgoodcommconfig2.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -951,6 +980,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 		appgoodcommissionconfig1.WithInvites(_appgoodcommconfig3.Invites, true),
 		appgoodcommissionconfig1.WithSettleType(_appgoodcommconfig3.SettleType, true),
 		appgoodcommissionconfig1.WithStartAt(_appgoodcommconfig3.StartAt, true),
+		appgoodcommissionconfig1.WithLevel(_appgoodcommconfig3.Level, true),
 	)
 	assert.Nil(t, err)
 

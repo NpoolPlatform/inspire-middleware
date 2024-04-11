@@ -40,8 +40,6 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 			Update().
 			Where(
 				entcommissionconfig.AppID(*h.AppID),
-				entcommissionconfig.ThresholdAmount(*h.ThresholdAmount),
-				entcommissionconfig.Invites(*h.Invites),
 				entcommissionconfig.Level(*h.Level),
 				entcommissionconfig.SettleType(h.SettleType.String()),
 				entcommissionconfig.EndAt(0),
