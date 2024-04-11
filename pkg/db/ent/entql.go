@@ -98,6 +98,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appcommissionconfig.FieldDeletedAt:       {Type: field.TypeUint32, Column: appcommissionconfig.FieldDeletedAt},
 			appcommissionconfig.FieldEntID:           {Type: field.TypeUUID, Column: appcommissionconfig.FieldEntID},
 			appcommissionconfig.FieldAppID:           {Type: field.TypeUUID, Column: appcommissionconfig.FieldAppID},
+			appcommissionconfig.FieldLevel:           {Type: field.TypeUint32, Column: appcommissionconfig.FieldLevel},
 			appcommissionconfig.FieldThresholdAmount: {Type: field.TypeOther, Column: appcommissionconfig.FieldThresholdAmount},
 			appcommissionconfig.FieldAmountOrPercent: {Type: field.TypeOther, Column: appcommissionconfig.FieldAmountOrPercent},
 			appcommissionconfig.FieldStartAt:         {Type: field.TypeUint32, Column: appcommissionconfig.FieldStartAt},
@@ -128,6 +129,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appconfig.FieldSettleInterval:   {Type: field.TypeString, Column: appconfig.FieldSettleInterval},
 			appconfig.FieldCommissionType:   {Type: field.TypeString, Column: appconfig.FieldCommissionType},
 			appconfig.FieldSettleBenefit:    {Type: field.TypeBool, Column: appconfig.FieldSettleBenefit},
+			appconfig.FieldMaxLevelCount:    {Type: field.TypeUint32, Column: appconfig.FieldMaxLevelCount},
 			appconfig.FieldStartAt:          {Type: field.TypeUint32, Column: appconfig.FieldStartAt},
 			appconfig.FieldEndAt:            {Type: field.TypeUint32, Column: appconfig.FieldEndAt},
 		},
@@ -150,6 +152,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appgoodcommissionconfig.FieldAppID:           {Type: field.TypeUUID, Column: appgoodcommissionconfig.FieldAppID},
 			appgoodcommissionconfig.FieldGoodID:          {Type: field.TypeUUID, Column: appgoodcommissionconfig.FieldGoodID},
 			appgoodcommissionconfig.FieldAppGoodID:       {Type: field.TypeUUID, Column: appgoodcommissionconfig.FieldAppGoodID},
+			appgoodcommissionconfig.FieldLevel:           {Type: field.TypeUint32, Column: appgoodcommissionconfig.FieldLevel},
 			appgoodcommissionconfig.FieldThresholdAmount: {Type: field.TypeOther, Column: appgoodcommissionconfig.FieldThresholdAmount},
 			appgoodcommissionconfig.FieldAmountOrPercent: {Type: field.TypeOther, Column: appgoodcommissionconfig.FieldAmountOrPercent},
 			appgoodcommissionconfig.FieldStartAt:         {Type: field.TypeUint32, Column: appgoodcommissionconfig.FieldStartAt},
@@ -725,6 +728,11 @@ func (f *AppCommissionConfigFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(appcommissionconfig.FieldAppID))
 }
 
+// WhereLevel applies the entql uint32 predicate on the level field.
+func (f *AppCommissionConfigFilter) WhereLevel(p entql.Uint32P) {
+	f.Where(p.Field(appcommissionconfig.FieldLevel))
+}
+
 // WhereThresholdAmount applies the entql other predicate on the threshold_amount field.
 func (f *AppCommissionConfigFilter) WhereThresholdAmount(p entql.OtherP) {
 	f.Where(p.Field(appcommissionconfig.FieldThresholdAmount))
@@ -850,6 +858,11 @@ func (f *AppConfigFilter) WhereSettleBenefit(p entql.BoolP) {
 	f.Where(p.Field(appconfig.FieldSettleBenefit))
 }
 
+// WhereMaxLevelCount applies the entql uint32 predicate on the max_level_count field.
+func (f *AppConfigFilter) WhereMaxLevelCount(p entql.Uint32P) {
+	f.Where(p.Field(appconfig.FieldMaxLevelCount))
+}
+
 // WhereStartAt applies the entql uint32 predicate on the start_at field.
 func (f *AppConfigFilter) WhereStartAt(p entql.Uint32P) {
 	f.Where(p.Field(appconfig.FieldStartAt))
@@ -933,6 +946,11 @@ func (f *AppGoodCommissionConfigFilter) WhereGoodID(p entql.ValueP) {
 // WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
 func (f *AppGoodCommissionConfigFilter) WhereAppGoodID(p entql.ValueP) {
 	f.Where(p.Field(appgoodcommissionconfig.FieldAppGoodID))
+}
+
+// WhereLevel applies the entql uint32 predicate on the level field.
+func (f *AppGoodCommissionConfigFilter) WhereLevel(p entql.Uint32P) {
+	f.Where(p.Field(appgoodcommissionconfig.FieldLevel))
 }
 
 // WhereThresholdAmount applies the entql other predicate on the threshold_amount field.

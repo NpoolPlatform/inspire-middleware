@@ -121,6 +121,20 @@ func (agccc *AppGoodCommissionConfigCreate) SetNillableAppGoodID(u *uuid.UUID) *
 	return agccc
 }
 
+// SetLevel sets the "level" field.
+func (agccc *AppGoodCommissionConfigCreate) SetLevel(u uint32) *AppGoodCommissionConfigCreate {
+	agccc.mutation.SetLevel(u)
+	return agccc
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (agccc *AppGoodCommissionConfigCreate) SetNillableLevel(u *uint32) *AppGoodCommissionConfigCreate {
+	if u != nil {
+		agccc.SetLevel(*u)
+	}
+	return agccc
+}
+
 // SetThresholdAmount sets the "threshold_amount" field.
 func (agccc *AppGoodCommissionConfigCreate) SetThresholdAmount(d decimal.Decimal) *AppGoodCommissionConfigCreate {
 	agccc.mutation.SetThresholdAmount(d)
@@ -353,6 +367,10 @@ func (agccc *AppGoodCommissionConfigCreate) defaults() error {
 		v := appgoodcommissionconfig.DefaultAppGoodID()
 		agccc.mutation.SetAppGoodID(v)
 	}
+	if _, ok := agccc.mutation.Level(); !ok {
+		v := appgoodcommissionconfig.DefaultLevel
+		agccc.mutation.SetLevel(v)
+	}
 	if _, ok := agccc.mutation.ThresholdAmount(); !ok {
 		v := appgoodcommissionconfig.DefaultThresholdAmount
 		agccc.mutation.SetThresholdAmount(v)
@@ -487,6 +505,14 @@ func (agccc *AppGoodCommissionConfigCreate) createSpec() (*AppGoodCommissionConf
 			Column: appgoodcommissionconfig.FieldAppGoodID,
 		})
 		_node.AppGoodID = value
+	}
+	if value, ok := agccc.mutation.Level(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+		_node.Level = value
 	}
 	if value, ok := agccc.mutation.ThresholdAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -715,6 +741,30 @@ func (u *AppGoodCommissionConfigUpsert) UpdateAppGoodID() *AppGoodCommissionConf
 // ClearAppGoodID clears the value of the "app_good_id" field.
 func (u *AppGoodCommissionConfigUpsert) ClearAppGoodID() *AppGoodCommissionConfigUpsert {
 	u.SetNull(appgoodcommissionconfig.FieldAppGoodID)
+	return u
+}
+
+// SetLevel sets the "level" field.
+func (u *AppGoodCommissionConfigUpsert) SetLevel(v uint32) *AppGoodCommissionConfigUpsert {
+	u.Set(appgoodcommissionconfig.FieldLevel, v)
+	return u
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsert) UpdateLevel() *AppGoodCommissionConfigUpsert {
+	u.SetExcluded(appgoodcommissionconfig.FieldLevel)
+	return u
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppGoodCommissionConfigUpsert) AddLevel(v uint32) *AppGoodCommissionConfigUpsert {
+	u.Add(appgoodcommissionconfig.FieldLevel, v)
+	return u
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppGoodCommissionConfigUpsert) ClearLevel() *AppGoodCommissionConfigUpsert {
+	u.SetNull(appgoodcommissionconfig.FieldLevel)
 	return u
 }
 
@@ -1049,6 +1099,34 @@ func (u *AppGoodCommissionConfigUpsertOne) UpdateAppGoodID() *AppGoodCommissionC
 func (u *AppGoodCommissionConfigUpsertOne) ClearAppGoodID() *AppGoodCommissionConfigUpsertOne {
 	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
 		s.ClearAppGoodID()
+	})
+}
+
+// SetLevel sets the "level" field.
+func (u *AppGoodCommissionConfigUpsertOne) SetLevel(v uint32) *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.SetLevel(v)
+	})
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppGoodCommissionConfigUpsertOne) AddLevel(v uint32) *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.AddLevel(v)
+	})
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsertOne) UpdateLevel() *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.UpdateLevel()
+	})
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppGoodCommissionConfigUpsertOne) ClearLevel() *AppGoodCommissionConfigUpsertOne {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.ClearLevel()
 	})
 }
 
@@ -1572,6 +1650,34 @@ func (u *AppGoodCommissionConfigUpsertBulk) UpdateAppGoodID() *AppGoodCommission
 func (u *AppGoodCommissionConfigUpsertBulk) ClearAppGoodID() *AppGoodCommissionConfigUpsertBulk {
 	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
 		s.ClearAppGoodID()
+	})
+}
+
+// SetLevel sets the "level" field.
+func (u *AppGoodCommissionConfigUpsertBulk) SetLevel(v uint32) *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.SetLevel(v)
+	})
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppGoodCommissionConfigUpsertBulk) AddLevel(v uint32) *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.AddLevel(v)
+	})
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppGoodCommissionConfigUpsertBulk) UpdateLevel() *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.UpdateLevel()
+	})
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppGoodCommissionConfigUpsertBulk) ClearLevel() *AppGoodCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppGoodCommissionConfigUpsert) {
+		s.ClearLevel()
 	})
 }
 

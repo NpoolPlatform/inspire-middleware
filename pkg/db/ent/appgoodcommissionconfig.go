@@ -31,6 +31,8 @@ type AppGoodCommissionConfig struct {
 	GoodID uuid.UUID `json:"good_id,omitempty"`
 	// AppGoodID holds the value of the "app_good_id" field.
 	AppGoodID uuid.UUID `json:"app_good_id,omitempty"`
+	// Level holds the value of the "level" field.
+	Level uint32 `json:"level,omitempty"`
 	// ThresholdAmount holds the value of the "threshold_amount" field.
 	ThresholdAmount decimal.Decimal `json:"threshold_amount,omitempty"`
 	// AmountOrPercent holds the value of the "amount_or_percent" field.
@@ -56,7 +58,7 @@ func (*AppGoodCommissionConfig) scanValues(columns []string) ([]interface{}, err
 			values[i] = new(decimal.Decimal)
 		case appgoodcommissionconfig.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case appgoodcommissionconfig.FieldID, appgoodcommissionconfig.FieldCreatedAt, appgoodcommissionconfig.FieldUpdatedAt, appgoodcommissionconfig.FieldDeletedAt, appgoodcommissionconfig.FieldStartAt, appgoodcommissionconfig.FieldEndAt, appgoodcommissionconfig.FieldInvites:
+		case appgoodcommissionconfig.FieldID, appgoodcommissionconfig.FieldCreatedAt, appgoodcommissionconfig.FieldUpdatedAt, appgoodcommissionconfig.FieldDeletedAt, appgoodcommissionconfig.FieldLevel, appgoodcommissionconfig.FieldStartAt, appgoodcommissionconfig.FieldEndAt, appgoodcommissionconfig.FieldInvites:
 			values[i] = new(sql.NullInt64)
 		case appgoodcommissionconfig.FieldSettleType:
 			values[i] = new(sql.NullString)
@@ -124,6 +126,12 @@ func (agcc *AppGoodCommissionConfig) assignValues(columns []string, values []int
 				return fmt.Errorf("unexpected type %T for field app_good_id", values[i])
 			} else if value != nil {
 				agcc.AppGoodID = *value
+			}
+		case appgoodcommissionconfig.FieldLevel:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field level", values[i])
+			} else if value.Valid {
+				agcc.Level = uint32(value.Int64)
 			}
 		case appgoodcommissionconfig.FieldThresholdAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -215,6 +223,9 @@ func (agcc *AppGoodCommissionConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_good_id=")
 	builder.WriteString(fmt.Sprintf("%v", agcc.AppGoodID))
+	builder.WriteString(", ")
+	builder.WriteString("level=")
+	builder.WriteString(fmt.Sprintf("%v", agcc.Level))
 	builder.WriteString(", ")
 	builder.WriteString("threshold_amount=")
 	builder.WriteString(fmt.Sprintf("%v", agcc.ThresholdAmount))

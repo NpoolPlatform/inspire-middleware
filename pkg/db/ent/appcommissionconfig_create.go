@@ -93,6 +93,20 @@ func (accc *AppCommissionConfigCreate) SetNillableAppID(u *uuid.UUID) *AppCommis
 	return accc
 }
 
+// SetLevel sets the "level" field.
+func (accc *AppCommissionConfigCreate) SetLevel(u uint32) *AppCommissionConfigCreate {
+	accc.mutation.SetLevel(u)
+	return accc
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (accc *AppCommissionConfigCreate) SetNillableLevel(u *uint32) *AppCommissionConfigCreate {
+	if u != nil {
+		accc.SetLevel(*u)
+	}
+	return accc
+}
+
 // SetThresholdAmount sets the "threshold_amount" field.
 func (accc *AppCommissionConfigCreate) SetThresholdAmount(d decimal.Decimal) *AppCommissionConfigCreate {
 	accc.mutation.SetThresholdAmount(d)
@@ -311,6 +325,10 @@ func (accc *AppCommissionConfigCreate) defaults() error {
 		v := appcommissionconfig.DefaultAppID()
 		accc.mutation.SetAppID(v)
 	}
+	if _, ok := accc.mutation.Level(); !ok {
+		v := appcommissionconfig.DefaultLevel
+		accc.mutation.SetLevel(v)
+	}
 	if _, ok := accc.mutation.ThresholdAmount(); !ok {
 		v := appcommissionconfig.DefaultThresholdAmount
 		accc.mutation.SetThresholdAmount(v)
@@ -429,6 +447,14 @@ func (accc *AppCommissionConfigCreate) createSpec() (*AppCommissionConfig, *sqlg
 			Column: appcommissionconfig.FieldAppID,
 		})
 		_node.AppID = value
+	}
+	if value, ok := accc.mutation.Level(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appcommissionconfig.FieldLevel,
+		})
+		_node.Level = value
 	}
 	if value, ok := accc.mutation.ThresholdAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -621,6 +647,30 @@ func (u *AppCommissionConfigUpsert) UpdateAppID() *AppCommissionConfigUpsert {
 // ClearAppID clears the value of the "app_id" field.
 func (u *AppCommissionConfigUpsert) ClearAppID() *AppCommissionConfigUpsert {
 	u.SetNull(appcommissionconfig.FieldAppID)
+	return u
+}
+
+// SetLevel sets the "level" field.
+func (u *AppCommissionConfigUpsert) SetLevel(v uint32) *AppCommissionConfigUpsert {
+	u.Set(appcommissionconfig.FieldLevel, v)
+	return u
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsert) UpdateLevel() *AppCommissionConfigUpsert {
+	u.SetExcluded(appcommissionconfig.FieldLevel)
+	return u
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppCommissionConfigUpsert) AddLevel(v uint32) *AppCommissionConfigUpsert {
+	u.Add(appcommissionconfig.FieldLevel, v)
+	return u
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppCommissionConfigUpsert) ClearLevel() *AppCommissionConfigUpsert {
+	u.SetNull(appcommissionconfig.FieldLevel)
 	return u
 }
 
@@ -913,6 +963,34 @@ func (u *AppCommissionConfigUpsertOne) UpdateAppID() *AppCommissionConfigUpsertO
 func (u *AppCommissionConfigUpsertOne) ClearAppID() *AppCommissionConfigUpsertOne {
 	return u.Update(func(s *AppCommissionConfigUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetLevel sets the "level" field.
+func (u *AppCommissionConfigUpsertOne) SetLevel(v uint32) *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.SetLevel(v)
+	})
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppCommissionConfigUpsertOne) AddLevel(v uint32) *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.AddLevel(v)
+	})
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsertOne) UpdateLevel() *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.UpdateLevel()
+	})
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppCommissionConfigUpsertOne) ClearLevel() *AppCommissionConfigUpsertOne {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.ClearLevel()
 	})
 }
 
@@ -1394,6 +1472,34 @@ func (u *AppCommissionConfigUpsertBulk) UpdateAppID() *AppCommissionConfigUpsert
 func (u *AppCommissionConfigUpsertBulk) ClearAppID() *AppCommissionConfigUpsertBulk {
 	return u.Update(func(s *AppCommissionConfigUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetLevel sets the "level" field.
+func (u *AppCommissionConfigUpsertBulk) SetLevel(v uint32) *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.SetLevel(v)
+	})
+}
+
+// AddLevel adds v to the "level" field.
+func (u *AppCommissionConfigUpsertBulk) AddLevel(v uint32) *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.AddLevel(v)
+	})
+}
+
+// UpdateLevel sets the "level" field to the value that was provided on create.
+func (u *AppCommissionConfigUpsertBulk) UpdateLevel() *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.UpdateLevel()
+	})
+}
+
+// ClearLevel clears the value of the "level" field.
+func (u *AppCommissionConfigUpsertBulk) ClearLevel() *AppCommissionConfigUpsertBulk {
+	return u.Update(func(s *AppCommissionConfigUpsert) {
+		s.ClearLevel()
 	})
 }
 

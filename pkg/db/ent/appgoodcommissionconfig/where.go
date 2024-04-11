@@ -129,6 +129,13 @@ func AppGoodID(v uuid.UUID) predicate.AppGoodCommissionConfig {
 	})
 }
 
+// Level applies equality check predicate on the "level" field. It's identical to LevelEQ.
+func Level(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLevel), v))
+	})
+}
+
 // ThresholdAmount applies equality check predicate on the "threshold_amount" field. It's identical to ThresholdAmountEQ.
 func ThresholdAmount(v decimal.Decimal) predicate.AppGoodCommissionConfig {
 	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
@@ -665,6 +672,84 @@ func AppGoodIDIsNil() predicate.AppGoodCommissionConfig {
 func AppGoodIDNotNil() predicate.AppGoodCommissionConfig {
 	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldAppGoodID)))
+	})
+}
+
+// LevelEQ applies the EQ predicate on the "level" field.
+func LevelEQ(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLevel), v))
+	})
+}
+
+// LevelNEQ applies the NEQ predicate on the "level" field.
+func LevelNEQ(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLevel), v))
+	})
+}
+
+// LevelIn applies the In predicate on the "level" field.
+func LevelIn(vs ...uint32) predicate.AppGoodCommissionConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLevel), v...))
+	})
+}
+
+// LevelNotIn applies the NotIn predicate on the "level" field.
+func LevelNotIn(vs ...uint32) predicate.AppGoodCommissionConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLevel), v...))
+	})
+}
+
+// LevelGT applies the GT predicate on the "level" field.
+func LevelGT(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLevel), v))
+	})
+}
+
+// LevelGTE applies the GTE predicate on the "level" field.
+func LevelGTE(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLevel), v))
+	})
+}
+
+// LevelLT applies the LT predicate on the "level" field.
+func LevelLT(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLevel), v))
+	})
+}
+
+// LevelLTE applies the LTE predicate on the "level" field.
+func LevelLTE(v uint32) predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLevel), v))
+	})
+}
+
+// LevelIsNil applies the IsNil predicate on the "level" field.
+func LevelIsNil() predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLevel)))
+	})
+}
+
+// LevelNotNil applies the NotNil predicate on the "level" field.
+func LevelNotNil() predicate.AppGoodCommissionConfig {
+	return predicate.AppGoodCommissionConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLevel)))
 	})
 }
 

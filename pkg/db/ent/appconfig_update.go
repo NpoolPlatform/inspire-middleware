@@ -218,6 +218,33 @@ func (acu *AppConfigUpdate) ClearSettleBenefit() *AppConfigUpdate {
 	return acu
 }
 
+// SetMaxLevelCount sets the "max_level_count" field.
+func (acu *AppConfigUpdate) SetMaxLevelCount(u uint32) *AppConfigUpdate {
+	acu.mutation.ResetMaxLevelCount()
+	acu.mutation.SetMaxLevelCount(u)
+	return acu
+}
+
+// SetNillableMaxLevelCount sets the "max_level_count" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableMaxLevelCount(u *uint32) *AppConfigUpdate {
+	if u != nil {
+		acu.SetMaxLevelCount(*u)
+	}
+	return acu
+}
+
+// AddMaxLevelCount adds u to the "max_level_count" field.
+func (acu *AppConfigUpdate) AddMaxLevelCount(u int32) *AppConfigUpdate {
+	acu.mutation.AddMaxLevelCount(u)
+	return acu
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (acu *AppConfigUpdate) ClearMaxLevelCount() *AppConfigUpdate {
+	acu.mutation.ClearMaxLevelCount()
+	return acu
+}
+
 // SetStartAt sets the "start_at" field.
 func (acu *AppConfigUpdate) SetStartAt(u uint32) *AppConfigUpdate {
 	acu.mutation.ResetStartAt()
@@ -497,6 +524,26 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appconfig.FieldSettleBenefit,
 		})
 	}
+	if value, ok := acu.mutation.MaxLevelCount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+	}
+	if value, ok := acu.mutation.AddedMaxLevelCount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+	}
+	if acu.mutation.MaxLevelCountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+	}
 	if value, ok := acu.mutation.StartAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
@@ -744,6 +791,33 @@ func (acuo *AppConfigUpdateOne) SetNillableSettleBenefit(b *bool) *AppConfigUpda
 // ClearSettleBenefit clears the value of the "settle_benefit" field.
 func (acuo *AppConfigUpdateOne) ClearSettleBenefit() *AppConfigUpdateOne {
 	acuo.mutation.ClearSettleBenefit()
+	return acuo
+}
+
+// SetMaxLevelCount sets the "max_level_count" field.
+func (acuo *AppConfigUpdateOne) SetMaxLevelCount(u uint32) *AppConfigUpdateOne {
+	acuo.mutation.ResetMaxLevelCount()
+	acuo.mutation.SetMaxLevelCount(u)
+	return acuo
+}
+
+// SetNillableMaxLevelCount sets the "max_level_count" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableMaxLevelCount(u *uint32) *AppConfigUpdateOne {
+	if u != nil {
+		acuo.SetMaxLevelCount(*u)
+	}
+	return acuo
+}
+
+// AddMaxLevelCount adds u to the "max_level_count" field.
+func (acuo *AppConfigUpdateOne) AddMaxLevelCount(u int32) *AppConfigUpdateOne {
+	acuo.mutation.AddMaxLevelCount(u)
+	return acuo
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (acuo *AppConfigUpdateOne) ClearMaxLevelCount() *AppConfigUpdateOne {
+	acuo.mutation.ClearMaxLevelCount()
 	return acuo
 }
 
@@ -1054,6 +1128,26 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: appconfig.FieldSettleBenefit,
+		})
+	}
+	if value, ok := acuo.mutation.MaxLevelCount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+	}
+	if value, ok := acuo.mutation.AddedMaxLevelCount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+	}
+	if acuo.mutation.MaxLevelCountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appconfig.FieldMaxLevelCount,
 		})
 	}
 	if value, ok := acuo.mutation.StartAt(); ok {

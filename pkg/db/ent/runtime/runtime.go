@@ -215,32 +215,36 @@ func init() {
 	appcommissionconfigDescAppID := appcommissionconfigFields[0].Descriptor()
 	// appcommissionconfig.DefaultAppID holds the default value on creation for the app_id field.
 	appcommissionconfig.DefaultAppID = appcommissionconfigDescAppID.Default.(func() uuid.UUID)
+	// appcommissionconfigDescLevel is the schema descriptor for level field.
+	appcommissionconfigDescLevel := appcommissionconfigFields[1].Descriptor()
+	// appcommissionconfig.DefaultLevel holds the default value on creation for the level field.
+	appcommissionconfig.DefaultLevel = appcommissionconfigDescLevel.Default.(uint32)
 	// appcommissionconfigDescThresholdAmount is the schema descriptor for threshold_amount field.
-	appcommissionconfigDescThresholdAmount := appcommissionconfigFields[1].Descriptor()
+	appcommissionconfigDescThresholdAmount := appcommissionconfigFields[2].Descriptor()
 	// appcommissionconfig.DefaultThresholdAmount holds the default value on creation for the threshold_amount field.
 	appcommissionconfig.DefaultThresholdAmount = appcommissionconfigDescThresholdAmount.Default.(decimal.Decimal)
 	// appcommissionconfigDescAmountOrPercent is the schema descriptor for amount_or_percent field.
-	appcommissionconfigDescAmountOrPercent := appcommissionconfigFields[2].Descriptor()
+	appcommissionconfigDescAmountOrPercent := appcommissionconfigFields[3].Descriptor()
 	// appcommissionconfig.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
 	appcommissionconfig.DefaultAmountOrPercent = appcommissionconfigDescAmountOrPercent.Default.(decimal.Decimal)
 	// appcommissionconfigDescStartAt is the schema descriptor for start_at field.
-	appcommissionconfigDescStartAt := appcommissionconfigFields[3].Descriptor()
+	appcommissionconfigDescStartAt := appcommissionconfigFields[4].Descriptor()
 	// appcommissionconfig.DefaultStartAt holds the default value on creation for the start_at field.
 	appcommissionconfig.DefaultStartAt = appcommissionconfigDescStartAt.Default.(uint32)
 	// appcommissionconfigDescEndAt is the schema descriptor for end_at field.
-	appcommissionconfigDescEndAt := appcommissionconfigFields[4].Descriptor()
+	appcommissionconfigDescEndAt := appcommissionconfigFields[5].Descriptor()
 	// appcommissionconfig.DefaultEndAt holds the default value on creation for the end_at field.
 	appcommissionconfig.DefaultEndAt = appcommissionconfigDescEndAt.Default.(uint32)
 	// appcommissionconfigDescInvites is the schema descriptor for invites field.
-	appcommissionconfigDescInvites := appcommissionconfigFields[5].Descriptor()
+	appcommissionconfigDescInvites := appcommissionconfigFields[6].Descriptor()
 	// appcommissionconfig.DefaultInvites holds the default value on creation for the invites field.
 	appcommissionconfig.DefaultInvites = appcommissionconfigDescInvites.Default.(uint32)
 	// appcommissionconfigDescSettleType is the schema descriptor for settle_type field.
-	appcommissionconfigDescSettleType := appcommissionconfigFields[6].Descriptor()
+	appcommissionconfigDescSettleType := appcommissionconfigFields[7].Descriptor()
 	// appcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
 	appcommissionconfig.DefaultSettleType = appcommissionconfigDescSettleType.Default.(string)
 	// appcommissionconfigDescDisabled is the schema descriptor for disabled field.
-	appcommissionconfigDescDisabled := appcommissionconfigFields[7].Descriptor()
+	appcommissionconfigDescDisabled := appcommissionconfigFields[8].Descriptor()
 	// appcommissionconfig.DefaultDisabled holds the default value on creation for the disabled field.
 	appcommissionconfig.DefaultDisabled = appcommissionconfigDescDisabled.Default.(bool)
 	appconfigMixin := schema.AppConfig{}.Mixin()
@@ -301,12 +305,16 @@ func init() {
 	appconfigDescSettleBenefit := appconfigFields[5].Descriptor()
 	// appconfig.DefaultSettleBenefit holds the default value on creation for the settle_benefit field.
 	appconfig.DefaultSettleBenefit = appconfigDescSettleBenefit.Default.(bool)
+	// appconfigDescMaxLevelCount is the schema descriptor for max_level_count field.
+	appconfigDescMaxLevelCount := appconfigFields[6].Descriptor()
+	// appconfig.DefaultMaxLevelCount holds the default value on creation for the max_level_count field.
+	appconfig.DefaultMaxLevelCount = appconfigDescMaxLevelCount.Default.(uint32)
 	// appconfigDescStartAt is the schema descriptor for start_at field.
-	appconfigDescStartAt := appconfigFields[6].Descriptor()
+	appconfigDescStartAt := appconfigFields[7].Descriptor()
 	// appconfig.DefaultStartAt holds the default value on creation for the start_at field.
 	appconfig.DefaultStartAt = appconfigDescStartAt.Default.(uint32)
 	// appconfigDescEndAt is the schema descriptor for end_at field.
-	appconfigDescEndAt := appconfigFields[7].Descriptor()
+	appconfigDescEndAt := appconfigFields[8].Descriptor()
 	// appconfig.DefaultEndAt holds the default value on creation for the end_at field.
 	appconfig.DefaultEndAt = appconfigDescEndAt.Default.(uint32)
 	appgoodcommissionconfigMixin := schema.AppGoodCommissionConfig{}.Mixin()
@@ -355,32 +363,36 @@ func init() {
 	appgoodcommissionconfigDescAppGoodID := appgoodcommissionconfigFields[2].Descriptor()
 	// appgoodcommissionconfig.DefaultAppGoodID holds the default value on creation for the app_good_id field.
 	appgoodcommissionconfig.DefaultAppGoodID = appgoodcommissionconfigDescAppGoodID.Default.(func() uuid.UUID)
+	// appgoodcommissionconfigDescLevel is the schema descriptor for level field.
+	appgoodcommissionconfigDescLevel := appgoodcommissionconfigFields[3].Descriptor()
+	// appgoodcommissionconfig.DefaultLevel holds the default value on creation for the level field.
+	appgoodcommissionconfig.DefaultLevel = appgoodcommissionconfigDescLevel.Default.(uint32)
 	// appgoodcommissionconfigDescThresholdAmount is the schema descriptor for threshold_amount field.
-	appgoodcommissionconfigDescThresholdAmount := appgoodcommissionconfigFields[3].Descriptor()
+	appgoodcommissionconfigDescThresholdAmount := appgoodcommissionconfigFields[4].Descriptor()
 	// appgoodcommissionconfig.DefaultThresholdAmount holds the default value on creation for the threshold_amount field.
 	appgoodcommissionconfig.DefaultThresholdAmount = appgoodcommissionconfigDescThresholdAmount.Default.(decimal.Decimal)
 	// appgoodcommissionconfigDescAmountOrPercent is the schema descriptor for amount_or_percent field.
-	appgoodcommissionconfigDescAmountOrPercent := appgoodcommissionconfigFields[4].Descriptor()
+	appgoodcommissionconfigDescAmountOrPercent := appgoodcommissionconfigFields[5].Descriptor()
 	// appgoodcommissionconfig.DefaultAmountOrPercent holds the default value on creation for the amount_or_percent field.
 	appgoodcommissionconfig.DefaultAmountOrPercent = appgoodcommissionconfigDescAmountOrPercent.Default.(decimal.Decimal)
 	// appgoodcommissionconfigDescStartAt is the schema descriptor for start_at field.
-	appgoodcommissionconfigDescStartAt := appgoodcommissionconfigFields[5].Descriptor()
+	appgoodcommissionconfigDescStartAt := appgoodcommissionconfigFields[6].Descriptor()
 	// appgoodcommissionconfig.DefaultStartAt holds the default value on creation for the start_at field.
 	appgoodcommissionconfig.DefaultStartAt = appgoodcommissionconfigDescStartAt.Default.(uint32)
 	// appgoodcommissionconfigDescEndAt is the schema descriptor for end_at field.
-	appgoodcommissionconfigDescEndAt := appgoodcommissionconfigFields[6].Descriptor()
+	appgoodcommissionconfigDescEndAt := appgoodcommissionconfigFields[7].Descriptor()
 	// appgoodcommissionconfig.DefaultEndAt holds the default value on creation for the end_at field.
 	appgoodcommissionconfig.DefaultEndAt = appgoodcommissionconfigDescEndAt.Default.(uint32)
 	// appgoodcommissionconfigDescInvites is the schema descriptor for invites field.
-	appgoodcommissionconfigDescInvites := appgoodcommissionconfigFields[7].Descriptor()
+	appgoodcommissionconfigDescInvites := appgoodcommissionconfigFields[8].Descriptor()
 	// appgoodcommissionconfig.DefaultInvites holds the default value on creation for the invites field.
 	appgoodcommissionconfig.DefaultInvites = appgoodcommissionconfigDescInvites.Default.(uint32)
 	// appgoodcommissionconfigDescSettleType is the schema descriptor for settle_type field.
-	appgoodcommissionconfigDescSettleType := appgoodcommissionconfigFields[8].Descriptor()
+	appgoodcommissionconfigDescSettleType := appgoodcommissionconfigFields[9].Descriptor()
 	// appgoodcommissionconfig.DefaultSettleType holds the default value on creation for the settle_type field.
 	appgoodcommissionconfig.DefaultSettleType = appgoodcommissionconfigDescSettleType.Default.(string)
 	// appgoodcommissionconfigDescDisabled is the schema descriptor for disabled field.
-	appgoodcommissionconfigDescDisabled := appgoodcommissionconfigFields[9].Descriptor()
+	appgoodcommissionconfigDescDisabled := appgoodcommissionconfigFields[10].Descriptor()
 	// appgoodcommissionconfig.DefaultDisabled holds the default value on creation for the disabled field.
 	appgoodcommissionconfig.DefaultDisabled = appgoodcommissionconfigDescDisabled.Default.(bool)
 	appgoodscopeMixin := schema.AppGoodScope{}.Mixin()

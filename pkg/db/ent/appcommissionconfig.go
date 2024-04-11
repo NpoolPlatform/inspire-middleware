@@ -27,6 +27,8 @@ type AppCommissionConfig struct {
 	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
+	// Level holds the value of the "level" field.
+	Level uint32 `json:"level,omitempty"`
 	// ThresholdAmount holds the value of the "threshold_amount" field.
 	ThresholdAmount decimal.Decimal `json:"threshold_amount,omitempty"`
 	// AmountOrPercent holds the value of the "amount_or_percent" field.
@@ -52,7 +54,7 @@ func (*AppCommissionConfig) scanValues(columns []string) ([]interface{}, error) 
 			values[i] = new(decimal.Decimal)
 		case appcommissionconfig.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case appcommissionconfig.FieldID, appcommissionconfig.FieldCreatedAt, appcommissionconfig.FieldUpdatedAt, appcommissionconfig.FieldDeletedAt, appcommissionconfig.FieldStartAt, appcommissionconfig.FieldEndAt, appcommissionconfig.FieldInvites:
+		case appcommissionconfig.FieldID, appcommissionconfig.FieldCreatedAt, appcommissionconfig.FieldUpdatedAt, appcommissionconfig.FieldDeletedAt, appcommissionconfig.FieldLevel, appcommissionconfig.FieldStartAt, appcommissionconfig.FieldEndAt, appcommissionconfig.FieldInvites:
 			values[i] = new(sql.NullInt64)
 		case appcommissionconfig.FieldSettleType:
 			values[i] = new(sql.NullString)
@@ -108,6 +110,12 @@ func (acc *AppCommissionConfig) assignValues(columns []string, values []interfac
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value != nil {
 				acc.AppID = *value
+			}
+		case appcommissionconfig.FieldLevel:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field level", values[i])
+			} else if value.Valid {
+				acc.Level = uint32(value.Int64)
 			}
 		case appcommissionconfig.FieldThresholdAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -193,6 +201,9 @@ func (acc *AppCommissionConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", acc.AppID))
+	builder.WriteString(", ")
+	builder.WriteString("level=")
+	builder.WriteString(fmt.Sprintf("%v", acc.Level))
 	builder.WriteString(", ")
 	builder.WriteString("threshold_amount=")
 	builder.WriteString(fmt.Sprintf("%v", acc.ThresholdAmount))

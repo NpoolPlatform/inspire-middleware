@@ -119,6 +119,33 @@ func (accu *AppCommissionConfigUpdate) ClearAppID() *AppCommissionConfigUpdate {
 	return accu
 }
 
+// SetLevel sets the "level" field.
+func (accu *AppCommissionConfigUpdate) SetLevel(u uint32) *AppCommissionConfigUpdate {
+	accu.mutation.ResetLevel()
+	accu.mutation.SetLevel(u)
+	return accu
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (accu *AppCommissionConfigUpdate) SetNillableLevel(u *uint32) *AppCommissionConfigUpdate {
+	if u != nil {
+		accu.SetLevel(*u)
+	}
+	return accu
+}
+
+// AddLevel adds u to the "level" field.
+func (accu *AppCommissionConfigUpdate) AddLevel(u int32) *AppCommissionConfigUpdate {
+	accu.mutation.AddLevel(u)
+	return accu
+}
+
+// ClearLevel clears the value of the "level" field.
+func (accu *AppCommissionConfigUpdate) ClearLevel() *AppCommissionConfigUpdate {
+	accu.mutation.ClearLevel()
+	return accu
+}
+
 // SetThresholdAmount sets the "threshold_amount" field.
 func (accu *AppCommissionConfigUpdate) SetThresholdAmount(d decimal.Decimal) *AppCommissionConfigUpdate {
 	accu.mutation.SetThresholdAmount(d)
@@ -440,6 +467,26 @@ func (accu *AppCommissionConfigUpdate) sqlSave(ctx context.Context) (n int, err 
 			Column: appcommissionconfig.FieldAppID,
 		})
 	}
+	if value, ok := accu.mutation.Level(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appcommissionconfig.FieldLevel,
+		})
+	}
+	if value, ok := accu.mutation.AddedLevel(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appcommissionconfig.FieldLevel,
+		})
+	}
+	if accu.mutation.LevelCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appcommissionconfig.FieldLevel,
+		})
+	}
 	if value, ok := accu.mutation.ThresholdAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -659,6 +706,33 @@ func (accuo *AppCommissionConfigUpdateOne) SetNillableAppID(u *uuid.UUID) *AppCo
 // ClearAppID clears the value of the "app_id" field.
 func (accuo *AppCommissionConfigUpdateOne) ClearAppID() *AppCommissionConfigUpdateOne {
 	accuo.mutation.ClearAppID()
+	return accuo
+}
+
+// SetLevel sets the "level" field.
+func (accuo *AppCommissionConfigUpdateOne) SetLevel(u uint32) *AppCommissionConfigUpdateOne {
+	accuo.mutation.ResetLevel()
+	accuo.mutation.SetLevel(u)
+	return accuo
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (accuo *AppCommissionConfigUpdateOne) SetNillableLevel(u *uint32) *AppCommissionConfigUpdateOne {
+	if u != nil {
+		accuo.SetLevel(*u)
+	}
+	return accuo
+}
+
+// AddLevel adds u to the "level" field.
+func (accuo *AppCommissionConfigUpdateOne) AddLevel(u int32) *AppCommissionConfigUpdateOne {
+	accuo.mutation.AddLevel(u)
+	return accuo
+}
+
+// ClearLevel clears the value of the "level" field.
+func (accuo *AppCommissionConfigUpdateOne) ClearLevel() *AppCommissionConfigUpdateOne {
+	accuo.mutation.ClearLevel()
 	return accuo
 }
 
@@ -1011,6 +1085,26 @@ func (accuo *AppCommissionConfigUpdateOne) sqlSave(ctx context.Context) (_node *
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: appcommissionconfig.FieldAppID,
+		})
+	}
+	if value, ok := accuo.mutation.Level(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appcommissionconfig.FieldLevel,
+		})
+	}
+	if value, ok := accuo.mutation.AddedLevel(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appcommissionconfig.FieldLevel,
+		})
+	}
+	if accuo.mutation.LevelCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appcommissionconfig.FieldLevel,
 		})
 	}
 	if value, ok := accuo.mutation.ThresholdAmount(); ok {

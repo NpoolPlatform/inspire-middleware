@@ -2695,6 +2695,8 @@ type AppCommissionConfigMutation struct {
 	adddeleted_at     *int32
 	ent_id            *uuid.UUID
 	app_id            *uuid.UUID
+	level             *uint32
+	addlevel          *int32
 	threshold_amount  *decimal.Decimal
 	amount_or_percent *decimal.Decimal
 	start_at          *uint32
@@ -3066,6 +3068,76 @@ func (m *AppCommissionConfigMutation) AppIDCleared() bool {
 func (m *AppCommissionConfigMutation) ResetAppID() {
 	m.app_id = nil
 	delete(m.clearedFields, appcommissionconfig.FieldAppID)
+}
+
+// SetLevel sets the "level" field.
+func (m *AppCommissionConfigMutation) SetLevel(u uint32) {
+	m.level = &u
+	m.addlevel = nil
+}
+
+// Level returns the value of the "level" field in the mutation.
+func (m *AppCommissionConfigMutation) Level() (r uint32, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevel returns the old "level" field's value of the AppCommissionConfig entity.
+// If the AppCommissionConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppCommissionConfigMutation) OldLevel(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevel: %w", err)
+	}
+	return oldValue.Level, nil
+}
+
+// AddLevel adds u to the "level" field.
+func (m *AppCommissionConfigMutation) AddLevel(u int32) {
+	if m.addlevel != nil {
+		*m.addlevel += u
+	} else {
+		m.addlevel = &u
+	}
+}
+
+// AddedLevel returns the value that was added to the "level" field in this mutation.
+func (m *AppCommissionConfigMutation) AddedLevel() (r int32, exists bool) {
+	v := m.addlevel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLevel clears the value of the "level" field.
+func (m *AppCommissionConfigMutation) ClearLevel() {
+	m.level = nil
+	m.addlevel = nil
+	m.clearedFields[appcommissionconfig.FieldLevel] = struct{}{}
+}
+
+// LevelCleared returns if the "level" field was cleared in this mutation.
+func (m *AppCommissionConfigMutation) LevelCleared() bool {
+	_, ok := m.clearedFields[appcommissionconfig.FieldLevel]
+	return ok
+}
+
+// ResetLevel resets all changes to the "level" field.
+func (m *AppCommissionConfigMutation) ResetLevel() {
+	m.level = nil
+	m.addlevel = nil
+	delete(m.clearedFields, appcommissionconfig.FieldLevel)
 }
 
 // SetThresholdAmount sets the "threshold_amount" field.
@@ -3493,7 +3565,7 @@ func (m *AppCommissionConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppCommissionConfigMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, appcommissionconfig.FieldCreatedAt)
 	}
@@ -3508,6 +3580,9 @@ func (m *AppCommissionConfigMutation) Fields() []string {
 	}
 	if m.app_id != nil {
 		fields = append(fields, appcommissionconfig.FieldAppID)
+	}
+	if m.level != nil {
+		fields = append(fields, appcommissionconfig.FieldLevel)
 	}
 	if m.threshold_amount != nil {
 		fields = append(fields, appcommissionconfig.FieldThresholdAmount)
@@ -3548,6 +3623,8 @@ func (m *AppCommissionConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.EntID()
 	case appcommissionconfig.FieldAppID:
 		return m.AppID()
+	case appcommissionconfig.FieldLevel:
+		return m.Level()
 	case appcommissionconfig.FieldThresholdAmount:
 		return m.ThresholdAmount()
 	case appcommissionconfig.FieldAmountOrPercent:
@@ -3581,6 +3658,8 @@ func (m *AppCommissionConfigMutation) OldField(ctx context.Context, name string)
 		return m.OldEntID(ctx)
 	case appcommissionconfig.FieldAppID:
 		return m.OldAppID(ctx)
+	case appcommissionconfig.FieldLevel:
+		return m.OldLevel(ctx)
 	case appcommissionconfig.FieldThresholdAmount:
 		return m.OldThresholdAmount(ctx)
 	case appcommissionconfig.FieldAmountOrPercent:
@@ -3638,6 +3717,13 @@ func (m *AppCommissionConfigMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
+		return nil
+	case appcommissionconfig.FieldLevel:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevel(v)
 		return nil
 	case appcommissionconfig.FieldThresholdAmount:
 		v, ok := value.(decimal.Decimal)
@@ -3705,6 +3791,9 @@ func (m *AppCommissionConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, appcommissionconfig.FieldDeletedAt)
 	}
+	if m.addlevel != nil {
+		fields = append(fields, appcommissionconfig.FieldLevel)
+	}
 	if m.addstart_at != nil {
 		fields = append(fields, appcommissionconfig.FieldStartAt)
 	}
@@ -3728,6 +3817,8 @@ func (m *AppCommissionConfigMutation) AddedField(name string) (ent.Value, bool) 
 		return m.AddedUpdatedAt()
 	case appcommissionconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case appcommissionconfig.FieldLevel:
+		return m.AddedLevel()
 	case appcommissionconfig.FieldStartAt:
 		return m.AddedStartAt()
 	case appcommissionconfig.FieldEndAt:
@@ -3764,6 +3855,13 @@ func (m *AppCommissionConfigMutation) AddField(name string, value ent.Value) err
 		}
 		m.AddDeletedAt(v)
 		return nil
+	case appcommissionconfig.FieldLevel:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevel(v)
+		return nil
 	case appcommissionconfig.FieldStartAt:
 		v, ok := value.(int32)
 		if !ok {
@@ -3795,6 +3893,9 @@ func (m *AppCommissionConfigMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(appcommissionconfig.FieldAppID) {
 		fields = append(fields, appcommissionconfig.FieldAppID)
+	}
+	if m.FieldCleared(appcommissionconfig.FieldLevel) {
+		fields = append(fields, appcommissionconfig.FieldLevel)
 	}
 	if m.FieldCleared(appcommissionconfig.FieldThresholdAmount) {
 		fields = append(fields, appcommissionconfig.FieldThresholdAmount)
@@ -3833,6 +3934,9 @@ func (m *AppCommissionConfigMutation) ClearField(name string) error {
 	switch name {
 	case appcommissionconfig.FieldAppID:
 		m.ClearAppID()
+		return nil
+	case appcommissionconfig.FieldLevel:
+		m.ClearLevel()
 		return nil
 	case appcommissionconfig.FieldThresholdAmount:
 		m.ClearThresholdAmount()
@@ -3877,6 +3981,9 @@ func (m *AppCommissionConfigMutation) ResetField(name string) error {
 		return nil
 	case appcommissionconfig.FieldAppID:
 		m.ResetAppID()
+		return nil
+	case appcommissionconfig.FieldLevel:
+		m.ResetLevel()
 		return nil
 	case appcommissionconfig.FieldThresholdAmount:
 		m.ResetThresholdAmount()
@@ -3970,6 +4077,8 @@ type AppConfigMutation struct {
 	settle_interval    *string
 	commission_type    *string
 	settle_benefit     *bool
+	max_level_count    *uint32
+	addmax_level_count *int32
 	start_at           *uint32
 	addstart_at        *int32
 	end_at             *uint32
@@ -4582,6 +4691,76 @@ func (m *AppConfigMutation) ResetSettleBenefit() {
 	delete(m.clearedFields, appconfig.FieldSettleBenefit)
 }
 
+// SetMaxLevelCount sets the "max_level_count" field.
+func (m *AppConfigMutation) SetMaxLevelCount(u uint32) {
+	m.max_level_count = &u
+	m.addmax_level_count = nil
+}
+
+// MaxLevelCount returns the value of the "max_level_count" field in the mutation.
+func (m *AppConfigMutation) MaxLevelCount() (r uint32, exists bool) {
+	v := m.max_level_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxLevelCount returns the old "max_level_count" field's value of the AppConfig entity.
+// If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppConfigMutation) OldMaxLevelCount(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxLevelCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxLevelCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxLevelCount: %w", err)
+	}
+	return oldValue.MaxLevelCount, nil
+}
+
+// AddMaxLevelCount adds u to the "max_level_count" field.
+func (m *AppConfigMutation) AddMaxLevelCount(u int32) {
+	if m.addmax_level_count != nil {
+		*m.addmax_level_count += u
+	} else {
+		m.addmax_level_count = &u
+	}
+}
+
+// AddedMaxLevelCount returns the value that was added to the "max_level_count" field in this mutation.
+func (m *AppConfigMutation) AddedMaxLevelCount() (r int32, exists bool) {
+	v := m.addmax_level_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (m *AppConfigMutation) ClearMaxLevelCount() {
+	m.max_level_count = nil
+	m.addmax_level_count = nil
+	m.clearedFields[appconfig.FieldMaxLevelCount] = struct{}{}
+}
+
+// MaxLevelCountCleared returns if the "max_level_count" field was cleared in this mutation.
+func (m *AppConfigMutation) MaxLevelCountCleared() bool {
+	_, ok := m.clearedFields[appconfig.FieldMaxLevelCount]
+	return ok
+}
+
+// ResetMaxLevelCount resets all changes to the "max_level_count" field.
+func (m *AppConfigMutation) ResetMaxLevelCount() {
+	m.max_level_count = nil
+	m.addmax_level_count = nil
+	delete(m.clearedFields, appconfig.FieldMaxLevelCount)
+}
+
 // SetStartAt sets the "start_at" field.
 func (m *AppConfigMutation) SetStartAt(u uint32) {
 	m.start_at = &u
@@ -4741,7 +4920,7 @@ func (m *AppConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppConfigMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, appconfig.FieldCreatedAt)
 	}
@@ -4771,6 +4950,9 @@ func (m *AppConfigMutation) Fields() []string {
 	}
 	if m.settle_benefit != nil {
 		fields = append(fields, appconfig.FieldSettleBenefit)
+	}
+	if m.max_level_count != nil {
+		fields = append(fields, appconfig.FieldMaxLevelCount)
 	}
 	if m.start_at != nil {
 		fields = append(fields, appconfig.FieldStartAt)
@@ -4806,6 +4988,8 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.CommissionType()
 	case appconfig.FieldSettleBenefit:
 		return m.SettleBenefit()
+	case appconfig.FieldMaxLevelCount:
+		return m.MaxLevelCount()
 	case appconfig.FieldStartAt:
 		return m.StartAt()
 	case appconfig.FieldEndAt:
@@ -4839,6 +5023,8 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCommissionType(ctx)
 	case appconfig.FieldSettleBenefit:
 		return m.OldSettleBenefit(ctx)
+	case appconfig.FieldMaxLevelCount:
+		return m.OldMaxLevelCount(ctx)
 	case appconfig.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case appconfig.FieldEndAt:
@@ -4922,6 +5108,13 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSettleBenefit(v)
 		return nil
+	case appconfig.FieldMaxLevelCount:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxLevelCount(v)
+		return nil
 	case appconfig.FieldStartAt:
 		v, ok := value.(uint32)
 		if !ok {
@@ -4953,6 +5146,9 @@ func (m *AppConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, appconfig.FieldDeletedAt)
 	}
+	if m.addmax_level_count != nil {
+		fields = append(fields, appconfig.FieldMaxLevelCount)
+	}
 	if m.addstart_at != nil {
 		fields = append(fields, appconfig.FieldStartAt)
 	}
@@ -4973,6 +5169,8 @@ func (m *AppConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case appconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case appconfig.FieldMaxLevelCount:
+		return m.AddedMaxLevelCount()
 	case appconfig.FieldStartAt:
 		return m.AddedStartAt()
 	case appconfig.FieldEndAt:
@@ -5006,6 +5204,13 @@ func (m *AppConfigMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case appconfig.FieldMaxLevelCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxLevelCount(v)
 		return nil
 	case appconfig.FieldStartAt:
 		v, ok := value.(int32)
@@ -5047,6 +5252,9 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appconfig.FieldSettleBenefit) {
 		fields = append(fields, appconfig.FieldSettleBenefit)
 	}
+	if m.FieldCleared(appconfig.FieldMaxLevelCount) {
+		fields = append(fields, appconfig.FieldMaxLevelCount)
+	}
 	if m.FieldCleared(appconfig.FieldStartAt) {
 		fields = append(fields, appconfig.FieldStartAt)
 	}
@@ -5084,6 +5292,9 @@ func (m *AppConfigMutation) ClearField(name string) error {
 		return nil
 	case appconfig.FieldSettleBenefit:
 		m.ClearSettleBenefit()
+		return nil
+	case appconfig.FieldMaxLevelCount:
+		m.ClearMaxLevelCount()
 		return nil
 	case appconfig.FieldStartAt:
 		m.ClearStartAt()
@@ -5128,6 +5339,9 @@ func (m *AppConfigMutation) ResetField(name string) error {
 		return nil
 	case appconfig.FieldSettleBenefit:
 		m.ResetSettleBenefit()
+		return nil
+	case appconfig.FieldMaxLevelCount:
+		m.ResetMaxLevelCount()
 		return nil
 	case appconfig.FieldStartAt:
 		m.ResetStartAt()
@@ -5203,6 +5417,8 @@ type AppGoodCommissionConfigMutation struct {
 	app_id            *uuid.UUID
 	good_id           *uuid.UUID
 	app_good_id       *uuid.UUID
+	level             *uint32
+	addlevel          *int32
 	threshold_amount  *decimal.Decimal
 	amount_or_percent *decimal.Decimal
 	start_at          *uint32
@@ -5674,6 +5890,76 @@ func (m *AppGoodCommissionConfigMutation) ResetAppGoodID() {
 	delete(m.clearedFields, appgoodcommissionconfig.FieldAppGoodID)
 }
 
+// SetLevel sets the "level" field.
+func (m *AppGoodCommissionConfigMutation) SetLevel(u uint32) {
+	m.level = &u
+	m.addlevel = nil
+}
+
+// Level returns the value of the "level" field in the mutation.
+func (m *AppGoodCommissionConfigMutation) Level() (r uint32, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevel returns the old "level" field's value of the AppGoodCommissionConfig entity.
+// If the AppGoodCommissionConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppGoodCommissionConfigMutation) OldLevel(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevel: %w", err)
+	}
+	return oldValue.Level, nil
+}
+
+// AddLevel adds u to the "level" field.
+func (m *AppGoodCommissionConfigMutation) AddLevel(u int32) {
+	if m.addlevel != nil {
+		*m.addlevel += u
+	} else {
+		m.addlevel = &u
+	}
+}
+
+// AddedLevel returns the value that was added to the "level" field in this mutation.
+func (m *AppGoodCommissionConfigMutation) AddedLevel() (r int32, exists bool) {
+	v := m.addlevel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLevel clears the value of the "level" field.
+func (m *AppGoodCommissionConfigMutation) ClearLevel() {
+	m.level = nil
+	m.addlevel = nil
+	m.clearedFields[appgoodcommissionconfig.FieldLevel] = struct{}{}
+}
+
+// LevelCleared returns if the "level" field was cleared in this mutation.
+func (m *AppGoodCommissionConfigMutation) LevelCleared() bool {
+	_, ok := m.clearedFields[appgoodcommissionconfig.FieldLevel]
+	return ok
+}
+
+// ResetLevel resets all changes to the "level" field.
+func (m *AppGoodCommissionConfigMutation) ResetLevel() {
+	m.level = nil
+	m.addlevel = nil
+	delete(m.clearedFields, appgoodcommissionconfig.FieldLevel)
+}
+
 // SetThresholdAmount sets the "threshold_amount" field.
 func (m *AppGoodCommissionConfigMutation) SetThresholdAmount(d decimal.Decimal) {
 	m.threshold_amount = &d
@@ -6099,7 +6385,7 @@ func (m *AppGoodCommissionConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppGoodCommissionConfigMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldCreatedAt)
 	}
@@ -6120,6 +6406,9 @@ func (m *AppGoodCommissionConfigMutation) Fields() []string {
 	}
 	if m.app_good_id != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldAppGoodID)
+	}
+	if m.level != nil {
+		fields = append(fields, appgoodcommissionconfig.FieldLevel)
 	}
 	if m.threshold_amount != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldThresholdAmount)
@@ -6164,6 +6453,8 @@ func (m *AppGoodCommissionConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.GoodID()
 	case appgoodcommissionconfig.FieldAppGoodID:
 		return m.AppGoodID()
+	case appgoodcommissionconfig.FieldLevel:
+		return m.Level()
 	case appgoodcommissionconfig.FieldThresholdAmount:
 		return m.ThresholdAmount()
 	case appgoodcommissionconfig.FieldAmountOrPercent:
@@ -6201,6 +6492,8 @@ func (m *AppGoodCommissionConfigMutation) OldField(ctx context.Context, name str
 		return m.OldGoodID(ctx)
 	case appgoodcommissionconfig.FieldAppGoodID:
 		return m.OldAppGoodID(ctx)
+	case appgoodcommissionconfig.FieldLevel:
+		return m.OldLevel(ctx)
 	case appgoodcommissionconfig.FieldThresholdAmount:
 		return m.OldThresholdAmount(ctx)
 	case appgoodcommissionconfig.FieldAmountOrPercent:
@@ -6273,6 +6566,13 @@ func (m *AppGoodCommissionConfigMutation) SetField(name string, value ent.Value)
 		}
 		m.SetAppGoodID(v)
 		return nil
+	case appgoodcommissionconfig.FieldLevel:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevel(v)
+		return nil
 	case appgoodcommissionconfig.FieldThresholdAmount:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
@@ -6339,6 +6639,9 @@ func (m *AppGoodCommissionConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldDeletedAt)
 	}
+	if m.addlevel != nil {
+		fields = append(fields, appgoodcommissionconfig.FieldLevel)
+	}
 	if m.addstart_at != nil {
 		fields = append(fields, appgoodcommissionconfig.FieldStartAt)
 	}
@@ -6362,6 +6665,8 @@ func (m *AppGoodCommissionConfigMutation) AddedField(name string) (ent.Value, bo
 		return m.AddedUpdatedAt()
 	case appgoodcommissionconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case appgoodcommissionconfig.FieldLevel:
+		return m.AddedLevel()
 	case appgoodcommissionconfig.FieldStartAt:
 		return m.AddedStartAt()
 	case appgoodcommissionconfig.FieldEndAt:
@@ -6397,6 +6702,13 @@ func (m *AppGoodCommissionConfigMutation) AddField(name string, value ent.Value)
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case appgoodcommissionconfig.FieldLevel:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevel(v)
 		return nil
 	case appgoodcommissionconfig.FieldStartAt:
 		v, ok := value.(int32)
@@ -6435,6 +6747,9 @@ func (m *AppGoodCommissionConfigMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(appgoodcommissionconfig.FieldAppGoodID) {
 		fields = append(fields, appgoodcommissionconfig.FieldAppGoodID)
+	}
+	if m.FieldCleared(appgoodcommissionconfig.FieldLevel) {
+		fields = append(fields, appgoodcommissionconfig.FieldLevel)
 	}
 	if m.FieldCleared(appgoodcommissionconfig.FieldThresholdAmount) {
 		fields = append(fields, appgoodcommissionconfig.FieldThresholdAmount)
@@ -6479,6 +6794,9 @@ func (m *AppGoodCommissionConfigMutation) ClearField(name string) error {
 		return nil
 	case appgoodcommissionconfig.FieldAppGoodID:
 		m.ClearAppGoodID()
+		return nil
+	case appgoodcommissionconfig.FieldLevel:
+		m.ClearLevel()
 		return nil
 	case appgoodcommissionconfig.FieldThresholdAmount:
 		m.ClearThresholdAmount()
@@ -6529,6 +6847,9 @@ func (m *AppGoodCommissionConfigMutation) ResetField(name string) error {
 		return nil
 	case appgoodcommissionconfig.FieldAppGoodID:
 		m.ResetAppGoodID()
+		return nil
+	case appgoodcommissionconfig.FieldLevel:
+		m.ResetLevel()
 		return nil
 	case appgoodcommissionconfig.FieldThresholdAmount:
 		m.ResetThresholdAmount()

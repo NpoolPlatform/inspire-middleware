@@ -36,6 +36,8 @@ type AppConfig struct {
 	CommissionType string `json:"commission_type,omitempty"`
 	// SettleBenefit holds the value of the "settle_benefit" field.
 	SettleBenefit bool `json:"settle_benefit,omitempty"`
+	// MaxLevelCount holds the value of the "max_level_count" field.
+	MaxLevelCount uint32 `json:"max_level_count,omitempty"`
 	// StartAt holds the value of the "start_at" field.
 	StartAt uint32 `json:"start_at,omitempty"`
 	// EndAt holds the value of the "end_at" field.
@@ -49,7 +51,7 @@ func (*AppConfig) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case appconfig.FieldSettleBenefit:
 			values[i] = new(sql.NullBool)
-		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldStartAt, appconfig.FieldEndAt:
+		case appconfig.FieldID, appconfig.FieldCreatedAt, appconfig.FieldUpdatedAt, appconfig.FieldDeletedAt, appconfig.FieldMaxLevelCount, appconfig.FieldStartAt, appconfig.FieldEndAt:
 			values[i] = new(sql.NullInt64)
 		case appconfig.FieldSettleMode, appconfig.FieldSettleAmountType, appconfig.FieldSettleInterval, appconfig.FieldCommissionType:
 			values[i] = new(sql.NullString)
@@ -136,6 +138,12 @@ func (ac *AppConfig) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				ac.SettleBenefit = value.Bool
 			}
+		case appconfig.FieldMaxLevelCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_level_count", values[i])
+			} else if value.Valid {
+				ac.MaxLevelCount = uint32(value.Int64)
+			}
 		case appconfig.FieldStartAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field start_at", values[i])
@@ -205,6 +213,9 @@ func (ac *AppConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("settle_benefit=")
 	builder.WriteString(fmt.Sprintf("%v", ac.SettleBenefit))
+	builder.WriteString(", ")
+	builder.WriteString("max_level_count=")
+	builder.WriteString(fmt.Sprintf("%v", ac.MaxLevelCount))
 	builder.WriteString(", ")
 	builder.WriteString("start_at=")
 	builder.WriteString(fmt.Sprintf("%v", ac.StartAt))

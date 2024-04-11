@@ -162,6 +162,20 @@ func (acc *AppConfigCreate) SetNillableSettleBenefit(b *bool) *AppConfigCreate {
 	return acc
 }
 
+// SetMaxLevelCount sets the "max_level_count" field.
+func (acc *AppConfigCreate) SetMaxLevelCount(u uint32) *AppConfigCreate {
+	acc.mutation.SetMaxLevelCount(u)
+	return acc
+}
+
+// SetNillableMaxLevelCount sets the "max_level_count" field if the given value is not nil.
+func (acc *AppConfigCreate) SetNillableMaxLevelCount(u *uint32) *AppConfigCreate {
+	if u != nil {
+		acc.SetMaxLevelCount(*u)
+	}
+	return acc
+}
+
 // SetStartAt sets the "start_at" field.
 func (acc *AppConfigCreate) SetStartAt(u uint32) *AppConfigCreate {
 	acc.mutation.SetStartAt(u)
@@ -330,6 +344,10 @@ func (acc *AppConfigCreate) defaults() error {
 		v := appconfig.DefaultSettleBenefit
 		acc.mutation.SetSettleBenefit(v)
 	}
+	if _, ok := acc.mutation.MaxLevelCount(); !ok {
+		v := appconfig.DefaultMaxLevelCount
+		acc.mutation.SetMaxLevelCount(v)
+	}
 	if _, ok := acc.mutation.StartAt(); !ok {
 		v := appconfig.DefaultStartAt
 		acc.mutation.SetStartAt(v)
@@ -468,6 +486,14 @@ func (acc *AppConfigCreate) createSpec() (*AppConfig, *sqlgraph.CreateSpec) {
 			Column: appconfig.FieldSettleBenefit,
 		})
 		_node.SettleBenefit = value
+	}
+	if value, ok := acc.mutation.MaxLevelCount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appconfig.FieldMaxLevelCount,
+		})
+		_node.MaxLevelCount = value
 	}
 	if value, ok := acc.mutation.StartAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -710,6 +736,30 @@ func (u *AppConfigUpsert) UpdateSettleBenefit() *AppConfigUpsert {
 // ClearSettleBenefit clears the value of the "settle_benefit" field.
 func (u *AppConfigUpsert) ClearSettleBenefit() *AppConfigUpsert {
 	u.SetNull(appconfig.FieldSettleBenefit)
+	return u
+}
+
+// SetMaxLevelCount sets the "max_level_count" field.
+func (u *AppConfigUpsert) SetMaxLevelCount(v uint32) *AppConfigUpsert {
+	u.Set(appconfig.FieldMaxLevelCount, v)
+	return u
+}
+
+// UpdateMaxLevelCount sets the "max_level_count" field to the value that was provided on create.
+func (u *AppConfigUpsert) UpdateMaxLevelCount() *AppConfigUpsert {
+	u.SetExcluded(appconfig.FieldMaxLevelCount)
+	return u
+}
+
+// AddMaxLevelCount adds v to the "max_level_count" field.
+func (u *AppConfigUpsert) AddMaxLevelCount(v uint32) *AppConfigUpsert {
+	u.Add(appconfig.FieldMaxLevelCount, v)
+	return u
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (u *AppConfigUpsert) ClearMaxLevelCount() *AppConfigUpsert {
+	u.SetNull(appconfig.FieldMaxLevelCount)
 	return u
 }
 
@@ -1011,6 +1061,34 @@ func (u *AppConfigUpsertOne) UpdateSettleBenefit() *AppConfigUpsertOne {
 func (u *AppConfigUpsertOne) ClearSettleBenefit() *AppConfigUpsertOne {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSettleBenefit()
+	})
+}
+
+// SetMaxLevelCount sets the "max_level_count" field.
+func (u *AppConfigUpsertOne) SetMaxLevelCount(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetMaxLevelCount(v)
+	})
+}
+
+// AddMaxLevelCount adds v to the "max_level_count" field.
+func (u *AppConfigUpsertOne) AddMaxLevelCount(v uint32) *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddMaxLevelCount(v)
+	})
+}
+
+// UpdateMaxLevelCount sets the "max_level_count" field to the value that was provided on create.
+func (u *AppConfigUpsertOne) UpdateMaxLevelCount() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateMaxLevelCount()
+	})
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (u *AppConfigUpsertOne) ClearMaxLevelCount() *AppConfigUpsertOne {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearMaxLevelCount()
 	})
 }
 
@@ -1485,6 +1563,34 @@ func (u *AppConfigUpsertBulk) UpdateSettleBenefit() *AppConfigUpsertBulk {
 func (u *AppConfigUpsertBulk) ClearSettleBenefit() *AppConfigUpsertBulk {
 	return u.Update(func(s *AppConfigUpsert) {
 		s.ClearSettleBenefit()
+	})
+}
+
+// SetMaxLevelCount sets the "max_level_count" field.
+func (u *AppConfigUpsertBulk) SetMaxLevelCount(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.SetMaxLevelCount(v)
+	})
+}
+
+// AddMaxLevelCount adds v to the "max_level_count" field.
+func (u *AppConfigUpsertBulk) AddMaxLevelCount(v uint32) *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.AddMaxLevelCount(v)
+	})
+}
+
+// UpdateMaxLevelCount sets the "max_level_count" field to the value that was provided on create.
+func (u *AppConfigUpsertBulk) UpdateMaxLevelCount() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.UpdateMaxLevelCount()
+	})
+}
+
+// ClearMaxLevelCount clears the value of the "max_level_count" field.
+func (u *AppConfigUpsertBulk) ClearMaxLevelCount() *AppConfigUpsertBulk {
+	return u.Update(func(s *AppConfigUpsert) {
+		s.ClearMaxLevelCount()
 	})
 }
 

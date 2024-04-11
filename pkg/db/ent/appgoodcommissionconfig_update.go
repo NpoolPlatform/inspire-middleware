@@ -159,6 +159,33 @@ func (agccu *AppGoodCommissionConfigUpdate) ClearAppGoodID() *AppGoodCommissionC
 	return agccu
 }
 
+// SetLevel sets the "level" field.
+func (agccu *AppGoodCommissionConfigUpdate) SetLevel(u uint32) *AppGoodCommissionConfigUpdate {
+	agccu.mutation.ResetLevel()
+	agccu.mutation.SetLevel(u)
+	return agccu
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (agccu *AppGoodCommissionConfigUpdate) SetNillableLevel(u *uint32) *AppGoodCommissionConfigUpdate {
+	if u != nil {
+		agccu.SetLevel(*u)
+	}
+	return agccu
+}
+
+// AddLevel adds u to the "level" field.
+func (agccu *AppGoodCommissionConfigUpdate) AddLevel(u int32) *AppGoodCommissionConfigUpdate {
+	agccu.mutation.AddLevel(u)
+	return agccu
+}
+
+// ClearLevel clears the value of the "level" field.
+func (agccu *AppGoodCommissionConfigUpdate) ClearLevel() *AppGoodCommissionConfigUpdate {
+	agccu.mutation.ClearLevel()
+	return agccu
+}
+
 // SetThresholdAmount sets the "threshold_amount" field.
 func (agccu *AppGoodCommissionConfigUpdate) SetThresholdAmount(d decimal.Decimal) *AppGoodCommissionConfigUpdate {
 	agccu.mutation.SetThresholdAmount(d)
@@ -506,6 +533,26 @@ func (agccu *AppGoodCommissionConfigUpdate) sqlSave(ctx context.Context) (n int,
 			Column: appgoodcommissionconfig.FieldAppGoodID,
 		})
 	}
+	if value, ok := agccu.mutation.Level(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+	}
+	if value, ok := agccu.mutation.AddedLevel(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+	}
+	if agccu.mutation.LevelCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+	}
 	if value, ok := agccu.mutation.ThresholdAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -765,6 +812,33 @@ func (agccuo *AppGoodCommissionConfigUpdateOne) SetNillableAppGoodID(u *uuid.UUI
 // ClearAppGoodID clears the value of the "app_good_id" field.
 func (agccuo *AppGoodCommissionConfigUpdateOne) ClearAppGoodID() *AppGoodCommissionConfigUpdateOne {
 	agccuo.mutation.ClearAppGoodID()
+	return agccuo
+}
+
+// SetLevel sets the "level" field.
+func (agccuo *AppGoodCommissionConfigUpdateOne) SetLevel(u uint32) *AppGoodCommissionConfigUpdateOne {
+	agccuo.mutation.ResetLevel()
+	agccuo.mutation.SetLevel(u)
+	return agccuo
+}
+
+// SetNillableLevel sets the "level" field if the given value is not nil.
+func (agccuo *AppGoodCommissionConfigUpdateOne) SetNillableLevel(u *uint32) *AppGoodCommissionConfigUpdateOne {
+	if u != nil {
+		agccuo.SetLevel(*u)
+	}
+	return agccuo
+}
+
+// AddLevel adds u to the "level" field.
+func (agccuo *AppGoodCommissionConfigUpdateOne) AddLevel(u int32) *AppGoodCommissionConfigUpdateOne {
+	agccuo.mutation.AddLevel(u)
+	return agccuo
+}
+
+// ClearLevel clears the value of the "level" field.
+func (agccuo *AppGoodCommissionConfigUpdateOne) ClearLevel() *AppGoodCommissionConfigUpdateOne {
+	agccuo.mutation.ClearLevel()
 	return agccuo
 }
 
@@ -1143,6 +1217,26 @@ func (agccuo *AppGoodCommissionConfigUpdateOne) sqlSave(ctx context.Context) (_n
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: appgoodcommissionconfig.FieldAppGoodID,
+		})
+	}
+	if value, ok := agccuo.mutation.Level(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+	}
+	if value, ok := agccuo.mutation.AddedLevel(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: appgoodcommissionconfig.FieldLevel,
+		})
+	}
+	if agccuo.mutation.LevelCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: appgoodcommissionconfig.FieldLevel,
 		})
 	}
 	if value, ok := agccuo.mutation.ThresholdAmount(); ok {

@@ -149,6 +149,13 @@ func SettleBenefit(v bool) predicate.AppConfig {
 	})
 }
 
+// MaxLevelCount applies equality check predicate on the "max_level_count" field. It's identical to MaxLevelCountEQ.
+func MaxLevelCount(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxLevelCount), v))
+	})
+}
+
 // StartAt applies equality check predicate on the "start_at" field. It's identical to StartAtEQ.
 func StartAt(v uint32) predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
@@ -974,6 +981,84 @@ func SettleBenefitIsNil() predicate.AppConfig {
 func SettleBenefitNotNil() predicate.AppConfig {
 	return predicate.AppConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldSettleBenefit)))
+	})
+}
+
+// MaxLevelCountEQ applies the EQ predicate on the "max_level_count" field.
+func MaxLevelCountEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountNEQ applies the NEQ predicate on the "max_level_count" field.
+func MaxLevelCountNEQ(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountIn applies the In predicate on the "max_level_count" field.
+func MaxLevelCountIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldMaxLevelCount), v...))
+	})
+}
+
+// MaxLevelCountNotIn applies the NotIn predicate on the "max_level_count" field.
+func MaxLevelCountNotIn(vs ...uint32) predicate.AppConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldMaxLevelCount), v...))
+	})
+}
+
+// MaxLevelCountGT applies the GT predicate on the "max_level_count" field.
+func MaxLevelCountGT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountGTE applies the GTE predicate on the "max_level_count" field.
+func MaxLevelCountGTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountLT applies the LT predicate on the "max_level_count" field.
+func MaxLevelCountLT(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountLTE applies the LTE predicate on the "max_level_count" field.
+func MaxLevelCountLTE(v uint32) predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMaxLevelCount), v))
+	})
+}
+
+// MaxLevelCountIsNil applies the IsNil predicate on the "max_level_count" field.
+func MaxLevelCountIsNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMaxLevelCount)))
+	})
+}
+
+// MaxLevelCountNotNil applies the NotNil predicate on the "max_level_count" field.
+func MaxLevelCountNotNil() predicate.AppConfig {
+	return predicate.AppConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMaxLevelCount)))
 	})
 }
 

@@ -54,6 +54,10 @@ func (AppConfig) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
+			Uint32("max_level_count").
+			Optional().
+			Default(1),
+		field.
 			Uint32("start_at").
 			Optional().
 			Default(uint32(time.Now().Unix())),

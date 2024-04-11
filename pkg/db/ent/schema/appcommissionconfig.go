@@ -36,6 +36,10 @@ func (AppCommissionConfig) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
+			Uint32("level").
+			Optional().
+			Default(0),
+		field.
 			Other("threshold_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

@@ -23,6 +23,8 @@ const (
 	FieldEntID = "ent_id"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
+	// FieldLevel holds the string denoting the level field in the database.
+	FieldLevel = "level"
 	// FieldThresholdAmount holds the string denoting the threshold_amount field in the database.
 	FieldThresholdAmount = "threshold_amount"
 	// FieldAmountOrPercent holds the string denoting the amount_or_percent field in the database.
@@ -49,6 +51,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldEntID,
 	FieldAppID,
+	FieldLevel,
 	FieldThresholdAmount,
 	FieldAmountOrPercent,
 	FieldStartAt,
@@ -89,6 +92,8 @@ var (
 	DefaultEntID func() uuid.UUID
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
+	// DefaultLevel holds the default value on creation for the "level" field.
+	DefaultLevel uint32
 	// DefaultThresholdAmount holds the default value on creation for the "threshold_amount" field.
 	DefaultThresholdAmount decimal.Decimal
 	// DefaultAmountOrPercent holds the default value on creation for the "amount_or_percent" field.
