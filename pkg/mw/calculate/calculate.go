@@ -3,7 +3,6 @@ package calculate
 import (
 	"context"
 	"fmt"
-	"sort"
 
 	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	appcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/commission/config"
@@ -77,42 +76,6 @@ func (h *calculateHandler) getDirectInviters(ctx context.Context) error {
 	h.inviters = inviters
 	h.inviterIDs = append(h.inviterIDs, inviters[0].InviterID)
 	return nil
-}
-
-func sortAppGoodCommissionConfig(byValue []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig) {
-	sort.Slice(byValue, func(i, j int) bool {
-		decI, errI := decimal.NewFromString(byValue[i].ThresholdAmount)
-		if errI != nil {
-			return false
-		}
-		decJ, errJ := decimal.NewFromString(byValue[j].ThresholdAmount)
-		if errJ != nil {
-			return false
-		}
-
-		if byValue[i].Invites != byValue[j].Invites {
-			return byValue[i].Invites < byValue[j].Invites
-		}
-		return decI.LessThan(decJ)
-	})
-}
-
-func sortAppCommissionConfig(byValue []*appcommissionconfigmwpb.AppCommissionConfig) {
-	sort.Slice(byValue, func(i, j int) bool {
-		decI, errI := decimal.NewFromString(byValue[i].ThresholdAmount)
-		if errI != nil {
-			return false
-		}
-		decJ, errJ := decimal.NewFromString(byValue[j].ThresholdAmount)
-		if errJ != nil {
-			return false
-		}
-
-		if byValue[i].Invites != byValue[j].Invites {
-			return byValue[i].Invites < byValue[j].Invites
-		}
-		return decI.LessThan(decJ)
-	})
 }
 
 func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]*achievementusermwpb.AchievementUser, error) {
@@ -281,7 +244,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 				return nil, err
 			}
 			if len(goodcomms) > 0 {
-				sortAppGoodCommissionConfig(goodcomms)
 				fmt.Println("------ use app good commission config ------")
 				for _, item := range goodcomms {
 					fmt.Println("------ app good commission config: ", item)
@@ -330,7 +292,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.Statement, er
 				return nil, err
 			}
 			if len(appcomms) > 0 {
-				sortAppCommissionConfig(appcomms)
 				fmt.Println("------ use app commission config ------")
 				for _, item := range appcomms {
 					fmt.Println("------ app commission config: ", item)

@@ -49,6 +49,7 @@ var ret = &npool.AppConfig{
 	SettleIntervalStr:   types.SettleInterval_SettleEveryOrder.String(),
 	SettleBenefit:       false,
 	StartAt:             uint32(time.Now().Unix()) + 10000,
+	MaxLevelCount:       uint32(5),
 }
 
 func create(t *testing.T) {
@@ -61,6 +62,7 @@ func create(t *testing.T) {
 		SettleInterval:   &ret.SettleInterval,
 		SettleBenefit:    &ret.SettleBenefit,
 		StartAt:          &ret.StartAt,
+		MaxLevelCount:    &ret.MaxLevelCount,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetAppConfigOnly(context.Background(), &npool.Conds{
