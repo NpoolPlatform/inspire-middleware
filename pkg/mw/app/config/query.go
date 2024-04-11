@@ -60,6 +60,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entappconfig.FieldSettleBenefit), "settle_benefit"),
 			sql.As(t.C(entappconfig.FieldStartAt), "start_at"),
 			sql.As(t.C(entappconfig.FieldEndAt), "end_at"),
+			sql.As(t.C(entappconfig.FieldMaxLevelCount), "max_level_count"),
 			sql.As(t.C(entappconfig.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entappconfig.FieldUpdatedAt), "updated_at"),
 		)

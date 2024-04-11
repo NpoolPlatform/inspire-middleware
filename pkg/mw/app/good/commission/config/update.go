@@ -33,6 +33,9 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 	if h.Invites == nil {
 		h.Invites = &info.Invites
 	}
+	if h.Level == nil {
+		h.Level = &info.Level
+	}
 
 	endAt := uint32(0)
 	entID := uuid.MustParse(info.EntID)
@@ -46,6 +49,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 		AppGoodID:       &cruder.Cond{Op: cruder.EQ, Val: appgoodID},
 		ThresholdAmount: &cruder.Cond{Op: cruder.EQ, Val: *h.ThresholdAmount},
 		Invites:         &cruder.Cond{Op: cruder.EQ, Val: *h.Invites},
+		Level:           &cruder.Cond{Op: cruder.EQ, Val: *h.Level},
 		EndAt:           &cruder.Cond{Op: cruder.EQ, Val: endAt},
 	}
 
@@ -66,6 +70,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 				ThresholdAmount: h.ThresholdAmount,
 				Invites:         h.Invites,
 				Disabled:        h.Disabled,
+				Level:           h.Level,
 			},
 		).Save(_ctx); err != nil {
 			return err

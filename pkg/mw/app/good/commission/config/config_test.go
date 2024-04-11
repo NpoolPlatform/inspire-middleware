@@ -40,6 +40,7 @@ var (
 		AmountOrPercent: decimal.RequireFromString("12.25").String(),
 		ThresholdAmount: decimal.RequireFromString("12.26").String(),
 		Invites:         uint32(1),
+		Level:           uint32(1),
 		StartAt:         uint32(time.Now().Unix()),
 		Disabled:        false,
 	}
@@ -60,6 +61,7 @@ func createCommissionConfig(t *testing.T) {
 		WithThresholdAmount(&ret.ThresholdAmount, true),
 		WithAmountOrPercent(&ret.AmountOrPercent, true),
 		WithInvites(&ret.Invites, true),
+		WithLevel(&ret.Level, true),
 		WithStartAt(&ret.StartAt, true),
 		WithDisabled(&ret.Disabled, true),
 	)
@@ -82,6 +84,7 @@ func updateCommissionConfig(t *testing.T) {
 	ret.StartAt += 10000
 	ret.ThresholdAmount = decimal.NewFromInt(10).String()
 	ret.Disabled = true
+	ret.Level = uint32(2)
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -90,6 +93,7 @@ func updateCommissionConfig(t *testing.T) {
 		WithStartAt(&ret.StartAt, true),
 		WithThresholdAmount(&ret.ThresholdAmount, true),
 		WithDisabled(&ret.Disabled, true),
+		WithLevel(&ret.Level, true),
 	)
 	assert.Nil(t, err)
 
@@ -122,6 +126,7 @@ func getCommissionConfigs(t *testing.T) {
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
 		EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.EndAt},
 		StartAt:    &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.StartAt},
+		Level:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.Level},
 		Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: true},
 	}
 

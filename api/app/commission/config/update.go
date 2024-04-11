@@ -30,6 +30,7 @@ func (s *Server) UpdateAppCommissionConfig(ctx context.Context, in *npool.Update
 		config1.WithThresholdAmount(req.ThresholdAmount, false),
 		config1.WithInvites(req.Invites, false),
 		config1.WithDisabled(req.Disabled, false),
+		config1.WithLevel(req.Level, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

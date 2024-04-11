@@ -33,6 +33,7 @@ func (s *Server) CreateAppGoodCommissionConfig(ctx context.Context, in *npool.Cr
 		config1.WithInvites(req.Invites, true),
 		config1.WithSettleType(req.SettleType, true),
 		config1.WithDisabled(req.Disabled, false),
+		config1.WithLevel(req.Level, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

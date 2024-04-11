@@ -64,6 +64,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcommissionconfig.FieldEndAt), "end_at"),
 			sql.As(t.C(entcommissionconfig.FieldInvites), "invites"),
 			sql.As(t.C(entcommissionconfig.FieldDisabled), "disabled"),
+			sql.As(t.C(entcommissionconfig.FieldLevel), "level"),
 			sql.As(t.C(entcommissionconfig.FieldCreatedAt), "created_at"),
 			sql.As(t.C(entcommissionconfig.FieldUpdatedAt), "updated_at"),
 		)

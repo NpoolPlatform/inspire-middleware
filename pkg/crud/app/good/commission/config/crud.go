@@ -26,6 +26,7 @@ type Req struct {
 	Invites         *uint32
 	SettleType      *types.SettleType
 	Disabled        *bool
+	Level           *uint32
 	DeletedAt       *uint32
 }
 
@@ -64,15 +65,18 @@ func CreateSet(c *ent.AppGoodCommissionConfigCreate, req *Req) *ent.AppGoodCommi
 	if req.Disabled != nil {
 		c.SetDisabled(*req.Disabled)
 	}
+	if req.Level != nil {
+		c.SetLevel(*req.Level)
+	}
 	return c
 }
 
 func UpdateSet(u *ent.AppGoodCommissionConfigUpdateOne, req *Req) *ent.AppGoodCommissionConfigUpdateOne {
 	if req.AmountOrPercent != nil {
-		u = u.SetAmountOrPercent(*req.AmountOrPercent)
+		u.SetAmountOrPercent(*req.AmountOrPercent)
 	}
 	if req.StartAt != nil {
-		u = u.SetStartAt(*req.StartAt)
+		u.SetStartAt(*req.StartAt)
 	}
 	if req.ThresholdAmount != nil {
 		u.SetThresholdAmount(*req.ThresholdAmount)
@@ -83,8 +87,11 @@ func UpdateSet(u *ent.AppGoodCommissionConfigUpdateOne, req *Req) *ent.AppGoodCo
 	if req.Disabled != nil {
 		u.SetDisabled(*req.Disabled)
 	}
+	if req.Level != nil {
+		u.SetLevel(*req.Level)
+	}
 	if req.DeletedAt != nil {
-		u = u.SetDeletedAt(*req.DeletedAt)
+		u.SetDeletedAt(*req.DeletedAt)
 	}
 	return u
 }
@@ -104,6 +111,7 @@ type Conds struct {
 	ThresholdAmount *cruder.Cond
 	Invites         *cruder.Cond
 	Disabled        *cruder.Cond
+	Level           *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppGoodCommissionConfigQuery, error) { //nolint
@@ -285,6 +293,18 @@ func SetQueryConds(q *ent.AppGoodCommissionConfigQuery, conds *Conds) (*ent.AppG
 		switch conds.Disabled.Op {
 		case cruder.EQ:
 			q.Where(entappgoodcommissionconfig.Disabled(value))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.Level != nil {
+		id, ok := conds.Level.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid level")
+		}
+		switch conds.Level.Op {
+		case cruder.EQ:
+			q.Where(entappgoodcommissionconfig.Level(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}

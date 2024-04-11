@@ -23,6 +23,7 @@ type Handler struct {
 	CommissionType   *types.CommissionType
 	SettleBenefit    *bool
 	StartAt          *uint32
+	MaxLevelCount    *uint32
 	Conds            *appconfigcrud.Conds
 	Offset           int32
 	Limit            int32
@@ -185,6 +186,18 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 			}
 		}
 		h.StartAt = startAt
+		return nil
+	}
+}
+
+func WithMaxLevelCount(value *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid maxlevelcount")
+			}
+		}
+		h.MaxLevelCount = value
 		return nil
 	}
 }

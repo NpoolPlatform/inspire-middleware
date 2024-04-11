@@ -43,6 +43,7 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 				entcommissionconfig.AppGoodID(*h.AppGoodID),
 				entcommissionconfig.ThresholdAmount(*h.ThresholdAmount),
 				entcommissionconfig.Invites(*h.Invites),
+				entcommissionconfig.Level(*h.Level),
 				entcommissionconfig.SettleType(h.SettleType.String()),
 				entcommissionconfig.EndAt(0),
 				entcommissionconfig.DeletedAt(0),
@@ -65,6 +66,7 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 				Invites:         h.Invites,
 				SettleType:      h.SettleType,
 				Disabled:        h.Disabled,
+				Level:           h.Level,
 			},
 		).Save(_ctx); err != nil {
 			return err

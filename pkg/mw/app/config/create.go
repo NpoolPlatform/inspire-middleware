@@ -33,6 +33,9 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		startAt := uint32(time.Now().Unix())
 		h.StartAt = &startAt
 	}
+	if h.MaxLevelCount != nil && *h.MaxLevelCount <= 0 {
+		return nil, fmt.Errorf("invalid maxlevelcount")
+	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
@@ -59,6 +62,7 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 				CommissionType:   h.CommissionType,
 				SettleBenefit:    h.SettleBenefit,
 				StartAt:          h.StartAt,
+				MaxLevelCount:    h.MaxLevelCount,
 			},
 		).Save(_ctx); err != nil {
 			return err

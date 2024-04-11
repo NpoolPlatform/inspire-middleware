@@ -49,6 +49,7 @@ var ret = &npool.AppCommissionConfig{
 	ThresholdAmount: decimal.NewFromInt(0).String(),
 	StartAt:         uint32(time.Now().Unix()) + 10000,
 	Disabled:        false,
+	Level:           uint32(1),
 }
 
 func create(t *testing.T) {
@@ -61,6 +62,7 @@ func create(t *testing.T) {
 		AmountOrPercent: &ret.AmountOrPercent,
 		StartAt:         &ret.StartAt,
 		Disabled:        &ret.Disabled,
+		Level:           &ret.Level,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetCommissionConfigOnly(context.Background(), &npool.Conds{
@@ -96,6 +98,7 @@ func getCommissions(t *testing.T) {
 	infos, total, err := GetCommissionConfigs(context.Background(), &npool.Conds{
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
+		Level:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.Level},
 	}, int32(0), int32(100))
 	if assert.Nil(t, err) {
 		assert.Equal(t, total, uint32(1))
@@ -107,6 +110,7 @@ func getCommissionOnly(t *testing.T) {
 	info, err := GetCommissionConfigOnly(context.Background(), &npool.Conds{
 		AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
 		SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(ret.SettleType)},
+		Level:      &basetypes.Uint32Val{Op: cruder.EQ, Value: ret.Level},
 	})
 	if assert.Nil(t, err) {
 		assert.Equal(t, ret, info)

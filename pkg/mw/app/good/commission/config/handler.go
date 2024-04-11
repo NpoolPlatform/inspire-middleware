@@ -31,6 +31,7 @@ type Handler struct {
 	ToAppGoodID     *uuid.UUID
 	ScalePercent    *decimal.Decimal
 	Disabled        *bool
+	Level           *uint32
 	Conds           *commissionconfigcrud.Conds
 	Offset          int32
 	Limit           int32
@@ -313,6 +314,18 @@ func WithDisabled(value *bool, must bool) func(context.Context, *Handler) error 
 	}
 }
 
+func WithLevel(value *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid level")
+			}
+		}
+		h.Level = value
+		return nil
+	}
+}
+
 //nolint:funlen
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
@@ -424,6 +437,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.Disabled = &cruder.Cond{
 				Op:  conds.GetDisabled().GetOp(),
 				Val: conds.GetDisabled().GetValue(),
+			}
+		}
+		if conds.Level != nil {
+			h.Conds.Level = &cruder.Cond{
+				Op:  conds.GetLevel().GetOp(),
+				Val: conds.GetLevel().GetValue(),
 			}
 		}
 		return nil
