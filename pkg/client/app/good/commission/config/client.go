@@ -126,21 +126,6 @@ func GetCommissionConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.Ap
 	return infos.([]*npool.AppGoodCommissionConfig)[0], nil
 }
 
-func CloneCommissionConfigs(ctx context.Context, req *npool.CloneAppGoodCommissionConfigsRequest) error {
-	_, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
-		_, err := cli.CloneAppGoodCommissionConfigs(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-
-		return nil, nil
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func DeleteCommissionConfig(ctx context.Context, id uint32) (*npool.AppGoodCommissionConfig, error) {
 	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
 		resp, err := cli.DeleteAppGoodCommissionConfig(ctx, &npool.DeleteAppGoodCommissionConfigRequest{

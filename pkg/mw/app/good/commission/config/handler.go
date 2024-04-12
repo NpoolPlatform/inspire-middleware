@@ -25,11 +25,6 @@ type Handler struct {
 	StartAt         *uint32
 	Invites         *uint32
 	SettleType      *types.SettleType
-	FromGoodID      *uuid.UUID
-	ToGoodID        *uuid.UUID
-	FromAppGoodID   *uuid.UUID
-	ToAppGoodID     *uuid.UUID
-	ScalePercent    *decimal.Decimal
 	Disabled        *bool
 	Level           *uint32
 	Conds           *commissionconfigcrud.Conds
@@ -149,74 +144,6 @@ func WithThresholdAmount(value *string, must bool) func(context.Context, *Handle
 	}
 }
 
-func WithFromGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid fromgoodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.FromGoodID = &_id
-		return nil
-	}
-}
-
-func WithToGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid togoodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.ToGoodID = &_id
-		return nil
-	}
-}
-
-func WithFromAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid fromappgoodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.FromAppGoodID = &_id
-		return nil
-	}
-}
-
-func WithToAppGoodID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid toappgoodid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.ToAppGoodID = &_id
-		return nil
-	}
-}
-
 func WithSettleType(settleType *types.SettleType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if settleType == nil {
@@ -277,27 +204,6 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 			}
 		}
 		h.Invites = value
-		return nil
-	}
-}
-
-//nolint:dupl
-func WithScalePercent(value *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid scalepercent")
-			}
-			return nil
-		}
-		_amount, err := decimal.NewFromString(*value)
-		if err != nil {
-			return err
-		}
-		if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("invalid scalepercent")
-		}
-		h.ScalePercent = &_amount
 		return nil
 	}
 }
