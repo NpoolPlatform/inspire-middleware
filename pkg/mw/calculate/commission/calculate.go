@@ -30,10 +30,8 @@ type calculateHandler struct {
 //nolint:funlen
 func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	commMap := map[string]*npool.Commission{}
-	fmt.Println("=========== calculate commission config ================")
 	for _, comm := range h.Commissions {
 		commMap[comm.UserID] = comm
-		fmt.Println("====== commission config: ", comm)
 	}
 
 	_comms := []*Commission{}
@@ -55,7 +53,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 				return nil, err
 			}
 		}
-		fmt.Println("------comm1: ", comm1)
 
 		comm2, ok := commMap[inviter.InviterID]
 		if ok {
@@ -64,19 +61,16 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 				return nil, err
 			}
 		}
-		fmt.Println("------comm2: ", comm2)
 
 		if percent2.Cmp(percent1) < 0 {
 			return nil, fmt.Errorf("%v/%v < %v/%v (%v)", inviter.InviterID, percent2, inviter.InviteeID, percent1, comm1.GetGoodID())
 		}
 
 		if percent2.Cmp(percent1) == 0 {
-			fmt.Println("----------- percent2 == percent1 ----------")
 			commissionConfigID := uuid.Nil.String()
 			if comm2 != nil {
 				commissionConfigID = comm2.EntID
 			}
-			fmt.Println("------commissionConfigID: ", commissionConfigID)
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
 				CommissionConfigID:      commissionConfigID,
@@ -264,7 +258,6 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 
 //nolint:dupl,funlen
 func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, error) {
-	fmt.Println("=========== calculate by app commission config ================")
 	_comms := []*Commission{}
 	handler := &calculateHandler{
 		Handler: h,
@@ -289,7 +282,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 				return nil, err
 			}
 		}
-		fmt.Println("------comm1: ", comm1)
 
 		if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
 			percent1 = decimal.NewFromInt(0)
@@ -306,14 +298,12 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 				return nil, err
 			}
 		}
-		fmt.Println("------comm2: ", comm2)
 
 		if percent2.Cmp(percent1) < 0 {
 			return nil, fmt.Errorf("%v/%v < %v/%v", inviter.InviterID, percent2, inviter.InviteeID, percent1)
 		}
 
 		if percent2.Cmp(percent1) == 0 {
-			fmt.Println("----------- percent2 == percent1 ----------")
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
 				CommissionConfigID:      comm2.EntID,
@@ -347,7 +337,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	}
 
 	if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
-		fmt.Println("------ direct commission user: ", h.Inviters[len(h.Inviters)-1].InviteeID, "; appConfigID: ", h.AppConfig.EntID)
 		_comms = append(_comms, &Commission{
 			AppConfigID:          h.AppConfig.EntID,
 			CommissionConfigID:   uuid.Nil.String(),
@@ -360,7 +349,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	}
 
 	commLast, commLastUseful, err := handler.getAppCommLevelConf(h.Inviters[len(h.Inviters)-1].InviteeID)
-	fmt.Println("------ order user: ", h.Inviters[len(h.Inviters)-1].InviteeID, "; commission config: ", commLast)
 	if err != nil {
 		return nil, err
 	}
@@ -405,7 +393,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 
 //nolint:dupl,funlen
 func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commission, error) {
-	fmt.Println("=========== calculate by app good commission config ================")
 	_comms := []*Commission{}
 	handler := &calculateHandler{
 		Handler: h,
@@ -431,7 +418,6 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 				return nil, err
 			}
 		}
-		fmt.Println("------comm1: ", comm1)
 
 		if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
 			percent1 = decimal.NewFromInt(0)
@@ -447,14 +433,12 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 				return nil, err
 			}
 		}
-		fmt.Println("------comm2: ", comm2)
 
 		if percent2.Cmp(percent1) < 0 {
 			return nil, fmt.Errorf("%v/%v < %v/%v", inviter.InviterID, percent2, inviter.InviteeID, percent1)
 		}
 
 		if percent2.Cmp(percent1) == 0 {
-			fmt.Println("----------- percent2 == percent1 ----------")
 			_comms = append(_comms, &Commission{
 				AppConfigID:             h.AppConfig.EntID,
 				CommissionConfigID:      comm2.EntID,
@@ -488,7 +472,6 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 	}
 
 	if h.AppConfig.CommissionType == types.CommissionType_DirectCommission {
-		fmt.Println("------ direct commission user: ", h.Inviters[len(h.Inviters)-1].InviteeID, "; appConfigID: ", h.AppConfig.EntID)
 		_comms = append(_comms, &Commission{
 			AppConfigID:          h.AppConfig.EntID,
 			CommissionConfigID:   uuid.Nil.String(),
@@ -504,7 +487,6 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("------ order user: ", h.Inviters[len(h.Inviters)-1].InviteeID, "; commission config: ", commLast)
 	if commLast == nil {
 		return _comms, nil
 	}
