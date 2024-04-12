@@ -244,7 +244,7 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 			return nil, false, err
 		}
 		if consumeAmount.Cmp(thresholdAmount) < 0 {
-			continue
+			break
 		}
 		_percent, err := decimal.NewFromString(comm.GetAmountOrPercent())
 		if err != nil {
