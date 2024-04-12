@@ -5,25 +5,92 @@ import (
 	"fmt"
 	"time"
 
-	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
-	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	"github.com/google/uuid"
 )
 
-func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
-	key := fmt.Sprintf("%v:%v", basetypes.Prefix_PrefixCreateAppConfig, *h.AppID)
-	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
+type createHandler struct {
+	*Handler
+	sql string
+}
+
+//nolint:goconst
+func (h *createHandler) constructSQL() {
+	comma := ""
+	now := uint32(time.Now().Unix())
+	_sql := "insert into app_configs "
+	_sql += "("
+	if h.EntID != nil {
+		_sql += "ent_id"
+		comma = ", "
 	}
-	defer func() {
-		_ = redis2.Unlock(key)
-	}()
+	_sql += comma + "app_id"
+	comma = ", "
+	_sql += comma + "settle_mode"
+	_sql += comma + "settle_amount_type"
+	_sql += comma + "settle_interval"
+	_sql += comma + "commission_type"
+	_sql += comma + "max_level_count"
+	_sql += comma + "start_at"
+	_sql += comma + "end_at"
+	if h.SettleBenefit != nil {
+		_sql += comma + "settle_benefit"
+	}
+	_sql += comma + "created_at"
+	_sql += comma + "updated_at"
+	_sql += comma + "deleted_at"
+	_sql += ")"
+
+	comma = ""
+	_sql += " select * from (select "
+	if h.EntID != nil {
+		_sql += fmt.Sprintf("'%v' as ent_id ", *h.EntID)
+		comma = ", "
+	}
+	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
+	comma = ", "
+	_sql += fmt.Sprintf("%v'%v' as settle_mode", comma, *h.SettleMode)
+	_sql += fmt.Sprintf("%v'%v' as settle_amount_type", comma, *h.SettleAmountType)
+	_sql += fmt.Sprintf("%v'%v' as settle_interval", comma, *h.SettleInterval)
+	_sql += fmt.Sprintf("%v'%v' as commission_type", comma, *h.CommissionType)
+	_sql += fmt.Sprintf("%v%v as max_level_count", comma, *h.MaxLevelCount)
+	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
+	_sql += fmt.Sprintf("%v0 as end_at", comma)
+	if h.SettleBenefit != nil {
+		_sql += fmt.Sprintf("%v%v as settle_benefit", comma, *h.SettleBenefit)
+	}
+	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
+	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
+	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
+	_sql += ") as tmp "
+
+	_sql += "where not exists ("
+	_sql += "select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0", *h.AppID)
+	_sql += " limit 1)"
+	h.sql = _sql
+}
+
+func (h *createHandler) createAppConfig(ctx context.Context, tx *ent.Tx) error {
+	rc, err := tx.ExecContext(ctx, h.sql)
+	if err != nil {
+		return err
+	}
+	n, err := rc.RowsAffected()
+	if err != nil || n != 1 {
+		return fmt.Errorf("fail create appconfig: %v", err)
+	}
+	return nil
+}
+
+func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
+	handler := &createHandler{
+		Handler: h,
+	}
 
 	id := uuid.New()
 	if h.EntID == nil {
@@ -36,6 +103,8 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 	if h.MaxLevelCount != nil && *h.MaxLevelCount <= 0 {
 		return nil, fmt.Errorf("invalid maxlevelcount")
 	}
+
+	handler.constructSQL()
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
@@ -51,20 +120,7 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 			return err
 		}
 
-		if _, err := appconfigcrud.CreateSet(
-			tx.AppConfig.Create(),
-			&appconfigcrud.Req{
-				EntID:            h.EntID,
-				AppID:            h.AppID,
-				SettleMode:       h.SettleMode,
-				SettleAmountType: h.SettleAmountType,
-				SettleInterval:   h.SettleInterval,
-				CommissionType:   h.CommissionType,
-				SettleBenefit:    h.SettleBenefit,
-				StartAt:          h.StartAt,
-				MaxLevelCount:    h.MaxLevelCount,
-			},
-		).Save(_ctx); err != nil {
+		if err := handler.createAppConfig(_ctx, tx); err != nil {
 			return err
 		}
 		return nil
