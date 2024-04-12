@@ -100,7 +100,9 @@ func (h *Handler) CloneCommissionConfigs(ctx context.Context) error {
 				SetSettleType(info.SettleType).
 				SetAmountOrPercent(info.AmountOrPercent.Mul(percent)).
 				SetStartAt(now).
-				SetThresholdAmount(info.ThresholdAmount)
+				SetThresholdAmount(info.ThresholdAmount).
+				SetDisabled(info.Disabled).
+				SetLevel(info.Level)
 			cs = append(cs, c)
 		}
 		if _, err := cli.
