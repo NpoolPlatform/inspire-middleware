@@ -3,16 +3,71 @@ package config
 import (
 	"context"
 	"fmt"
+	"time"
 
-	commissionconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/commission/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
-	"github.com/google/uuid"
 )
 
+type updateHandler struct {
+	*Handler
+	sql   string
+	appID string
+}
+
+func (h *updateHandler) constructSQL() {
+	comma := ""
+	now := uint32(time.Now().Unix())
+
+	_sql := "update app_commission_configs "
+	_sql += "set "
+	comma = ", "
+	_sql += fmt.Sprintf("updated_at = %v", now)
+	if h.AmountOrPercent != nil {
+		_sql += fmt.Sprintf("%vamount_or_percent = '%v'", comma, *h.AmountOrPercent)
+	}
+	if h.StartAt != nil {
+		_sql += fmt.Sprintf("%vstart_at = %v", comma, *h.StartAt)
+	}
+	if h.ThresholdAmount != nil {
+		_sql += fmt.Sprintf("%vthreshold_amount = '%v'", comma, *h.ThresholdAmount)
+	}
+	if h.Invites != nil {
+		_sql += fmt.Sprintf("%vinvites = %v", comma, *h.Invites)
+	}
+	if h.Disabled != nil {
+		_sql += fmt.Sprintf("%vdisabled = %v", comma, *h.Disabled)
+	}
+	if h.Level != nil {
+		_sql += fmt.Sprintf("%vlevel = %v", comma, *h.Level)
+	}
+	_sql += " where "
+	_sql += fmt.Sprintf("id = %v ", *h.ID)
+	_sql += "and not exists ("
+	_sql += "select 1 from (select * from app_commission_configs) as di "
+	_sql += fmt.Sprintf("where di.app_id = '%v' and di.level = %v and di.id != %v and end_at=0", h.appID, *h.Level, *h.ID)
+	_sql += " limit 1)"
+
+	h.sql = _sql
+}
+
+func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) error {
+	rc, err := tx.ExecContext(ctx, h.sql)
+	if err != nil {
+		return err
+	}
+	n, err := rc.RowsAffected()
+	if err != nil || n != 1 {
+		return fmt.Errorf("fail update appcommissionconfig: %v", err)
+	}
+	return nil
+}
+
 func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommissionConfig, error) {
+	handler := &updateHandler{
+		Handler: h,
+	}
 	info, err := h.GetCommissionConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -20,44 +75,18 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 	if info == nil {
 		return nil, fmt.Errorf("invalid appcommissionconfig")
 	}
+
 	h.ID = &info.ID
 	if h.Level == nil {
 		h.Level = &info.Level
 	}
 
-	endAt := uint32(0)
-	entID := uuid.MustParse(info.EntID)
-	appID := uuid.MustParse(info.AppID)
-	h.Conds = &commissionconfigcrud.Conds{
-		EntID: &cruder.Cond{Op: cruder.NEQ, Val: entID},
-		AppID: &cruder.Cond{Op: cruder.EQ, Val: appID},
-		Level: &cruder.Cond{Op: cruder.EQ, Val: *h.Level},
-		EndAt: &cruder.Cond{Op: cruder.EQ, Val: endAt},
-	}
+	handler.appID = info.AppID
 
-	exist, err := h.ExistCommissionConfigs(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if exist {
-		return nil, fmt.Errorf("exist same config")
-	}
+	handler.constructSQL()
 
-	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
-		if _, err := commissionconfigcrud.UpdateSet(
-			tx.AppCommissionConfig.UpdateOneID(*h.ID),
-			&commissionconfigcrud.Req{
-				AmountOrPercent: h.AmountOrPercent,
-				StartAt:         h.StartAt,
-				ThresholdAmount: h.ThresholdAmount,
-				Invites:         h.Invites,
-				Disabled:        h.Disabled,
-				Level:           h.Level,
-			},
-		).Save(_ctx); err != nil {
-			return err
-		}
-		return nil
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		return handler.updateCommissionConfig(_ctx, tx)
 	})
 	if err != nil {
 		return nil, err
