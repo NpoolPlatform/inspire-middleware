@@ -99,7 +99,9 @@ func GetCommissions(ctx context.Context, conds *npool.Conds, offset, limit int32
 func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commission, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCommissions(ctx, &npool.GetCommissionsRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err

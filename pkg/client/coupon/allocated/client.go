@@ -114,7 +114,9 @@ func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([
 func GetCouponOnly(ctx context.Context, conds *npool.Conds) (*npool.Coupon, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCoupons(ctx, &npool.GetCouponsRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err

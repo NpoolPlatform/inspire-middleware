@@ -44,7 +44,9 @@ func CreateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*np
 func GetInvitationCodeOnly(ctx context.Context, conds *npool.Conds) (*npool.InvitationCode, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err

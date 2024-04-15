@@ -102,7 +102,9 @@ func GetEvents(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 func GetEventOnly(ctx context.Context, conds *npool.Conds) (*npool.Event, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetEvents(ctx, &npool.GetEventsRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err
