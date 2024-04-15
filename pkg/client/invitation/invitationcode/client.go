@@ -7,34 +7,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateInvitationCode(ctx, &npool.CreateInvitationCodeRequest{
 			Info: in,
 		})
@@ -50,7 +42,7 @@ func CreateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*np
 }
 
 func GetInvitationCodeOnly(ctx context.Context, conds *npool.Conds) (*npool.InvitationCode, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
 			Conds: conds,
 		})
@@ -72,7 +64,7 @@ func GetInvitationCodeOnly(ctx context.Context, conds *npool.Conds) (*npool.Invi
 }
 
 func UpdateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*npool.InvitationCode, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateInvitationCode(ctx, &npool.UpdateInvitationCodeRequest{
 			Info: in,
 		})
@@ -88,7 +80,7 @@ func UpdateInvitationCode(ctx context.Context, in *npool.InvitationCodeReq) (*np
 }
 
 func GetInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetInvitationCode(ctx, &npool.GetInvitationCodeRequest{
 			EntID: id,
 		})
@@ -106,7 +98,7 @@ func GetInvitationCode(ctx context.Context, id string) (*npool.InvitationCode, e
 func GetInvitationCodes(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.InvitationCode, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetInvitationCodes(ctx, &npool.GetInvitationCodesRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -127,7 +119,7 @@ func GetInvitationCodes(ctx context.Context, conds *npool.Conds, offset, limit i
 }
 
 func DeleteInvitationCode(ctx context.Context, id uint32) (*npool.InvitationCode, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteInvitationCode(ctx, &npool.DeleteInvitationCodeRequest{
 			Info: &npool.InvitationCodeReq{
 				ID: &id,

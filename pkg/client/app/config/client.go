@@ -7,34 +7,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateAppConfig(ctx context.Context, in *npool.AppConfigReq) (*npool.AppConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateAppConfig(ctx, &npool.CreateAppConfigRequest{
 			Info: in,
 		})
@@ -50,7 +42,7 @@ func CreateAppConfig(ctx context.Context, in *npool.AppConfigReq) (*npool.AppCon
 }
 
 func UpdateAppConfig(ctx context.Context, in *npool.AppConfigReq) (*npool.AppConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateAppConfig(ctx, &npool.UpdateAppConfigRequest{
 			Info: in,
 		})
@@ -66,7 +58,7 @@ func UpdateAppConfig(ctx context.Context, in *npool.AppConfigReq) (*npool.AppCon
 }
 
 func GetAppConfig(ctx context.Context, id string) (*npool.AppConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppConfig(ctx, &npool.GetAppConfigRequest{
 			EntID: id,
 		})
@@ -84,7 +76,7 @@ func GetAppConfig(ctx context.Context, id string) (*npool.AppConfig, error) {
 func GetAppConfigs(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.AppConfig, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppConfigs(ctx, &npool.GetAppConfigsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -105,7 +97,7 @@ func GetAppConfigs(ctx context.Context, conds *npool.Conds, offset, limit int32)
 }
 
 func GetAppConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.AppConfig, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppConfigs(ctx, &npool.GetAppConfigsRequest{
 			Conds: conds,
 		})
@@ -127,7 +119,7 @@ func GetAppConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.AppConfig
 }
 
 func ExistAppConfigConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistAppConfigConds(ctx, &npool.ExistAppConfigCondsRequest{
 			Conds: conds,
 		})
@@ -143,7 +135,7 @@ func ExistAppConfigConds(ctx context.Context, conds *npool.Conds) (bool, error) 
 }
 
 func DeleteAppConfig(ctx context.Context, id uint32) (*npool.AppConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteAppConfig(ctx, &npool.DeleteAppConfigRequest{
 			Info: &npool.AppConfigReq{
 				ID: &id,

@@ -6,34 +6,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateCoupon(ctx, &npool.CreateCouponRequest{
 			Info: in,
 		})
@@ -51,7 +43,7 @@ func CreateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Coupon, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCoupons(ctx, &npool.GetCouponsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -72,7 +64,7 @@ func GetCoupons(ctx context.Context, conds *npool.Conds, offset, limit int32) ([
 }
 
 func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateCoupon(ctx, &npool.UpdateCouponRequest{
 			Info: in,
 		})
@@ -88,7 +80,7 @@ func UpdateCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, erro
 }
 
 func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
 			EntID: id,
 		})
@@ -104,7 +96,7 @@ func GetCoupon(ctx context.Context, id string) (*npool.Coupon, error) {
 }
 
 func ExistCoupon(ctx context.Context, id string) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCoupon(ctx, &npool.GetCouponRequest{
 			EntID: id,
 		})
@@ -123,7 +115,7 @@ func ExistCoupon(ctx context.Context, id string) (bool, error) {
 }
 
 func DeleteCoupon(ctx context.Context, id uint32) (*npool.Coupon, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteCoupon(ctx, &npool.DeleteCouponRequest{
 			Info: &npool.CouponReq{
 				ID: &id,

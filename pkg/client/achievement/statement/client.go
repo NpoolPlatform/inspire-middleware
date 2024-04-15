@@ -7,34 +7,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateStatement(ctx context.Context, req *npool.StatementReq) (*npool.Statement, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateStatement(ctx, &npool.CreateStatementRequest{
 			Info: req,
 		})
@@ -50,7 +42,7 @@ func CreateStatement(ctx context.Context, req *npool.StatementReq) (*npool.State
 }
 
 func CreateStatements(ctx context.Context, reqs []*npool.StatementReq) ([]*npool.Statement, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateStatements(ctx, &npool.CreateStatementsRequest{
 			Infos: reqs,
 		})
@@ -67,7 +59,7 @@ func CreateStatements(ctx context.Context, reqs []*npool.StatementReq) ([]*npool
 
 func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Statement, uint32, error) {
 	var total uint32
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		in, err := cli.GetStatements(ctx, &npool.GetStatementsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -86,7 +78,7 @@ func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32)
 }
 
 func DeleteStatement(ctx context.Context, id uint32) (*npool.Statement, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteStatement(ctx, &npool.DeleteStatementRequest{
 			Info: &npool.StatementReq{
 				ID: &id,
@@ -104,7 +96,7 @@ func DeleteStatement(ctx context.Context, id uint32) (*npool.Statement, error) {
 }
 
 func DeleteStatements(ctx context.Context, in []*npool.StatementReq) ([]*npool.Statement, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteStatements(ctx, &npool.DeleteStatementsRequest{
 			Infos: in,
 		})

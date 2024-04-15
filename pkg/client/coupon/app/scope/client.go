@@ -6,34 +6,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/scope"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateAppGoodScope(ctx context.Context, in *npool.ScopeReq) (*npool.Scope, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateAppGoodScope(ctx, &npool.CreateAppGoodScopeRequest{
 			Info: in,
 		})
@@ -50,7 +42,7 @@ func CreateAppGoodScope(ctx context.Context, in *npool.ScopeReq) (*npool.Scope, 
 
 func GetAppGoodScopes(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Scope, uint32, error) {
 	var total uint32
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppGoodScopes(ctx, &npool.GetAppGoodScopesRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -71,7 +63,7 @@ func GetAppGoodScopes(ctx context.Context, conds *npool.Conds, offset, limit int
 }
 
 func GetAppGoodScope(ctx context.Context, id string) (*npool.Scope, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppGoodScope(ctx, &npool.GetAppGoodScopeRequest{
 			EntID: id,
 		})
@@ -87,7 +79,7 @@ func GetAppGoodScope(ctx context.Context, id string) (*npool.Scope, error) {
 }
 
 func DeleteAppGoodScope(ctx context.Context, id uint32) (*npool.Scope, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteAppGoodScope(ctx, &npool.DeleteAppGoodScopeRequest{
 			Info: &npool.ScopeReq{
 				ID: &id,
@@ -105,7 +97,7 @@ func DeleteAppGoodScope(ctx context.Context, id uint32) (*npool.Scope, error) {
 }
 
 func ExistAppGoodScopeConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistAppGoodScopeConds(ctx, &npool.ExistAppGoodScopeCondsRequest{
 			Conds: conds,
 		})
@@ -121,7 +113,7 @@ func ExistAppGoodScopeConds(ctx context.Context, conds *npool.Conds) (bool, erro
 }
 
 func VerifyCouponScopes(ctx context.Context, in []*npool.ScopeReq) error {
-	_, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		_, err := cli.VerifyCouponScopes(ctx, &npool.VerifyCouponScopesRequest{
 			Infos: in,
 		})

@@ -6,35 +6,25 @@ import (
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
-
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
-
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateCommissionConfig(ctx context.Context, in *npool.AppCommissionConfigReq) (*npool.AppCommissionConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateAppCommissionConfig(ctx, &npool.CreateAppCommissionConfigRequest{
 			Info: in,
 		})
@@ -50,7 +40,7 @@ func CreateCommissionConfig(ctx context.Context, in *npool.AppCommissionConfigRe
 }
 
 func UpdateCommissionConfig(ctx context.Context, in *npool.AppCommissionConfigReq) (*npool.AppCommissionConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateAppCommissionConfig(ctx, &npool.UpdateAppCommissionConfigRequest{
 			Info: in,
 		})
@@ -66,7 +56,7 @@ func UpdateCommissionConfig(ctx context.Context, in *npool.AppCommissionConfigRe
 }
 
 func GetCommissionConfig(ctx context.Context, id string) (*npool.AppCommissionConfig, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppCommissionConfig(ctx, &npool.GetAppCommissionConfigRequest{
 			EntID: id,
 		})
@@ -84,7 +74,7 @@ func GetCommissionConfig(ctx context.Context, id string) (*npool.AppCommissionCo
 func GetCommissionConfigs(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.AppCommissionConfig, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppCommissionConfigs(ctx, &npool.GetAppCommissionConfigsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -105,9 +95,11 @@ func GetCommissionConfigs(ctx context.Context, conds *npool.Conds, offset, limit
 }
 
 func GetCommissionConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.AppCommissionConfig, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetAppCommissionConfigs(ctx, &npool.GetAppCommissionConfigsRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err
@@ -127,7 +119,7 @@ func GetCommissionConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.Ap
 }
 
 func ExistCommissionConfigConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistAppCommissionConfigConds(ctx, &npool.ExistAppCommissionConfigCondsRequest{
 			Conds: conds,
 		})
