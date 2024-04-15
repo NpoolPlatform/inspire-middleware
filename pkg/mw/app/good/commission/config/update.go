@@ -48,7 +48,7 @@ func (h *updateHandler) constructSQL() {
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 	_sql += "and not exists ("
 	_sql += "select 1 from (select * from app_good_commission_configs) as di "
-	_sql += fmt.Sprintf("where di.app_id = '%v' and di.good_id = '%v' and di.app_good_id = '%v' and di.level = '%v' and di.id != %v and end_at=0",
+	_sql += fmt.Sprintf("where di.app_id = '%v' and di.good_id = '%v' and di.app_good_id = '%v' and di.level = '%v' and di.id != %v and di.end_at=0 and di.deleted_at=0",
 		h.appID, h.goodID, h.appGoodID, *h.Level, *h.ID)
 	_sql += " limit 1)"
 
