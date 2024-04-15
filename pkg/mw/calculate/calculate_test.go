@@ -109,7 +109,7 @@ var appConfig = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_LegacyCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig = appconfigmwpb.AppConfigReq{
@@ -121,7 +121,7 @@ var _appConfig = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig.CommissionType,
 	SettleBenefit:    &appConfig.SettleBenefit,
 	StartAt:          &appConfig.StartAt,
-	MaxLevelCount:    &appConfig.MaxLevelCount,
+	MaxLevel:         &appConfig.MaxLevel,
 }
 
 var appConfig2 = appconfigmwpb.AppConfig{
@@ -133,7 +133,7 @@ var appConfig2 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_LayeredCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig2 = appconfigmwpb.AppConfigReq{
@@ -145,7 +145,7 @@ var _appConfig2 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig2.CommissionType,
 	SettleBenefit:    &appConfig2.SettleBenefit,
 	StartAt:          &appConfig2.StartAt,
-	MaxLevelCount:    &appConfig2.MaxLevelCount,
+	MaxLevel:         &appConfig2.MaxLevel,
 }
 
 var appConfig3 = appconfigmwpb.AppConfig{
@@ -157,7 +157,7 @@ var appConfig3 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_DirectCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig3 = appconfigmwpb.AppConfigReq{
@@ -169,7 +169,7 @@ var _appConfig3 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig3.CommissionType,
 	SettleBenefit:    &appConfig3.SettleBenefit,
 	StartAt:          &appConfig3.StartAt,
-	MaxLevelCount:    &appConfig3.MaxLevelCount,
+	MaxLevel:         &appConfig3.MaxLevel,
 }
 
 var appConfig4 = appconfigmwpb.AppConfig{
@@ -181,7 +181,7 @@ var appConfig4 = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_WithoutCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(6),
+	MaxLevel:         uint32(6),
 }
 
 var _appConfig4 = appconfigmwpb.AppConfigReq{
@@ -193,7 +193,7 @@ var _appConfig4 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig4.CommissionType,
 	SettleBenefit:    &appConfig4.SettleBenefit,
 	StartAt:          &appConfig4.StartAt,
-	MaxLevelCount:    &appConfig4.MaxLevelCount,
+	MaxLevel:         &appConfig4.MaxLevel,
 }
 
 var comm1 = commmwpb.Commission{
@@ -661,7 +661,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
@@ -771,7 +771,7 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig2.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig2.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig2.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig2.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig2.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
@@ -799,7 +799,7 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig3.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig3.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig3.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig3.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig3.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
@@ -827,7 +827,7 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig4.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig4.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig4.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig4.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig4.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 

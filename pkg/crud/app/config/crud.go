@@ -23,7 +23,7 @@ type Req struct {
 	SettleBenefit    *bool
 	EndAt            *uint32
 	StartAt          *uint32
-	MaxLevelCount    *uint32
+	MaxLevel         *uint32
 	DeletedAt        *uint32
 }
 
@@ -56,8 +56,8 @@ func CreateSet(c *ent.AppConfigCreate, req *Req) *ent.AppConfigCreate {
 	if req.SettleBenefit != nil {
 		c.SetSettleBenefit(*req.SettleBenefit)
 	}
-	if req.MaxLevelCount != nil {
-		c.SetMaxLevelCount(*req.MaxLevelCount)
+	if req.MaxLevel != nil {
+		c.SetMaxLevel(*req.MaxLevel)
 	}
 	return c
 }

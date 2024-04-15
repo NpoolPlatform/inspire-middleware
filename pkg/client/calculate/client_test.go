@@ -113,7 +113,7 @@ var config1 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	MaxLevel:         uint32(5),
 }
 
 var _config1 = appconfigmwpb.AppConfigReq{
@@ -125,7 +125,7 @@ var _config1 = appconfigmwpb.AppConfigReq{
 	SettleInterval:   &config1.SettleInterval,
 	SettleBenefit:    &config1.SettleBenefit,
 	StartAt:          &config1.StartAt,
-	MaxLevelCount:    &config1.MaxLevelCount,
+	MaxLevel:         &config1.MaxLevel,
 }
 
 var percent1 = "30"

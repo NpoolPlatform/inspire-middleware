@@ -57,7 +57,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as settle_amount_type", comma, *h.SettleAmountType)
 	_sql += fmt.Sprintf("%v'%v' as settle_interval", comma, *h.SettleInterval)
 	_sql += fmt.Sprintf("%v'%v' as commission_type", comma, *h.CommissionType)
-	_sql += fmt.Sprintf("%v%v as max_level_count", comma, *h.MaxLevelCount)
+	_sql += fmt.Sprintf("%v%v as max_level_count", comma, *h.MaxLevel)
 	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
 	_sql += fmt.Sprintf("%v0 as end_at", comma)
 	if h.SettleBenefit != nil {
@@ -100,8 +100,8 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		startAt := uint32(time.Now().Unix())
 		h.StartAt = &startAt
 	}
-	if h.MaxLevelCount != nil && *h.MaxLevelCount <= 0 {
-		return nil, fmt.Errorf("invalid maxlevelcount")
+	if h.MaxLevel != nil && *h.MaxLevel <= 0 {
+		return nil, fmt.Errorf("invalid MaxLevel")
 	}
 
 	handler.constructSQL()
