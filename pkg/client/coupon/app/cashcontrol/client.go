@@ -6,34 +6,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/app/cashcontrol"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.CashControl, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateCashControl(ctx, &npool.CreateCashControlRequest{
 			Info: in,
 		})
@@ -49,7 +41,7 @@ func CreateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.Ca
 }
 
 func UpdateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.CashControl, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateCashControl(ctx, &npool.UpdateCashControlRequest{
 			Info: in,
 		})
@@ -66,7 +58,7 @@ func UpdateCashControl(ctx context.Context, in *npool.CashControlReq) (*npool.Ca
 
 func GetCashControls(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.CashControl, uint32, error) {
 	var total uint32
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCashControls(ctx, &npool.GetCashControlsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -87,7 +79,7 @@ func GetCashControls(ctx context.Context, conds *npool.Conds, offset, limit int3
 }
 
 func GetCashControl(ctx context.Context, id string) (*npool.CashControl, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetCashControl(ctx, &npool.GetCashControlRequest{
 			EntID: id,
 		})
@@ -103,7 +95,7 @@ func GetCashControl(ctx context.Context, id string) (*npool.CashControl, error) 
 }
 
 func DeleteCashControl(ctx context.Context, id uint32) (*npool.CashControl, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteCashControl(ctx, &npool.DeleteCashControlRequest{
 			Info: &npool.CashControlReq{
 				ID: &id,
@@ -121,7 +113,7 @@ func DeleteCashControl(ctx context.Context, id uint32) (*npool.CashControl, erro
 }
 
 func ExistCashControlConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistCashControlConds(ctx, &npool.ExistCashControlCondsRequest{
 			Conds: conds,
 		})

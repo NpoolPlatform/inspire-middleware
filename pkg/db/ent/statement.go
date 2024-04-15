@@ -57,6 +57,12 @@ type Statement struct {
 	UsdAmount decimal.Decimal `json:"usd_amount,omitempty"`
 	// Commission holds the value of the "commission" field.
 	Commission decimal.Decimal `json:"commission,omitempty"`
+	// AppConfigID holds the value of the "app_config_id" field.
+	AppConfigID uuid.UUID `json:"app_config_id,omitempty"`
+	// CommissionConfigID holds the value of the "commission_config_id" field.
+	CommissionConfigID uuid.UUID `json:"commission_config_id,omitempty"`
+	// CommissionConfigType holds the value of the "commission_config_type" field.
+	CommissionConfigType string `json:"commission_config_type,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -70,7 +76,9 @@ func (*Statement) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case statement.FieldID, statement.FieldCreatedAt, statement.FieldUpdatedAt, statement.FieldDeletedAt, statement.FieldUnits:
 			values[i] = new(sql.NullInt64)
-		case statement.FieldEntID, statement.FieldAppID, statement.FieldUserID, statement.FieldDirectContributorID, statement.FieldGoodID, statement.FieldAppGoodID, statement.FieldOrderID, statement.FieldPaymentID, statement.FieldCoinTypeID, statement.FieldPaymentCoinTypeID:
+		case statement.FieldCommissionConfigType:
+			values[i] = new(sql.NullString)
+		case statement.FieldEntID, statement.FieldAppID, statement.FieldUserID, statement.FieldDirectContributorID, statement.FieldGoodID, statement.FieldAppGoodID, statement.FieldOrderID, statement.FieldPaymentID, statement.FieldCoinTypeID, statement.FieldPaymentCoinTypeID, statement.FieldAppConfigID, statement.FieldCommissionConfigID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Statement", columns[i])
@@ -213,6 +221,24 @@ func (s *Statement) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				s.Commission = *value
 			}
+		case statement.FieldAppConfigID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field app_config_id", values[i])
+			} else if value != nil {
+				s.AppConfigID = *value
+			}
+		case statement.FieldCommissionConfigID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field commission_config_id", values[i])
+			} else if value != nil {
+				s.CommissionConfigID = *value
+			}
+		case statement.FieldCommissionConfigType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field commission_config_type", values[i])
+			} else if value.Valid {
+				s.CommissionConfigType = value.String
+			}
 		}
 	}
 	return nil
@@ -300,6 +326,15 @@ func (s *Statement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("commission=")
 	builder.WriteString(fmt.Sprintf("%v", s.Commission))
+	builder.WriteString(", ")
+	builder.WriteString("app_config_id=")
+	builder.WriteString(fmt.Sprintf("%v", s.AppConfigID))
+	builder.WriteString(", ")
+	builder.WriteString("commission_config_id=")
+	builder.WriteString(fmt.Sprintf("%v", s.CommissionConfigID))
+	builder.WriteString(", ")
+	builder.WriteString("commission_config_type=")
+	builder.WriteString(s.CommissionConfigType)
 	builder.WriteByte(')')
 	return builder.String()
 }

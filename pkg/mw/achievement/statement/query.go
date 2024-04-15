@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 
 	"github.com/shopspring/decimal"
@@ -39,6 +40,9 @@ func (h *queryHandler) selectStatement(stm *ent.StatementQuery) {
 		entstatement.FieldAmount,
 		entstatement.FieldUsdAmount,
 		entstatement.FieldCommission,
+		entstatement.FieldAppConfigID,
+		entstatement.FieldCommissionConfigID,
+		entstatement.FieldCommissionConfigType,
 		entstatement.FieldCreatedAt,
 		entstatement.FieldUpdatedAt,
 		entstatement.FieldDeletedAt,
@@ -110,6 +114,7 @@ func (h *queryHandler) formalize() {
 		} else {
 			info.Commission = amount.String()
 		}
+		info.CommissionConfigType = types.CommissionConfigType(types.CommissionConfigType_value[info.CommissionConfigTypeStr])
 	}
 }
 

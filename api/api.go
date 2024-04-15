@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/api/achievement"
 	"github.com/NpoolPlatform/inspire-middleware/api/achievement/statement"
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
@@ -17,6 +18,10 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
+
+	appcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/commission/config"
+	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
+	appgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/good/commission/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -40,6 +45,10 @@ func Register(server grpc.ServiceRegistrar) {
 	event.Register(server)
 	statement.Register(server)
 	cashcontrol.Register(server)
+	appconfig.Register(server)
+	appcommissionconfig.Register(server)
+	appgoodcommissionconfig.Register(server)
+	user.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -74,6 +83,12 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := registration.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := appgoodcommissionconfig.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := user.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil

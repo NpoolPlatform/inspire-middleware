@@ -22,6 +22,58 @@ func (f AchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
+// The AchievementUserFunc type is an adapter to allow the use of ordinary
+// function as AchievementUser mutator.
+type AchievementUserFunc func(context.Context, *ent.AchievementUserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AchievementUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AchievementUserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AchievementUserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The AppCommissionConfigFunc type is an adapter to allow the use of ordinary
+// function as AppCommissionConfig mutator.
+type AppCommissionConfigFunc func(context.Context, *ent.AppCommissionConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppCommissionConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppCommissionConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppCommissionConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The AppConfigFunc type is an adapter to allow the use of ordinary
+// function as AppConfig mutator.
+type AppConfigFunc func(context.Context, *ent.AppConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The AppGoodCommissionConfigFunc type is an adapter to allow the use of ordinary
+// function as AppGoodCommissionConfig mutator.
+type AppGoodCommissionConfigFunc func(context.Context, *ent.AppGoodCommissionConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppGoodCommissionConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AppGoodCommissionConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppGoodCommissionConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The AppGoodScopeFunc type is an adapter to allow the use of ordinary
 // function as AppGoodScope mutator.
 type AppGoodScopeFunc func(context.Context, *ent.AppGoodScopeMutation) (ent.Value, error)

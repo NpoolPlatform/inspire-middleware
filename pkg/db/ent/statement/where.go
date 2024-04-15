@@ -220,6 +220,27 @@ func Commission(v decimal.Decimal) predicate.Statement {
 	})
 }
 
+// AppConfigID applies equality check predicate on the "app_config_id" field. It's identical to AppConfigIDEQ.
+func AppConfigID(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppConfigID), v))
+	})
+}
+
+// CommissionConfigID applies equality check predicate on the "commission_config_id" field. It's identical to CommissionConfigIDEQ.
+func CommissionConfigID(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigType applies equality check predicate on the "commission_config_type" field. It's identical to CommissionConfigTypeEQ.
+func CommissionConfigType(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionConfigType), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Statement {
 	return predicate.Statement(func(s *sql.Selector) {
@@ -1671,6 +1692,275 @@ func CommissionIsNil() predicate.Statement {
 func CommissionNotNil() predicate.Statement {
 	return predicate.Statement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCommission)))
+	})
+}
+
+// AppConfigIDEQ applies the EQ predicate on the "app_config_id" field.
+func AppConfigIDEQ(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDNEQ applies the NEQ predicate on the "app_config_id" field.
+func AppConfigIDNEQ(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDIn applies the In predicate on the "app_config_id" field.
+func AppConfigIDIn(vs ...uuid.UUID) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldAppConfigID), v...))
+	})
+}
+
+// AppConfigIDNotIn applies the NotIn predicate on the "app_config_id" field.
+func AppConfigIDNotIn(vs ...uuid.UUID) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldAppConfigID), v...))
+	})
+}
+
+// AppConfigIDGT applies the GT predicate on the "app_config_id" field.
+func AppConfigIDGT(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDGTE applies the GTE predicate on the "app_config_id" field.
+func AppConfigIDGTE(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDLT applies the LT predicate on the "app_config_id" field.
+func AppConfigIDLT(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDLTE applies the LTE predicate on the "app_config_id" field.
+func AppConfigIDLTE(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAppConfigID), v))
+	})
+}
+
+// AppConfigIDIsNil applies the IsNil predicate on the "app_config_id" field.
+func AppConfigIDIsNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAppConfigID)))
+	})
+}
+
+// AppConfigIDNotNil applies the NotNil predicate on the "app_config_id" field.
+func AppConfigIDNotNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAppConfigID)))
+	})
+}
+
+// CommissionConfigIDEQ applies the EQ predicate on the "commission_config_id" field.
+func CommissionConfigIDEQ(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDNEQ applies the NEQ predicate on the "commission_config_id" field.
+func CommissionConfigIDNEQ(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDIn applies the In predicate on the "commission_config_id" field.
+func CommissionConfigIDIn(vs ...uuid.UUID) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCommissionConfigID), v...))
+	})
+}
+
+// CommissionConfigIDNotIn applies the NotIn predicate on the "commission_config_id" field.
+func CommissionConfigIDNotIn(vs ...uuid.UUID) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCommissionConfigID), v...))
+	})
+}
+
+// CommissionConfigIDGT applies the GT predicate on the "commission_config_id" field.
+func CommissionConfigIDGT(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDGTE applies the GTE predicate on the "commission_config_id" field.
+func CommissionConfigIDGTE(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDLT applies the LT predicate on the "commission_config_id" field.
+func CommissionConfigIDLT(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDLTE applies the LTE predicate on the "commission_config_id" field.
+func CommissionConfigIDLTE(v uuid.UUID) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCommissionConfigID), v))
+	})
+}
+
+// CommissionConfigIDIsNil applies the IsNil predicate on the "commission_config_id" field.
+func CommissionConfigIDIsNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCommissionConfigID)))
+	})
+}
+
+// CommissionConfigIDNotNil applies the NotNil predicate on the "commission_config_id" field.
+func CommissionConfigIDNotNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCommissionConfigID)))
+	})
+}
+
+// CommissionConfigTypeEQ applies the EQ predicate on the "commission_config_type" field.
+func CommissionConfigTypeEQ(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeNEQ applies the NEQ predicate on the "commission_config_type" field.
+func CommissionConfigTypeNEQ(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeIn applies the In predicate on the "commission_config_type" field.
+func CommissionConfigTypeIn(vs ...string) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCommissionConfigType), v...))
+	})
+}
+
+// CommissionConfigTypeNotIn applies the NotIn predicate on the "commission_config_type" field.
+func CommissionConfigTypeNotIn(vs ...string) predicate.Statement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCommissionConfigType), v...))
+	})
+}
+
+// CommissionConfigTypeGT applies the GT predicate on the "commission_config_type" field.
+func CommissionConfigTypeGT(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeGTE applies the GTE predicate on the "commission_config_type" field.
+func CommissionConfigTypeGTE(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeLT applies the LT predicate on the "commission_config_type" field.
+func CommissionConfigTypeLT(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeLTE applies the LTE predicate on the "commission_config_type" field.
+func CommissionConfigTypeLTE(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeContains applies the Contains predicate on the "commission_config_type" field.
+func CommissionConfigTypeContains(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeHasPrefix applies the HasPrefix predicate on the "commission_config_type" field.
+func CommissionConfigTypeHasPrefix(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeHasSuffix applies the HasSuffix predicate on the "commission_config_type" field.
+func CommissionConfigTypeHasSuffix(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeIsNil applies the IsNil predicate on the "commission_config_type" field.
+func CommissionConfigTypeIsNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCommissionConfigType)))
+	})
+}
+
+// CommissionConfigTypeNotNil applies the NotNil predicate on the "commission_config_type" field.
+func CommissionConfigTypeNotNil() predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCommissionConfigType)))
+	})
+}
+
+// CommissionConfigTypeEqualFold applies the EqualFold predicate on the "commission_config_type" field.
+func CommissionConfigTypeEqualFold(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCommissionConfigType), v))
+	})
+}
+
+// CommissionConfigTypeContainsFold applies the ContainsFold predicate on the "commission_config_type" field.
+func CommissionConfigTypeContainsFold(v string) predicate.Statement {
+	return predicate.Statement(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCommissionConfigType), v))
 	})
 }
 

@@ -426,6 +426,66 @@ func (su *StatementUpdate) ClearCommission() *StatementUpdate {
 	return su
 }
 
+// SetAppConfigID sets the "app_config_id" field.
+func (su *StatementUpdate) SetAppConfigID(u uuid.UUID) *StatementUpdate {
+	su.mutation.SetAppConfigID(u)
+	return su
+}
+
+// SetNillableAppConfigID sets the "app_config_id" field if the given value is not nil.
+func (su *StatementUpdate) SetNillableAppConfigID(u *uuid.UUID) *StatementUpdate {
+	if u != nil {
+		su.SetAppConfigID(*u)
+	}
+	return su
+}
+
+// ClearAppConfigID clears the value of the "app_config_id" field.
+func (su *StatementUpdate) ClearAppConfigID() *StatementUpdate {
+	su.mutation.ClearAppConfigID()
+	return su
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (su *StatementUpdate) SetCommissionConfigID(u uuid.UUID) *StatementUpdate {
+	su.mutation.SetCommissionConfigID(u)
+	return su
+}
+
+// SetNillableCommissionConfigID sets the "commission_config_id" field if the given value is not nil.
+func (su *StatementUpdate) SetNillableCommissionConfigID(u *uuid.UUID) *StatementUpdate {
+	if u != nil {
+		su.SetCommissionConfigID(*u)
+	}
+	return su
+}
+
+// ClearCommissionConfigID clears the value of the "commission_config_id" field.
+func (su *StatementUpdate) ClearCommissionConfigID() *StatementUpdate {
+	su.mutation.ClearCommissionConfigID()
+	return su
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (su *StatementUpdate) SetCommissionConfigType(s string) *StatementUpdate {
+	su.mutation.SetCommissionConfigType(s)
+	return su
+}
+
+// SetNillableCommissionConfigType sets the "commission_config_type" field if the given value is not nil.
+func (su *StatementUpdate) SetNillableCommissionConfigType(s *string) *StatementUpdate {
+	if s != nil {
+		su.SetCommissionConfigType(*s)
+	}
+	return su
+}
+
+// ClearCommissionConfigType clears the value of the "commission_config_type" field.
+func (su *StatementUpdate) ClearCommissionConfigType() *StatementUpdate {
+	su.mutation.ClearCommissionConfigType()
+	return su
+}
+
 // Mutation returns the StatementMutation object of the builder.
 func (su *StatementUpdate) Mutation() *StatementMutation {
 	return su.mutation
@@ -786,6 +846,45 @@ func (su *StatementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: statement.FieldCommission,
+		})
+	}
+	if value, ok := su.mutation.AppConfigID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppConfigID,
+		})
+	}
+	if su.mutation.AppConfigIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldAppConfigID,
+		})
+	}
+	if value, ok := su.mutation.CommissionConfigID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldCommissionConfigID,
+		})
+	}
+	if su.mutation.CommissionConfigIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldCommissionConfigID,
+		})
+	}
+	if value, ok := su.mutation.CommissionConfigType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: statement.FieldCommissionConfigType,
+		})
+	}
+	if su.mutation.CommissionConfigTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: statement.FieldCommissionConfigType,
 		})
 	}
 	_spec.Modifiers = su.modifiers
@@ -1205,6 +1304,66 @@ func (suo *StatementUpdateOne) ClearCommission() *StatementUpdateOne {
 	return suo
 }
 
+// SetAppConfigID sets the "app_config_id" field.
+func (suo *StatementUpdateOne) SetAppConfigID(u uuid.UUID) *StatementUpdateOne {
+	suo.mutation.SetAppConfigID(u)
+	return suo
+}
+
+// SetNillableAppConfigID sets the "app_config_id" field if the given value is not nil.
+func (suo *StatementUpdateOne) SetNillableAppConfigID(u *uuid.UUID) *StatementUpdateOne {
+	if u != nil {
+		suo.SetAppConfigID(*u)
+	}
+	return suo
+}
+
+// ClearAppConfigID clears the value of the "app_config_id" field.
+func (suo *StatementUpdateOne) ClearAppConfigID() *StatementUpdateOne {
+	suo.mutation.ClearAppConfigID()
+	return suo
+}
+
+// SetCommissionConfigID sets the "commission_config_id" field.
+func (suo *StatementUpdateOne) SetCommissionConfigID(u uuid.UUID) *StatementUpdateOne {
+	suo.mutation.SetCommissionConfigID(u)
+	return suo
+}
+
+// SetNillableCommissionConfigID sets the "commission_config_id" field if the given value is not nil.
+func (suo *StatementUpdateOne) SetNillableCommissionConfigID(u *uuid.UUID) *StatementUpdateOne {
+	if u != nil {
+		suo.SetCommissionConfigID(*u)
+	}
+	return suo
+}
+
+// ClearCommissionConfigID clears the value of the "commission_config_id" field.
+func (suo *StatementUpdateOne) ClearCommissionConfigID() *StatementUpdateOne {
+	suo.mutation.ClearCommissionConfigID()
+	return suo
+}
+
+// SetCommissionConfigType sets the "commission_config_type" field.
+func (suo *StatementUpdateOne) SetCommissionConfigType(s string) *StatementUpdateOne {
+	suo.mutation.SetCommissionConfigType(s)
+	return suo
+}
+
+// SetNillableCommissionConfigType sets the "commission_config_type" field if the given value is not nil.
+func (suo *StatementUpdateOne) SetNillableCommissionConfigType(s *string) *StatementUpdateOne {
+	if s != nil {
+		suo.SetCommissionConfigType(*s)
+	}
+	return suo
+}
+
+// ClearCommissionConfigType clears the value of the "commission_config_type" field.
+func (suo *StatementUpdateOne) ClearCommissionConfigType() *StatementUpdateOne {
+	suo.mutation.ClearCommissionConfigType()
+	return suo
+}
+
 // Mutation returns the StatementMutation object of the builder.
 func (suo *StatementUpdateOne) Mutation() *StatementMutation {
 	return suo.mutation
@@ -1595,6 +1754,45 @@ func (suo *StatementUpdateOne) sqlSave(ctx context.Context) (_node *Statement, e
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: statement.FieldCommission,
+		})
+	}
+	if value, ok := suo.mutation.AppConfigID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldAppConfigID,
+		})
+	}
+	if suo.mutation.AppConfigIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldAppConfigID,
+		})
+	}
+	if value, ok := suo.mutation.CommissionConfigID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: statement.FieldCommissionConfigID,
+		})
+	}
+	if suo.mutation.CommissionConfigIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: statement.FieldCommissionConfigID,
+		})
+	}
+	if value, ok := suo.mutation.CommissionConfigType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: statement.FieldCommissionConfigType,
+		})
+	}
+	if suo.mutation.CommissionConfigTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: statement.FieldCommissionConfigType,
 		})
 	}
 	_spec.Modifiers = suo.modifiers

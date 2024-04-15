@@ -11,6 +11,10 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/migrate"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
@@ -34,6 +38,14 @@ type Client struct {
 	Schema *migrate.Schema
 	// Achievement is the client for interacting with the Achievement builders.
 	Achievement *AchievementClient
+	// AchievementUser is the client for interacting with the AchievementUser builders.
+	AchievementUser *AchievementUserClient
+	// AppCommissionConfig is the client for interacting with the AppCommissionConfig builders.
+	AppCommissionConfig *AppCommissionConfigClient
+	// AppConfig is the client for interacting with the AppConfig builders.
+	AppConfig *AppConfigClient
+	// AppGoodCommissionConfig is the client for interacting with the AppGoodCommissionConfig builders.
+	AppGoodCommissionConfig *AppGoodCommissionConfigClient
 	// AppGoodScope is the client for interacting with the AppGoodScope builders.
 	AppGoodScope *AppGoodScopeClient
 	// CashControl is the client for interacting with the CashControl builders.
@@ -70,6 +82,10 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Achievement = NewAchievementClient(c.config)
+	c.AchievementUser = NewAchievementUserClient(c.config)
+	c.AppCommissionConfig = NewAppCommissionConfigClient(c.config)
+	c.AppConfig = NewAppConfigClient(c.config)
+	c.AppGoodCommissionConfig = NewAppGoodCommissionConfigClient(c.config)
 	c.AppGoodScope = NewAppGoodScopeClient(c.config)
 	c.CashControl = NewCashControlClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
@@ -112,20 +128,24 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:             ctx,
-		config:          cfg,
-		Achievement:     NewAchievementClient(cfg),
-		AppGoodScope:    NewAppGoodScopeClient(cfg),
-		CashControl:     NewCashControlClient(cfg),
-		Commission:      NewCommissionClient(cfg),
-		Coupon:          NewCouponClient(cfg),
-		CouponAllocated: NewCouponAllocatedClient(cfg),
-		CouponScope:     NewCouponScopeClient(cfg),
-		Event:           NewEventClient(cfg),
-		InvitationCode:  NewInvitationCodeClient(cfg),
-		PubsubMessage:   NewPubsubMessageClient(cfg),
-		Registration:    NewRegistrationClient(cfg),
-		Statement:       NewStatementClient(cfg),
+		ctx:                     ctx,
+		config:                  cfg,
+		Achievement:             NewAchievementClient(cfg),
+		AchievementUser:         NewAchievementUserClient(cfg),
+		AppCommissionConfig:     NewAppCommissionConfigClient(cfg),
+		AppConfig:               NewAppConfigClient(cfg),
+		AppGoodCommissionConfig: NewAppGoodCommissionConfigClient(cfg),
+		AppGoodScope:            NewAppGoodScopeClient(cfg),
+		CashControl:             NewCashControlClient(cfg),
+		Commission:              NewCommissionClient(cfg),
+		Coupon:                  NewCouponClient(cfg),
+		CouponAllocated:         NewCouponAllocatedClient(cfg),
+		CouponScope:             NewCouponScopeClient(cfg),
+		Event:                   NewEventClient(cfg),
+		InvitationCode:          NewInvitationCodeClient(cfg),
+		PubsubMessage:           NewPubsubMessageClient(cfg),
+		Registration:            NewRegistrationClient(cfg),
+		Statement:               NewStatementClient(cfg),
 	}, nil
 }
 
@@ -143,20 +163,24 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:             ctx,
-		config:          cfg,
-		Achievement:     NewAchievementClient(cfg),
-		AppGoodScope:    NewAppGoodScopeClient(cfg),
-		CashControl:     NewCashControlClient(cfg),
-		Commission:      NewCommissionClient(cfg),
-		Coupon:          NewCouponClient(cfg),
-		CouponAllocated: NewCouponAllocatedClient(cfg),
-		CouponScope:     NewCouponScopeClient(cfg),
-		Event:           NewEventClient(cfg),
-		InvitationCode:  NewInvitationCodeClient(cfg),
-		PubsubMessage:   NewPubsubMessageClient(cfg),
-		Registration:    NewRegistrationClient(cfg),
-		Statement:       NewStatementClient(cfg),
+		ctx:                     ctx,
+		config:                  cfg,
+		Achievement:             NewAchievementClient(cfg),
+		AchievementUser:         NewAchievementUserClient(cfg),
+		AppCommissionConfig:     NewAppCommissionConfigClient(cfg),
+		AppConfig:               NewAppConfigClient(cfg),
+		AppGoodCommissionConfig: NewAppGoodCommissionConfigClient(cfg),
+		AppGoodScope:            NewAppGoodScopeClient(cfg),
+		CashControl:             NewCashControlClient(cfg),
+		Commission:              NewCommissionClient(cfg),
+		Coupon:                  NewCouponClient(cfg),
+		CouponAllocated:         NewCouponAllocatedClient(cfg),
+		CouponScope:             NewCouponScopeClient(cfg),
+		Event:                   NewEventClient(cfg),
+		InvitationCode:          NewInvitationCodeClient(cfg),
+		PubsubMessage:           NewPubsubMessageClient(cfg),
+		Registration:            NewRegistrationClient(cfg),
+		Statement:               NewStatementClient(cfg),
 	}, nil
 }
 
@@ -187,6 +211,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Achievement.Use(hooks...)
+	c.AchievementUser.Use(hooks...)
+	c.AppCommissionConfig.Use(hooks...)
+	c.AppConfig.Use(hooks...)
+	c.AppGoodCommissionConfig.Use(hooks...)
 	c.AppGoodScope.Use(hooks...)
 	c.CashControl.Use(hooks...)
 	c.Commission.Use(hooks...)
@@ -289,6 +317,370 @@ func (c *AchievementClient) GetX(ctx context.Context, id uint32) *Achievement {
 func (c *AchievementClient) Hooks() []Hook {
 	hooks := c.hooks.Achievement
 	return append(hooks[:len(hooks):len(hooks)], achievement.Hooks[:]...)
+}
+
+// AchievementUserClient is a client for the AchievementUser schema.
+type AchievementUserClient struct {
+	config
+}
+
+// NewAchievementUserClient returns a client for the AchievementUser from the given config.
+func NewAchievementUserClient(c config) *AchievementUserClient {
+	return &AchievementUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `achievementuser.Hooks(f(g(h())))`.
+func (c *AchievementUserClient) Use(hooks ...Hook) {
+	c.hooks.AchievementUser = append(c.hooks.AchievementUser, hooks...)
+}
+
+// Create returns a builder for creating a AchievementUser entity.
+func (c *AchievementUserClient) Create() *AchievementUserCreate {
+	mutation := newAchievementUserMutation(c.config, OpCreate)
+	return &AchievementUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AchievementUser entities.
+func (c *AchievementUserClient) CreateBulk(builders ...*AchievementUserCreate) *AchievementUserCreateBulk {
+	return &AchievementUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AchievementUser.
+func (c *AchievementUserClient) Update() *AchievementUserUpdate {
+	mutation := newAchievementUserMutation(c.config, OpUpdate)
+	return &AchievementUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AchievementUserClient) UpdateOne(au *AchievementUser) *AchievementUserUpdateOne {
+	mutation := newAchievementUserMutation(c.config, OpUpdateOne, withAchievementUser(au))
+	return &AchievementUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AchievementUserClient) UpdateOneID(id uint32) *AchievementUserUpdateOne {
+	mutation := newAchievementUserMutation(c.config, OpUpdateOne, withAchievementUserID(id))
+	return &AchievementUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AchievementUser.
+func (c *AchievementUserClient) Delete() *AchievementUserDelete {
+	mutation := newAchievementUserMutation(c.config, OpDelete)
+	return &AchievementUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AchievementUserClient) DeleteOne(au *AchievementUser) *AchievementUserDeleteOne {
+	return c.DeleteOneID(au.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AchievementUserClient) DeleteOneID(id uint32) *AchievementUserDeleteOne {
+	builder := c.Delete().Where(achievementuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AchievementUserDeleteOne{builder}
+}
+
+// Query returns a query builder for AchievementUser.
+func (c *AchievementUserClient) Query() *AchievementUserQuery {
+	return &AchievementUserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AchievementUser entity by its id.
+func (c *AchievementUserClient) Get(ctx context.Context, id uint32) (*AchievementUser, error) {
+	return c.Query().Where(achievementuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AchievementUserClient) GetX(ctx context.Context, id uint32) *AchievementUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AchievementUserClient) Hooks() []Hook {
+	hooks := c.hooks.AchievementUser
+	return append(hooks[:len(hooks):len(hooks)], achievementuser.Hooks[:]...)
+}
+
+// AppCommissionConfigClient is a client for the AppCommissionConfig schema.
+type AppCommissionConfigClient struct {
+	config
+}
+
+// NewAppCommissionConfigClient returns a client for the AppCommissionConfig from the given config.
+func NewAppCommissionConfigClient(c config) *AppCommissionConfigClient {
+	return &AppCommissionConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appcommissionconfig.Hooks(f(g(h())))`.
+func (c *AppCommissionConfigClient) Use(hooks ...Hook) {
+	c.hooks.AppCommissionConfig = append(c.hooks.AppCommissionConfig, hooks...)
+}
+
+// Create returns a builder for creating a AppCommissionConfig entity.
+func (c *AppCommissionConfigClient) Create() *AppCommissionConfigCreate {
+	mutation := newAppCommissionConfigMutation(c.config, OpCreate)
+	return &AppCommissionConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppCommissionConfig entities.
+func (c *AppCommissionConfigClient) CreateBulk(builders ...*AppCommissionConfigCreate) *AppCommissionConfigCreateBulk {
+	return &AppCommissionConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppCommissionConfig.
+func (c *AppCommissionConfigClient) Update() *AppCommissionConfigUpdate {
+	mutation := newAppCommissionConfigMutation(c.config, OpUpdate)
+	return &AppCommissionConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppCommissionConfigClient) UpdateOne(acc *AppCommissionConfig) *AppCommissionConfigUpdateOne {
+	mutation := newAppCommissionConfigMutation(c.config, OpUpdateOne, withAppCommissionConfig(acc))
+	return &AppCommissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppCommissionConfigClient) UpdateOneID(id uint32) *AppCommissionConfigUpdateOne {
+	mutation := newAppCommissionConfigMutation(c.config, OpUpdateOne, withAppCommissionConfigID(id))
+	return &AppCommissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppCommissionConfig.
+func (c *AppCommissionConfigClient) Delete() *AppCommissionConfigDelete {
+	mutation := newAppCommissionConfigMutation(c.config, OpDelete)
+	return &AppCommissionConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppCommissionConfigClient) DeleteOne(acc *AppCommissionConfig) *AppCommissionConfigDeleteOne {
+	return c.DeleteOneID(acc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppCommissionConfigClient) DeleteOneID(id uint32) *AppCommissionConfigDeleteOne {
+	builder := c.Delete().Where(appcommissionconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppCommissionConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for AppCommissionConfig.
+func (c *AppCommissionConfigClient) Query() *AppCommissionConfigQuery {
+	return &AppCommissionConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppCommissionConfig entity by its id.
+func (c *AppCommissionConfigClient) Get(ctx context.Context, id uint32) (*AppCommissionConfig, error) {
+	return c.Query().Where(appcommissionconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppCommissionConfigClient) GetX(ctx context.Context, id uint32) *AppCommissionConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppCommissionConfigClient) Hooks() []Hook {
+	hooks := c.hooks.AppCommissionConfig
+	return append(hooks[:len(hooks):len(hooks)], appcommissionconfig.Hooks[:]...)
+}
+
+// AppConfigClient is a client for the AppConfig schema.
+type AppConfigClient struct {
+	config
+}
+
+// NewAppConfigClient returns a client for the AppConfig from the given config.
+func NewAppConfigClient(c config) *AppConfigClient {
+	return &AppConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appconfig.Hooks(f(g(h())))`.
+func (c *AppConfigClient) Use(hooks ...Hook) {
+	c.hooks.AppConfig = append(c.hooks.AppConfig, hooks...)
+}
+
+// Create returns a builder for creating a AppConfig entity.
+func (c *AppConfigClient) Create() *AppConfigCreate {
+	mutation := newAppConfigMutation(c.config, OpCreate)
+	return &AppConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppConfig entities.
+func (c *AppConfigClient) CreateBulk(builders ...*AppConfigCreate) *AppConfigCreateBulk {
+	return &AppConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppConfig.
+func (c *AppConfigClient) Update() *AppConfigUpdate {
+	mutation := newAppConfigMutation(c.config, OpUpdate)
+	return &AppConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppConfigClient) UpdateOne(ac *AppConfig) *AppConfigUpdateOne {
+	mutation := newAppConfigMutation(c.config, OpUpdateOne, withAppConfig(ac))
+	return &AppConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppConfigClient) UpdateOneID(id uint32) *AppConfigUpdateOne {
+	mutation := newAppConfigMutation(c.config, OpUpdateOne, withAppConfigID(id))
+	return &AppConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppConfig.
+func (c *AppConfigClient) Delete() *AppConfigDelete {
+	mutation := newAppConfigMutation(c.config, OpDelete)
+	return &AppConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppConfigClient) DeleteOne(ac *AppConfig) *AppConfigDeleteOne {
+	return c.DeleteOneID(ac.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppConfigClient) DeleteOneID(id uint32) *AppConfigDeleteOne {
+	builder := c.Delete().Where(appconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for AppConfig.
+func (c *AppConfigClient) Query() *AppConfigQuery {
+	return &AppConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppConfig entity by its id.
+func (c *AppConfigClient) Get(ctx context.Context, id uint32) (*AppConfig, error) {
+	return c.Query().Where(appconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppConfigClient) GetX(ctx context.Context, id uint32) *AppConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppConfigClient) Hooks() []Hook {
+	hooks := c.hooks.AppConfig
+	return append(hooks[:len(hooks):len(hooks)], appconfig.Hooks[:]...)
+}
+
+// AppGoodCommissionConfigClient is a client for the AppGoodCommissionConfig schema.
+type AppGoodCommissionConfigClient struct {
+	config
+}
+
+// NewAppGoodCommissionConfigClient returns a client for the AppGoodCommissionConfig from the given config.
+func NewAppGoodCommissionConfigClient(c config) *AppGoodCommissionConfigClient {
+	return &AppGoodCommissionConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appgoodcommissionconfig.Hooks(f(g(h())))`.
+func (c *AppGoodCommissionConfigClient) Use(hooks ...Hook) {
+	c.hooks.AppGoodCommissionConfig = append(c.hooks.AppGoodCommissionConfig, hooks...)
+}
+
+// Create returns a builder for creating a AppGoodCommissionConfig entity.
+func (c *AppGoodCommissionConfigClient) Create() *AppGoodCommissionConfigCreate {
+	mutation := newAppGoodCommissionConfigMutation(c.config, OpCreate)
+	return &AppGoodCommissionConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppGoodCommissionConfig entities.
+func (c *AppGoodCommissionConfigClient) CreateBulk(builders ...*AppGoodCommissionConfigCreate) *AppGoodCommissionConfigCreateBulk {
+	return &AppGoodCommissionConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppGoodCommissionConfig.
+func (c *AppGoodCommissionConfigClient) Update() *AppGoodCommissionConfigUpdate {
+	mutation := newAppGoodCommissionConfigMutation(c.config, OpUpdate)
+	return &AppGoodCommissionConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppGoodCommissionConfigClient) UpdateOne(agcc *AppGoodCommissionConfig) *AppGoodCommissionConfigUpdateOne {
+	mutation := newAppGoodCommissionConfigMutation(c.config, OpUpdateOne, withAppGoodCommissionConfig(agcc))
+	return &AppGoodCommissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppGoodCommissionConfigClient) UpdateOneID(id uint32) *AppGoodCommissionConfigUpdateOne {
+	mutation := newAppGoodCommissionConfigMutation(c.config, OpUpdateOne, withAppGoodCommissionConfigID(id))
+	return &AppGoodCommissionConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppGoodCommissionConfig.
+func (c *AppGoodCommissionConfigClient) Delete() *AppGoodCommissionConfigDelete {
+	mutation := newAppGoodCommissionConfigMutation(c.config, OpDelete)
+	return &AppGoodCommissionConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppGoodCommissionConfigClient) DeleteOne(agcc *AppGoodCommissionConfig) *AppGoodCommissionConfigDeleteOne {
+	return c.DeleteOneID(agcc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *AppGoodCommissionConfigClient) DeleteOneID(id uint32) *AppGoodCommissionConfigDeleteOne {
+	builder := c.Delete().Where(appgoodcommissionconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppGoodCommissionConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for AppGoodCommissionConfig.
+func (c *AppGoodCommissionConfigClient) Query() *AppGoodCommissionConfigQuery {
+	return &AppGoodCommissionConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a AppGoodCommissionConfig entity by its id.
+func (c *AppGoodCommissionConfigClient) Get(ctx context.Context, id uint32) (*AppGoodCommissionConfig, error) {
+	return c.Query().Where(appgoodcommissionconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppGoodCommissionConfigClient) GetX(ctx context.Context, id uint32) *AppGoodCommissionConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AppGoodCommissionConfigClient) Hooks() []Hook {
+	hooks := c.hooks.AppGoodCommissionConfig
+	return append(hooks[:len(hooks):len(hooks)], appgoodcommissionconfig.Hooks[:]...)
 }
 
 // AppGoodScopeClient is a client for the AppGoodScope schema.

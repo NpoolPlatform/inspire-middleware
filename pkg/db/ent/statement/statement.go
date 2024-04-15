@@ -53,6 +53,12 @@ const (
 	FieldUsdAmount = "usd_amount"
 	// FieldCommission holds the string denoting the commission field in the database.
 	FieldCommission = "commission"
+	// FieldAppConfigID holds the string denoting the app_config_id field in the database.
+	FieldAppConfigID = "app_config_id"
+	// FieldCommissionConfigID holds the string denoting the commission_config_id field in the database.
+	FieldCommissionConfigID = "commission_config_id"
+	// FieldCommissionConfigType holds the string denoting the commission_config_type field in the database.
+	FieldCommissionConfigType = "commission_config_type"
 	// Table holds the table name of the statement in the database.
 	Table = "archivement_details"
 )
@@ -80,6 +86,9 @@ var Columns = []string{
 	FieldAmount,
 	FieldUsdAmount,
 	FieldCommission,
+	FieldAppConfigID,
+	FieldCommissionConfigID,
+	FieldCommissionConfigType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -143,4 +152,10 @@ var (
 	DefaultUsdAmount decimal.Decimal
 	// DefaultCommission holds the default value on creation for the "commission" field.
 	DefaultCommission decimal.Decimal
+	// DefaultAppConfigID holds the default value on creation for the "app_config_id" field.
+	DefaultAppConfigID func() uuid.UUID
+	// DefaultCommissionConfigID holds the default value on creation for the "commission_config_id" field.
+	DefaultCommissionConfigID func() uuid.UUID
+	// DefaultCommissionConfigType holds the default value on creation for the "commission_config_type" field.
+	DefaultCommissionConfigType string
 )

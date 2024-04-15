@@ -39,6 +39,9 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		statement1.WithAmount(req.Amount, true),
 		statement1.WithUSDAmount(req.USDAmount, true),
 		statement1.WithCommission(req.Commission, true),
+		statement1.WithAppConfigID(req.AppConfigID, true),
+		statement1.WithCommissionConfigID(req.CommissionConfigID, true),
+		statement1.WithCommissionConfigType(req.CommissionConfigType, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

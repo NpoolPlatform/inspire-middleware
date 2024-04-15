@@ -9,6 +9,18 @@ import (
 // Achievement is the predicate function for achievement builders.
 type Achievement func(*sql.Selector)
 
+// AchievementUser is the predicate function for achievementuser builders.
+type AchievementUser func(*sql.Selector)
+
+// AppCommissionConfig is the predicate function for appcommissionconfig builders.
+type AppCommissionConfig func(*sql.Selector)
+
+// AppConfig is the predicate function for appconfig builders.
+type AppConfig func(*sql.Selector)
+
+// AppGoodCommissionConfig is the predicate function for appgoodcommissionconfig builders.
+type AppGoodCommissionConfig func(*sql.Selector)
+
 // AppGoodScope is the predicate function for appgoodscope builders.
 type AppGoodScope func(*sql.Selector)
 

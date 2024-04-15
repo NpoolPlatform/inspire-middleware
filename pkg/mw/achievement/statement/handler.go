@@ -7,6 +7,7 @@ import (
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 
 	"github.com/google/uuid"
@@ -305,6 +306,61 @@ func WithCommission(amount *string, must bool) func(context.Context, *Handler) e
 	}
 }
 
+func WithAppConfigID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid appconfigid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.AppConfigID = &_id
+		return nil
+	}
+}
+
+func WithCommissionConfigID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid commissionconfigid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.CommissionConfigID = &_id
+		return nil
+	}
+}
+
+func WithCommissionConfigType(value *types.CommissionConfigType, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return fmt.Errorf("invalid commissionconfigtype")
+			}
+			return nil
+		}
+		switch *value {
+		case types.CommissionConfigType_AppCommissionConfig:
+		case types.CommissionConfigType_AppGoodCommissionConfig:
+		case types.CommissionConfigType_LegacyCommissionConfig:
+		case types.CommissionConfigType_WithoutCommissionConfig:
+		default:
+			return fmt.Errorf("invalid commissionconfigtype")
+		}
+		h.CommissionConfigType = value
+		return nil
+	}
+}
+
 func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Handler) error { //nolint
 	return func(ctx context.Context, h *Handler) error {
 		appMap := map[string]struct{}{}
@@ -351,6 +407,15 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				}
 				if req.Commission == nil {
 					return fmt.Errorf("invalid commission")
+				}
+				if req.AppConfigID == nil {
+					return fmt.Errorf("invalid appconfigid")
+				}
+				if req.CommissionConfigID == nil {
+					return fmt.Errorf("invalid commissionconfigid")
+				}
+				if req.CommissionConfigType == nil {
+					return fmt.Errorf("invalid commissionconfigtype")
 				}
 			}
 			if !must {
@@ -484,6 +549,34 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 					return err
 				}
 				_req.Commission = &amount5
+			}
+
+			if req.AppConfigID != nil {
+				id10, err := uuid.Parse(*req.AppConfigID)
+				if err != nil {
+					return err
+				}
+				_req.AppConfigID = &id10
+			}
+
+			if req.CommissionConfigID != nil {
+				id11, err := uuid.Parse(*req.CommissionConfigID)
+				if err != nil {
+					return err
+				}
+				_req.CommissionConfigID = &id11
+			}
+
+			if req.CommissionConfigType != nil {
+				switch *req.CommissionConfigType {
+				case types.CommissionConfigType_AppCommissionConfig:
+				case types.CommissionConfigType_AppGoodCommissionConfig:
+				case types.CommissionConfigType_LegacyCommissionConfig:
+				case types.CommissionConfigType_WithoutCommissionConfig:
+				default:
+					return fmt.Errorf("invalid commissionconfigtype")
+				}
+				_req.CommissionConfigType = req.CommissionConfigType
 			}
 
 			if req.AppID != nil {

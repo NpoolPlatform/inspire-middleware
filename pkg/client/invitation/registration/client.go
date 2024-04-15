@@ -8,34 +8,26 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
+	"google.golang.org/grpc"
 )
 
-var timeout = 10 * time.Second
-
-type handler func(context.Context, npool.MiddlewareClient) (cruder.Any, error)
-
-func do(ctx context.Context, handler handler) (cruder.Any, error) {
-	_ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	conn, err := grpc2.GetGRPCConn(servicename.ServiceDomain, grpc2.GRPCTAG)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	cli := npool.NewMiddlewareClient(conn)
-
-	return handler(_ctx, cli)
+func withClient(ctx context.Context, handler func(context.Context, npool.MiddlewareClient) (interface{}, error)) (interface{}, error) {
+	return grpc2.WithGRPCConn(
+		ctx,
+		servicename.ServiceDomain,
+		10*time.Second, //nolint
+		func(_ctx context.Context, conn *grpc.ClientConn) (interface{}, error) {
+			return handler(_ctx, npool.NewMiddlewareClient(conn))
+		},
+		grpc2.GRPCTAG,
+	)
 }
 
 func CreateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.Registration, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CreateRegistration(ctx, &npool.CreateRegistrationRequest{
 			Info: in,
 		})
@@ -51,7 +43,7 @@ func CreateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.
 }
 
 func UpdateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.Registration, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.UpdateRegistration(ctx, &npool.UpdateRegistrationRequest{
 			Info: in,
 		})
@@ -67,7 +59,7 @@ func UpdateRegistration(ctx context.Context, in *npool.RegistrationReq) (*npool.
 }
 
 func ExistRegistrationConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.ExistRegistrationConds(ctx, &npool.ExistRegistrationCondsRequest{
 			Conds: conds,
 		})
@@ -85,7 +77,7 @@ func ExistRegistrationConds(ctx context.Context, conds *npool.Conds) (bool, erro
 func GetRegistrations(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Registration, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetRegistrations(ctx, &npool.GetRegistrationsRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -106,9 +98,11 @@ func GetRegistrations(ctx context.Context, conds *npool.Conds, offset, limit int
 }
 
 func GetRegistrationOnly(ctx context.Context, conds *npool.Conds) (*npool.Registration, error) {
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetRegistrations(ctx, &npool.GetRegistrationsRequest{
-			Conds: conds,
+			Conds:  conds,
+			Offset: 0,
+			Limit:  2,
 		})
 		if err != nil {
 			return nil, err
@@ -130,7 +124,7 @@ func GetRegistrationOnly(ctx context.Context, conds *npool.Conds) (*npool.Regist
 func GetSubordinates(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Registration, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetSubordinates(ctx, &npool.GetSubordinatesRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -153,7 +147,7 @@ func GetSubordinates(ctx context.Context, conds *npool.Conds, offset, limit int3
 func GetSuperiores(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Registration, uint32, error) {
 	var total uint32
 
-	infos, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetSuperiores(ctx, &npool.GetSuperioresRequest{
 			Conds:  conds,
 			Offset: offset,
@@ -174,7 +168,7 @@ func GetSuperiores(ctx context.Context, conds *npool.Conds, offset, limit int32)
 }
 
 func GetRegistration(ctx context.Context, id string) (*npool.Registration, error) {
-	info, err := do(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (cruder.Any, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetRegistration(ctx, &npool.GetRegistrationRequest{
 			EntID: id,
 		})

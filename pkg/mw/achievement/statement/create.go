@@ -10,7 +10,9 @@ import (
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	achievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
+	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
 
@@ -29,6 +31,97 @@ func (h *createHandler) createStatement(ctx context.Context, tx *ent.Tx, req *st
 	).Save(ctx); err != nil {
 		return err
 	}
+	return nil
+}
+
+func (h *createHandler) createOrAddAchievementUser(ctx context.Context, tx *ent.Tx, sreq *statementcrud.Req, commissionOnly bool) error {
+	key := fmt.Sprintf(
+		"%v:%v:%v",
+		basetypes.Prefix_PrefixCreateInspireAchievement,
+		*sreq.AppID,
+		*sreq.UserID,
+	)
+	if err := redis2.TryLock(key, 0); err != nil {
+		return err
+	}
+	defer func() {
+		_ = redis2.Unlock(key)
+	}()
+
+	stm, err := achievementusercrud.SetQueryConds(
+		tx.AchievementUser.Query(),
+		&achievementusercrud.Conds{
+			AppID:  &cruder.Cond{Op: cruder.EQ, Val: *sreq.AppID},
+			UserID: &cruder.Cond{Op: cruder.EQ, Val: *sreq.UserID},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	info, err := stm.Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return err
+		}
+	}
+
+	commission := sreq.Commission.Mul(*sreq.PaymentCoinUSDCurrency)
+
+	_req := &achievementusercrud.Req{
+		AppID:           sreq.AppID,
+		UserID:          sreq.UserID,
+		TotalCommission: &commission,
+	}
+
+	if sreq.SelfOrder != nil && *sreq.SelfOrder {
+		_req.SelfCommission = &commission
+		if !commissionOnly {
+			_req.DirectConsumeAmount = sreq.USDAmount
+		}
+	} else if !commissionOnly {
+		_req.InviteeConsumeAmount = sreq.USDAmount
+	}
+
+	if info == nil {
+		if _, err = achievementusercrud.CreateSet(
+			tx.AchievementUser.Create(),
+			_req,
+		).Save(ctx); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	totalCommission := info.TotalCommission
+	if _req.TotalCommission != nil {
+		totalCommission = _req.TotalCommission.Add(totalCommission)
+	}
+	_req.TotalCommission = &totalCommission
+
+	selfCommission := info.SelfCommission
+	if _req.SelfCommission != nil {
+		selfCommission = _req.SelfCommission.Add(selfCommission)
+	}
+	_req.SelfCommission = &selfCommission
+
+	if !commissionOnly {
+		if sreq.SelfOrder != nil && *sreq.SelfOrder {
+			directConsumeAmount := info.DirectConsumeAmount.Add(*sreq.USDAmount)
+			_req.DirectConsumeAmount = &directConsumeAmount
+		} else {
+			inviteeConsumeAmount := info.InviteeConsumeAmount.Add(*sreq.USDAmount)
+			_req.InviteeConsumeAmount = &inviteeConsumeAmount
+		}
+	}
+
+	if _, err := achievementusercrud.UpdateSet(
+		tx.AchievementUser.UpdateOneID(info.ID),
+		_req,
+	).Save(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -97,6 +190,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 		).Save(ctx); err != nil {
 			return err
 		}
+
 		return nil
 	}
 
@@ -141,6 +235,7 @@ func (h *createHandler) createOrAddAchievement(ctx context.Context, tx *ent.Tx, 
 	).Save(ctx); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -181,6 +276,9 @@ func (h *Handler) CreateStatement(ctx context.Context) (*npool.Statement, error)
 		if err := handler.createOrAddAchievement(_ctx, tx, &handler.Req, false); err != nil {
 			return err
 		}
+		if err := handler.createOrAddAchievementUser(ctx, tx, &handler.Req, false); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
@@ -205,6 +303,9 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 	if info == nil {
 		return "", nil
 	}
+	if info.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig {
+		return info.EntID, nil
+	}
 
 	amount, err := decimal.NewFromString(info.Amount)
 	if err != nil {
@@ -219,6 +320,15 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 	if req.Commission.Cmp(commission) == 0 {
+		if req.Commission.Cmp(decimal.NewFromInt(0)) == 0 && info.CommissionConfigID == uuid.Nil.String() {
+			if _, err := tx.
+				Statement.
+				UpdateOneID(info.ID).
+				SetCommissionConfigID(*req.CommissionConfigID).
+				Save(ctx); err != nil {
+				return "", err
+			}
+		}
 		return info.EntID, nil
 	}
 	if commission.Cmp(decimal.NewFromInt(0)) != 0 {
@@ -229,11 +339,18 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		Statement.
 		UpdateOneID(info.ID).
 		SetCommission(*req.Commission).
+		SetCommissionConfigID(*req.CommissionConfigID).
+		SetCommissionConfigType(req.CommissionConfigType.String()).
+		SetAppConfigID(*req.AppConfigID).
 		Save(ctx); err != nil {
 		return "", err
 	}
 
 	if err := h.createOrAddAchievement(ctx, tx, req, true); err != nil {
+		return "", err
+	}
+
+	if err := h.createOrAddAchievementUser(ctx, tx, req, true); err != nil {
 		return "", err
 	}
 
@@ -288,7 +405,10 @@ func (h *Handler) CreateStatements(ctx context.Context) ([]*npool.Statement, err
 				if err := handler.createOrAddAchievement(_ctx, tx, req, false); err != nil {
 					return err
 				}
-				ids = append(ids, id)
+				if err := handler.createOrAddAchievementUser(ctx, tx, req, false); err != nil {
+					return err
+				}
+				ids = append(ids, *req.EntID)
 				return nil
 			}
 			if err := _f(); err != nil {

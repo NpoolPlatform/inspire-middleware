@@ -174,6 +174,102 @@ func (f AchievementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchievementMutation", m)
 }
 
+// The AchievementUserQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AchievementUserQueryRuleFunc func(context.Context, *ent.AchievementUserQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AchievementUserQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AchievementUserQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AchievementUserQuery", q)
+}
+
+// The AchievementUserMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AchievementUserMutationRuleFunc func(context.Context, *ent.AchievementUserMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AchievementUserMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AchievementUserMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AchievementUserMutation", m)
+}
+
+// The AppCommissionConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppCommissionConfigQueryRuleFunc func(context.Context, *ent.AppCommissionConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppCommissionConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppCommissionConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppCommissionConfigQuery", q)
+}
+
+// The AppCommissionConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppCommissionConfigMutationRuleFunc func(context.Context, *ent.AppCommissionConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppCommissionConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppCommissionConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppCommissionConfigMutation", m)
+}
+
+// The AppConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppConfigQueryRuleFunc func(context.Context, *ent.AppConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppConfigQuery", q)
+}
+
+// The AppConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppConfigMutationRuleFunc func(context.Context, *ent.AppConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppConfigMutation", m)
+}
+
+// The AppGoodCommissionConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AppGoodCommissionConfigQueryRuleFunc func(context.Context, *ent.AppGoodCommissionConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AppGoodCommissionConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppGoodCommissionConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AppGoodCommissionConfigQuery", q)
+}
+
+// The AppGoodCommissionConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AppGoodCommissionConfigMutationRuleFunc func(context.Context, *ent.AppGoodCommissionConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AppGoodCommissionConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AppGoodCommissionConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AppGoodCommissionConfigMutation", m)
+}
+
 // The AppGoodScopeQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type AppGoodScopeQueryRuleFunc func(context.Context, *ent.AppGoodScopeQuery) error
@@ -475,6 +571,14 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AchievementQuery:
 		return q.Filter(), nil
+	case *ent.AchievementUserQuery:
+		return q.Filter(), nil
+	case *ent.AppCommissionConfigQuery:
+		return q.Filter(), nil
+	case *ent.AppConfigQuery:
+		return q.Filter(), nil
+	case *ent.AppGoodCommissionConfigQuery:
+		return q.Filter(), nil
 	case *ent.AppGoodScopeQuery:
 		return q.Filter(), nil
 	case *ent.CashControlQuery:
@@ -505,6 +609,14 @@ func queryFilter(q ent.Query) (Filter, error) {
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AchievementMutation:
+		return m.Filter(), nil
+	case *ent.AchievementUserMutation:
+		return m.Filter(), nil
+	case *ent.AppCommissionConfigMutation:
+		return m.Filter(), nil
+	case *ent.AppConfigMutation:
+		return m.Filter(), nil
+	case *ent.AppGoodCommissionConfigMutation:
 		return m.Filter(), nil
 	case *ent.AppGoodScopeMutation:
 		return m.Filter(), nil

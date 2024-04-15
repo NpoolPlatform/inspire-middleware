@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
+	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
@@ -29,22 +30,26 @@ func init() {
 
 var (
 	ret = npool.Statement{
-		EntID:                  uuid.NewString(),
-		AppID:                  uuid.NewString(),
-		UserID:                 uuid.NewString(),
-		GoodID:                 uuid.NewString(),
-		AppGoodID:              uuid.NewString(),
-		DirectContributorID:    uuid.NewString(),
-		OrderID:                uuid.NewString(),
-		SelfOrder:              true,
-		PaymentID:              uuid.NewString(),
-		CoinTypeID:             uuid.NewString(),
-		PaymentCoinTypeID:      uuid.NewString(),
-		PaymentCoinUSDCurrency: decimal.RequireFromString("12.25").String(),
-		Units:                  decimal.RequireFromString("12.25").String(),
-		Amount:                 decimal.RequireFromString("12.25").String(),
-		USDAmount:              decimal.RequireFromString("12.25").String(),
-		Commission:             decimal.RequireFromString("12.25").String(),
+		EntID:                   uuid.NewString(),
+		AppID:                   uuid.NewString(),
+		UserID:                  uuid.NewString(),
+		GoodID:                  uuid.NewString(),
+		AppGoodID:               uuid.NewString(),
+		DirectContributorID:     uuid.NewString(),
+		OrderID:                 uuid.NewString(),
+		SelfOrder:               true,
+		PaymentID:               uuid.NewString(),
+		CoinTypeID:              uuid.NewString(),
+		PaymentCoinTypeID:       uuid.NewString(),
+		PaymentCoinUSDCurrency:  decimal.RequireFromString("10").String(),
+		Units:                   decimal.RequireFromString("12.25").String(),
+		Amount:                  decimal.RequireFromString("12.25").String(),
+		USDAmount:               decimal.RequireFromString("12.25").String(),
+		Commission:              decimal.RequireFromString("0").String(),
+		AppConfigID:             uuid.NewString(),
+		CommissionConfigID:      uuid.NewString(),
+		CommissionConfigType:    inspiretypes.CommissionConfigType_LegacyCommissionConfig,
+		CommissionConfigTypeStr: inspiretypes.CommissionConfigType_LegacyCommissionConfig.String(),
 	}
 )
 
@@ -71,6 +76,9 @@ func createStatement(t *testing.T) {
 		WithAmount(&ret.Amount, true),
 		WithUSDAmount(&ret.USDAmount, true),
 		WithCommission(&ret.Commission, true),
+		WithAppConfigID(&ret.AppConfigID, true),
+		WithCommissionConfigID(&ret.CommissionConfigID, true),
+		WithCommissionConfigType(&ret.CommissionConfigType, true),
 	)
 	assert.Nil(t, err)
 
