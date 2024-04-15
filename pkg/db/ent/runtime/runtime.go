@@ -305,10 +305,10 @@ func init() {
 	appconfigDescSettleBenefit := appconfigFields[5].Descriptor()
 	// appconfig.DefaultSettleBenefit holds the default value on creation for the settle_benefit field.
 	appconfig.DefaultSettleBenefit = appconfigDescSettleBenefit.Default.(bool)
-	// appconfigDescMaxLevelCount is the schema descriptor for max_level_count field.
-	appconfigDescMaxLevelCount := appconfigFields[6].Descriptor()
-	// appconfig.DefaultMaxLevelCount holds the default value on creation for the max_level_count field.
-	appconfig.DefaultMaxLevelCount = appconfigDescMaxLevelCount.Default.(uint32)
+	// appconfigDescMaxLevel is the schema descriptor for max_level field.
+	appconfigDescMaxLevel := appconfigFields[6].Descriptor()
+	// appconfig.DefaultMaxLevel holds the default value on creation for the max_level field.
+	appconfig.DefaultMaxLevel = appconfigDescMaxLevel.Default.(uint32)
 	// appconfigDescStartAt is the schema descriptor for start_at field.
 	appconfigDescStartAt := appconfigFields[7].Descriptor()
 	// appconfig.DefaultStartAt holds the default value on creation for the start_at field.

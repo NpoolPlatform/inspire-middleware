@@ -54,7 +54,7 @@ func (AppConfig) Fields() []ent.Field {
 			Optional().
 			Default(false),
 		field.
-			Uint32("max_level_count").
+			Uint32("max_level").
 			Optional().
 			Default(1),
 		field.
