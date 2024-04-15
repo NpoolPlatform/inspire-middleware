@@ -38,7 +38,7 @@ const (
 	// FieldIndirectInvites holds the string denoting the indirect_invites field in the database.
 	FieldIndirectInvites = "indirect_invites"
 	// Table holds the table name of the achievementuser in the database.
-	Table = "archivement_users"
+	Table = "achievement_users"
 )
 
 // Columns holds all SQL columns for achievementuser fields.
