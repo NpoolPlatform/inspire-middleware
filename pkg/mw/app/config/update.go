@@ -47,14 +47,14 @@ func (h *updateHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) error {
+func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
 		return err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail update appcommissionconfig: %v", err)
+		return fmt.Errorf("fail update appconfig: %v", err)
 	}
 	return nil
 }
@@ -76,7 +76,7 @@ func (h *Handler) UpdateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 	handler.constructSQL()
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return handler.updateCommissionConfig(_ctx, tx)
+		return handler.updateAppConfig(_ctx, tx)
 	})
 	if err != nil {
 		return nil, err
