@@ -74,10 +74,10 @@ func (h *createHandler) constructSQL() {
 		*h.AppID, h.SettleType.String(), *h.Level)
 	_sql += " limit 1)"
 
-	_sql += " and not exists ("
+	_sql += " and exists ("
 	_sql += " select 1 from app_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v > max_level",
-		*h.AppID, *h.Level+1)
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v < max_level",
+		*h.AppID, *h.Level)
 	_sql += " limit 1)"
 
 	_sql += " and not exists ("
