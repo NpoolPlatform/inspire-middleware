@@ -60,8 +60,8 @@ func (h *updateHandler) constructSQL() {
 
 	if h.StartAt != nil {
 		_sql += " and not exists ("
-		_sql += " select 1 from app_commission_configs "
-		_sql += fmt.Sprintf("where app_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at!=0 and %v < end_at",
+		_sql += " select 1 from (select * from app_commission_configs) as di "
+		_sql += fmt.Sprintf("where di.app_id='%v' and di.settle_type='%v' and di.level=%v and di.deleted_at=0 and di.end_at!=0 and %v < di.end_at",
 			h.appID, h.settleType, *h.Level, *h.StartAt)
 		_sql += " limit 1)"
 	}

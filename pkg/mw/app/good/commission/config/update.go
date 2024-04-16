@@ -53,7 +53,7 @@ func (h *updateHandler) constructSQL() {
 		h.appID, h.goodID, h.appGoodID, *h.Level, *h.ID)
 	_sql += " limit 1)"
 
-	if h.Disabled != nil && !*h.Disabled {
+	if !*h.Disabled {
 		_sql += " and not exists ("
 		_sql += " select 1 from app_configs "
 		_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v > max_level",
@@ -63,8 +63,8 @@ func (h *updateHandler) constructSQL() {
 
 	if h.StartAt != nil {
 		_sql += " and not exists ("
-		_sql += " select 1 from app_good_commission_configs "
-		_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at!=0 and %v < end_at",
+		_sql += " select 1 from (select * from app_good_commission_configs) as di "
+		_sql += fmt.Sprintf("where di.app_id='%v' and di.app_good_id='%v' and di.settle_type='%v' and di.level=%v and di.deleted_at=0 and di.end_at!=0 and %v < di.end_at",
 			h.appID, h.appGoodID, h.settleType, *h.Level, *h.StartAt)
 		_sql += " limit 1)"
 	}
@@ -99,6 +99,9 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 
 	if h.Level == nil {
 		h.Level = &info.Level
+	}
+	if h.Disabled == nil {
+		h.Disabled = &info.Disabled
 	}
 
 	handler.appID = info.AppID

@@ -16,6 +16,7 @@ import (
 type createHandler struct {
 	*Handler
 	sql string
+	now uint32
 }
 
 //nolint:goconst,funlen
@@ -74,13 +75,25 @@ func (h *createHandler) constructSQL() {
 	_sql += " limit 1)"
 
 	_sql += " and not exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and deleted_at=0 and end_at!=0 and %v < end_at",
+		*h.AppID, *h.StartAt)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and deleted_at=0 and end_at=0 and %v < %v",
+		*h.AppID, *h.StartAt, now)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
 	_sql += " select 1 from app_commission_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level > %v", *h.AppID, *h.MaxLevel)
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level >= %v", *h.AppID, *h.MaxLevel)
 	_sql += " limit 1)"
 
 	_sql += " and not exists ("
 	_sql += " select 1 from app_good_commission_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level > %v", *h.AppID, *h.MaxLevel)
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level >= %v", *h.AppID, *h.MaxLevel)
 	_sql += " limit 1)"
 	h.sql = _sql
 }
@@ -107,8 +120,8 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		h.EntID = &id
 	}
 	if h.StartAt == nil {
-		startAt := uint32(time.Now().Unix())
-		h.StartAt = &startAt
+		handler.now = uint32(time.Now().Unix())
+		h.StartAt = &handler.now
 	}
 	if h.MaxLevel != nil && *h.MaxLevel <= 0 {
 		return nil, fmt.Errorf("invalid MaxLevel")

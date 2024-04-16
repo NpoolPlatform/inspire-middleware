@@ -92,8 +92,8 @@ func (h *createHandler) constructSQL() {
 
 	_sql += " and not exists ("
 	_sql += " select 1 from app_good_commission_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and settle_type='%v' and level=%v and end_at=0 and deleted_at=0 and %v >= now",
-		*h.AppID, *h.AppGoodID, h.SettleType.String(), *h.Level, *h.StartAt)
+	_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and settle_type='%v' and level=%v and end_at=0 and deleted_at=0 and %v >= %v",
+		*h.AppID, *h.AppGoodID, h.SettleType.String(), *h.Level, *h.StartAt, now)
 	_sql += " limit 1)"
 	h.sql = _sql
 }
