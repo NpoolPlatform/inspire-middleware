@@ -18,7 +18,7 @@ type createHandler struct {
 	sql string
 }
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
@@ -70,7 +70,26 @@ func (h *createHandler) constructSQL() {
 
 	_sql += "where not exists ("
 	_sql += "select 1 from app_commission_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and level=%v and settle_type='%v' and end_at=0 and deleted_at=0", *h.AppID, *h.Level, h.SettleType.String())
+	_sql += fmt.Sprintf("where app_id='%v' and settle_type='%v' and level=%v and end_at=0 and deleted_at=0",
+		*h.AppID, h.SettleType.String(), *h.Level)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v > max_level",
+		*h.AppID, *h.Level+1)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at!=0 and %v < end_at",
+		*h.AppID, h.SettleType.String(), *h.Level, *h.StartAt)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at=0 and %v < %v",
+		*h.AppID, h.SettleType.String(), *h.Level, *h.StartAt, now)
 	_sql += " limit 1)"
 	h.sql = _sql
 }

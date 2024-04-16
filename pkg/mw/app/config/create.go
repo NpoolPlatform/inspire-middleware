@@ -18,7 +18,7 @@ type createHandler struct {
 	sql string
 }
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
@@ -34,7 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "settle_amount_type"
 	_sql += comma + "settle_interval"
 	_sql += comma + "commission_type"
-	_sql += comma + "max_level_count"
+	_sql += comma + "max_level"
 	_sql += comma + "start_at"
 	_sql += comma + "end_at"
 	if h.SettleBenefit != nil {
@@ -57,7 +57,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as settle_amount_type", comma, *h.SettleAmountType)
 	_sql += fmt.Sprintf("%v'%v' as settle_interval", comma, *h.SettleInterval)
 	_sql += fmt.Sprintf("%v'%v' as commission_type", comma, *h.CommissionType)
-	_sql += fmt.Sprintf("%v%v as max_level_count", comma, *h.MaxLevel)
+	_sql += fmt.Sprintf("%v%v as max_level", comma, *h.MaxLevel)
 	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
 	_sql += fmt.Sprintf("%v0 as end_at", comma)
 	if h.SettleBenefit != nil {
@@ -71,6 +71,16 @@ func (h *createHandler) constructSQL() {
 	_sql += "where not exists ("
 	_sql += "select 1 from app_configs "
 	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0", *h.AppID)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level > %v", *h.AppID, *h.MaxLevel)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_good_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level > %v", *h.AppID, *h.MaxLevel)
 	_sql += " limit 1)"
 	h.sql = _sql
 }

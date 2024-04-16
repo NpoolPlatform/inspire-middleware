@@ -12,8 +12,9 @@ import (
 
 type updateHandler struct {
 	*Handler
-	sql   string
-	appID string
+	sql        string
+	appID      string
+	settleType string
 }
 
 func (h *updateHandler) constructSQL() {
@@ -49,6 +50,22 @@ func (h *updateHandler) constructSQL() {
 	_sql += fmt.Sprintf("where di.app_id = '%v' and di.level = %v and di.id != %v and di.end_at=0 and di.deleted_at=0", h.appID, *h.Level, *h.ID)
 	_sql += " limit 1)"
 
+	if h.Disabled != nil && !*h.Disabled {
+		_sql += " and not exists ("
+		_sql += " select 1 from app_configs "
+		_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v > max_level",
+			h.appID, *h.Level+1)
+		_sql += " limit 1)"
+	}
+
+	if h.StartAt != nil {
+		_sql += " and not exists ("
+		_sql += " select 1 from app_commission_configs "
+		_sql += fmt.Sprintf("where app_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at!=0 and %v < end_at",
+			h.appID, h.settleType, *h.Level, *h.StartAt)
+		_sql += " limit 1)"
+	}
+
 	h.sql = _sql
 }
 
@@ -82,6 +99,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 	}
 
 	handler.appID = info.AppID
+	handler.settleType = info.SettleTypeStr
 
 	handler.constructSQL()
 
