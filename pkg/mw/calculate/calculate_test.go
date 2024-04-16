@@ -132,7 +132,7 @@ var appConfig2 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_LayeredCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
+	StartAt:          uint32(time.Now().Unix()) + 500,
 	MaxLevel:         uint32(5),
 }
 
@@ -156,7 +156,7 @@ var appConfig3 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_DirectCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
+	StartAt:          uint32(time.Now().Unix()) + 1000,
 	MaxLevel:         uint32(5),
 }
 
@@ -180,7 +180,7 @@ var appConfig4 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_WithoutCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
+	StartAt:          uint32(time.Now().Unix()) + 1500,
 	MaxLevel:         uint32(6),
 }
 
@@ -1012,7 +1012,7 @@ func calculateLegacyCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1115,7 +1115,7 @@ func calculateAppCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1218,7 +1218,7 @@ func calculateAppGoodCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1321,7 +1321,7 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1424,7 +1424,7 @@ func calculateWithoutCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
