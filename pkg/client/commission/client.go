@@ -134,3 +134,19 @@ func CloneCommissions(ctx context.Context, req *npool.CloneCommissionsRequest) e
 	}
 	return nil
 }
+
+func ExistCommissionConds(ctx context.Context, conds *npool.Conds) (bool, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.ExistCommissionConds(ctx, &npool.ExistCommissionCondsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return info.(bool), nil
+}
