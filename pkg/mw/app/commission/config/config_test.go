@@ -10,7 +10,9 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
+	appconfigmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
@@ -42,10 +44,60 @@ var (
 		Level:           uint32(1),
 		Disabled:        false,
 	}
+	appConfigRet = appconfigmw.AppConfig{
+		EntID:               uuid.NewString(),
+		AppID:               ret.AppID,
+		SettleMode:          types.SettleMode_SettleWithGoodValue,
+		SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+		SettleAmountType:    types.SettleAmountType_SettleByPercent,
+		SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+		SettleInterval:      types.SettleInterval_SettleYearly,
+		SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+		CommissionType:      types.CommissionType_LayeredCommission,
+		CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+		SettleBenefit:       false,
+		StartAt:             uint32(time.Now().Unix()),
+		MaxLevel:            uint32(5),
+	}
+	appConfigReq = appconfigmw.AppConfigReq{
+		EntID:            &appConfigRet.EntID,
+		AppID:            &appConfigRet.AppID,
+		SettleMode:       &appConfigRet.SettleMode,
+		SettleAmountType: &appConfigRet.SettleAmountType,
+		SettleInterval:   &appConfigRet.SettleInterval,
+		CommissionType:   &appConfigRet.CommissionType,
+		SettleBenefit:    &appConfigRet.SettleBenefit,
+		StartAt:          &appConfigRet.StartAt,
+		MaxLevel:         &appConfigRet.MaxLevel,
+	}
 )
 
 func setup(t *testing.T) func(*testing.T) {
-	return func(*testing.T) {}
+	h1, err := appconfig1.NewHandler(
+		context.Background(),
+		appconfig1.WithEntID(appConfigReq.EntID, true),
+		appconfig1.WithAppID(appConfigReq.AppID, true),
+		appconfig1.WithSettleInterval(appConfigReq.SettleInterval, true),
+		appconfig1.WithSettleMode(appConfigReq.SettleMode, true),
+		appconfig1.WithSettleAmountType(appConfigReq.SettleAmountType, true),
+		appconfig1.WithCommissionType(appConfigReq.CommissionType, true),
+		appconfig1.WithSettleBenefit(appConfigReq.SettleBenefit, true),
+		appconfig1.WithStartAt(appConfigReq.StartAt, true),
+		appconfig1.WithMaxLevel(appConfigReq.MaxLevel, true),
+	)
+	assert.Nil(t, err)
+
+	_, err = h1.CreateAppConfig(context.Background())
+	if assert.Nil(t, err) {
+		info1, err := h1.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			h1.ID = &info1.ID
+		}
+	}
+
+	return func(*testing.T) {
+		_, _ = h1.DeleteAppConfig(context.Background())
+	}
 }
 
 func createCommissionConfig(t *testing.T) {

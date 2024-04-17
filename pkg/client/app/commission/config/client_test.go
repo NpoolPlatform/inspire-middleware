@@ -10,7 +10,9 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/config"
 
+	appconfigmwcli "github.com/NpoolPlatform/inspire-middleware/pkg/client/app/config"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
+	appconfigmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
@@ -37,19 +39,64 @@ func init() {
 	}
 }
 
-var percent = "10"
+var (
+	percent = "10"
+	ret     = &npool.AppCommissionConfig{
+		EntID:           uuid.NewString(),
+		AppID:           uuid.NewString(),
+		SettleType:      types.SettleType_GoodOrderPayment,
+		SettleTypeStr:   types.SettleType_GoodOrderPayment.String(),
+		Invites:         uint32(0),
+		AmountOrPercent: percent,
+		ThresholdAmount: decimal.NewFromInt(0).String(),
+		StartAt:         uint32(time.Now().Unix()) + 10000,
+		Disabled:        false,
+		Level:           uint32(1),
+	}
 
-var ret = &npool.AppCommissionConfig{
-	EntID:           uuid.NewString(),
-	AppID:           uuid.NewString(),
-	SettleType:      types.SettleType_GoodOrderPayment,
-	SettleTypeStr:   types.SettleType_GoodOrderPayment.String(),
-	Invites:         uint32(0),
-	AmountOrPercent: percent,
-	ThresholdAmount: decimal.NewFromInt(0).String(),
-	StartAt:         uint32(time.Now().Unix()) + 10000,
-	Disabled:        false,
-	Level:           uint32(1),
+	appConfigRet = appconfigmw.AppConfig{
+		EntID:               uuid.NewString(),
+		AppID:               ret.AppID,
+		SettleMode:          types.SettleMode_SettleWithGoodValue,
+		SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+		SettleAmountType:    types.SettleAmountType_SettleByPercent,
+		SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+		SettleInterval:      types.SettleInterval_SettleYearly,
+		SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+		CommissionType:      types.CommissionType_LayeredCommission,
+		CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+		SettleBenefit:       false,
+		StartAt:             uint32(time.Now().Unix()),
+		MaxLevel:            uint32(5),
+	}
+)
+
+func setup(t *testing.T) func(*testing.T) {
+	_, err := appconfigmwcli.CreateAppConfig(context.Background(), &appconfigmw.AppConfigReq{
+		EntID:            &appConfigRet.EntID,
+		AppID:            &appConfigRet.AppID,
+		SettleMode:       &appConfigRet.SettleMode,
+		SettleAmountType: &appConfigRet.SettleAmountType,
+		SettleInterval:   &appConfigRet.SettleInterval,
+		CommissionType:   &appConfigRet.CommissionType,
+		SettleBenefit:    &appConfigRet.SettleBenefit,
+		StartAt:          &appConfigRet.StartAt,
+		MaxLevel:         &appConfigRet.MaxLevel,
+	})
+	if assert.Nil(t, err) {
+		info, err := appconfigmwcli.GetAppConfigOnly(context.Background(), &appconfigmw.Conds{
+			EntID: &basetypes.StringVal{Op: cruder.EQ, Value: appConfigRet.EntID},
+		})
+		if assert.Nil(t, err) {
+			appConfigRet.ID = info.ID
+			appConfigRet.CreatedAt = info.CreatedAt
+			appConfigRet.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &appConfigRet, info)
+		}
+	}
+	return func(*testing.T) {
+		_, _ = appconfigmwcli.DeleteAppConfig(context.Background(), appConfigRet.ID)
+	}
 }
 
 func create(t *testing.T) {
@@ -130,6 +177,9 @@ func TestCommission(t *testing.T) {
 	monkey.Patch(grpc2.GetGRPCConnV1, func(service string, recvMsgBytes int, tags ...string) (*grpc.ClientConn, error) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
+
+	teardown := setup(t)
+	defer teardown(t)
 
 	t.Run("create", create)
 	t.Run("update", update)
