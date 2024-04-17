@@ -67,7 +67,6 @@ func (h *updateHandler) constructSQL() {
 	}
 
 	h.sql = _sql
-	fmt.Println("sql: ", _sql)
 }
 
 func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) error {
