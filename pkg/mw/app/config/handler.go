@@ -284,6 +284,18 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: ids,
 			}
 		}
+		if conds.ID != nil {
+			h.Conds.ID = &cruder.Cond{
+				Op:  conds.GetID().GetOp(),
+				Val: conds.GetID().GetValue(),
+			}
+		}
+		if conds.MaxLevel != nil {
+			h.Conds.MaxLevel = &cruder.Cond{
+				Op:  conds.GetMaxLevel().GetOp(),
+				Val: conds.GetMaxLevel().GetValue(),
+			}
+		}
 		return nil
 	}
 }

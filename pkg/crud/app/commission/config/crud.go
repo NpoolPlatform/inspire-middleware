@@ -99,6 +99,7 @@ type Conds struct {
 	Invites         *cruder.Cond
 	Disabled        *cruder.Cond
 	Level           *cruder.Cond
+	ID              *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommissionConfigQuery, error) { //nolint
@@ -244,6 +245,20 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		switch conds.Level.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.Level(id))
+		default:
+			return nil, fmt.Errorf("invalid commission field")
+		}
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entappcommissionconfig.ID(id))
+		case cruder.NEQ:
+			q.Where(entappcommissionconfig.IDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}

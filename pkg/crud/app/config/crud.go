@@ -83,6 +83,8 @@ type Conds struct {
 	CommissionType   *cruder.Cond
 	SettleBenefit    *cruder.Cond
 	EntIDs           *cruder.Cond
+	ID               *cruder.Cond
+	MaxLevel         *cruder.Cond
 }
 
 func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, error) { //nolint
@@ -99,7 +101,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.AppID != nil {
@@ -111,7 +113,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.EndAt != nil {
@@ -133,7 +135,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.EndAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.StartAt != nil {
@@ -155,7 +157,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.StartAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleMode != nil {
@@ -167,7 +169,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.SettleMode(settleType.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleAmountType != nil {
@@ -179,7 +181,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.SettleAmountType(settleAmountType.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleInterval != nil {
@@ -191,7 +193,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.SettleInterval(settleInterval.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.CommissionType != nil {
@@ -203,7 +205,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.CommissionType(commissionType.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleBenefit != nil {
@@ -215,7 +217,7 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.EQ:
 			q.Where(entappconfig.SettleBenefit(settleBenefit))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.EntIDs != nil {
@@ -227,7 +229,33 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.IN:
 			q.Where(entappconfig.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, fmt.Errorf("invalid appconfig field")
+		}
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entappconfig.ID(id))
+		case cruder.NEQ:
+			q.Where(entappconfig.IDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid appconfig field")
+		}
+	}
+	if conds.MaxLevel != nil {
+		value, ok := conds.MaxLevel.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid maxlevel")
+		}
+		switch conds.MaxLevel.Op {
+		case cruder.EQ:
+			q.Where(entappconfig.MaxLevel(value))
+		default:
+			return nil, fmt.Errorf("invalid appconfig field")
 		}
 	}
 	return q, nil
