@@ -7,7 +7,6 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 )
 
 type updateHandler struct {
@@ -59,28 +58,23 @@ func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) UpdateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
+func (h *Handler) UpdateAppConfig(ctx context.Context) error {
 	handler := &updateHandler{
 		Handler: h,
 	}
 	info, err := h.GetAppConfig(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, fmt.Errorf("invalid appconfig")
+		return fmt.Errorf("invalid appconfig")
 	}
 	h.ID = &info.ID
 	handler.appID = info.AppID
 
 	handler.constructSQL()
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateAppConfig(_ctx, tx)
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return h.GetAppConfig(ctx)
 }

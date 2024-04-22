@@ -665,7 +665,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h12.CreateAppConfig(context.Background())
+	err = h12.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info12, err := h12.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -686,7 +686,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h13.CreateCommissionConfig(context.Background())
+	err = h13.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info13, err := h13.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -707,7 +707,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h14.CreateCommissionConfig(context.Background())
+	err = h14.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info14, err := h14.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -728,7 +728,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h15.CreateCommissionConfig(context.Background())
+	err = h15.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info15, err := h15.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -747,16 +747,16 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		_, _ = h3.DeleteRegistration(context.Background())
 		_, _ = h4.DeleteRegistration(context.Background())
 		_, _ = h5.DeleteRegistration(context.Background())
-		_, _ = h6.DeleteCommission(context.Background())
-		_, _ = h7.DeleteCommission(context.Background())
-		_, _ = h8.DeleteCommission(context.Background())
-		_, _ = h9.DeleteCommission(context.Background())
-		_, _ = h10.DeleteCommission(context.Background())
-		_, _ = h11.DeleteCommission(context.Background())
-		_, _ = h12.DeleteAppConfig(context.Background())
-		_, _ = h13.DeleteCommissionConfig(context.Background())
-		_, _ = h14.DeleteCommissionConfig(context.Background())
-		_, _ = h15.DeleteCommissionConfig(context.Background())
+		_ = h6.DeleteCommission(context.Background())
+		_ = h7.DeleteCommission(context.Background())
+		_ = h8.DeleteCommission(context.Background())
+		_ = h9.DeleteCommission(context.Background())
+		_ = h10.DeleteCommission(context.Background())
+		_ = h11.DeleteCommission(context.Background())
+		_ = h12.DeleteAppConfig(context.Background())
+		_ = h13.DeleteCommissionConfig(context.Background())
+		_ = h14.DeleteCommissionConfig(context.Background())
+		_ = h15.DeleteCommissionConfig(context.Background())
 	}
 }
 
@@ -775,7 +775,7 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -784,7 +784,7 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -803,7 +803,7 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -812,7 +812,7 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -831,7 +831,7 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -840,7 +840,7 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -938,7 +938,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateCommissionConfig(context.Background())
+	err = h1.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -961,7 +961,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h2.CreateCommissionConfig(context.Background())
+	err = h2.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info2, err := h2.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -984,7 +984,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h3.CreateCommissionConfig(context.Background())
+	err = h3.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info3, err := h3.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -993,9 +993,9 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteCommissionConfig(context.Background())
-		_, _ = h2.DeleteCommissionConfig(context.Background())
-		_, _ = h3.DeleteCommissionConfig(context.Background())
+		_ = h1.DeleteCommissionConfig(context.Background())
+		_ = h2.DeleteCommissionConfig(context.Background())
+		_ = h3.DeleteCommissionConfig(context.Background())
 	}
 }
 

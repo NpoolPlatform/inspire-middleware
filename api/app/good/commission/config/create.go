@@ -44,7 +44,7 @@ func (s *Server) CreateAppGoodCommissionConfig(ctx context.Context, in *npool.Cr
 		return &npool.CreateAppGoodCommissionConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.CreateCommissionConfig(ctx)
+	err = handler.CreateCommissionConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateAppGoodCommissionConfig",
@@ -55,6 +55,6 @@ func (s *Server) CreateAppGoodCommissionConfig(ctx context.Context, in *npool.Cr
 	}
 
 	return &npool.CreateAppGoodCommissionConfigResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

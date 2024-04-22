@@ -35,7 +35,7 @@ func (s *Server) DeleteAppConfig(ctx context.Context, in *npool.DeleteAppConfigR
 		return &npool.DeleteAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.DeleteAppConfig(ctx)
+	err = handler.DeleteAppConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteAppConfig",
@@ -46,6 +46,6 @@ func (s *Server) DeleteAppConfig(ctx context.Context, in *npool.DeleteAppConfigR
 	}
 
 	return &npool.DeleteAppConfigResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

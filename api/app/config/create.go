@@ -42,7 +42,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.CreateAppConfig(ctx)
+	err = handler.CreateAppConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateAppConfig",
@@ -53,6 +53,6 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 	}
 
 	return &npool.CreateAppConfigResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

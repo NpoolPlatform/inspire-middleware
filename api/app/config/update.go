@@ -36,7 +36,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, in *npool.UpdateAppConfigR
 		return &npool.UpdateAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateAppConfig(ctx)
+	err = handler.UpdateAppConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateAppConfig",
@@ -47,6 +47,6 @@ func (s *Server) UpdateAppConfig(ctx context.Context, in *npool.UpdateAppConfigR
 	}
 
 	return &npool.UpdateAppConfigResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

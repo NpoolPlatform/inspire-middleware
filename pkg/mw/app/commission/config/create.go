@@ -8,7 +8,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 
 	"github.com/google/uuid"
 )
@@ -106,7 +105,7 @@ func (h *createHandler) createCommissionConfig(ctx context.Context, tx *ent.Tx) 
 	return nil
 }
 
-func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppCommissionConfig, error) {
+func (h *Handler) CreateCommissionConfig(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -121,7 +120,7 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 
 	handler.constructSQL()
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
 			AppCommissionConfig.
 			Update().
@@ -142,9 +141,4 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppCommiss
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
 }

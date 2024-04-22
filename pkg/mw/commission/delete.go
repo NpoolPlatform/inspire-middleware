@@ -7,20 +7,19 @@ import (
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 )
 
-func (h *Handler) DeleteCommission(ctx context.Context) (*npool.Commission, error) {
+func (h *Handler) DeleteCommission(ctx context.Context) error {
 	info, err := h.GetCommission(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, nil
+		return nil
 	}
 
 	now := uint32(time.Now().Unix())
-	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
+	return db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
 		if _, err := commissioncrud.UpdateSet(
 			tx.Commission.UpdateOneID(*h.ID),
 			&commissioncrud.Req{
@@ -32,9 +31,4 @@ func (h *Handler) DeleteCommission(ctx context.Context) (*npool.Commission, erro
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
 }

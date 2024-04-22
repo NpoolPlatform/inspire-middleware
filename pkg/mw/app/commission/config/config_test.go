@@ -87,7 +87,7 @@ func setup(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -96,7 +96,7 @@ func setup(t *testing.T) func(*testing.T) {
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -115,7 +115,7 @@ func createCommissionConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = handler.CreateCommissionConfig(context.Background())
+	err = handler.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info, err := handler.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -143,10 +143,13 @@ func updateCommissionConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.UpdateCommissionConfig(context.Background())
+	err = handler.UpdateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetCommissionConfig(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
@@ -196,12 +199,10 @@ func deleteCommissionConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteCommissionConfig(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+	err = handler.DeleteCommissionConfig(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetCommissionConfig(context.Background())
+	info, err := handler.GetCommissionConfig(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

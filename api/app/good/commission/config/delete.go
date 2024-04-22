@@ -35,7 +35,7 @@ func (s *Server) DeleteAppGoodCommissionConfig(ctx context.Context, in *npool.De
 		return &npool.DeleteAppGoodCommissionConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.DeleteCommissionConfig(ctx)
+	err = handler.DeleteCommissionConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteCommissionConfig",
@@ -46,6 +46,6 @@ func (s *Server) DeleteAppGoodCommissionConfig(ctx context.Context, in *npool.De
 	}
 
 	return &npool.DeleteAppGoodCommissionConfigResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

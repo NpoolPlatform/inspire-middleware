@@ -7,7 +7,6 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 )
 
 type updateHandler struct {
@@ -65,16 +64,16 @@ func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) 
 	return nil
 }
 
-func (h *Handler) UpdateCommission(ctx context.Context) (*npool.Commission, error) {
+func (h *Handler) UpdateCommission(ctx context.Context) error {
 	handler := &updateHandler{
 		Handler: h,
 	}
 	info, err := h.GetCommission(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, fmt.Errorf("invalid commission")
+		return fmt.Errorf("invalid commission")
 	}
 	h.ID = &info.ID
 
@@ -86,12 +85,7 @@ func (h *Handler) UpdateCommission(ctx context.Context) (*npool.Commission, erro
 
 	handler.constructSQL()
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateCommissionConfig(_ctx, tx)
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return h.GetCommission(ctx)
 }

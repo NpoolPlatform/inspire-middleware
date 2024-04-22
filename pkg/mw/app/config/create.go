@@ -8,7 +8,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	"github.com/google/uuid"
 )
@@ -110,7 +109,7 @@ func (h *createHandler) createAppConfig(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
+func (h *Handler) CreateAppConfig(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -124,12 +123,12 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		h.StartAt = &handler.now
 	}
 	if h.MaxLevel != nil && *h.MaxLevel <= 0 {
-		return nil, fmt.Errorf("invalid MaxLevel")
+		return fmt.Errorf("invalid MaxLevel")
 	}
 
 	handler.constructSQL()
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
 			AppConfig.
 			Update().
@@ -148,9 +147,4 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
 }
