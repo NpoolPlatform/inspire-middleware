@@ -85,15 +85,18 @@ func update(t *testing.T) {
 	ret.StartAt += 10000
 	ret.Threshold = decimal.NewFromInt(10).String()
 
-	info, err := UpdateCommission(context.Background(), &npool.CommissionReq{
+	_, err := UpdateCommission(context.Background(), &npool.CommissionReq{
 		ID:              &ret.ID,
 		StartAt:         &ret.StartAt,
 		AmountOrPercent: &ret.AmountOrPercent,
 		Threshold:       &ret.Threshold,
 	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		info, err := GetCommission(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 

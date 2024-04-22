@@ -600,6 +600,7 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 	}
 }
 
+//nolint:funlen
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &statementcrud.Conds{}
