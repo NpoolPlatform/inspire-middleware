@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
 type updateHandler struct {
@@ -15,19 +16,19 @@ type updateHandler struct {
 	appID string
 }
 
-func (h *updateHandler) constructSQL() {
-	comma := ""
+func (h *updateHandler) constructSQL() error {
+	set := "set "
 	now := uint32(time.Now().Unix())
 
 	_sql := "update app_configs "
-	_sql += "set "
-	comma = ", "
-	_sql += fmt.Sprintf("updated_at = %v", now)
-
 	if h.StartAt != nil {
-		_sql += fmt.Sprintf("%vstart_at = %v", comma, *h.StartAt)
+		_sql += fmt.Sprintf("%vstart_at = %v, ", set, *h.StartAt)
+		set = ""
 	}
-
+	if set != "" {
+		return cruder.ErrUpdateNothing
+	}
+	_sql += fmt.Sprintf("updated_at = %v ", now)
 	_sql += " where "
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 	_sql += "and not exists ("
@@ -44,6 +45,7 @@ func (h *updateHandler) constructSQL() {
 	}
 
 	h.sql = _sql
+	return nil
 }
 
 func (h *updateHandler) updateAppConfig(ctx context.Context, tx *ent.Tx) error {
@@ -72,7 +74,9 @@ func (h *Handler) UpdateAppConfig(ctx context.Context) error {
 	h.ID = &info.ID
 	handler.appID = info.AppID
 
-	handler.constructSQL()
+	if err := handler.constructSQL(); err != nil {
+		return err
+	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateAppConfig(_ctx, tx)

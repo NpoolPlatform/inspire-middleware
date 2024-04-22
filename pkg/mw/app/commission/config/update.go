@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 )
 
 type updateHandler struct {
@@ -16,32 +17,39 @@ type updateHandler struct {
 	settleType string
 }
 
-func (h *updateHandler) constructSQL() {
-	comma := ""
+func (h *updateHandler) constructSQL() error {
+	set := "set "
 	now := uint32(time.Now().Unix())
 
 	_sql := "update app_commission_configs "
-	_sql += "set "
-	comma = ", "
-	_sql += fmt.Sprintf("updated_at = %v", now)
 	if h.AmountOrPercent != nil {
-		_sql += fmt.Sprintf("%vamount_or_percent = '%v'", comma, *h.AmountOrPercent)
+		_sql += fmt.Sprintf("%vamount_or_percent = '%v', ", set, *h.AmountOrPercent)
+		set = ""
 	}
 	if h.StartAt != nil {
-		_sql += fmt.Sprintf("%vstart_at = %v", comma, *h.StartAt)
+		_sql += fmt.Sprintf("%vstart_at = %v, ", set, *h.StartAt)
+		set = ""
 	}
 	if h.ThresholdAmount != nil {
-		_sql += fmt.Sprintf("%vthreshold_amount = '%v'", comma, *h.ThresholdAmount)
+		_sql += fmt.Sprintf("%vthreshold_amount = '%v', ", set, *h.ThresholdAmount)
+		set = ""
 	}
 	if h.Invites != nil {
-		_sql += fmt.Sprintf("%vinvites = %v", comma, *h.Invites)
+		_sql += fmt.Sprintf("%vinvites = %v, ", set, *h.Invites)
+		set = ""
 	}
 	if h.Disabled != nil {
-		_sql += fmt.Sprintf("%vdisabled = %v", comma, *h.Disabled)
+		_sql += fmt.Sprintf("%vdisabled = %v, ", set, *h.Disabled)
+		set = ""
 	}
 	if h.Level != nil {
-		_sql += fmt.Sprintf("%vlevel = %v", comma, *h.Level)
+		_sql += fmt.Sprintf("%vlevel = %v, ", set, *h.Level)
+		set = ""
 	}
+	if set != "" {
+		return cruder.ErrUpdateNothing
+	}
+	_sql += fmt.Sprintf("updated_at = %v ", now)
 	_sql += " where "
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 	_sql += "and not exists ("
@@ -66,6 +74,7 @@ func (h *updateHandler) constructSQL() {
 	}
 
 	h.sql = _sql
+	return nil
 }
 
 func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) error {
@@ -103,7 +112,9 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) error {
 	handler.appID = info.AppID
 	handler.settleType = info.SettleTypeStr
 
-	handler.constructSQL()
+	if err := handler.constructSQL(); err != nil {
+		return err
+	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateCommissionConfig(_ctx, tx)
