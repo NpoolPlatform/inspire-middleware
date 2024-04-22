@@ -97,7 +97,7 @@ func setup(t *testing.T) func(*testing.T) {
 		}
 	}
 	return func(*testing.T) {
-		_, _ = appconfigmwcli.DeleteAppConfig(context.Background(), appConfigRet.ID)
+		_, _ = appconfigmwcli.DeleteAppConfig(context.Background(), &appConfigRet.ID, &appConfigRet.EntID)
 	}
 }
 
@@ -133,15 +133,18 @@ func update(t *testing.T) {
 	ret.StartAt += 10000
 	ret.ThresholdAmount = decimal.NewFromInt(10).String()
 
-	info, err := UpdateCommissionConfig(context.Background(), &npool.AppGoodCommissionConfigReq{
+	_, err := UpdateCommissionConfig(context.Background(), &npool.AppGoodCommissionConfigReq{
 		ID:              &ret.ID,
 		StartAt:         &ret.StartAt,
 		AmountOrPercent: &ret.AmountOrPercent,
 		ThresholdAmount: &ret.ThresholdAmount,
 	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		info, err := GetCommissionConfig(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 

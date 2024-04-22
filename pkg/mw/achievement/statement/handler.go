@@ -690,6 +690,26 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.PaymentCoinTypeID = &cruder.Cond{Op: conds.GetPaymentCoinTypeID().GetOp(), Val: id}
 		}
+		if conds.AppConfigID != nil {
+			id, err := uuid.Parse(conds.GetAppConfigID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.AppConfigID = &cruder.Cond{Op: conds.GetAppConfigID().GetOp(), Val: id}
+		}
+		if conds.CommissionConfigID != nil {
+			id, err := uuid.Parse(conds.GetCommissionConfigID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.CommissionConfigID = &cruder.Cond{Op: conds.GetCommissionConfigID().GetOp(), Val: id}
+		}
+		if conds.CommissionConfigType != nil {
+			h.Conds.CommissionConfigType = &cruder.Cond{
+				Op:  conds.GetCommissionConfigType().GetOp(),
+				Val: types.CommissionConfigType(conds.GetCommissionConfigType().GetValue()),
+			}
+		}
 		return nil
 	}
 }

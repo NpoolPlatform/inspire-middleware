@@ -95,7 +95,7 @@ func setup(t *testing.T) func(*testing.T) {
 		}
 	}
 	return func(*testing.T) {
-		_, _ = appconfigmwcli.DeleteAppConfig(context.Background(), appConfigRet.ID)
+		_, _ = appconfigmwcli.DeleteAppConfig(context.Background(), &appConfigRet.ID, &appConfigRet.EntID)
 	}
 }
 
@@ -129,15 +129,18 @@ func update(t *testing.T) {
 	ret.StartAt += 10000
 	ret.ThresholdAmount = decimal.NewFromInt(10).String()
 
-	info, err := UpdateCommissionConfig(context.Background(), &npool.AppCommissionConfigReq{
+	_, err := UpdateCommissionConfig(context.Background(), &npool.AppCommissionConfigReq{
 		ID:              &ret.ID,
 		StartAt:         &ret.StartAt,
 		AmountOrPercent: &ret.AmountOrPercent,
 		ThresholdAmount: &ret.ThresholdAmount,
 	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		info, err := GetCommissionConfig(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 
@@ -164,6 +167,15 @@ func getCommissionOnly(t *testing.T) {
 	}
 }
 
+func deleteCommission(t *testing.T) {
+	err := DeleteCommissionConfig(context.Background(), &ret.ID, &ret.EntID)
+	assert.Nil(t, err)
+
+	info, err := GetCommissionConfig(context.Background(), ret.EntID)
+	assert.Nil(t, err)
+	assert.Nil(t, info)
+}
+
 func TestCommission(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
@@ -185,4 +197,5 @@ func TestCommission(t *testing.T) {
 	t.Run("update", update)
 	t.Run("getCommissionOnly", getCommissionOnly)
 	t.Run("getCommissions", getCommissions)
+	t.Run("deleteCommission", deleteCommission)
 }

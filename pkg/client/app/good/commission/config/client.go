@@ -120,11 +120,12 @@ func GetCommissionConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.Ap
 	return infos.([]*npool.AppGoodCommissionConfig)[0], nil
 }
 
-func DeleteCommissionConfig(ctx context.Context, id uint32) (*npool.AppGoodCommissionConfig, error) {
+func DeleteCommissionConfig(ctx context.Context, id *uint32, entID *string) (*npool.AppGoodCommissionConfig, error) {
 	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteAppGoodCommissionConfig(ctx, &npool.DeleteAppGoodCommissionConfigRequest{
 			Info: &npool.AppGoodCommissionConfigReq{
-				ID: &id,
+				ID:    id,
+				EntID: entID,
 			},
 		})
 		if err != nil {
