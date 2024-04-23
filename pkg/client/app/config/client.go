@@ -136,11 +136,12 @@ func ExistAppConfigConds(ctx context.Context, conds *npool.Conds) (bool, error) 
 	return info.(bool), nil
 }
 
-func DeleteAppConfig(ctx context.Context, id uint32) (*npool.AppConfig, error) {
+func DeleteAppConfig(ctx context.Context, id *uint32, entID *string) (*npool.AppConfig, error) {
 	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.DeleteAppConfig(ctx, &npool.DeleteAppConfigRequest{
 			Info: &npool.AppConfigReq{
-				ID: &id,
+				ID:    id,
+				EntID: entID,
 			},
 		})
 		if err != nil {

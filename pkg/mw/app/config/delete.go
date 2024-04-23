@@ -2,27 +2,25 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 )
 
-func (h *Handler) DeleteAppConfig(ctx context.Context) (*npool.AppConfig, error) {
+func (h *Handler) DeleteAppConfig(ctx context.Context) error {
 	info, err := h.GetAppConfig(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if info == nil {
-		return nil, fmt.Errorf("invalid appconfig")
+		return nil
 	}
 	h.ID = &info.ID
 
 	now := uint32(time.Now().Unix())
-	err = db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
+	return db.WithClient(ctx, func(_ctx context.Context, tx *ent.Client) error {
 		if _, err := appconfigcrud.UpdateSet(
 			tx.AppConfig.UpdateOneID(*h.ID),
 			&appconfigcrud.Req{
@@ -34,9 +32,4 @@ func (h *Handler) DeleteAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
 }

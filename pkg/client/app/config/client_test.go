@@ -49,7 +49,7 @@ var ret = &npool.AppConfig{
 	SettleIntervalStr:   types.SettleInterval_SettleEveryOrder.String(),
 	SettleBenefit:       false,
 	StartAt:             uint32(time.Now().Unix()) + 10000,
-	MaxLevelCount:       uint32(5),
+	MaxLevel:            uint32(5),
 }
 
 func create(t *testing.T) {
@@ -62,7 +62,7 @@ func create(t *testing.T) {
 		SettleInterval:   &ret.SettleInterval,
 		SettleBenefit:    &ret.SettleBenefit,
 		StartAt:          &ret.StartAt,
-		MaxLevelCount:    &ret.MaxLevelCount,
+		MaxLevel:         &ret.MaxLevel,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetAppConfigOnly(context.Background(), &npool.Conds{
@@ -80,13 +80,16 @@ func create(t *testing.T) {
 func update(t *testing.T) {
 	ret.StartAt += 10000
 
-	info, err := UpdateAppConfig(context.Background(), &npool.AppConfigReq{
+	_, err := UpdateAppConfig(context.Background(), &npool.AppConfigReq{
 		ID:      &ret.ID,
 		StartAt: &ret.StartAt,
 	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
+		info, err := GetAppConfig(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 
@@ -110,12 +113,10 @@ func getAppConfigOnly(t *testing.T) {
 }
 
 func deleteAppConfig(t *testing.T) {
-	info, err := DeleteAppConfig(context.Background(), ret.ID)
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, ret)
-	}
+	_, err := DeleteAppConfig(context.Background(), &ret.ID, &ret.EntID)
+	assert.Nil(t, err)
 
-	info, err = GetAppConfig(context.Background(), ret.EntID)
+	info, err := GetAppConfig(context.Background(), ret.EntID)
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

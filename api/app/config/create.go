@@ -31,7 +31,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		commission1.WithCommissionType(req.CommissionType, true),
 		commission1.WithSettleBenefit(req.SettleBenefit, false),
 		commission1.WithStartAt(req.StartAt, false),
-		commission1.WithMaxLevelCount(req.MaxLevelCount, true),
+		commission1.WithMaxLevel(req.MaxLevel, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -42,7 +42,7 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.CreateAppConfig(ctx)
+	err = handler.CreateAppConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateAppConfig",
@@ -52,7 +52,5 @@ func (s *Server) CreateAppConfig(ctx context.Context, in *npool.CreateAppConfigR
 		return &npool.CreateAppConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CreateAppConfigResponse{
-		Info: info,
-	}, nil
+	return &npool.CreateAppConfigResponse{}, nil
 }

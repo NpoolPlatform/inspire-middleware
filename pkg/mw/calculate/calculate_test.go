@@ -109,7 +109,7 @@ var appConfig = appconfigmwpb.AppConfig{
 	CommissionType:   types.CommissionType_LegacyCommission,
 	SettleBenefit:    false,
 	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig = appconfigmwpb.AppConfigReq{
@@ -121,7 +121,7 @@ var _appConfig = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig.CommissionType,
 	SettleBenefit:    &appConfig.SettleBenefit,
 	StartAt:          &appConfig.StartAt,
-	MaxLevelCount:    &appConfig.MaxLevelCount,
+	MaxLevel:         &appConfig.MaxLevel,
 }
 
 var appConfig2 = appconfigmwpb.AppConfig{
@@ -132,8 +132,8 @@ var appConfig2 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_LayeredCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	StartAt:          uint32(time.Now().Unix()) + 500,
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig2 = appconfigmwpb.AppConfigReq{
@@ -145,7 +145,7 @@ var _appConfig2 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig2.CommissionType,
 	SettleBenefit:    &appConfig2.SettleBenefit,
 	StartAt:          &appConfig2.StartAt,
-	MaxLevelCount:    &appConfig2.MaxLevelCount,
+	MaxLevel:         &appConfig2.MaxLevel,
 }
 
 var appConfig3 = appconfigmwpb.AppConfig{
@@ -156,8 +156,8 @@ var appConfig3 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_DirectCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(5),
+	StartAt:          uint32(time.Now().Unix()) + 1000,
+	MaxLevel:         uint32(5),
 }
 
 var _appConfig3 = appconfigmwpb.AppConfigReq{
@@ -169,7 +169,7 @@ var _appConfig3 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig3.CommissionType,
 	SettleBenefit:    &appConfig3.SettleBenefit,
 	StartAt:          &appConfig3.StartAt,
-	MaxLevelCount:    &appConfig3.MaxLevelCount,
+	MaxLevel:         &appConfig3.MaxLevel,
 }
 
 var appConfig4 = appconfigmwpb.AppConfig{
@@ -180,8 +180,8 @@ var appConfig4 = appconfigmwpb.AppConfig{
 	SettleInterval:   types.SettleInterval_SettleEveryOrder,
 	CommissionType:   types.CommissionType_WithoutCommission,
 	SettleBenefit:    false,
-	StartAt:          uint32(time.Now().Unix()),
-	MaxLevelCount:    uint32(6),
+	StartAt:          uint32(time.Now().Unix()) + 1500,
+	MaxLevel:         uint32(6),
 }
 
 var _appConfig4 = appconfigmwpb.AppConfigReq{
@@ -193,7 +193,7 @@ var _appConfig4 = appconfigmwpb.AppConfigReq{
 	CommissionType:   &appConfig4.CommissionType,
 	SettleBenefit:    &appConfig4.SettleBenefit,
 	StartAt:          &appConfig4.StartAt,
-	MaxLevelCount:    &appConfig4.MaxLevelCount,
+	MaxLevel:         &appConfig4.MaxLevel,
 }
 
 var comm1 = commmwpb.Commission{
@@ -661,11 +661,11 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	_, err = h12.CreateAppConfig(context.Background())
+	err = h12.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info12, err := h12.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -686,7 +686,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h13.CreateCommissionConfig(context.Background())
+	err = h13.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info13, err := h13.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -707,7 +707,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h14.CreateCommissionConfig(context.Background())
+	err = h14.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info14, err := h14.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -728,7 +728,7 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 	)
 	assert.Nil(t, err)
 
-	_, err = h15.CreateCommissionConfig(context.Background())
+	err = h15.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info15, err := h15.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -747,16 +747,16 @@ func setup(t *testing.T) func(*testing.T) { //nolint
 		_, _ = h3.DeleteRegistration(context.Background())
 		_, _ = h4.DeleteRegistration(context.Background())
 		_, _ = h5.DeleteRegistration(context.Background())
-		_, _ = h6.DeleteCommission(context.Background())
-		_, _ = h7.DeleteCommission(context.Background())
-		_, _ = h8.DeleteCommission(context.Background())
-		_, _ = h9.DeleteCommission(context.Background())
-		_, _ = h10.DeleteCommission(context.Background())
-		_, _ = h11.DeleteCommission(context.Background())
-		_, _ = h12.DeleteAppConfig(context.Background())
-		_, _ = h13.DeleteCommissionConfig(context.Background())
-		_, _ = h14.DeleteCommissionConfig(context.Background())
-		_, _ = h15.DeleteCommissionConfig(context.Background())
+		_ = h6.DeleteCommission(context.Background())
+		_ = h7.DeleteCommission(context.Background())
+		_ = h8.DeleteCommission(context.Background())
+		_ = h9.DeleteCommission(context.Background())
+		_ = h10.DeleteCommission(context.Background())
+		_ = h11.DeleteCommission(context.Background())
+		_ = h12.DeleteAppConfig(context.Background())
+		_ = h13.DeleteCommissionConfig(context.Background())
+		_ = h14.DeleteCommissionConfig(context.Background())
+		_ = h15.DeleteCommissionConfig(context.Background())
 	}
 }
 
@@ -771,11 +771,11 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig2.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig2.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig2.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig2.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig2.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -784,7 +784,7 @@ func resetAppConfigToLayeredCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -799,11 +799,11 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig3.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig3.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig3.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig3.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig3.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -812,7 +812,7 @@ func resetAppConfigToDirectCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -827,11 +827,11 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 		appconfig1.WithCommissionType(_appConfig4.CommissionType, true),
 		appconfig1.WithSettleBenefit(_appConfig4.SettleBenefit, true),
 		appconfig1.WithStartAt(_appConfig4.StartAt, true),
-		appconfig1.WithMaxLevelCount(_appConfig4.MaxLevelCount, true),
+		appconfig1.WithMaxLevel(_appConfig4.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateAppConfig(context.Background())
+	err = h1.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -840,7 +840,7 @@ func resetAppConfigToWithoutCommission(t *testing.T) func(*testing.T) { //nolint
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteAppConfig(context.Background())
+		_ = h1.DeleteAppConfig(context.Background())
 	}
 }
 
@@ -938,7 +938,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h1.CreateCommissionConfig(context.Background())
+	err = h1.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info1, err := h1.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -961,7 +961,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h2.CreateCommissionConfig(context.Background())
+	err = h2.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info2, err := h2.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -984,7 +984,7 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	)
 	assert.Nil(t, err)
 
-	_, err = h3.CreateCommissionConfig(context.Background())
+	err = h3.CreateCommissionConfig(context.Background())
 	if assert.Nil(t, err) {
 		info3, err := h3.GetCommissionConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -993,9 +993,9 @@ func addAppGoodCommissionConfig(t *testing.T) func(*testing.T) {
 	}
 
 	return func(*testing.T) {
-		_, _ = h1.DeleteCommissionConfig(context.Background())
-		_, _ = h2.DeleteCommissionConfig(context.Background())
-		_, _ = h3.DeleteCommissionConfig(context.Background())
+		_ = h1.DeleteCommissionConfig(context.Background())
+		_ = h2.DeleteCommissionConfig(context.Background())
+		_ = h3.DeleteCommissionConfig(context.Background())
 	}
 }
 
@@ -1012,7 +1012,7 @@ func calculateLegacyCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1115,7 +1115,7 @@ func calculateAppCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1218,7 +1218,7 @@ func calculateAppGoodCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1321,7 +1321,7 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -1424,7 +1424,7 @@ func calculateWithoutCommission(t *testing.T) {
 	settleType := types.SettleType_GoodOrderPayment
 	settleAmount := types.SettleAmountType_SettleByPercent
 	hasCommission := true
-	orderCreatedAt := uint32(time.Now().Unix())
+	orderCreatedAt := uint32(time.Now().Unix()) + 2000
 
 	handler, err := NewHandler(
 		context.Background(),

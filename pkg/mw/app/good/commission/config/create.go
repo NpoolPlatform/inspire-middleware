@@ -8,7 +8,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 
 	"github.com/google/uuid"
 )
@@ -77,6 +76,24 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and level=%v and settle_type='%v' and end_at=0 and deleted_at=0",
 		*h.AppID, *h.AppGoodID, *h.Level, h.SettleType.String())
 	_sql += " limit 1)"
+
+	_sql += " and exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v < max_level",
+		*h.AppID, *h.Level)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_good_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and settle_type='%v' and level=%v and deleted_at=0 and end_at!=0 and %v < end_at",
+		*h.AppID, *h.AppGoodID, h.SettleType.String(), *h.Level, *h.StartAt)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_good_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and app_good_id='%v' and settle_type='%v' and level=%v and end_at=0 and deleted_at=0 and %v >= %v",
+		*h.AppID, *h.AppGoodID, h.SettleType.String(), *h.Level, *h.StartAt, now)
+	_sql += " limit 1)"
 	h.sql = _sql
 }
 
@@ -92,7 +109,7 @@ func (h *createHandler) createCommissionConfig(ctx context.Context, tx *ent.Tx) 
 	return nil
 }
 
-func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCommissionConfig, error) {
+func (h *Handler) CreateCommissionConfig(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -108,7 +125,7 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 
 	handler.constructSQL()
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
 			AppGoodCommissionConfig.
 			Update().
@@ -130,9 +147,4 @@ func (h *Handler) CreateCommissionConfig(ctx context.Context) (*npool.AppGoodCom
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
 }

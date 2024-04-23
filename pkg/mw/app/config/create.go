@@ -8,7 +8,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	"github.com/google/uuid"
 )
@@ -16,9 +15,10 @@ import (
 type createHandler struct {
 	*Handler
 	sql string
+	now uint32
 }
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
@@ -34,7 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "settle_amount_type"
 	_sql += comma + "settle_interval"
 	_sql += comma + "commission_type"
-	_sql += comma + "max_level_count"
+	_sql += comma + "max_level"
 	_sql += comma + "start_at"
 	_sql += comma + "end_at"
 	if h.SettleBenefit != nil {
@@ -57,7 +57,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as settle_amount_type", comma, *h.SettleAmountType)
 	_sql += fmt.Sprintf("%v'%v' as settle_interval", comma, *h.SettleInterval)
 	_sql += fmt.Sprintf("%v'%v' as commission_type", comma, *h.CommissionType)
-	_sql += fmt.Sprintf("%v%v as max_level_count", comma, *h.MaxLevelCount)
+	_sql += fmt.Sprintf("%v%v as max_level", comma, *h.MaxLevel)
 	_sql += fmt.Sprintf("%v%v as start_at", comma, *h.StartAt)
 	_sql += fmt.Sprintf("%v0 as end_at", comma)
 	if h.SettleBenefit != nil {
@@ -71,6 +71,28 @@ func (h *createHandler) constructSQL() {
 	_sql += "where not exists ("
 	_sql += "select 1 from app_configs "
 	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0", *h.AppID)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and deleted_at=0 and end_at!=0 and %v < end_at",
+		*h.AppID, *h.StartAt)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and deleted_at=0 and end_at=0 and %v < %v",
+		*h.AppID, *h.StartAt, now)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level >= %v", *h.AppID, *h.MaxLevel)
+	_sql += " limit 1)"
+
+	_sql += " and not exists ("
+	_sql += " select 1 from app_good_commission_configs "
+	_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and disabled=0 and deleted_at=0 and level >= %v", *h.AppID, *h.MaxLevel)
 	_sql += " limit 1)"
 	h.sql = _sql
 }
@@ -87,7 +109,7 @@ func (h *createHandler) createAppConfig(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error) {
+func (h *Handler) CreateAppConfig(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -97,16 +119,16 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		h.EntID = &id
 	}
 	if h.StartAt == nil {
-		startAt := uint32(time.Now().Unix())
-		h.StartAt = &startAt
+		handler.now = uint32(time.Now().Unix())
+		h.StartAt = &handler.now
 	}
-	if h.MaxLevelCount != nil && *h.MaxLevelCount <= 0 {
-		return nil, fmt.Errorf("invalid maxlevelcount")
+	if h.MaxLevel != nil && *h.MaxLevel <= 0 {
+		return fmt.Errorf("invalid MaxLevel")
 	}
 
 	handler.constructSQL()
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if _, err := tx.
 			AppConfig.
 			Update().
@@ -125,9 +147,4 @@ func (h *Handler) CreateAppConfig(ctx context.Context) (*npool.AppConfig, error)
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
 }

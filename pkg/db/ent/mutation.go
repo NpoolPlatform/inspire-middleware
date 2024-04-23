@@ -4077,8 +4077,8 @@ type AppConfigMutation struct {
 	settle_interval    *string
 	commission_type    *string
 	settle_benefit     *bool
-	max_level_count    *uint32
-	addmax_level_count *int32
+	max_level          *uint32
+	addmax_level       *int32
 	start_at           *uint32
 	addstart_at        *int32
 	end_at             *uint32
@@ -4691,74 +4691,74 @@ func (m *AppConfigMutation) ResetSettleBenefit() {
 	delete(m.clearedFields, appconfig.FieldSettleBenefit)
 }
 
-// SetMaxLevelCount sets the "max_level_count" field.
-func (m *AppConfigMutation) SetMaxLevelCount(u uint32) {
-	m.max_level_count = &u
-	m.addmax_level_count = nil
+// SetMaxLevel sets the "max_level" field.
+func (m *AppConfigMutation) SetMaxLevel(u uint32) {
+	m.max_level = &u
+	m.addmax_level = nil
 }
 
-// MaxLevelCount returns the value of the "max_level_count" field in the mutation.
-func (m *AppConfigMutation) MaxLevelCount() (r uint32, exists bool) {
-	v := m.max_level_count
+// MaxLevel returns the value of the "max_level" field in the mutation.
+func (m *AppConfigMutation) MaxLevel() (r uint32, exists bool) {
+	v := m.max_level
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldMaxLevelCount returns the old "max_level_count" field's value of the AppConfig entity.
+// OldMaxLevel returns the old "max_level" field's value of the AppConfig entity.
 // If the AppConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppConfigMutation) OldMaxLevelCount(ctx context.Context) (v uint32, err error) {
+func (m *AppConfigMutation) OldMaxLevel(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMaxLevelCount is only allowed on UpdateOne operations")
+		return v, errors.New("OldMaxLevel is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMaxLevelCount requires an ID field in the mutation")
+		return v, errors.New("OldMaxLevel requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMaxLevelCount: %w", err)
+		return v, fmt.Errorf("querying old value for OldMaxLevel: %w", err)
 	}
-	return oldValue.MaxLevelCount, nil
+	return oldValue.MaxLevel, nil
 }
 
-// AddMaxLevelCount adds u to the "max_level_count" field.
-func (m *AppConfigMutation) AddMaxLevelCount(u int32) {
-	if m.addmax_level_count != nil {
-		*m.addmax_level_count += u
+// AddMaxLevel adds u to the "max_level" field.
+func (m *AppConfigMutation) AddMaxLevel(u int32) {
+	if m.addmax_level != nil {
+		*m.addmax_level += u
 	} else {
-		m.addmax_level_count = &u
+		m.addmax_level = &u
 	}
 }
 
-// AddedMaxLevelCount returns the value that was added to the "max_level_count" field in this mutation.
-func (m *AppConfigMutation) AddedMaxLevelCount() (r int32, exists bool) {
-	v := m.addmax_level_count
+// AddedMaxLevel returns the value that was added to the "max_level" field in this mutation.
+func (m *AppConfigMutation) AddedMaxLevel() (r int32, exists bool) {
+	v := m.addmax_level
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearMaxLevelCount clears the value of the "max_level_count" field.
-func (m *AppConfigMutation) ClearMaxLevelCount() {
-	m.max_level_count = nil
-	m.addmax_level_count = nil
-	m.clearedFields[appconfig.FieldMaxLevelCount] = struct{}{}
+// ClearMaxLevel clears the value of the "max_level" field.
+func (m *AppConfigMutation) ClearMaxLevel() {
+	m.max_level = nil
+	m.addmax_level = nil
+	m.clearedFields[appconfig.FieldMaxLevel] = struct{}{}
 }
 
-// MaxLevelCountCleared returns if the "max_level_count" field was cleared in this mutation.
-func (m *AppConfigMutation) MaxLevelCountCleared() bool {
-	_, ok := m.clearedFields[appconfig.FieldMaxLevelCount]
+// MaxLevelCleared returns if the "max_level" field was cleared in this mutation.
+func (m *AppConfigMutation) MaxLevelCleared() bool {
+	_, ok := m.clearedFields[appconfig.FieldMaxLevel]
 	return ok
 }
 
-// ResetMaxLevelCount resets all changes to the "max_level_count" field.
-func (m *AppConfigMutation) ResetMaxLevelCount() {
-	m.max_level_count = nil
-	m.addmax_level_count = nil
-	delete(m.clearedFields, appconfig.FieldMaxLevelCount)
+// ResetMaxLevel resets all changes to the "max_level" field.
+func (m *AppConfigMutation) ResetMaxLevel() {
+	m.max_level = nil
+	m.addmax_level = nil
+	delete(m.clearedFields, appconfig.FieldMaxLevel)
 }
 
 // SetStartAt sets the "start_at" field.
@@ -4951,8 +4951,8 @@ func (m *AppConfigMutation) Fields() []string {
 	if m.settle_benefit != nil {
 		fields = append(fields, appconfig.FieldSettleBenefit)
 	}
-	if m.max_level_count != nil {
-		fields = append(fields, appconfig.FieldMaxLevelCount)
+	if m.max_level != nil {
+		fields = append(fields, appconfig.FieldMaxLevel)
 	}
 	if m.start_at != nil {
 		fields = append(fields, appconfig.FieldStartAt)
@@ -4988,8 +4988,8 @@ func (m *AppConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.CommissionType()
 	case appconfig.FieldSettleBenefit:
 		return m.SettleBenefit()
-	case appconfig.FieldMaxLevelCount:
-		return m.MaxLevelCount()
+	case appconfig.FieldMaxLevel:
+		return m.MaxLevel()
 	case appconfig.FieldStartAt:
 		return m.StartAt()
 	case appconfig.FieldEndAt:
@@ -5023,8 +5023,8 @@ func (m *AppConfigMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCommissionType(ctx)
 	case appconfig.FieldSettleBenefit:
 		return m.OldSettleBenefit(ctx)
-	case appconfig.FieldMaxLevelCount:
-		return m.OldMaxLevelCount(ctx)
+	case appconfig.FieldMaxLevel:
+		return m.OldMaxLevel(ctx)
 	case appconfig.FieldStartAt:
 		return m.OldStartAt(ctx)
 	case appconfig.FieldEndAt:
@@ -5108,12 +5108,12 @@ func (m *AppConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSettleBenefit(v)
 		return nil
-	case appconfig.FieldMaxLevelCount:
+	case appconfig.FieldMaxLevel:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetMaxLevelCount(v)
+		m.SetMaxLevel(v)
 		return nil
 	case appconfig.FieldStartAt:
 		v, ok := value.(uint32)
@@ -5146,8 +5146,8 @@ func (m *AppConfigMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, appconfig.FieldDeletedAt)
 	}
-	if m.addmax_level_count != nil {
-		fields = append(fields, appconfig.FieldMaxLevelCount)
+	if m.addmax_level != nil {
+		fields = append(fields, appconfig.FieldMaxLevel)
 	}
 	if m.addstart_at != nil {
 		fields = append(fields, appconfig.FieldStartAt)
@@ -5169,8 +5169,8 @@ func (m *AppConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case appconfig.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case appconfig.FieldMaxLevelCount:
-		return m.AddedMaxLevelCount()
+	case appconfig.FieldMaxLevel:
+		return m.AddedMaxLevel()
 	case appconfig.FieldStartAt:
 		return m.AddedStartAt()
 	case appconfig.FieldEndAt:
@@ -5205,12 +5205,12 @@ func (m *AppConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case appconfig.FieldMaxLevelCount:
+	case appconfig.FieldMaxLevel:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddMaxLevelCount(v)
+		m.AddMaxLevel(v)
 		return nil
 	case appconfig.FieldStartAt:
 		v, ok := value.(int32)
@@ -5252,8 +5252,8 @@ func (m *AppConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(appconfig.FieldSettleBenefit) {
 		fields = append(fields, appconfig.FieldSettleBenefit)
 	}
-	if m.FieldCleared(appconfig.FieldMaxLevelCount) {
-		fields = append(fields, appconfig.FieldMaxLevelCount)
+	if m.FieldCleared(appconfig.FieldMaxLevel) {
+		fields = append(fields, appconfig.FieldMaxLevel)
 	}
 	if m.FieldCleared(appconfig.FieldStartAt) {
 		fields = append(fields, appconfig.FieldStartAt)
@@ -5293,8 +5293,8 @@ func (m *AppConfigMutation) ClearField(name string) error {
 	case appconfig.FieldSettleBenefit:
 		m.ClearSettleBenefit()
 		return nil
-	case appconfig.FieldMaxLevelCount:
-		m.ClearMaxLevelCount()
+	case appconfig.FieldMaxLevel:
+		m.ClearMaxLevel()
 		return nil
 	case appconfig.FieldStartAt:
 		m.ClearStartAt()
@@ -5340,8 +5340,8 @@ func (m *AppConfigMutation) ResetField(name string) error {
 	case appconfig.FieldSettleBenefit:
 		m.ResetSettleBenefit()
 		return nil
-	case appconfig.FieldMaxLevelCount:
-		m.ResetMaxLevelCount()
+	case appconfig.FieldMaxLevel:
+		m.ResetMaxLevel()
 		return nil
 	case appconfig.FieldStartAt:
 		m.ResetStartAt()

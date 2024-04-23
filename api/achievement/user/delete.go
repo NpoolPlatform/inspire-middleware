@@ -35,7 +35,7 @@ func (s *Server) DeleteAchievementUser(ctx context.Context, in *npool.DeleteAchi
 		return &npool.DeleteAchievementUserResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.DeleteAchievementUser(ctx)
+	err = handler.DeleteAchievementUser(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteAchievementUser",
@@ -45,7 +45,5 @@ func (s *Server) DeleteAchievementUser(ctx context.Context, in *npool.DeleteAchi
 		return &npool.DeleteAchievementUserResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.DeleteAchievementUserResponse{
-		Info: info,
-	}, nil
+	return &npool.DeleteAchievementUserResponse{}, nil
 }

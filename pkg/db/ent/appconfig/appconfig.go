@@ -32,8 +32,8 @@ const (
 	FieldCommissionType = "commission_type"
 	// FieldSettleBenefit holds the string denoting the settle_benefit field in the database.
 	FieldSettleBenefit = "settle_benefit"
-	// FieldMaxLevelCount holds the string denoting the max_level_count field in the database.
-	FieldMaxLevelCount = "max_level_count"
+	// FieldMaxLevel holds the string denoting the max_level field in the database.
+	FieldMaxLevel = "max_level"
 	// FieldStartAt holds the string denoting the start_at field in the database.
 	FieldStartAt = "start_at"
 	// FieldEndAt holds the string denoting the end_at field in the database.
@@ -55,7 +55,7 @@ var Columns = []string{
 	FieldSettleInterval,
 	FieldCommissionType,
 	FieldSettleBenefit,
-	FieldMaxLevelCount,
+	FieldMaxLevel,
 	FieldStartAt,
 	FieldEndAt,
 }
@@ -101,8 +101,8 @@ var (
 	DefaultCommissionType string
 	// DefaultSettleBenefit holds the default value on creation for the "settle_benefit" field.
 	DefaultSettleBenefit bool
-	// DefaultMaxLevelCount holds the default value on creation for the "max_level_count" field.
-	DefaultMaxLevelCount uint32
+	// DefaultMaxLevel holds the default value on creation for the "max_level" field.
+	DefaultMaxLevel uint32
 	// DefaultStartAt holds the default value on creation for the "start_at" field.
 	DefaultStartAt uint32
 	// DefaultEndAt holds the default value on creation for the "end_at" field.

@@ -129,7 +129,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			appconfig.FieldSettleInterval:   {Type: field.TypeString, Column: appconfig.FieldSettleInterval},
 			appconfig.FieldCommissionType:   {Type: field.TypeString, Column: appconfig.FieldCommissionType},
 			appconfig.FieldSettleBenefit:    {Type: field.TypeBool, Column: appconfig.FieldSettleBenefit},
-			appconfig.FieldMaxLevelCount:    {Type: field.TypeUint32, Column: appconfig.FieldMaxLevelCount},
+			appconfig.FieldMaxLevel:         {Type: field.TypeUint32, Column: appconfig.FieldMaxLevel},
 			appconfig.FieldStartAt:          {Type: field.TypeUint32, Column: appconfig.FieldStartAt},
 			appconfig.FieldEndAt:            {Type: field.TypeUint32, Column: appconfig.FieldEndAt},
 		},
@@ -858,9 +858,9 @@ func (f *AppConfigFilter) WhereSettleBenefit(p entql.BoolP) {
 	f.Where(p.Field(appconfig.FieldSettleBenefit))
 }
 
-// WhereMaxLevelCount applies the entql uint32 predicate on the max_level_count field.
-func (f *AppConfigFilter) WhereMaxLevelCount(p entql.Uint32P) {
-	f.Where(p.Field(appconfig.FieldMaxLevelCount))
+// WhereMaxLevel applies the entql uint32 predicate on the max_level field.
+func (f *AppConfigFilter) WhereMaxLevel(p entql.Uint32P) {
+	f.Where(p.Field(appconfig.FieldMaxLevel))
 }
 
 // WhereStartAt applies the entql uint32 predicate on the start_at field.

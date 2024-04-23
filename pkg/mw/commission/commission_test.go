@@ -95,10 +95,13 @@ func updateCommission(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.UpdateCommission(context.Background())
+	err = handler.UpdateCommission(context.Background())
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetCommission(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
@@ -150,12 +153,10 @@ func deleteCommission(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteCommission(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+	err = handler.DeleteCommission(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetCommission(context.Background())
+	info, err := handler.GetCommission(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

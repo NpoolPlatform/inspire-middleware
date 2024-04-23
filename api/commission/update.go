@@ -37,7 +37,7 @@ func (s *Server) UpdateCommission(ctx context.Context, in *npool.UpdateCommissio
 		return &npool.UpdateCommissionResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateCommission(ctx)
+	err = handler.UpdateCommission(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateCommission",
@@ -47,7 +47,5 @@ func (s *Server) UpdateCommission(ctx context.Context, in *npool.UpdateCommissio
 		return &npool.UpdateCommissionResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateCommissionResponse{
-		Info: info,
-	}, nil
+	return &npool.UpdateCommissionResponse{}, nil
 }

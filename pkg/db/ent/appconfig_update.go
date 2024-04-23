@@ -218,30 +218,30 @@ func (acu *AppConfigUpdate) ClearSettleBenefit() *AppConfigUpdate {
 	return acu
 }
 
-// SetMaxLevelCount sets the "max_level_count" field.
-func (acu *AppConfigUpdate) SetMaxLevelCount(u uint32) *AppConfigUpdate {
-	acu.mutation.ResetMaxLevelCount()
-	acu.mutation.SetMaxLevelCount(u)
+// SetMaxLevel sets the "max_level" field.
+func (acu *AppConfigUpdate) SetMaxLevel(u uint32) *AppConfigUpdate {
+	acu.mutation.ResetMaxLevel()
+	acu.mutation.SetMaxLevel(u)
 	return acu
 }
 
-// SetNillableMaxLevelCount sets the "max_level_count" field if the given value is not nil.
-func (acu *AppConfigUpdate) SetNillableMaxLevelCount(u *uint32) *AppConfigUpdate {
+// SetNillableMaxLevel sets the "max_level" field if the given value is not nil.
+func (acu *AppConfigUpdate) SetNillableMaxLevel(u *uint32) *AppConfigUpdate {
 	if u != nil {
-		acu.SetMaxLevelCount(*u)
+		acu.SetMaxLevel(*u)
 	}
 	return acu
 }
 
-// AddMaxLevelCount adds u to the "max_level_count" field.
-func (acu *AppConfigUpdate) AddMaxLevelCount(u int32) *AppConfigUpdate {
-	acu.mutation.AddMaxLevelCount(u)
+// AddMaxLevel adds u to the "max_level" field.
+func (acu *AppConfigUpdate) AddMaxLevel(u int32) *AppConfigUpdate {
+	acu.mutation.AddMaxLevel(u)
 	return acu
 }
 
-// ClearMaxLevelCount clears the value of the "max_level_count" field.
-func (acu *AppConfigUpdate) ClearMaxLevelCount() *AppConfigUpdate {
-	acu.mutation.ClearMaxLevelCount()
+// ClearMaxLevel clears the value of the "max_level" field.
+func (acu *AppConfigUpdate) ClearMaxLevel() *AppConfigUpdate {
+	acu.mutation.ClearMaxLevel()
 	return acu
 }
 
@@ -524,24 +524,24 @@ func (acu *AppConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: appconfig.FieldSettleBenefit,
 		})
 	}
-	if value, ok := acu.mutation.MaxLevelCount(); ok {
+	if value, ok := acu.mutation.MaxLevel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
-	if value, ok := acu.mutation.AddedMaxLevelCount(); ok {
+	if value, ok := acu.mutation.AddedMaxLevel(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
-	if acu.mutation.MaxLevelCountCleared() {
+	if acu.mutation.MaxLevelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
 	if value, ok := acu.mutation.StartAt(); ok {
@@ -794,30 +794,30 @@ func (acuo *AppConfigUpdateOne) ClearSettleBenefit() *AppConfigUpdateOne {
 	return acuo
 }
 
-// SetMaxLevelCount sets the "max_level_count" field.
-func (acuo *AppConfigUpdateOne) SetMaxLevelCount(u uint32) *AppConfigUpdateOne {
-	acuo.mutation.ResetMaxLevelCount()
-	acuo.mutation.SetMaxLevelCount(u)
+// SetMaxLevel sets the "max_level" field.
+func (acuo *AppConfigUpdateOne) SetMaxLevel(u uint32) *AppConfigUpdateOne {
+	acuo.mutation.ResetMaxLevel()
+	acuo.mutation.SetMaxLevel(u)
 	return acuo
 }
 
-// SetNillableMaxLevelCount sets the "max_level_count" field if the given value is not nil.
-func (acuo *AppConfigUpdateOne) SetNillableMaxLevelCount(u *uint32) *AppConfigUpdateOne {
+// SetNillableMaxLevel sets the "max_level" field if the given value is not nil.
+func (acuo *AppConfigUpdateOne) SetNillableMaxLevel(u *uint32) *AppConfigUpdateOne {
 	if u != nil {
-		acuo.SetMaxLevelCount(*u)
+		acuo.SetMaxLevel(*u)
 	}
 	return acuo
 }
 
-// AddMaxLevelCount adds u to the "max_level_count" field.
-func (acuo *AppConfigUpdateOne) AddMaxLevelCount(u int32) *AppConfigUpdateOne {
-	acuo.mutation.AddMaxLevelCount(u)
+// AddMaxLevel adds u to the "max_level" field.
+func (acuo *AppConfigUpdateOne) AddMaxLevel(u int32) *AppConfigUpdateOne {
+	acuo.mutation.AddMaxLevel(u)
 	return acuo
 }
 
-// ClearMaxLevelCount clears the value of the "max_level_count" field.
-func (acuo *AppConfigUpdateOne) ClearMaxLevelCount() *AppConfigUpdateOne {
-	acuo.mutation.ClearMaxLevelCount()
+// ClearMaxLevel clears the value of the "max_level" field.
+func (acuo *AppConfigUpdateOne) ClearMaxLevel() *AppConfigUpdateOne {
+	acuo.mutation.ClearMaxLevel()
 	return acuo
 }
 
@@ -1130,24 +1130,24 @@ func (acuo *AppConfigUpdateOne) sqlSave(ctx context.Context) (_node *AppConfig, 
 			Column: appconfig.FieldSettleBenefit,
 		})
 	}
-	if value, ok := acuo.mutation.MaxLevelCount(); ok {
+	if value, ok := acuo.mutation.MaxLevel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
-	if value, ok := acuo.mutation.AddedMaxLevelCount(); ok {
+	if value, ok := acuo.mutation.AddedMaxLevel(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
-	if acuo.mutation.MaxLevelCountCleared() {
+	if acuo.mutation.MaxLevelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: appconfig.FieldMaxLevelCount,
+			Column: appconfig.FieldMaxLevel,
 		})
 	}
 	if value, ok := acuo.mutation.StartAt(); ok {

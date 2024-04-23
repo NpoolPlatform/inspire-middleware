@@ -41,7 +41,7 @@ func (s *Server) UpdateAppGoodCommissionConfig(ctx context.Context, in *npool.Up
 		return &npool.UpdateAppGoodCommissionConfigResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateCommissionConfig(ctx)
+	err = handler.UpdateCommissionConfig(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateAppGoodCommissionConfig",
@@ -51,7 +51,5 @@ func (s *Server) UpdateAppGoodCommissionConfig(ctx context.Context, in *npool.Up
 		return &npool.UpdateAppGoodCommissionConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateAppGoodCommissionConfigResponse{
-		Info: info,
-	}, nil
+	return &npool.UpdateAppGoodCommissionConfigResponse{}, nil
 }

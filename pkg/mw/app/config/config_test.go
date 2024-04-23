@@ -42,7 +42,7 @@ var (
 		CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
 		SettleBenefit:       false,
 		StartAt:             uint32(time.Now().Unix()),
-		MaxLevelCount:       uint32(5),
+		MaxLevel:            uint32(5),
 	}
 )
 
@@ -61,11 +61,11 @@ func createAppConfig(t *testing.T) {
 		WithSettleInterval(&ret.SettleInterval, true),
 		WithSettleBenefit(&ret.SettleBenefit, true),
 		WithStartAt(&ret.StartAt, true),
-		WithMaxLevelCount(&ret.MaxLevelCount, true),
+		WithMaxLevel(&ret.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	_, err = handler.CreateAppConfig(context.Background())
+	err = handler.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
 		info, err := handler.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
@@ -87,10 +87,13 @@ func updateAppConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.UpdateAppConfig(context.Background())
+	err = handler.UpdateAppConfig(context.Background())
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
@@ -142,12 +145,10 @@ func deleteAppConfig(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteAppConfig(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+	err = handler.DeleteAppConfig(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetAppConfig(context.Background())
+	info, err := handler.GetAppConfig(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }
