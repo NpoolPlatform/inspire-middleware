@@ -17,6 +17,8 @@ type updateHandler struct {
 	goodID     string
 	appGoodID  string
 	settleType string
+	level      uint32
+	disabled   bool
 }
 
 func (h *updateHandler) constructSQL() error {
@@ -56,15 +58,15 @@ func (h *updateHandler) constructSQL() error {
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 	_sql += "and not exists ("
 	_sql += "select 1 from (select * from app_good_commission_configs) as di "
-	_sql += fmt.Sprintf("where di.app_id = '%v' and di.good_id = '%v' and di.app_good_id = '%v' and di.level = '%v' and di.id != %v and di.end_at=0 and di.deleted_at=0",
-		h.appID, h.goodID, h.appGoodID, *h.Level, *h.ID)
+	_sql += fmt.Sprintf("where di.app_id = '%v' and di.good_id = '%v' and di.app_good_id = '%v' and di.level = %v and di.id != %v and di.end_at=0 and di.deleted_at=0",
+		h.appID, h.goodID, h.appGoodID, h.level, *h.ID)
 	_sql += " limit 1)"
 
-	if !*h.Disabled {
+	if !h.disabled {
 		_sql += " and exists ("
 		_sql += " select 1 from app_configs "
 		_sql += fmt.Sprintf("where app_id='%v' and end_at=0 and deleted_at=0 and %v < max_level",
-			h.appID, *h.Level)
+			h.appID, h.level)
 		_sql += " limit 1)"
 	}
 
@@ -72,7 +74,7 @@ func (h *updateHandler) constructSQL() error {
 		_sql += " and not exists ("
 		_sql += " select 1 from (select * from app_good_commission_configs) as di "
 		_sql += fmt.Sprintf("where di.app_id='%v' and di.app_good_id='%v' and di.settle_type='%v' and di.level=%v and di.deleted_at=0 and di.end_at!=0 and %v < di.end_at",
-			h.appID, h.appGoodID, h.settleType, *h.Level, *h.StartAt)
+			h.appID, h.appGoodID, h.settleType, h.level, *h.StartAt)
 		_sql += " limit 1)"
 	}
 
@@ -103,13 +105,15 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) error {
 	if info == nil {
 		return fmt.Errorf("invalid appgoodcommissionconfig")
 	}
-	h.ID = &info.ID
 
-	if h.Level == nil {
-		h.Level = &info.Level
+	h.ID = &info.ID
+	handler.level = info.Level
+	handler.disabled = info.Disabled
+	if h.Level != nil {
+		handler.level = *h.Level
 	}
-	if h.Disabled == nil {
-		h.Disabled = &info.Disabled
+	if h.Disabled != nil {
+		handler.disabled = *h.Disabled
 	}
 
 	handler.appID = info.AppID
