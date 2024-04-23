@@ -45,7 +45,5 @@ func (s *Server) DeleteAppConfig(ctx context.Context, in *npool.DeleteAppConfigR
 		return &npool.DeleteAppConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.DeleteAppConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.DeleteAppConfigResponse{}, nil
 }

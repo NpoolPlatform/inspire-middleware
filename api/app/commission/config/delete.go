@@ -45,7 +45,5 @@ func (s *Server) DeleteAppCommissionConfig(ctx context.Context, in *npool.Delete
 		return &npool.DeleteAppCommissionConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.DeleteAppCommissionConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.DeleteAppCommissionConfigResponse{}, nil
 }

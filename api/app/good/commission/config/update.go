@@ -51,7 +51,5 @@ func (s *Server) UpdateAppGoodCommissionConfig(ctx context.Context, in *npool.Up
 		return &npool.UpdateAppGoodCommissionConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateAppGoodCommissionConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.UpdateAppGoodCommissionConfigResponse{}, nil
 }

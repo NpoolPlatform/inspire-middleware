@@ -46,7 +46,5 @@ func (s *Server) UpdateAppConfig(ctx context.Context, in *npool.UpdateAppConfigR
 		return &npool.UpdateAppConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateAppConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.UpdateAppConfigResponse{}, nil
 }

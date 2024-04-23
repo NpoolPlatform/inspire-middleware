@@ -52,7 +52,5 @@ func (s *Server) CreateAppCommissionConfig(ctx context.Context, in *npool.Create
 		return &npool.CreateAppCommissionConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CreateAppCommissionConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.CreateAppCommissionConfigResponse{}, nil
 }

@@ -47,7 +47,5 @@ func (s *Server) UpdateCommission(ctx context.Context, in *npool.UpdateCommissio
 		return &npool.UpdateCommissionResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateCommissionResponse{
-		Info: nil,
-	}, nil
+	return &npool.UpdateCommissionResponse{}, nil
 }

@@ -45,7 +45,5 @@ func (s *Server) DeleteAppGoodCommissionConfig(ctx context.Context, in *npool.De
 		return &npool.DeleteAppGoodCommissionConfigResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.DeleteAppGoodCommissionConfigResponse{
-		Info: nil,
-	}, nil
+	return &npool.DeleteAppGoodCommissionConfigResponse{}, nil
 }
