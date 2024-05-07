@@ -30,7 +30,6 @@ func (h *createHandler) constructSQL() {
 	comma = ", "
 	_sql += comma + "user_id"
 	_sql += comma + "action_credits"
-	_sql += comma + "coin_pre_usd"
 	_sql += comma + "coupon_amount"
 	_sql += comma + "coupon_cashable_amount"
 	_sql += comma + "created_at"
@@ -47,7 +46,6 @@ func (h *createHandler) constructSQL() {
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
 	_sql += fmt.Sprintf("%v'%v' as action_credits", comma, *h.ActionCredits)
-	_sql += fmt.Sprintf("%v'%v' as coin_pre_usd", comma, *h.CoinPreUSD)
 	_sql += fmt.Sprintf("%v'%v' as coupon_amount", comma, *h.CouponAmount)
 	_sql += fmt.Sprintf("%v'%v' as coupon_cashable_amount", comma, *h.CouponCashableAmount)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)

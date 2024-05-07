@@ -25,7 +25,6 @@ func (s *Server) UpdateUserReward(ctx context.Context, in *npool.UpdateUserRewar
 		ctx,
 		reward1.WithID(req.ID, true),
 		reward1.WithActionCredits(req.ActionCredits, false),
-		reward1.WithCoinPreUSD(req.CoinPreUSD, false),
 		reward1.WithCouponAmount(req.CouponAmount, false),
 		reward1.WithCouponCashableAmount(req.CouponCashableAmount, false),
 	)

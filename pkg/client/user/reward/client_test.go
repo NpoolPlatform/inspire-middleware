@@ -39,7 +39,6 @@ var ret = &npool.UserReward{
 	AppID:                uuid.NewString(),
 	UserID:               uuid.NewString(),
 	ActionCredits:        decimal.RequireFromString("12.25").String(),
-	CoinPreUSD:           decimal.RequireFromString("12.25").String(),
 	CouponAmount:         decimal.RequireFromString("12.25").String(),
 	CouponCashableAmount: decimal.RequireFromString("12.25").String(),
 }
@@ -54,7 +53,6 @@ func createUserReward(t *testing.T) {
 		AppID:                &ret.AppID,
 		UserID:               &ret.UserID,
 		ActionCredits:        &ret.ActionCredits,
-		CoinPreUSD:           &ret.CoinPreUSD,
 		CouponAmount:         &ret.CouponAmount,
 		CouponCashableAmount: &ret.CouponCashableAmount,
 	})
@@ -74,7 +72,6 @@ func updateUserReward(t *testing.T) {
 		ID:                   &ret.ID,
 		EntID:                &ret.EntID,
 		ActionCredits:        &ret.ActionCredits,
-		CoinPreUSD:           &ret.CoinPreUSD,
 		CouponAmount:         &ret.CouponAmount,
 		CouponCashableAmount: &ret.CouponCashableAmount,
 	})

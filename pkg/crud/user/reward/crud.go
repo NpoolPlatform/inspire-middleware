@@ -16,7 +16,6 @@ type Req struct {
 	AppID                *uuid.UUID
 	UserID               *uuid.UUID
 	ActionCredits        *decimal.Decimal
-	CoinPreUSD           *decimal.Decimal
 	CouponAmount         *decimal.Decimal
 	CouponCashableAmount *decimal.Decimal
 	DeletedAt            *uint32
@@ -35,9 +34,6 @@ func CreateSet(c *ent.UserRewardCreate, req *Req) *ent.UserRewardCreate {
 	if req.ActionCredits != nil {
 		c.SetActionCredits(*req.ActionCredits)
 	}
-	if req.CoinPreUSD != nil {
-		c.SetCoinPreUsd(*req.CoinPreUSD)
-	}
 	if req.CouponAmount != nil {
 		c.SetCouponAmount(*req.CouponAmount)
 	}
@@ -50,9 +46,6 @@ func CreateSet(c *ent.UserRewardCreate, req *Req) *ent.UserRewardCreate {
 func UpdateSet(u *ent.UserRewardUpdateOne, req *Req) *ent.UserRewardUpdateOne {
 	if req.ActionCredits != nil {
 		u.SetActionCredits(*req.ActionCredits)
-	}
-	if req.CoinPreUSD != nil {
-		u.SetCoinPreUsd(*req.CoinPreUSD)
 	}
 	if req.CouponAmount != nil {
 		u.SetCouponAmount(*req.CouponAmount)

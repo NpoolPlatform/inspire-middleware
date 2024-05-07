@@ -66,6 +66,7 @@ var (
 	}
 )
 
+//nolint:dupl
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := coupon1.NewHandler(
 		context.Background(),

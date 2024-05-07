@@ -57,19 +57,19 @@ func (h *createHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *createHandler) createCoinAllocated(ctx context.Context, tx *ent.Tx) error {
+func (h *createHandler) createEventCoin(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
 		return err
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create coinallocated: %v", err)
+		return fmt.Errorf("fail create eventcoin: %v", err)
 	}
 	return nil
 }
 
-func (h *Handler) CreateCoinAllocated(ctx context.Context) error {
+func (h *Handler) CreateEventCoin(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
 	}
@@ -78,6 +78,6 @@ func (h *Handler) CreateCoinAllocated(ctx context.Context) error {
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		return handler.createCoinAllocated(_ctx, tx)
+		return handler.createEventCoin(_ctx, tx)
 	})
 }

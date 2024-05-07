@@ -57,6 +57,7 @@ type Conds struct {
 	EventID      *cruder.Cond
 	CoinConfigID *cruder.Cond
 	ID           *cruder.Cond
+	EventIDs     *cruder.Cond
 }
 
 //nolint:funlen
@@ -135,6 +136,18 @@ func SetQueryConds(q *ent.EventCoinQuery, conds *Conds) (*ent.EventCoinQuery, er
 			q.Where(enteventcoin.ID(id))
 		case cruder.NEQ:
 			q.Where(enteventcoin.IDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid eventcoin field")
+		}
+	}
+	if conds.EventIDs != nil {
+		ids, ok := conds.EventIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid eventids")
+		}
+		switch conds.EventIDs.Op {
+		case cruder.IN:
+			q.Where(enteventcoin.EntIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid eventcoin field")
 		}

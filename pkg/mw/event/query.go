@@ -6,12 +6,20 @@ import (
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	eventcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coin"
+	eventcouponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	eventcoin1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coin"
+	eventcoupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coupon"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	eventcoinmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
+	eventcouponmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coupon"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -98,6 +106,102 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) queryEventCoins(ctx context.Context) error {
+	eventIDs := []uuid.UUID{}
+	for _, info := range h.infos {
+		id := uuid.MustParse(info.EntID)
+		eventIDs = append(eventIDs, id)
+	}
+	handler, err := eventcoin1.NewHandler(ctx)
+	if err != nil {
+		return err
+	}
+	handler.Limit = constant.DefaultRowLimit
+	handler.Offset = 0
+	handler.Conds = &eventcoincrud.Conds{
+		AppID:    &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
+	}
+
+	coins := []*eventcoinmw.EventCoin{}
+	for {
+		_coins, _, err := handler.GetEventCoins(ctx)
+		if err != nil {
+			return err
+		}
+		if len(_coins) == 0 {
+			break
+		}
+		coins = append(coins, _coins...)
+		h.Offset += h.Limit
+	}
+
+	coinMap := map[string][]*eventcoinmw.EventCoin{}
+	for _, coin := range coins {
+		_coins, ok := coinMap[coin.EventID]
+		if ok {
+			coinMap[coin.EventID] = append(_coins, coin)
+			continue
+		}
+		coinMap[coin.EventID] = []*eventcoinmw.EventCoin{coin}
+	}
+	for _, info := range h.infos {
+		_coins, ok := coinMap[info.EntID]
+		if ok {
+			info.Coins = _coins
+		}
+	}
+	return nil
+}
+
+func (h *queryHandler) queryEventCoupons(ctx context.Context) error {
+	eventIDs := []uuid.UUID{}
+	for _, info := range h.infos {
+		id := uuid.MustParse(info.EntID)
+		eventIDs = append(eventIDs, id)
+	}
+	handler, err := eventcoupon1.NewHandler(ctx)
+	if err != nil {
+		return err
+	}
+	handler.Limit = constant.DefaultRowLimit
+	handler.Offset = 0
+	handler.Conds = &eventcouponcrud.Conds{
+		AppID:    &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
+		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
+	}
+
+	coupons := []*eventcouponmw.EventCoupon{}
+	for {
+		_coupons, _, err := handler.GetEventCoupons(ctx)
+		if err != nil {
+			return err
+		}
+		if len(_coupons) == 0 {
+			break
+		}
+		coupons = append(coupons, _coupons...)
+		h.Offset += h.Limit
+	}
+
+	couponMap := map[string][]string{}
+	for _, coupon := range coupons {
+		_coupons, ok := couponMap[coupon.EventID]
+		if ok {
+			couponMap[coupon.EventID] = append(_coupons, coupon.CouponID)
+			continue
+		}
+		couponMap[coupon.EventID] = []string{coupon.CouponID}
+	}
+	for _, info := range h.infos {
+		_coupons, ok := couponMap[info.EntID]
+		if ok {
+			info.CouponIDs = _coupons
+		}
+	}
+	return nil
+}
+
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EventType = basetypes.UsedFor(basetypes.UsedFor_value[info.EventTypeStr])
@@ -147,6 +251,12 @@ func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
 	if len(handler.infos) > 1 {
 		return nil, fmt.Errorf("too many records")
 	}
+	if err := handler.queryEventCoins(ctx); err != nil {
+		return nil, err
+	}
+	if err := handler.queryEventCoupons(ctx); err != nil {
+		return nil, err
+	}
 
 	handler.formalize()
 
@@ -183,6 +293,13 @@ func (h *Handler) GetEvents(ctx context.Context) ([]*npool.Event, uint32, error)
 		return handler.scan(_ctx)
 	})
 	if err != nil {
+		return nil, 0, err
+	}
+
+	if err := handler.queryEventCoins(ctx); err != nil {
+		return nil, 0, err
+	}
+	if err := handler.queryEventCoupons(ctx); err != nil {
 		return nil, 0, err
 	}
 

@@ -27,7 +27,6 @@ func (s *Server) CreateUserReward(ctx context.Context, in *npool.CreateUserRewar
 		reward1.WithAppID(req.AppID, true),
 		reward1.WithUserID(req.UserID, true),
 		reward1.WithActionCredits(req.ActionCredits, true),
-		reward1.WithCoinPreUSD(req.CoinPreUSD, true),
 		reward1.WithCouponAmount(req.CouponAmount, true),
 		reward1.WithCouponCashableAmount(req.CouponCashableAmount, true),
 	)

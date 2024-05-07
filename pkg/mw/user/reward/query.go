@@ -97,12 +97,6 @@ func (h *queryHandler) formalize() {
 		} else {
 			info.ActionCredits = amount.String()
 		}
-		amount, err = decimal.NewFromString(info.CoinPreUSD)
-		if err != nil {
-			info.CoinPreUSD = decimal.NewFromInt(0).String()
-		} else {
-			info.CoinPreUSD = amount.String()
-		}
 		amount, err = decimal.NewFromString(info.CouponAmount)
 		if err != nil {
 			info.CouponAmount = decimal.NewFromInt(0).String()

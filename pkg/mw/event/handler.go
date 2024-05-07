@@ -9,6 +9,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	eventcoinmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -16,6 +17,7 @@ import (
 
 type Handler struct {
 	eventcrud.Req
+	Coins       []*eventcoinmw.EventCoinReq
 	Consecutive *uint32
 	Amount      *decimal.Decimal
 	UserID      *uuid.UUID
@@ -273,6 +275,27 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 			return err
 		}
 		h.Amount = &_amount
+		return nil
+	}
+}
+
+func WithCoins(coins []*eventcoinmw.EventCoinReq) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, coin := range coins {
+			_, err := uuid.Parse(*coin.CoinConfigID)
+			if err != nil {
+				return err
+			}
+			_, err = decimal.NewFromString(*coin.CoinValue)
+			if err != nil {
+				return err
+			}
+			_, err = decimal.NewFromString(*coin.CoinPreUSD)
+			if err != nil {
+				return err
+			}
+		}
+		h.Coins = coins
 		return nil
 	}
 }

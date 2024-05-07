@@ -171,6 +171,20 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: conds.GetID().GetValue(),
 			}
 		}
+		if conds.EventIDs != nil {
+			ids := []uuid.UUID{}
+			for _, id := range conds.GetEventIDs().GetValue() {
+				_id, err := uuid.Parse(id)
+				if err != nil {
+					return err
+				}
+				ids = append(ids, _id)
+			}
+			h.Conds.EventIDs = &cruder.Cond{
+				Op:  conds.GetEventIDs().GetOp(),
+				Val: ids,
+			}
+		}
 		return nil
 	}
 }

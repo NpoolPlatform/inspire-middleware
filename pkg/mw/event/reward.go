@@ -7,19 +7,33 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	coinallocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/allocated"
+	coinconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/config"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
+	taskconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/task/config"
+	taskuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/task/user"
+	usercredithistory1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/user/credit/history"
+	userreward1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/user/reward"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	taskconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/config"
+	"github.com/google/uuid"
 
 	"github.com/shopspring/decimal"
 )
 
 type rewardHandler struct {
 	*Handler
+	taskConfig           *taskconfigmwpb.TaskConfig
+	addCredits           decimal.Decimal
+	coinPreUSDAmount     decimal.Decimal
+	couponAmount         decimal.Decimal
+	couponCashableAmount decimal.Decimal
 }
 
 func (h *rewardHandler) condGood() error {
@@ -54,7 +68,7 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 	return info, nil
 }
 
-func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, error) {
+func (h *rewardHandler) calculateCredits(ctx context.Context, ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
 		return decimal.NewFromInt(0), err
@@ -66,6 +80,23 @@ func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, erro
 	}
 
 	credits = credits.Add(_credits.Mul(*h.Amount))
+	creditsStr := credits.String()
+
+	userID := h.UserID.String()
+	handler, err := usercredithistory1.NewHandler(
+		ctx,
+		usercredithistory1.WithAppID(&ev.AppID, true),
+		usercredithistory1.WithUserID(&userID, true),
+		usercredithistory1.WithTaskID(&h.taskConfig.EntID, true),
+		usercredithistory1.WithEventID(&ev.EntID, true),
+		usercredithistory1.WithCredits(&creditsStr, true),
+	)
+	if err != nil {
+		return decimal.NewFromInt(0), err
+	}
+	if err := handler.CreateUserCreditHistory(ctx); err != nil {
+		return decimal.NewFromInt(0), err
+	}
 	return credits, nil
 }
 
@@ -109,7 +140,99 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			return err
 		}
 
-		if _, err := handler.CreateCoupon(ctx); err != nil {
+		info, err := handler.CreateCoupon(ctx)
+		if err != nil {
+			return err
+		}
+		couponAmount, err := decimal.NewFromString(info.Allocated)
+		if err != nil {
+			return err
+		}
+		couponCashableAmount := decimal.NewFromInt(0)
+		if info.Cashable {
+			couponCashableAmount = couponAmount
+		}
+		h.couponAmount = couponAmount
+		h.couponCashableAmount = couponCashableAmount
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) error {
+	for _, eventCoin := range ev.Coins {
+		_id := eventCoin.CoinConfigID
+		handler, err := coinconfig1.NewHandler(
+			ctx,
+			coinconfig1.WithEntID(&_id, true),
+		)
+		if err != nil {
+			return err
+		}
+		_coinConfig, err := handler.GetCoinConfig(ctx)
+		if err != nil {
+			return err
+		}
+		if _coinConfig == nil {
+			return fmt.Errorf("invalid coinconfig")
+		}
+		if _coinConfig.MaxValue == _coinConfig.Allocated {
+			continue
+		}
+
+		userID := h.UserID.String()
+
+		coinValue, err := decimal.NewFromString(eventCoin.CoinValue)
+		if err != nil {
+			return err
+		}
+		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
+		if err != nil {
+			return err
+		}
+		amount := decimal.NewFromInt(0)
+		if h.Amount != nil {
+			amount = *h.Amount
+		}
+		coinPreUSDAmount := coinPreUSD.Mul(amount)
+		h.coinPreUSDAmount = coinPreUSDAmount
+
+		coins := coinValue.Add(coinPreUSDAmount)
+		if coins.Cmp(decimal.NewFromInt(0)) == 0 {
+			continue
+		}
+		allocated, err := decimal.NewFromString(_coinConfig.Allocated)
+		if err != nil {
+			return err
+		}
+		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
+		if err != nil {
+			return err
+		}
+
+		if coins.Add(allocated).Cmp(maxValue) >= 0 {
+			continue
+		}
+		coinsStr := coins.String()
+
+		handler2, err := coinallocated1.NewHandler(
+			ctx,
+			coinallocated1.WithAppID(&_coinConfig.AppID, true),
+			coinallocated1.WithUserID(&userID, true),
+			coinallocated1.WithCoinConfigID(&_coinConfig.EntID, true),
+			coinallocated1.WithCoinTypeID(&_coinConfig.CoinTypeID, true),
+			coinallocated1.WithUserID(&_coinConfig.EntID, true),
+			coinallocated1.WithValue(&coinsStr, true),
+		)
+		if err != nil {
+			return err
+		}
+
+		if err := handler2.CreateCoinAllocated(ctx); err != nil {
 			return err
 		}
 	}
@@ -130,7 +253,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 		return nil, nil
 	}
 
-	credits, err := h.calculateCredits(ev)
+	credits, err := h.calculateCredits(ctx, ev)
 	if err != nil {
 		return nil, err
 	}
@@ -229,6 +352,232 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 	return credits, nil
 }
 
+func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error {
+	handler, err := taskconfig1.NewHandler(
+		ctx,
+		taskconfig1.WithAppID(&ev.AppID, true),
+		taskconfig1.WithEventID(&ev.EntID, true),
+	)
+	if err != nil {
+		return err
+	}
+	configs, _, err := handler.GetTaskConfigs(ctx)
+	if err != nil {
+		return err
+	}
+	if len(configs) == 0 {
+		return fmt.Errorf("invalid taskconfig")
+	}
+	h.taskConfig = configs[0]
+	// check user has finished this task
+	userID := h.UserID.String()
+	handler2, err := taskuser1.NewHandler(
+		ctx,
+		taskuser1.WithAppID(&ev.AppID, true),
+		taskuser1.WithUserID(&userID, true),
+		taskuser1.WithTaskID(&configs[0].EntID, true),
+	)
+	if err != nil {
+		return err
+	}
+	taskUsers, _, err := handler2.GetTaskUsers(ctx)
+	if err != nil {
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	if len(taskUsers) == 0 {
+		return nil
+	}
+	// check user has over the max finish times
+	if len(taskUsers) >= int(configs[0].MaxRewardCount) {
+		return fmt.Errorf("invalid maxrewardcount")
+	}
+
+	// check user next task startat
+	now := uint32(time.Now().Unix())
+	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecord > now {
+		return fmt.Errorf("not the right time")
+	}
+	// check last task exist and finish status
+	if configs[0].LastTaskID != uuid.Nil.String() {
+		done := types.TaskState_Done
+		handler3, err := taskuser1.NewHandler(
+			ctx,
+			taskuser1.WithAppID(&ev.AppID, true),
+			taskuser1.WithUserID(&userID, true),
+			taskuser1.WithTaskID(&configs[0].LastTaskID, true),
+			taskuser1.WithTaskState(&done, true),
+		)
+		if err != nil {
+			return err
+		}
+		lastTaskUsers, _, err := handler3.GetTaskUsers(ctx)
+		if err != nil {
+			return err
+		}
+		if len(lastTaskUsers) == 0 {
+			return fmt.Errorf("invalid last task")
+		}
+	}
+
+	return nil
+}
+
+func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error) {
+	ev, err := h.getEvent(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if ev == nil {
+		return nil, nil
+	}
+
+	if *h.Consecutive > ev.MaxConsecutive {
+		return nil, nil
+	}
+
+	if err := h.validateTask(ctx, ev); err != nil {
+		return nil, err
+	}
+
+	h.addCredits = decimal.NewFromInt(0)
+	h.coinPreUSDAmount = decimal.NewFromInt(0)
+	h.couponAmount = decimal.NewFromInt(0)
+	h.couponCashableAmount = decimal.NewFromInt(0)
+
+	credits, err := h.calculateCredits(ctx, ev)
+	if err != nil {
+		return nil, err
+	}
+
+	// We don't care about result of allocate coupon
+	if err := h.allocateCoupons(ctx, ev); err != nil {
+		logger.Sugar().Warnw(
+			"rewardTask allocateCoupons",
+			"Event", ev,
+			"Error", err,
+		)
+	}
+
+	if err := h.allocateCoins(ctx, ev); err != nil {
+		logger.Sugar().Warnw(
+			"rewardTask allocateCoins",
+			"Event", ev,
+			"Error", err,
+		)
+	}
+
+	_credits := []*npool.Credit{}
+	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
+		_credits = append(_credits, &npool.Credit{
+			AppID:   h.AppID.String(),
+			UserID:  h.UserID.String(),
+			Credits: credits.String(),
+		})
+	}
+
+	if err := h.createTaskUser(ctx, ev); err != nil {
+		return nil, err
+	}
+	if err := h.createOrUpdateUserReward(ctx, ev); err != nil {
+		return nil, err
+	}
+
+	return _credits, nil
+}
+
+func (h *rewardHandler) createTaskUser(ctx context.Context, ev *npool.Event) error {
+	userID := h.UserID.String()
+	taskState := types.TaskState_Done
+	rewardState := types.RewardState_Issued
+	handler, err := taskuser1.NewHandler(
+		ctx,
+		taskuser1.WithAppID(&ev.AppID, true),
+		taskuser1.WithUserID(&userID, true),
+		taskuser1.WithTaskID(&h.taskConfig.EntID, true),
+		taskuser1.WithEventID(&ev.EntID, true),
+		taskuser1.WithTaskState(&taskState, true),
+		taskuser1.WithRewardState(&rewardState, true),
+	)
+	if err != nil {
+		return err
+	}
+	if err := handler.CreateTaskUser(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.Event) error {
+	userID := h.UserID.String()
+	handler, err := userreward1.NewHandler(
+		ctx,
+		userreward1.WithAppID(&ev.AppID, true),
+		userreward1.WithUserID(&userID, true),
+	)
+	if err != nil {
+		return err
+	}
+	userrewards, _, err := handler.GetUserRewards(ctx)
+	if err != nil {
+		return err
+	}
+	if len(userrewards) == 0 {
+		credits := h.addCredits.String()
+		couponAmount := h.couponAmount.String()
+		couponCashableAmount := h.couponCashableAmount.String()
+		handler2, err := userreward1.NewHandler(
+			ctx,
+			userreward1.WithAppID(&ev.AppID, true),
+			userreward1.WithUserID(&userID, true),
+			userreward1.WithActionCredits(&credits, true),
+			userreward1.WithCouponAmount(&couponAmount, true),
+			userreward1.WithCouponCashableAmount(&couponCashableAmount, true),
+		)
+		if err != nil {
+			return err
+		}
+		if err := handler2.CreateUserReward(ctx); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	oldActionCredits, err := decimal.NewFromString(userrewards[0].ActionCredits)
+	if err != nil {
+		return err
+	}
+	actionCredits := oldActionCredits.Add(*h.Credits).String()
+
+	oldCouponAmount, err := decimal.NewFromString(userrewards[0].CouponAmount)
+	if err != nil {
+		return err
+	}
+	couponAmount := oldCouponAmount.Add(h.couponAmount).String()
+	oldCouponCashableAmount, err := decimal.NewFromString(userrewards[0].CouponCashableAmount)
+	if err != nil {
+		return err
+	}
+	couponCashableAmount := oldCouponCashableAmount.Add(h.couponAmount).String()
+
+	handler2, err := userreward1.NewHandler(
+		ctx,
+		userreward1.WithID(&userrewards[0].ID, true),
+		userreward1.WithActionCredits(&actionCredits, true),
+		userreward1.WithCouponAmount(&couponAmount, true),
+		userreward1.WithCouponCashableAmount(&couponCashableAmount, true),
+	)
+	if err != nil {
+		return err
+	}
+	if err := handler2.CreateUserReward(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 	handler := &rewardHandler{
 		Handler: h,
@@ -241,6 +590,8 @@ func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 		fallthrough //nolint
 	case basetypes.UsedFor_SimulateOrderProfit:
 		return handler.rewardSelf(ctx)
+	case basetypes.UsedFor_KYCApproved:
+		return handler.rewardTask(ctx)
 	case basetypes.UsedFor_AffiliateSignup:
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:

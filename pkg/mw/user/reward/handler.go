@@ -111,23 +111,6 @@ func WithActionCredits(amount *string, must bool) func(context.Context, *Handler
 	}
 }
 
-func WithCoinPreUSD(amount *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if amount == nil {
-			if must {
-				return fmt.Errorf("invalid coinpreusd")
-			}
-			return nil
-		}
-		_amount, err := decimal.NewFromString(*amount)
-		if err != nil {
-			return err
-		}
-		h.CoinPreUSD = &_amount
-		return nil
-	}
-}
-
 func WithCouponAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {

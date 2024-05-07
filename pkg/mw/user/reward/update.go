@@ -23,11 +23,8 @@ func (h *updateHandler) constructSQL() error {
 	if h.ActionCredits != nil {
 		_sql += fmt.Sprintf("%vaction_credits = '%v'", set, *h.ActionCredits)
 	}
-	if h.CoinPreUSD != nil {
-		_sql += fmt.Sprintf("%vshipment_at = '%v'", set, *h.CoinPreUSD)
-	}
 	if h.CouponAmount != nil {
-		_sql += fmt.Sprintf("%vcoin_pre_usd = '%v'", set, *h.CouponAmount)
+		_sql += fmt.Sprintf("%vcoupon_amount = '%v'", set, *h.CouponAmount)
 	}
 	if h.CouponCashableAmount != nil {
 		_sql += fmt.Sprintf("%vcoupon_cashable_amount = '%v'", set, *h.CouponCashableAmount)

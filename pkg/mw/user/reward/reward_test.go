@@ -33,7 +33,6 @@ var (
 		AppID:                uuid.NewString(),
 		UserID:               uuid.NewString(),
 		ActionCredits:        decimal.RequireFromString("11.25").String(),
-		CoinPreUSD:           decimal.RequireFromString("11.25").String(),
 		CouponAmount:         decimal.RequireFromString("11.25").String(),
 		CouponCashableAmount: decimal.RequireFromString("11.25").String(),
 	}
@@ -50,7 +49,6 @@ func createUserReward(t *testing.T) {
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
 		WithActionCredits(&ret.ActionCredits, true),
-		WithCoinPreUSD(&ret.CoinPreUSD, true),
 		WithCouponAmount(&ret.CouponAmount, true),
 		WithCouponCashableAmount(&ret.CouponCashableAmount, true),
 	)
@@ -70,7 +68,6 @@ func createUserReward(t *testing.T) {
 
 func updateUserReward(t *testing.T) {
 	ret.ActionCredits = decimal.RequireFromString("22.25").String()
-	ret.CoinPreUSD = decimal.RequireFromString("22.25").String()
 	ret.CouponAmount = decimal.RequireFromString("22.25").String()
 	ret.CouponCashableAmount = decimal.RequireFromString("22.25").String()
 
@@ -78,7 +75,6 @@ func updateUserReward(t *testing.T) {
 		context.Background(),
 		WithID(&ret.ID, true),
 		WithActionCredits(&ret.ActionCredits, true),
-		WithCoinPreUSD(&ret.CoinPreUSD, true),
 		WithCouponAmount(&ret.CouponAmount, true),
 		WithCouponCashableAmount(&ret.CouponCashableAmount, true),
 	)
