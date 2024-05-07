@@ -27,8 +27,6 @@ const (
 	FieldUserID = "user_id"
 	// FieldActionCredits holds the string denoting the action_credits field in the database.
 	FieldActionCredits = "action_credits"
-	// FieldCoinPreUsd holds the string denoting the coin_pre_usd field in the database.
-	FieldCoinPreUsd = "coin_pre_usd"
 	// FieldCouponAmount holds the string denoting the coupon_amount field in the database.
 	FieldCouponAmount = "coupon_amount"
 	// FieldCouponCashableAmount holds the string denoting the coupon_cashable_amount field in the database.
@@ -47,7 +45,6 @@ var Columns = []string{
 	FieldAppID,
 	FieldUserID,
 	FieldActionCredits,
-	FieldCoinPreUsd,
 	FieldCouponAmount,
 	FieldCouponCashableAmount,
 }
@@ -87,8 +84,6 @@ var (
 	DefaultUserID func() uuid.UUID
 	// DefaultActionCredits holds the default value on creation for the "action_credits" field.
 	DefaultActionCredits decimal.Decimal
-	// DefaultCoinPreUsd holds the default value on creation for the "coin_pre_usd" field.
-	DefaultCoinPreUsd decimal.Decimal
 	// DefaultCouponAmount holds the default value on creation for the "coupon_amount" field.
 	DefaultCouponAmount decimal.Decimal
 	// DefaultCouponCashableAmount holds the default value on creation for the "coupon_cashable_amount" field.

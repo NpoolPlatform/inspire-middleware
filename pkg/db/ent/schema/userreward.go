@@ -46,13 +46,6 @@ func (UserReward) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("coin_pre_usd", decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL: "decimal(37,18)",
-			}).
-			Optional().
-			Default(decimal.Decimal{}),
-		field.
 			Other("coupon_amount", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

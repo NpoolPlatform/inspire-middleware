@@ -121,20 +121,6 @@ func (urc *UserRewardCreate) SetNillableActionCredits(d *decimal.Decimal) *UserR
 	return urc
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (urc *UserRewardCreate) SetCoinPreUsd(d decimal.Decimal) *UserRewardCreate {
-	urc.mutation.SetCoinPreUsd(d)
-	return urc
-}
-
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (urc *UserRewardCreate) SetNillableCoinPreUsd(d *decimal.Decimal) *UserRewardCreate {
-	if d != nil {
-		urc.SetCoinPreUsd(*d)
-	}
-	return urc
-}
-
 // SetCouponAmount sets the "coupon_amount" field.
 func (urc *UserRewardCreate) SetCouponAmount(d decimal.Decimal) *UserRewardCreate {
 	urc.mutation.SetCouponAmount(d)
@@ -294,10 +280,6 @@ func (urc *UserRewardCreate) defaults() error {
 		v := userreward.DefaultActionCredits
 		urc.mutation.SetActionCredits(v)
 	}
-	if _, ok := urc.mutation.CoinPreUsd(); !ok {
-		v := userreward.DefaultCoinPreUsd
-		urc.mutation.SetCoinPreUsd(v)
-	}
 	if _, ok := urc.mutation.CouponAmount(); !ok {
 		v := userreward.DefaultCouponAmount
 		urc.mutation.SetCouponAmount(v)
@@ -412,14 +394,6 @@ func (urc *UserRewardCreate) createSpec() (*UserReward, *sqlgraph.CreateSpec) {
 			Column: userreward.FieldActionCredits,
 		})
 		_node.ActionCredits = value
-	}
-	if value, ok := urc.mutation.CoinPreUsd(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: userreward.FieldCoinPreUsd,
-		})
-		_node.CoinPreUsd = value
 	}
 	if value, ok := urc.mutation.CouponAmount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -608,24 +582,6 @@ func (u *UserRewardUpsert) UpdateActionCredits() *UserRewardUpsert {
 // ClearActionCredits clears the value of the "action_credits" field.
 func (u *UserRewardUpsert) ClearActionCredits() *UserRewardUpsert {
 	u.SetNull(userreward.FieldActionCredits)
-	return u
-}
-
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *UserRewardUpsert) SetCoinPreUsd(v decimal.Decimal) *UserRewardUpsert {
-	u.Set(userreward.FieldCoinPreUsd, v)
-	return u
-}
-
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *UserRewardUpsert) UpdateCoinPreUsd() *UserRewardUpsert {
-	u.SetExcluded(userreward.FieldCoinPreUsd)
-	return u
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *UserRewardUpsert) ClearCoinPreUsd() *UserRewardUpsert {
-	u.SetNull(userreward.FieldCoinPreUsd)
 	return u
 }
 
@@ -852,27 +808,6 @@ func (u *UserRewardUpsertOne) UpdateActionCredits() *UserRewardUpsertOne {
 func (u *UserRewardUpsertOne) ClearActionCredits() *UserRewardUpsertOne {
 	return u.Update(func(s *UserRewardUpsert) {
 		s.ClearActionCredits()
-	})
-}
-
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *UserRewardUpsertOne) SetCoinPreUsd(v decimal.Decimal) *UserRewardUpsertOne {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.SetCoinPreUsd(v)
-	})
-}
-
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *UserRewardUpsertOne) UpdateCoinPreUsd() *UserRewardUpsertOne {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.UpdateCoinPreUsd()
-	})
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *UserRewardUpsertOne) ClearCoinPreUsd() *UserRewardUpsertOne {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.ClearCoinPreUsd()
 	})
 }
 
@@ -1270,27 +1205,6 @@ func (u *UserRewardUpsertBulk) UpdateActionCredits() *UserRewardUpsertBulk {
 func (u *UserRewardUpsertBulk) ClearActionCredits() *UserRewardUpsertBulk {
 	return u.Update(func(s *UserRewardUpsert) {
 		s.ClearActionCredits()
-	})
-}
-
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *UserRewardUpsertBulk) SetCoinPreUsd(v decimal.Decimal) *UserRewardUpsertBulk {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.SetCoinPreUsd(v)
-	})
-}
-
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *UserRewardUpsertBulk) UpdateCoinPreUsd() *UserRewardUpsertBulk {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.UpdateCoinPreUsd()
-	})
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *UserRewardUpsertBulk) ClearCoinPreUsd() *UserRewardUpsertBulk {
-	return u.Update(func(s *UserRewardUpsert) {
-		s.ClearCoinPreUsd()
 	})
 }
 

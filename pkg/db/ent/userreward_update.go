@@ -159,26 +159,6 @@ func (uru *UserRewardUpdate) ClearActionCredits() *UserRewardUpdate {
 	return uru
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (uru *UserRewardUpdate) SetCoinPreUsd(d decimal.Decimal) *UserRewardUpdate {
-	uru.mutation.SetCoinPreUsd(d)
-	return uru
-}
-
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (uru *UserRewardUpdate) SetNillableCoinPreUsd(d *decimal.Decimal) *UserRewardUpdate {
-	if d != nil {
-		uru.SetCoinPreUsd(*d)
-	}
-	return uru
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (uru *UserRewardUpdate) ClearCoinPreUsd() *UserRewardUpdate {
-	uru.mutation.ClearCoinPreUsd()
-	return uru
-}
-
 // SetCouponAmount sets the "coupon_amount" field.
 func (uru *UserRewardUpdate) SetCouponAmount(d decimal.Decimal) *UserRewardUpdate {
 	uru.mutation.SetCouponAmount(d)
@@ -405,19 +385,6 @@ func (uru *UserRewardUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: userreward.FieldActionCredits,
 		})
 	}
-	if value, ok := uru.mutation.CoinPreUsd(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: userreward.FieldCoinPreUsd,
-		})
-	}
-	if uru.mutation.CoinPreUsdCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: userreward.FieldCoinPreUsd,
-		})
-	}
 	if value, ok := uru.mutation.CouponAmount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -591,26 +558,6 @@ func (uruo *UserRewardUpdateOne) SetNillableActionCredits(d *decimal.Decimal) *U
 // ClearActionCredits clears the value of the "action_credits" field.
 func (uruo *UserRewardUpdateOne) ClearActionCredits() *UserRewardUpdateOne {
 	uruo.mutation.ClearActionCredits()
-	return uruo
-}
-
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (uruo *UserRewardUpdateOne) SetCoinPreUsd(d decimal.Decimal) *UserRewardUpdateOne {
-	uruo.mutation.SetCoinPreUsd(d)
-	return uruo
-}
-
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (uruo *UserRewardUpdateOne) SetNillableCoinPreUsd(d *decimal.Decimal) *UserRewardUpdateOne {
-	if d != nil {
-		uruo.SetCoinPreUsd(*d)
-	}
-	return uruo
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (uruo *UserRewardUpdateOne) ClearCoinPreUsd() *UserRewardUpdateOne {
-	uruo.mutation.ClearCoinPreUsd()
 	return uruo
 }
 
@@ -868,19 +815,6 @@ func (uruo *UserRewardUpdateOne) sqlSave(ctx context.Context) (_node *UserReward
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Column: userreward.FieldActionCredits,
-		})
-	}
-	if value, ok := uruo.mutation.CoinPreUsd(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Value:  value,
-			Column: userreward.FieldCoinPreUsd,
-		})
-	}
-	if uruo.mutation.CoinPreUsdCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeOther,
-			Column: userreward.FieldCoinPreUsd,
 		})
 	}
 	if value, ok := uruo.mutation.CouponAmount(); ok {

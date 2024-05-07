@@ -129,13 +129,6 @@ func ActionCredits(v decimal.Decimal) predicate.UserReward {
 	})
 }
 
-// CoinPreUsd applies equality check predicate on the "coin_pre_usd" field. It's identical to CoinPreUsdEQ.
-func CoinPreUsd(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinPreUsd), v))
-	})
-}
-
 // CouponAmount applies equality check predicate on the "coupon_amount" field. It's identical to CouponAmountEQ.
 func CouponAmount(v decimal.Decimal) predicate.UserReward {
 	return predicate.UserReward(func(s *sql.Selector) {
@@ -637,84 +630,6 @@ func ActionCreditsIsNil() predicate.UserReward {
 func ActionCreditsNotNil() predicate.UserReward {
 	return predicate.UserReward(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldActionCredits)))
-	})
-}
-
-// CoinPreUsdEQ applies the EQ predicate on the "coin_pre_usd" field.
-func CoinPreUsdEQ(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdNEQ applies the NEQ predicate on the "coin_pre_usd" field.
-func CoinPreUsdNEQ(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdIn applies the In predicate on the "coin_pre_usd" field.
-func CoinPreUsdIn(vs ...decimal.Decimal) predicate.UserReward {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCoinPreUsd), v...))
-	})
-}
-
-// CoinPreUsdNotIn applies the NotIn predicate on the "coin_pre_usd" field.
-func CoinPreUsdNotIn(vs ...decimal.Decimal) predicate.UserReward {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCoinPreUsd), v...))
-	})
-}
-
-// CoinPreUsdGT applies the GT predicate on the "coin_pre_usd" field.
-func CoinPreUsdGT(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdGTE applies the GTE predicate on the "coin_pre_usd" field.
-func CoinPreUsdGTE(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdLT applies the LT predicate on the "coin_pre_usd" field.
-func CoinPreUsdLT(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdLTE applies the LTE predicate on the "coin_pre_usd" field.
-func CoinPreUsdLTE(v decimal.Decimal) predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCoinPreUsd), v))
-	})
-}
-
-// CoinPreUsdIsNil applies the IsNil predicate on the "coin_pre_usd" field.
-func CoinPreUsdIsNil() predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCoinPreUsd)))
-	})
-}
-
-// CoinPreUsdNotNil applies the NotNil predicate on the "coin_pre_usd" field.
-func CoinPreUsdNotNil() predicate.UserReward {
-	return predicate.UserReward(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCoinPreUsd)))
 	})
 }
 

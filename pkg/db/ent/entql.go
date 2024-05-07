@@ -645,7 +645,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userreward.FieldAppID:                {Type: field.TypeUUID, Column: userreward.FieldAppID},
 			userreward.FieldUserID:               {Type: field.TypeUUID, Column: userreward.FieldUserID},
 			userreward.FieldActionCredits:        {Type: field.TypeOther, Column: userreward.FieldActionCredits},
-			userreward.FieldCoinPreUsd:           {Type: field.TypeOther, Column: userreward.FieldCoinPreUsd},
 			userreward.FieldCouponAmount:         {Type: field.TypeOther, Column: userreward.FieldCouponAmount},
 			userreward.FieldCouponCashableAmount: {Type: field.TypeOther, Column: userreward.FieldCouponCashableAmount},
 		},
@@ -3077,11 +3076,6 @@ func (f *UserRewardFilter) WhereUserID(p entql.ValueP) {
 // WhereActionCredits applies the entql other predicate on the action_credits field.
 func (f *UserRewardFilter) WhereActionCredits(p entql.OtherP) {
 	f.Where(p.Field(userreward.FieldActionCredits))
-}
-
-// WhereCoinPreUsd applies the entql other predicate on the coin_pre_usd field.
-func (f *UserRewardFilter) WhereCoinPreUsd(p entql.OtherP) {
-	f.Where(p.Field(userreward.FieldCoinPreUsd))
 }
 
 // WhereCouponAmount applies the entql other predicate on the coupon_amount field.

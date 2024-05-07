@@ -1628,16 +1628,12 @@ func init() {
 	userrewardDescActionCredits := userrewardFields[2].Descriptor()
 	// userreward.DefaultActionCredits holds the default value on creation for the action_credits field.
 	userreward.DefaultActionCredits = userrewardDescActionCredits.Default.(decimal.Decimal)
-	// userrewardDescCoinPreUsd is the schema descriptor for coin_pre_usd field.
-	userrewardDescCoinPreUsd := userrewardFields[3].Descriptor()
-	// userreward.DefaultCoinPreUsd holds the default value on creation for the coin_pre_usd field.
-	userreward.DefaultCoinPreUsd = userrewardDescCoinPreUsd.Default.(decimal.Decimal)
 	// userrewardDescCouponAmount is the schema descriptor for coupon_amount field.
-	userrewardDescCouponAmount := userrewardFields[4].Descriptor()
+	userrewardDescCouponAmount := userrewardFields[3].Descriptor()
 	// userreward.DefaultCouponAmount holds the default value on creation for the coupon_amount field.
 	userreward.DefaultCouponAmount = userrewardDescCouponAmount.Default.(decimal.Decimal)
 	// userrewardDescCouponCashableAmount is the schema descriptor for coupon_cashable_amount field.
-	userrewardDescCouponCashableAmount := userrewardFields[5].Descriptor()
+	userrewardDescCouponCashableAmount := userrewardFields[4].Descriptor()
 	// userreward.DefaultCouponCashableAmount holds the default value on creation for the coupon_cashable_amount field.
 	userreward.DefaultCouponCashableAmount = userrewardDescCouponCashableAmount.Default.(decimal.Decimal)
 }

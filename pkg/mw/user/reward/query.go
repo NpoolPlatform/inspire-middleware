@@ -67,7 +67,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(entuserreward.FieldAppID),
 			t1.C(entuserreward.FieldUserID),
 			t1.C(entuserreward.FieldActionCredits),
-			t1.C(entuserreward.FieldCoinPreUsd),
 			t1.C(entuserreward.FieldCouponAmount),
 			t1.C(entuserreward.FieldCouponCashableAmount),
 			t1.C(entuserreward.FieldCreatedAt),

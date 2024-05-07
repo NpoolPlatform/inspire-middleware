@@ -28239,7 +28239,6 @@ type UserRewardMutation struct {
 	app_id                 *uuid.UUID
 	user_id                *uuid.UUID
 	action_credits         *decimal.Decimal
-	coin_pre_usd           *decimal.Decimal
 	coupon_amount          *decimal.Decimal
 	coupon_cashable_amount *decimal.Decimal
 	clearedFields          map[string]struct{}
@@ -28703,55 +28702,6 @@ func (m *UserRewardMutation) ResetActionCredits() {
 	delete(m.clearedFields, userreward.FieldActionCredits)
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (m *UserRewardMutation) SetCoinPreUsd(d decimal.Decimal) {
-	m.coin_pre_usd = &d
-}
-
-// CoinPreUsd returns the value of the "coin_pre_usd" field in the mutation.
-func (m *UserRewardMutation) CoinPreUsd() (r decimal.Decimal, exists bool) {
-	v := m.coin_pre_usd
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCoinPreUsd returns the old "coin_pre_usd" field's value of the UserReward entity.
-// If the UserReward object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserRewardMutation) OldCoinPreUsd(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCoinPreUsd is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCoinPreUsd requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCoinPreUsd: %w", err)
-	}
-	return oldValue.CoinPreUsd, nil
-}
-
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (m *UserRewardMutation) ClearCoinPreUsd() {
-	m.coin_pre_usd = nil
-	m.clearedFields[userreward.FieldCoinPreUsd] = struct{}{}
-}
-
-// CoinPreUsdCleared returns if the "coin_pre_usd" field was cleared in this mutation.
-func (m *UserRewardMutation) CoinPreUsdCleared() bool {
-	_, ok := m.clearedFields[userreward.FieldCoinPreUsd]
-	return ok
-}
-
-// ResetCoinPreUsd resets all changes to the "coin_pre_usd" field.
-func (m *UserRewardMutation) ResetCoinPreUsd() {
-	m.coin_pre_usd = nil
-	delete(m.clearedFields, userreward.FieldCoinPreUsd)
-}
-
 // SetCouponAmount sets the "coupon_amount" field.
 func (m *UserRewardMutation) SetCouponAmount(d decimal.Decimal) {
 	m.coupon_amount = &d
@@ -28869,7 +28819,7 @@ func (m *UserRewardMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserRewardMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, userreward.FieldCreatedAt)
 	}
@@ -28890,9 +28840,6 @@ func (m *UserRewardMutation) Fields() []string {
 	}
 	if m.action_credits != nil {
 		fields = append(fields, userreward.FieldActionCredits)
-	}
-	if m.coin_pre_usd != nil {
-		fields = append(fields, userreward.FieldCoinPreUsd)
 	}
 	if m.coupon_amount != nil {
 		fields = append(fields, userreward.FieldCouponAmount)
@@ -28922,8 +28869,6 @@ func (m *UserRewardMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case userreward.FieldActionCredits:
 		return m.ActionCredits()
-	case userreward.FieldCoinPreUsd:
-		return m.CoinPreUsd()
 	case userreward.FieldCouponAmount:
 		return m.CouponAmount()
 	case userreward.FieldCouponCashableAmount:
@@ -28951,8 +28896,6 @@ func (m *UserRewardMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldUserID(ctx)
 	case userreward.FieldActionCredits:
 		return m.OldActionCredits(ctx)
-	case userreward.FieldCoinPreUsd:
-		return m.OldCoinPreUsd(ctx)
 	case userreward.FieldCouponAmount:
 		return m.OldCouponAmount(ctx)
 	case userreward.FieldCouponCashableAmount:
@@ -29014,13 +28957,6 @@ func (m *UserRewardMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetActionCredits(v)
-		return nil
-	case userreward.FieldCoinPreUsd:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCoinPreUsd(v)
 		return nil
 	case userreward.FieldCouponAmount:
 		v, ok := value.(decimal.Decimal)
@@ -29114,9 +29050,6 @@ func (m *UserRewardMutation) ClearedFields() []string {
 	if m.FieldCleared(userreward.FieldActionCredits) {
 		fields = append(fields, userreward.FieldActionCredits)
 	}
-	if m.FieldCleared(userreward.FieldCoinPreUsd) {
-		fields = append(fields, userreward.FieldCoinPreUsd)
-	}
 	if m.FieldCleared(userreward.FieldCouponAmount) {
 		fields = append(fields, userreward.FieldCouponAmount)
 	}
@@ -29145,9 +29078,6 @@ func (m *UserRewardMutation) ClearField(name string) error {
 		return nil
 	case userreward.FieldActionCredits:
 		m.ClearActionCredits()
-		return nil
-	case userreward.FieldCoinPreUsd:
-		m.ClearCoinPreUsd()
 		return nil
 	case userreward.FieldCouponAmount:
 		m.ClearCouponAmount()
@@ -29183,9 +29113,6 @@ func (m *UserRewardMutation) ResetField(name string) error {
 		return nil
 	case userreward.FieldActionCredits:
 		m.ResetActionCredits()
-		return nil
-	case userreward.FieldCoinPreUsd:
-		m.ResetCoinPreUsd()
 		return nil
 	case userreward.FieldCouponAmount:
 		m.ResetCouponAmount()

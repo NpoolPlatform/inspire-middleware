@@ -31,8 +31,6 @@ type UserReward struct {
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// ActionCredits holds the value of the "action_credits" field.
 	ActionCredits decimal.Decimal `json:"action_credits,omitempty"`
-	// CoinPreUsd holds the value of the "coin_pre_usd" field.
-	CoinPreUsd decimal.Decimal `json:"coin_pre_usd,omitempty"`
 	// CouponAmount holds the value of the "coupon_amount" field.
 	CouponAmount decimal.Decimal `json:"coupon_amount,omitempty"`
 	// CouponCashableAmount holds the value of the "coupon_cashable_amount" field.
@@ -44,7 +42,7 @@ func (*UserReward) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userreward.FieldActionCredits, userreward.FieldCoinPreUsd, userreward.FieldCouponAmount, userreward.FieldCouponCashableAmount:
+		case userreward.FieldActionCredits, userreward.FieldCouponAmount, userreward.FieldCouponCashableAmount:
 			values[i] = new(decimal.Decimal)
 		case userreward.FieldID, userreward.FieldCreatedAt, userreward.FieldUpdatedAt, userreward.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
@@ -113,12 +111,6 @@ func (ur *UserReward) assignValues(columns []string, values []interface{}) error
 			} else if value != nil {
 				ur.ActionCredits = *value
 			}
-		case userreward.FieldCoinPreUsd:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field coin_pre_usd", values[i])
-			} else if value != nil {
-				ur.CoinPreUsd = *value
-			}
 		case userreward.FieldCouponAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field coupon_amount", values[i])
@@ -179,9 +171,6 @@ func (ur *UserReward) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("action_credits=")
 	builder.WriteString(fmt.Sprintf("%v", ur.ActionCredits))
-	builder.WriteString(", ")
-	builder.WriteString("coin_pre_usd=")
-	builder.WriteString(fmt.Sprintf("%v", ur.CoinPreUsd))
 	builder.WriteString(", ")
 	builder.WriteString("coupon_amount=")
 	builder.WriteString(fmt.Sprintf("%v", ur.CouponAmount))
