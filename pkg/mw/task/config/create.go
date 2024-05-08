@@ -34,7 +34,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "task_desc"
 	_sql += comma + "step_guide"
 	_sql += comma + "recommend_message"
-	_sql += comma + "index"
+	_sql += comma + "`index`"
 	_sql += comma + "last_task_id"
 	_sql += comma + "max_reward_count"
 	_sql += comma + "cooldown_secord"
@@ -56,10 +56,10 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as task_desc", comma, *h.TaskDesc)
 	_sql += fmt.Sprintf("%v'%v' as step_guide", comma, *h.StepGuide)
 	_sql += fmt.Sprintf("%v'%v' as recommend_message", comma, *h.RecommendMessage)
-	_sql += fmt.Sprintf("%v'%v' as index", comma, *h.Index)
+	_sql += fmt.Sprintf("%v%v as `index`", comma, *h.Index)
 	_sql += fmt.Sprintf("%v'%v' as last_task_id", comma, *h.LastTaskID)
-	_sql += fmt.Sprintf("%v'%v' as max_reward_count", comma, *h.MaxRewardCount)
-	_sql += fmt.Sprintf("%v'%v' as cooldown_secord", comma, *h.CooldownSecord)
+	_sql += fmt.Sprintf("%v%v as max_reward_count", comma, *h.MaxRewardCount)
+	_sql += fmt.Sprintf("%v%v as cooldown_secord", comma, *h.CooldownSecord)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

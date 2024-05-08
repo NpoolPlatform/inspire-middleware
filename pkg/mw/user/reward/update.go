@@ -22,12 +22,15 @@ func (h *updateHandler) constructSQL() error {
 	_sql := "update user_rewards "
 	if h.ActionCredits != nil {
 		_sql += fmt.Sprintf("%vaction_credits = '%v'", set, *h.ActionCredits)
+		set = ""
 	}
 	if h.CouponAmount != nil {
 		_sql += fmt.Sprintf("%vcoupon_amount = '%v'", set, *h.CouponAmount)
+		set = ""
 	}
 	if h.CouponCashableAmount != nil {
 		_sql += fmt.Sprintf("%vcoupon_cashable_amount = '%v'", set, *h.CouponCashableAmount)
+		set = ""
 	}
 	if set != "" {
 		return cruder.ErrUpdateNothing

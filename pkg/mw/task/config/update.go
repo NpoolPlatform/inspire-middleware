@@ -25,33 +25,43 @@ func (h *updateHandler) constructSQL() error {
 	_sql := "update task_configs "
 	if h.EventID != nil {
 		_sql += fmt.Sprintf("%vevent_id = '%v'", set, *h.EventID)
+		set = ""
 	}
 	if h.TaskType != nil {
 		_sql += fmt.Sprintf("%vtask_type = '%v'", set, *h.TaskType)
+		set = ""
 	}
 	if h.Name != nil {
 		_sql += fmt.Sprintf("%vname = '%v'", set, *h.Name)
+		set = ""
 	}
 	if h.TaskDesc != nil {
 		_sql += fmt.Sprintf("%vtask_desc = '%v'", set, *h.TaskDesc)
+		set = ""
 	}
 	if h.StepGuide != nil {
 		_sql += fmt.Sprintf("%vstep_guide = '%v'", set, *h.StepGuide)
+		set = ""
 	}
 	if h.RecommendMessage != nil {
 		_sql += fmt.Sprintf("%vrecommend_message = '%v'", set, *h.RecommendMessage)
+		set = ""
 	}
 	if h.Index != nil {
 		_sql += fmt.Sprintf("%vindex = '%v'", set, *h.Index)
+		set = ""
 	}
 	if h.LastTaskID != nil {
 		_sql += fmt.Sprintf("%vlast_task_id = '%v'", set, *h.LastTaskID)
+		set = ""
 	}
 	if h.MaxRewardCount != nil {
 		_sql += fmt.Sprintf("%vmax_reward_count = '%v'", set, *h.MaxRewardCount)
+		set = ""
 	}
 	if h.CooldownSecord != nil {
 		_sql += fmt.Sprintf("%vcooldown_secord = '%v'", set, *h.CooldownSecord)
+		set = ""
 	}
 	if set != "" {
 		return cruder.ErrUpdateNothing

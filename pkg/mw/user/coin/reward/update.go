@@ -23,6 +23,7 @@ func (h *updateHandler) constructSQL() error {
 	_sql += fmt.Sprintf("set updated_at = %v ", now)
 	if h.CoinRewards != nil {
 		_sql += fmt.Sprintf("%vcoin_rewards = '%v'", set, *h.CoinRewards)
+		set = ""
 	}
 	if set != "" {
 		return cruder.ErrUpdateNothing
