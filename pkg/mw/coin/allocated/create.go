@@ -87,7 +87,9 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 		ForUpdate().
 		Only(ctx)
 	if err != nil {
-		return err
+		if !ent.IsNotFound(err) {
+			return err
+		}
 	}
 	coinRewards := decimal.NewFromInt(0)
 
