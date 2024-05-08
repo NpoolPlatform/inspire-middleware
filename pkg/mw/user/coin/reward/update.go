@@ -20,9 +20,8 @@ func (h *updateHandler) constructSQL() error {
 	now := uint32(time.Now().Unix())
 
 	_sql := "update user_coin_rewards "
-	_sql += fmt.Sprintf("set updated_at = %v ", now)
 	if h.CoinRewards != nil {
-		_sql += fmt.Sprintf("%vcoin_rewards = '%v'", set, *h.CoinRewards)
+		_sql += fmt.Sprintf("%vcoin_rewards = '%v', ", set, *h.CoinRewards)
 		set = ""
 	}
 	if set != "" {

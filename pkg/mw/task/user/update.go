@@ -21,15 +21,15 @@ func (h *updateHandler) constructSQL() error {
 
 	_sql := "update task_users "
 	if h.TaskState != nil {
-		_sql += fmt.Sprintf("%vtask_state = '%v'", set, h.TaskState.String())
+		_sql += fmt.Sprintf("%vtask_state = '%v', ", set, h.TaskState.String())
 		set = ""
 	}
 	if h.RewardState != nil {
-		_sql += fmt.Sprintf("%vreward_state = '%v'", set, h.RewardState.String())
+		_sql += fmt.Sprintf("%vreward_state = '%v', ", set, h.RewardState.String())
 		set = ""
 	}
 	if h.RewardInfo != nil {
-		_sql += fmt.Sprintf("%vreward_info = '%v'", set, *h.RewardInfo)
+		_sql += fmt.Sprintf("%vreward_info = '%v', ", set, *h.RewardInfo)
 		set = ""
 	}
 	if set != "" {

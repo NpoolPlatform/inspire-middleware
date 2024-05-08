@@ -21,11 +21,11 @@ func (h *updateHandler) constructSQL() error {
 
 	_sql := "update coin_configs "
 	if h.MaxValue != nil {
-		_sql += fmt.Sprintf("%vmax_value = '%v'", set, *h.MaxValue)
+		_sql += fmt.Sprintf("%vmax_value = '%v', ", set, *h.MaxValue)
 		set = ""
 	}
 	if h.Allocated != nil {
-		_sql += fmt.Sprintf("%vallocated = '%v'", set, *h.Allocated)
+		_sql += fmt.Sprintf("%vallocated = '%v', ", set, *h.Allocated)
 		set = ""
 	}
 	if set != "" {
