@@ -139,6 +139,26 @@ func (ucru *UserCoinRewardUpdate) ClearUserID() *UserCoinRewardUpdate {
 	return ucru
 }
 
+// SetCoinTypeID sets the "coin_type_id" field.
+func (ucru *UserCoinRewardUpdate) SetCoinTypeID(u uuid.UUID) *UserCoinRewardUpdate {
+	ucru.mutation.SetCoinTypeID(u)
+	return ucru
+}
+
+// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
+func (ucru *UserCoinRewardUpdate) SetNillableCoinTypeID(u *uuid.UUID) *UserCoinRewardUpdate {
+	if u != nil {
+		ucru.SetCoinTypeID(*u)
+	}
+	return ucru
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (ucru *UserCoinRewardUpdate) ClearCoinTypeID() *UserCoinRewardUpdate {
+	ucru.mutation.ClearCoinTypeID()
+	return ucru
+}
+
 // SetCoinRewards sets the "coin_rewards" field.
 func (ucru *UserCoinRewardUpdate) SetCoinRewards(d decimal.Decimal) *UserCoinRewardUpdate {
 	ucru.mutation.SetCoinRewards(d)
@@ -332,6 +352,19 @@ func (ucru *UserCoinRewardUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: usercoinreward.FieldUserID,
 		})
 	}
+	if value, ok := ucru.mutation.CoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: usercoinreward.FieldCoinTypeID,
+		})
+	}
+	if ucru.mutation.CoinTypeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: usercoinreward.FieldCoinTypeID,
+		})
+	}
 	if value, ok := ucru.mutation.CoinRewards(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -472,6 +505,26 @@ func (ucruo *UserCoinRewardUpdateOne) SetNillableUserID(u *uuid.UUID) *UserCoinR
 // ClearUserID clears the value of the "user_id" field.
 func (ucruo *UserCoinRewardUpdateOne) ClearUserID() *UserCoinRewardUpdateOne {
 	ucruo.mutation.ClearUserID()
+	return ucruo
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (ucruo *UserCoinRewardUpdateOne) SetCoinTypeID(u uuid.UUID) *UserCoinRewardUpdateOne {
+	ucruo.mutation.SetCoinTypeID(u)
+	return ucruo
+}
+
+// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
+func (ucruo *UserCoinRewardUpdateOne) SetNillableCoinTypeID(u *uuid.UUID) *UserCoinRewardUpdateOne {
+	if u != nil {
+		ucruo.SetCoinTypeID(*u)
+	}
+	return ucruo
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (ucruo *UserCoinRewardUpdateOne) ClearCoinTypeID() *UserCoinRewardUpdateOne {
+	ucruo.mutation.ClearCoinTypeID()
 	return ucruo
 }
 
@@ -696,6 +749,19 @@ func (ucruo *UserCoinRewardUpdateOne) sqlSave(ctx context.Context) (_node *UserC
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: usercoinreward.FieldUserID,
+		})
+	}
+	if value, ok := ucruo.mutation.CoinTypeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: usercoinreward.FieldCoinTypeID,
+		})
+	}
+	if ucruo.mutation.CoinTypeIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: usercoinreward.FieldCoinTypeID,
 		})
 	}
 	if value, ok := ucruo.mutation.CoinRewards(); ok {

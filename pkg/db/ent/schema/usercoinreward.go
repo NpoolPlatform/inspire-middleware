@@ -39,6 +39,12 @@ func (UserCoinReward) Fields() []ent.Field {
 				return uuid.Nil
 			}),
 		field.
+			UUID("coin_type_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.Nil
+			}),
+		field.
 			Other("coin_rewards", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

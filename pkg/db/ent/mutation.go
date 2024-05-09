@@ -26486,6 +26486,7 @@ type UserCoinRewardMutation struct {
 	ent_id        *uuid.UUID
 	app_id        *uuid.UUID
 	user_id       *uuid.UUID
+	coin_type_id  *uuid.UUID
 	coin_rewards  *decimal.Decimal
 	clearedFields map[string]struct{}
 	done          bool
@@ -26899,6 +26900,55 @@ func (m *UserCoinRewardMutation) ResetUserID() {
 	delete(m.clearedFields, usercoinreward.FieldUserID)
 }
 
+// SetCoinTypeID sets the "coin_type_id" field.
+func (m *UserCoinRewardMutation) SetCoinTypeID(u uuid.UUID) {
+	m.coin_type_id = &u
+}
+
+// CoinTypeID returns the value of the "coin_type_id" field in the mutation.
+func (m *UserCoinRewardMutation) CoinTypeID() (r uuid.UUID, exists bool) {
+	v := m.coin_type_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCoinTypeID returns the old "coin_type_id" field's value of the UserCoinReward entity.
+// If the UserCoinReward object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserCoinRewardMutation) OldCoinTypeID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCoinTypeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCoinTypeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCoinTypeID: %w", err)
+	}
+	return oldValue.CoinTypeID, nil
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (m *UserCoinRewardMutation) ClearCoinTypeID() {
+	m.coin_type_id = nil
+	m.clearedFields[usercoinreward.FieldCoinTypeID] = struct{}{}
+}
+
+// CoinTypeIDCleared returns if the "coin_type_id" field was cleared in this mutation.
+func (m *UserCoinRewardMutation) CoinTypeIDCleared() bool {
+	_, ok := m.clearedFields[usercoinreward.FieldCoinTypeID]
+	return ok
+}
+
+// ResetCoinTypeID resets all changes to the "coin_type_id" field.
+func (m *UserCoinRewardMutation) ResetCoinTypeID() {
+	m.coin_type_id = nil
+	delete(m.clearedFields, usercoinreward.FieldCoinTypeID)
+}
+
 // SetCoinRewards sets the "coin_rewards" field.
 func (m *UserCoinRewardMutation) SetCoinRewards(d decimal.Decimal) {
 	m.coin_rewards = &d
@@ -26967,7 +27017,7 @@ func (m *UserCoinRewardMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserCoinRewardMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, usercoinreward.FieldCreatedAt)
 	}
@@ -26985,6 +27035,9 @@ func (m *UserCoinRewardMutation) Fields() []string {
 	}
 	if m.user_id != nil {
 		fields = append(fields, usercoinreward.FieldUserID)
+	}
+	if m.coin_type_id != nil {
+		fields = append(fields, usercoinreward.FieldCoinTypeID)
 	}
 	if m.coin_rewards != nil {
 		fields = append(fields, usercoinreward.FieldCoinRewards)
@@ -27009,6 +27062,8 @@ func (m *UserCoinRewardMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case usercoinreward.FieldUserID:
 		return m.UserID()
+	case usercoinreward.FieldCoinTypeID:
+		return m.CoinTypeID()
 	case usercoinreward.FieldCoinRewards:
 		return m.CoinRewards()
 	}
@@ -27032,6 +27087,8 @@ func (m *UserCoinRewardMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldAppID(ctx)
 	case usercoinreward.FieldUserID:
 		return m.OldUserID(ctx)
+	case usercoinreward.FieldCoinTypeID:
+		return m.OldCoinTypeID(ctx)
 	case usercoinreward.FieldCoinRewards:
 		return m.OldCoinRewards(ctx)
 	}
@@ -27084,6 +27141,13 @@ func (m *UserCoinRewardMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUserID(v)
+		return nil
+	case usercoinreward.FieldCoinTypeID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCoinTypeID(v)
 		return nil
 	case usercoinreward.FieldCoinRewards:
 		v, ok := value.(decimal.Decimal)
@@ -27167,6 +27231,9 @@ func (m *UserCoinRewardMutation) ClearedFields() []string {
 	if m.FieldCleared(usercoinreward.FieldUserID) {
 		fields = append(fields, usercoinreward.FieldUserID)
 	}
+	if m.FieldCleared(usercoinreward.FieldCoinTypeID) {
+		fields = append(fields, usercoinreward.FieldCoinTypeID)
+	}
 	if m.FieldCleared(usercoinreward.FieldCoinRewards) {
 		fields = append(fields, usercoinreward.FieldCoinRewards)
 	}
@@ -27189,6 +27256,9 @@ func (m *UserCoinRewardMutation) ClearField(name string) error {
 		return nil
 	case usercoinreward.FieldUserID:
 		m.ClearUserID()
+		return nil
+	case usercoinreward.FieldCoinTypeID:
+		m.ClearCoinTypeID()
 		return nil
 	case usercoinreward.FieldCoinRewards:
 		m.ClearCoinRewards()
@@ -27218,6 +27288,9 @@ func (m *UserCoinRewardMutation) ResetField(name string) error {
 		return nil
 	case usercoinreward.FieldUserID:
 		m.ResetUserID()
+		return nil
+	case usercoinreward.FieldCoinTypeID:
+		m.ResetCoinTypeID()
 		return nil
 	case usercoinreward.FieldCoinRewards:
 		m.ResetCoinRewards()

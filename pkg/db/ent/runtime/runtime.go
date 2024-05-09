@@ -1524,8 +1524,12 @@ func init() {
 	usercoinrewardDescUserID := usercoinrewardFields[1].Descriptor()
 	// usercoinreward.DefaultUserID holds the default value on creation for the user_id field.
 	usercoinreward.DefaultUserID = usercoinrewardDescUserID.Default.(func() uuid.UUID)
+	// usercoinrewardDescCoinTypeID is the schema descriptor for coin_type_id field.
+	usercoinrewardDescCoinTypeID := usercoinrewardFields[2].Descriptor()
+	// usercoinreward.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	usercoinreward.DefaultCoinTypeID = usercoinrewardDescCoinTypeID.Default.(func() uuid.UUID)
 	// usercoinrewardDescCoinRewards is the schema descriptor for coin_rewards field.
-	usercoinrewardDescCoinRewards := usercoinrewardFields[2].Descriptor()
+	usercoinrewardDescCoinRewards := usercoinrewardFields[3].Descriptor()
 	// usercoinreward.DefaultCoinRewards holds the default value on creation for the coin_rewards field.
 	usercoinreward.DefaultCoinRewards = usercoinrewardDescCoinRewards.Default.(decimal.Decimal)
 	usercredithistoryMixin := schema.UserCreditHistory{}.Mixin()

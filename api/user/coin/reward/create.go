@@ -26,6 +26,7 @@ func (s *Server) CreateUserCoinReward(ctx context.Context, in *npool.CreateUserC
 		reward1.WithEntID(req.EntID, false),
 		reward1.WithAppID(req.AppID, true),
 		reward1.WithUserID(req.UserID, true),
+		reward1.WithCoinTypeID(req.CoinTypeID, true),
 		reward1.WithCoinRewards(req.CoinRewards, true),
 	)
 	if err != nil {

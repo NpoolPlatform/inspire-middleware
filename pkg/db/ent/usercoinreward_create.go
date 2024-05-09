@@ -107,6 +107,20 @@ func (ucrc *UserCoinRewardCreate) SetNillableUserID(u *uuid.UUID) *UserCoinRewar
 	return ucrc
 }
 
+// SetCoinTypeID sets the "coin_type_id" field.
+func (ucrc *UserCoinRewardCreate) SetCoinTypeID(u uuid.UUID) *UserCoinRewardCreate {
+	ucrc.mutation.SetCoinTypeID(u)
+	return ucrc
+}
+
+// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
+func (ucrc *UserCoinRewardCreate) SetNillableCoinTypeID(u *uuid.UUID) *UserCoinRewardCreate {
+	if u != nil {
+		ucrc.SetCoinTypeID(*u)
+	}
+	return ucrc
+}
+
 // SetCoinRewards sets the "coin_rewards" field.
 func (ucrc *UserCoinRewardCreate) SetCoinRewards(d decimal.Decimal) *UserCoinRewardCreate {
 	ucrc.mutation.SetCoinRewards(d)
@@ -248,6 +262,13 @@ func (ucrc *UserCoinRewardCreate) defaults() error {
 		v := usercoinreward.DefaultUserID()
 		ucrc.mutation.SetUserID(v)
 	}
+	if _, ok := ucrc.mutation.CoinTypeID(); !ok {
+		if usercoinreward.DefaultCoinTypeID == nil {
+			return fmt.Errorf("ent: uninitialized usercoinreward.DefaultCoinTypeID (forgotten import ent/runtime?)")
+		}
+		v := usercoinreward.DefaultCoinTypeID()
+		ucrc.mutation.SetCoinTypeID(v)
+	}
 	if _, ok := ucrc.mutation.CoinRewards(); !ok {
 		v := usercoinreward.DefaultCoinRewards
 		ucrc.mutation.SetCoinRewards(v)
@@ -350,6 +371,14 @@ func (ucrc *UserCoinRewardCreate) createSpec() (*UserCoinReward, *sqlgraph.Creat
 			Column: usercoinreward.FieldUserID,
 		})
 		_node.UserID = value
+	}
+	if value, ok := ucrc.mutation.CoinTypeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: usercoinreward.FieldCoinTypeID,
+		})
+		_node.CoinTypeID = value
 	}
 	if value, ok := ucrc.mutation.CoinRewards(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -512,6 +541,24 @@ func (u *UserCoinRewardUpsert) UpdateUserID() *UserCoinRewardUpsert {
 // ClearUserID clears the value of the "user_id" field.
 func (u *UserCoinRewardUpsert) ClearUserID() *UserCoinRewardUpsert {
 	u.SetNull(usercoinreward.FieldUserID)
+	return u
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *UserCoinRewardUpsert) SetCoinTypeID(v uuid.UUID) *UserCoinRewardUpsert {
+	u.Set(usercoinreward.FieldCoinTypeID, v)
+	return u
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *UserCoinRewardUpsert) UpdateCoinTypeID() *UserCoinRewardUpsert {
+	u.SetExcluded(usercoinreward.FieldCoinTypeID)
+	return u
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *UserCoinRewardUpsert) ClearCoinTypeID() *UserCoinRewardUpsert {
+	u.SetNull(usercoinreward.FieldCoinTypeID)
 	return u
 }
 
@@ -699,6 +746,27 @@ func (u *UserCoinRewardUpsertOne) UpdateUserID() *UserCoinRewardUpsertOne {
 func (u *UserCoinRewardUpsertOne) ClearUserID() *UserCoinRewardUpsertOne {
 	return u.Update(func(s *UserCoinRewardUpsert) {
 		s.ClearUserID()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *UserCoinRewardUpsertOne) SetCoinTypeID(v uuid.UUID) *UserCoinRewardUpsertOne {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *UserCoinRewardUpsertOne) UpdateCoinTypeID() *UserCoinRewardUpsertOne {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *UserCoinRewardUpsertOne) ClearCoinTypeID() *UserCoinRewardUpsertOne {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.ClearCoinTypeID()
 	})
 }
 
@@ -1054,6 +1122,27 @@ func (u *UserCoinRewardUpsertBulk) UpdateUserID() *UserCoinRewardUpsertBulk {
 func (u *UserCoinRewardUpsertBulk) ClearUserID() *UserCoinRewardUpsertBulk {
 	return u.Update(func(s *UserCoinRewardUpsert) {
 		s.ClearUserID()
+	})
+}
+
+// SetCoinTypeID sets the "coin_type_id" field.
+func (u *UserCoinRewardUpsertBulk) SetCoinTypeID(v uuid.UUID) *UserCoinRewardUpsertBulk {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.SetCoinTypeID(v)
+	})
+}
+
+// UpdateCoinTypeID sets the "coin_type_id" field to the value that was provided on create.
+func (u *UserCoinRewardUpsertBulk) UpdateCoinTypeID() *UserCoinRewardUpsertBulk {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.UpdateCoinTypeID()
+	})
+}
+
+// ClearCoinTypeID clears the value of the "coin_type_id" field.
+func (u *UserCoinRewardUpsertBulk) ClearCoinTypeID() *UserCoinRewardUpsertBulk {
+	return u.Update(func(s *UserCoinRewardUpsert) {
+		s.ClearCoinTypeID()
 	})
 }
 

@@ -83,7 +83,7 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 		Where(
 			entusercoinreward.AppID(*h.AppID),
 			entusercoinreward.UserID(*h.UserID),
-			entusercoinreward.UserID(*h.UserID),
+			entusercoinreward.CoinTypeID(*h.CoinTypeID),
 			entusercoinreward.DeletedAt(0),
 		).
 		ForUpdate().
@@ -103,6 +103,7 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 				EntID:       &id,
 				AppID:       h.AppID,
 				UserID:      h.UserID,
+				CoinTypeID:  h.CoinTypeID,
 				CoinRewards: h.Value,
 			},
 		).Save(ctx); err != nil {

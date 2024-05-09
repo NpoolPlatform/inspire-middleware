@@ -25,6 +25,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldCoinTypeID holds the string denoting the coin_type_id field in the database.
+	FieldCoinTypeID = "coin_type_id"
 	// FieldCoinRewards holds the string denoting the coin_rewards field in the database.
 	FieldCoinRewards = "coin_rewards"
 	// Table holds the table name of the usercoinreward in the database.
@@ -40,6 +42,7 @@ var Columns = []string{
 	FieldEntID,
 	FieldAppID,
 	FieldUserID,
+	FieldCoinTypeID,
 	FieldCoinRewards,
 }
 
@@ -76,6 +79,8 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID func() uuid.UUID
+	// DefaultCoinTypeID holds the default value on creation for the "coin_type_id" field.
+	DefaultCoinTypeID func() uuid.UUID
 	// DefaultCoinRewards holds the default value on creation for the "coin_rewards" field.
 	DefaultCoinRewards decimal.Decimal
 )

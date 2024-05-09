@@ -602,6 +602,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usercoinreward.FieldEntID:       {Type: field.TypeUUID, Column: usercoinreward.FieldEntID},
 			usercoinreward.FieldAppID:       {Type: field.TypeUUID, Column: usercoinreward.FieldAppID},
 			usercoinreward.FieldUserID:      {Type: field.TypeUUID, Column: usercoinreward.FieldUserID},
+			usercoinreward.FieldCoinTypeID:  {Type: field.TypeUUID, Column: usercoinreward.FieldCoinTypeID},
 			usercoinreward.FieldCoinRewards: {Type: field.TypeOther, Column: usercoinreward.FieldCoinRewards},
 		},
 	}
@@ -2911,6 +2912,11 @@ func (f *UserCoinRewardFilter) WhereAppID(p entql.ValueP) {
 // WhereUserID applies the entql [16]byte predicate on the user_id field.
 func (f *UserCoinRewardFilter) WhereUserID(p entql.ValueP) {
 	f.Where(p.Field(usercoinreward.FieldUserID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *UserCoinRewardFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(usercoinreward.FieldCoinTypeID))
 }
 
 // WhereCoinRewards applies the entql other predicate on the coin_rewards field.

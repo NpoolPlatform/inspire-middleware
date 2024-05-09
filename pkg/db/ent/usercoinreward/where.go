@@ -122,6 +122,13 @@ func UserID(v uuid.UUID) predicate.UserCoinReward {
 	})
 }
 
+// CoinTypeID applies equality check predicate on the "coin_type_id" field. It's identical to CoinTypeIDEQ.
+func CoinTypeID(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
 // CoinRewards applies equality check predicate on the "coin_rewards" field. It's identical to CoinRewardsEQ.
 func CoinRewards(v decimal.Decimal) predicate.UserCoinReward {
 	return predicate.UserCoinReward(func(s *sql.Selector) {
@@ -538,6 +545,84 @@ func UserIDIsNil() predicate.UserCoinReward {
 func UserIDNotNil() predicate.UserCoinReward {
 	return predicate.UserCoinReward(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldUserID)))
+	})
+}
+
+// CoinTypeIDEQ applies the EQ predicate on the "coin_type_id" field.
+func CoinTypeIDEQ(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDNEQ applies the NEQ predicate on the "coin_type_id" field.
+func CoinTypeIDNEQ(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDIn applies the In predicate on the "coin_type_id" field.
+func CoinTypeIDIn(vs ...uuid.UUID) predicate.UserCoinReward {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldCoinTypeID), v...))
+	})
+}
+
+// CoinTypeIDNotIn applies the NotIn predicate on the "coin_type_id" field.
+func CoinTypeIDNotIn(vs ...uuid.UUID) predicate.UserCoinReward {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldCoinTypeID), v...))
+	})
+}
+
+// CoinTypeIDGT applies the GT predicate on the "coin_type_id" field.
+func CoinTypeIDGT(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDGTE applies the GTE predicate on the "coin_type_id" field.
+func CoinTypeIDGTE(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDLT applies the LT predicate on the "coin_type_id" field.
+func CoinTypeIDLT(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDLTE applies the LTE predicate on the "coin_type_id" field.
+func CoinTypeIDLTE(v uuid.UUID) predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCoinTypeID), v))
+	})
+}
+
+// CoinTypeIDIsNil applies the IsNil predicate on the "coin_type_id" field.
+func CoinTypeIDIsNil() predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldCoinTypeID)))
+	})
+}
+
+// CoinTypeIDNotNil applies the NotNil predicate on the "coin_type_id" field.
+func CoinTypeIDNotNil() predicate.UserCoinReward {
+	return predicate.UserCoinReward(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldCoinTypeID)))
 	})
 }
 

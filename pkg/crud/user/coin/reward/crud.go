@@ -15,6 +15,7 @@ type Req struct {
 	EntID       *uuid.UUID
 	AppID       *uuid.UUID
 	UserID      *uuid.UUID
+	CoinTypeID  *uuid.UUID
 	CoinRewards *decimal.Decimal
 	DeletedAt   *uint32
 }
@@ -28,6 +29,9 @@ func CreateSet(c *ent.UserCoinRewardCreate, req *Req) *ent.UserCoinRewardCreate 
 	}
 	if req.UserID != nil {
 		c.SetUserID(*req.UserID)
+	}
+	if req.CoinTypeID != nil {
+		c.SetCoinTypeID(*req.CoinTypeID)
 	}
 	if req.CoinRewards != nil {
 		c.SetCoinRewards(*req.CoinRewards)
@@ -46,11 +50,12 @@ func UpdateSet(u *ent.UserCoinRewardUpdateOne, req *Req) *ent.UserCoinRewardUpda
 }
 
 type Conds struct {
-	EntID  *cruder.Cond
-	EntIDs *cruder.Cond
-	AppID  *cruder.Cond
-	UserID *cruder.Cond
-	ID     *cruder.Cond
+	EntID      *cruder.Cond
+	EntIDs     *cruder.Cond
+	AppID      *cruder.Cond
+	UserID     *cruder.Cond
+	ID         *cruder.Cond
+	CoinTypeID *cruder.Cond
 }
 
 //nolint:funlen
@@ -117,6 +122,18 @@ func SetQueryConds(q *ent.UserCoinRewardQuery, conds *Conds) (*ent.UserCoinRewar
 			q.Where(entusercoinreward.ID(id))
 		case cruder.NEQ:
 			q.Where(entusercoinreward.IDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid usercoinreward field")
+		}
+	}
+	if conds.CoinTypeID != nil {
+		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid cointypeid")
+		}
+		switch conds.CoinTypeID.Op {
+		case cruder.EQ:
+			q.Where(entusercoinreward.CoinTypeID(id))
 		default:
 			return nil, fmt.Errorf("invalid usercoinreward field")
 		}

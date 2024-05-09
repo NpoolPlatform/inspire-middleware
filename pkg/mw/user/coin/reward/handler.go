@@ -94,6 +94,23 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return fmt.Errorf("invalid cointypeid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return err
+		}
+		h.CoinTypeID = &_id
+		return nil
+	}
+}
+
 func WithCoinRewards(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -142,6 +159,15 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.UserID = &cruder.Cond{
 				Op: conds.GetUserID().GetOp(), Val: id,
+			}
+		}
+		if conds.CoinTypeID != nil {
+			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
+			if err != nil {
+				return err
+			}
+			h.Conds.CoinTypeID = &cruder.Cond{
+				Op: conds.GetCoinTypeID().GetOp(), Val: id,
 			}
 		}
 		if conds.EntIDs != nil {

@@ -29,6 +29,8 @@ type UserCoinReward struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
+	// CoinTypeID holds the value of the "coin_type_id" field.
+	CoinTypeID uuid.UUID `json:"coin_type_id,omitempty"`
 	// CoinRewards holds the value of the "coin_rewards" field.
 	CoinRewards decimal.Decimal `json:"coin_rewards,omitempty"`
 }
@@ -42,7 +44,7 @@ func (*UserCoinReward) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(decimal.Decimal)
 		case usercoinreward.FieldID, usercoinreward.FieldCreatedAt, usercoinreward.FieldUpdatedAt, usercoinreward.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case usercoinreward.FieldEntID, usercoinreward.FieldAppID, usercoinreward.FieldUserID:
+		case usercoinreward.FieldEntID, usercoinreward.FieldAppID, usercoinreward.FieldUserID, usercoinreward.FieldCoinTypeID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type UserCoinReward", columns[i])
@@ -101,6 +103,12 @@ func (ucr *UserCoinReward) assignValues(columns []string, values []interface{}) 
 			} else if value != nil {
 				ucr.UserID = *value
 			}
+		case usercoinreward.FieldCoinTypeID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field coin_type_id", values[i])
+			} else if value != nil {
+				ucr.CoinTypeID = *value
+			}
 		case usercoinreward.FieldCoinRewards:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field coin_rewards", values[i])
@@ -152,6 +160,9 @@ func (ucr *UserCoinReward) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", ucr.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("coin_type_id=")
+	builder.WriteString(fmt.Sprintf("%v", ucr.CoinTypeID))
 	builder.WriteString(", ")
 	builder.WriteString("coin_rewards=")
 	builder.WriteString(fmt.Sprintf("%v", ucr.CoinRewards))
