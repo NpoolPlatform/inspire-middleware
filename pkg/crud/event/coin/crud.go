@@ -147,7 +147,7 @@ func SetQueryConds(q *ent.EventCoinQuery, conds *Conds) (*ent.EventCoinQuery, er
 		}
 		switch conds.EventIDs.Op {
 		case cruder.IN:
-			q.Where(enteventcoin.EntIDIn(ids...))
+			q.Where(enteventcoin.EventIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid eventcoin field")
 		}

@@ -32,7 +32,9 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "task_id"
 	_sql += comma + "event_id"
 	_sql += comma + "task_state"
-	_sql += comma + "reward_info"
+	if h.RewardInfo != nil {
+		_sql += comma + "reward_info"
+	}
 	_sql += comma + "reward_state"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
@@ -50,7 +52,9 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as task_id", comma, *h.TaskID)
 	_sql += fmt.Sprintf("%v'%v' as event_id", comma, *h.EventID)
 	_sql += fmt.Sprintf("%v'%v' as task_state", comma, h.TaskState.String())
-	_sql += fmt.Sprintf("%v'%v' as reward_info", comma, *h.RewardInfo)
+	if h.RewardInfo != nil {
+		_sql += fmt.Sprintf("%v'%v' as reward_info", comma, *h.RewardInfo)
+	}
 	_sql += fmt.Sprintf("%v'%v' as reward_state", comma, h.RewardState.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)

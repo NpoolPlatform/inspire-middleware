@@ -183,6 +183,8 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_AffiliatePurchase:
 			fallthrough //nolint
 		case basetypes.UsedFor_SimulateOrderProfit:
+			fallthrough //nolint
+		case basetypes.UsedFor_NewLogin:
 		// Not implemented
 		case basetypes.UsedFor_Signin:
 			fallthrough //nolint

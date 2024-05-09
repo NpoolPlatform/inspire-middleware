@@ -119,7 +119,6 @@ func (h *queryHandler) queryEventCoins(ctx context.Context) error {
 	handler.Limit = constant.DefaultRowLimit
 	handler.Offset = 0
 	handler.Conds = &eventcoincrud.Conds{
-		AppID:    &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
 	}
 
@@ -133,20 +132,22 @@ func (h *queryHandler) queryEventCoins(ctx context.Context) error {
 			break
 		}
 		coins = append(coins, _coins...)
-		h.Offset += h.Limit
+		handler.Offset += handler.Limit
 	}
 
 	coinMap := map[string][]*eventcoinmw.EventCoin{}
 	for _, coin := range coins {
-		_coins, ok := coinMap[coin.EventID]
+		itemKey := fmt.Sprintf("%v_%v", coin.EventID, coin.AppID)
+		_coins, ok := coinMap[itemKey]
 		if ok {
-			coinMap[coin.EventID] = append(_coins, coin)
+			coinMap[itemKey] = append(_coins, coin)
 			continue
 		}
-		coinMap[coin.EventID] = []*eventcoinmw.EventCoin{coin}
+		coinMap[itemKey] = []*eventcoinmw.EventCoin{coin}
 	}
 	for _, info := range h.infos {
-		_coins, ok := coinMap[info.EntID]
+		itemKey := fmt.Sprintf("%v_%v", info.EntID, info.AppID)
+		_coins, ok := coinMap[itemKey]
 		if ok {
 			info.Coins = _coins
 		}
@@ -167,7 +168,6 @@ func (h *queryHandler) queryEventCoupons(ctx context.Context) error {
 	handler.Limit = constant.DefaultRowLimit
 	handler.Offset = 0
 	handler.Conds = &eventcouponcrud.Conds{
-		AppID:    &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
 		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
 	}
 
@@ -181,20 +181,22 @@ func (h *queryHandler) queryEventCoupons(ctx context.Context) error {
 			break
 		}
 		coupons = append(coupons, _coupons...)
-		h.Offset += h.Limit
+		handler.Offset += handler.Limit
 	}
 
 	couponMap := map[string][]string{}
 	for _, coupon := range coupons {
-		_coupons, ok := couponMap[coupon.EventID]
+		itemKey := fmt.Sprintf("%v_%v", coupon.EventID, coupon.AppID)
+		_coupons, ok := couponMap[itemKey]
 		if ok {
-			couponMap[coupon.EventID] = append(_coupons, coupon.CouponID)
+			couponMap[itemKey] = append(_coupons, coupon.CouponID)
 			continue
 		}
-		couponMap[coupon.EventID] = []string{coupon.CouponID}
+		couponMap[itemKey] = []string{coupon.CouponID}
 	}
 	for _, info := range h.infos {
-		_coupons, ok := couponMap[info.EntID]
+		itemKey := fmt.Sprintf("%v_%v", info.EntID, info.AppID)
+		_coupons, ok := couponMap[itemKey]
 		if ok {
 			info.CouponIDs = _coupons
 		}

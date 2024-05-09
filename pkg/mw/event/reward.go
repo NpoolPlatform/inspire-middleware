@@ -2,10 +2,11 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	coinallocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/allocated"
 	coinconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/config"
@@ -22,6 +23,8 @@ import (
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	taskconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/config"
+	taskusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/user"
+	userrewardmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/user/reward"
 	"github.com/google/uuid"
 
 	"github.com/shopspring/decimal"
@@ -42,10 +45,10 @@ func (h *rewardHandler) condGood() error {
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
 		if h.GoodID == nil {
-			return fmt.Errorf("need goodid")
+			return wlog.Errorf("need goodid")
 		}
 		if h.AppGoodID == nil {
-			return fmt.Errorf("need appgoodid")
+			return wlog.Errorf("need appgoodid")
 		}
 		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
 		h.Conds.AppGoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.AppGoodID}
@@ -116,7 +119,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			return err
 		}
 		if _coupon == nil {
-			return fmt.Errorf("invalid coupon")
+			return wlog.Errorf("invalid coupon")
 		}
 
 		now := time.Now().Unix()
@@ -178,7 +181,7 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 			return err
 		}
 		if _coinConfig == nil {
-			return fmt.Errorf("invalid coinconfig")
+			return wlog.Errorf("invalid coinconfig")
 		}
 		if _coinConfig.MaxValue == _coinConfig.Allocated {
 			continue
@@ -209,6 +212,7 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 		if err != nil {
 			return err
 		}
+
 		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
 		if err != nil {
 			return err
@@ -225,11 +229,10 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 			coinallocated1.WithUserID(&userID, true),
 			coinallocated1.WithCoinConfigID(&_coinConfig.EntID, true),
 			coinallocated1.WithCoinTypeID(&_coinConfig.CoinTypeID, true),
-			coinallocated1.WithUserID(&_coinConfig.EntID, true),
 			coinallocated1.WithValue(&coinsStr, true),
 		)
 		if err != nil {
-			return err
+			return wlog.Errorf("handler coinallocated1: %v", err)
 		}
 
 		if err := handler2.CreateCoinAllocated(ctx); err != nil {
@@ -355,8 +358,12 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error {
 	handler, err := taskconfig1.NewHandler(
 		ctx,
-		taskconfig1.WithAppID(&ev.AppID, true),
-		taskconfig1.WithEventID(&ev.EntID, true),
+		taskconfig1.WithConds(&taskconfigmwpb.Conds{
+			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+			EventID: &basetypes.StringVal{Op: cruder.EQ, Value: ev.EntID},
+		}),
+		taskconfig1.WithOffset(0),
+		taskconfig1.WithLimit(constant.DefaultRowLimit),
 	)
 	if err != nil {
 		return err
@@ -366,7 +373,7 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 		return err
 	}
 	if len(configs) == 0 {
-		return fmt.Errorf("invalid taskconfig")
+		return wlog.Errorf("invalid taskconfig")
 	}
 	h.taskConfig = configs[0]
 	// check user has finished this task
@@ -392,23 +399,27 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 	}
 	// check user has over the max finish times
 	if len(taskUsers) >= int(configs[0].MaxRewardCount) {
-		return fmt.Errorf("invalid maxrewardcount")
+		return wlog.Errorf("invalid maxrewardcount")
 	}
 
 	// check user next task startat
 	now := uint32(time.Now().Unix())
 	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecord > now {
-		return fmt.Errorf("not the right time")
+		return wlog.Errorf("not the right time")
 	}
 	// check last task exist and finish status
 	if configs[0].LastTaskID != uuid.Nil.String() {
 		done := types.TaskState_Done
 		handler3, err := taskuser1.NewHandler(
 			ctx,
-			taskuser1.WithAppID(&ev.AppID, true),
-			taskuser1.WithUserID(&userID, true),
-			taskuser1.WithTaskID(&configs[0].LastTaskID, true),
-			taskuser1.WithTaskState(&done, true),
+			taskuser1.WithConds(&taskusermwpb.Conds{
+				AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+				UserID:    &basetypes.StringVal{Op: cruder.EQ, Value: userID},
+				TaskID:    &basetypes.StringVal{Op: cruder.EQ, Value: configs[0].LastTaskID},
+				TaskState: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(done)},
+			}),
+			taskuser1.WithOffset(0),
+			taskuser1.WithLimit(constant.DefaultRowLimit),
 		)
 		if err != nil {
 			return err
@@ -418,7 +429,7 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 			return err
 		}
 		if len(lastTaskUsers) == 0 {
-			return fmt.Errorf("invalid last task")
+			return wlog.Errorf("invalid last task")
 		}
 	}
 
@@ -446,7 +457,6 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 	h.coinPreUSDAmount = decimal.NewFromInt(0)
 	h.couponAmount = decimal.NewFromInt(0)
 	h.couponCashableAmount = decimal.NewFromInt(0)
-
 	credits, err := h.calculateCredits(ctx, ev)
 	if err != nil {
 		return nil, err
@@ -460,7 +470,6 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 			"Error", err,
 		)
 	}
-
 	if err := h.allocateCoins(ctx, ev); err != nil {
 		logger.Sugar().Warnw(
 			"rewardTask allocateCoins",
@@ -477,6 +486,7 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 			Credits: credits.String(),
 		})
 	}
+	h.addCredits = credits
 
 	if err := h.createTaskUser(ctx, ev); err != nil {
 		return nil, err
@@ -484,7 +494,6 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 	if err := h.createOrUpdateUserReward(ctx, ev); err != nil {
 		return nil, err
 	}
-
 	return _credits, nil
 }
 
@@ -514,8 +523,12 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 	userID := h.UserID.String()
 	handler, err := userreward1.NewHandler(
 		ctx,
-		userreward1.WithAppID(&ev.AppID, true),
-		userreward1.WithUserID(&userID, true),
+		userreward1.WithConds(&userrewardmwpb.Conds{
+			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: userID},
+		}),
+		userreward1.WithOffset(0),
+		userreward1.WithLimit(constant.DefaultRowLimit),
 	)
 	if err != nil {
 		return err
@@ -590,13 +603,13 @@ func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 		fallthrough //nolint
 	case basetypes.UsedFor_SimulateOrderProfit:
 		return handler.rewardSelf(ctx)
-	case basetypes.UsedFor_KYCApproved:
+	case basetypes.UsedFor_NewLogin:
 		return handler.rewardTask(ctx)
 	case basetypes.UsedFor_AffiliateSignup:
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
 		return handler.rewardAffiliate(ctx)
 	default:
-		return nil, fmt.Errorf("not implemented")
+		return nil, wlog.Errorf("not implemented")
 	}
 }

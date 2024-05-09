@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	coinconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coin/config"
 	usercoinrewardcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/user/coin/reward"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcoinconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	entusercoinreward "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
 	"github.com/shopspring/decimal"
 
@@ -121,6 +123,36 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 	return nil
 }
 
+func (h *createHandler) updateCoinAllocated(ctx context.Context, tx *ent.Tx) error {
+	info, err := tx.
+		CoinConfig.
+		Query().
+		Where(
+			entcoinconfig.EntID(*h.CoinConfigID),
+			entcoinconfig.DeletedAt(0),
+		).
+		ForUpdate().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+	allocated, err := decimal.NewFromString(info.Allocated.String())
+	if err != nil {
+		return err
+	}
+
+	allocated = allocated.Add(*h.Value)
+	if _, err := coinconfigcrud.UpdateSet(
+		info.Update(),
+		&coinconfigcrud.Req{
+			Allocated: &allocated,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *Handler) CreateCoinAllocated(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
@@ -131,6 +163,9 @@ func (h *Handler) CreateCoinAllocated(ctx context.Context) error {
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createOrUpdateUserCoinReward(ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.updateCoinAllocated(ctx, tx); err != nil {
 			return err
 		}
 		return handler.createCoinAllocated(_ctx, tx)
