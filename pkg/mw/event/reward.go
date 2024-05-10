@@ -20,6 +20,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	coinallocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	taskconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/config"
@@ -166,7 +167,9 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 	return nil
 }
 
-func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) error {
+//nolint:funlen
+func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*coinallocatedmwpb.CoinAllocated, error) {
+	coinRewardIDs := []string{}
 	for _, eventCoin := range ev.Coins {
 		_id := eventCoin.CoinConfigID
 		handler, err := coinconfig1.NewHandler(
@@ -174,14 +177,14 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 			coinconfig1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		_coinConfig, err := handler.GetCoinConfig(ctx)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if _coinConfig == nil {
-			return wlog.Errorf("invalid coinconfig")
+			return nil, wlog.Errorf("invalid coinconfig")
 		}
 		if _coinConfig.MaxValue == _coinConfig.Allocated {
 			continue
@@ -191,11 +194,11 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 
 		coinValue, err := decimal.NewFromString(eventCoin.CoinValue)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		amount := decimal.NewFromInt(0)
 		if h.Amount != nil {
@@ -210,12 +213,12 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 		}
 		allocated, err := decimal.NewFromString(_coinConfig.Allocated)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if coins.Add(allocated).Cmp(maxValue) >= 0 {
@@ -223,8 +226,10 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 		}
 		coinsStr := coins.String()
 
+		id := uuid.NewString()
 		handler2, err := coinallocated1.NewHandler(
 			ctx,
+			coinallocated1.WithEntID(&id, true),
 			coinallocated1.WithAppID(&_coinConfig.AppID, true),
 			coinallocated1.WithUserID(&userID, true),
 			coinallocated1.WithCoinConfigID(&_coinConfig.EntID, true),
@@ -232,18 +237,36 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) erro
 			coinallocated1.WithValue(&coinsStr, true),
 		)
 		if err != nil {
-			return wlog.Errorf("handler coinallocated1: %v", err)
+			return nil, wlog.Errorf("handler coinallocated1: %v", err)
 		}
+		coinRewardIDs = append(coinRewardIDs, id)
 
 		if err := handler2.CreateCoinAllocated(ctx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	handler3, err := coinallocated1.NewHandler(
+		ctx,
+		coinallocated1.WithConds(&coinallocatedmwpb.Conds{
+			EntIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: coinRewardIDs},
+		},
+		),
+		coinallocated1.WithOffset(0),
+		coinallocated1.WithLimit(int32(len(coinRewardIDs))),
+	)
+	if err != nil {
+		return nil, err
+	}
+	coinRewards, _, err := handler3.GetCoinAllocateds(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return coinRewards, nil
 }
 
-func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error) {
+func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
 		return nil, err
@@ -279,10 +302,15 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 		})
 	}
 
-	return _credits, nil
+	_rewards := &npool.Reward{
+		Credits:     _credits,
+		CoinRewards: []*npool.CoinReward{},
+	}
+
+	return _rewards, nil
 }
 
-func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, error) {
+func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, error) {
 	handler, err := registration1.NewHandler(ctx)
 	if err != nil {
 		return nil, err
@@ -339,20 +367,25 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 			Handler: handler,
 		}
 
-		credit, err := _handler.rewardSelf(ctx)
+		reward, err := _handler.rewardSelf(ctx)
 		if err != nil {
 			return nil, err
 		}
 
 		j--
-		if len(credit) == 0 {
+		if len(reward.Credits) == 0 {
 			continue
 		}
 
-		credits = append(credits, credit...)
+		credits = append(credits, reward.Credits...)
 	}
 
-	return credits, nil
+	_rewards := &npool.Reward{
+		Credits:     credits,
+		CoinRewards: []*npool.CoinReward{},
+	}
+
+	return _rewards, nil
 }
 
 func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error {
@@ -380,9 +413,13 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 	userID := h.UserID.String()
 	handler2, err := taskuser1.NewHandler(
 		ctx,
-		taskuser1.WithAppID(&ev.AppID, true),
-		taskuser1.WithUserID(&userID, true),
-		taskuser1.WithTaskID(&configs[0].EntID, true),
+		taskuser1.WithConds(&taskusermwpb.Conds{
+			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: userID},
+			TaskID: &basetypes.StringVal{Op: cruder.EQ, Value: configs[0].EntID},
+		}),
+		taskuser1.WithOffset(0),
+		taskuser1.WithLimit(int32(configs[0].MaxRewardCount+1)),
 	)
 	if err != nil {
 		return err
@@ -436,7 +473,7 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 	return nil
 }
 
-func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error) {
+func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
 		return nil, err
@@ -470,7 +507,8 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 			"Error", err,
 		)
 	}
-	if err := h.allocateCoins(ctx, ev); err != nil {
+	allocateCoinRewards, err := h.allocateCoins(ctx, ev)
+	if err != nil {
 		logger.Sugar().Warnw(
 			"rewardTask allocateCoins",
 			"Event", ev,
@@ -494,7 +532,24 @@ func (h *rewardHandler) rewardTask(ctx context.Context) ([]*npool.Credit, error)
 	if err := h.createOrUpdateUserReward(ctx, ev); err != nil {
 		return nil, err
 	}
-	return _credits, nil
+
+	coinRewards := []*npool.CoinReward{}
+	for _, coin := range allocateCoinRewards {
+		coinReward := npool.CoinReward{
+			AppID:       coin.AppID,
+			UserID:      coin.UserID,
+			CoinTypeID:  coin.CoinTypeID,
+			CoinRewards: coin.Value,
+		}
+		coinRewards = append(coinRewards, &coinReward)
+	}
+
+	_rewards := &npool.Reward{
+		Credits:     _credits,
+		CoinRewards: coinRewards,
+	}
+
+	return _rewards, nil
 }
 
 func (h *rewardHandler) createTaskUser(ctx context.Context, ev *npool.Event) error {
@@ -562,7 +617,7 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 	if err != nil {
 		return err
 	}
-	actionCredits := oldActionCredits.Add(*h.Credits).String()
+	actionCredits := oldActionCredits.Add(h.addCredits).String()
 
 	oldCouponAmount, err := decimal.NewFromString(userrewards[0].CouponAmount)
 	if err != nil {
@@ -585,13 +640,13 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 	if err != nil {
 		return err
 	}
-	if err := handler2.CreateUserReward(ctx); err != nil {
+	if err := handler2.UpdateUserReward(ctx); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
+func (h *Handler) RewardEvent(ctx context.Context) (*npool.Reward, error) {
 	handler := &rewardHandler{
 		Handler: h,
 	}
@@ -604,6 +659,8 @@ func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 	case basetypes.UsedFor_SimulateOrderProfit:
 		return handler.rewardSelf(ctx)
 	case basetypes.UsedFor_NewLogin:
+		fallthrough //nolint
+	case basetypes.UsedFor_SetWithdrawAddress:
 		return handler.rewardTask(ctx)
 	case basetypes.UsedFor_AffiliateSignup:
 		fallthrough //nolint

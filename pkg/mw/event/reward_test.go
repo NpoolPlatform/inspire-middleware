@@ -42,8 +42,19 @@ var (
 		EventType:      basetypes.UsedFor_NewLogin,
 		EventTypeStr:   basetypes.UsedFor_NewLogin.String(),
 		CouponIDs:      []string{eventcoupon.EntID},
-		Credits:        decimal.RequireFromString("12.25").String(),
+		Credits:        decimal.RequireFromString("100").String(),
 		CreditsPerUSD:  decimal.RequireFromString("12.25").String(),
+		MaxConsecutive: 1,
+		InviterLayers:  2,
+	}
+	eventRet2 = npool.Event{
+		EntID:          uuid.NewString(),
+		AppID:          appID,
+		EventType:      basetypes.UsedFor_SetWithdrawAddress,
+		EventTypeStr:   basetypes.UsedFor_SetWithdrawAddress.String(),
+		CouponIDs:      []string{eventcoupon.EntID},
+		Credits:        decimal.RequireFromString("10").String(),
+		CreditsPerUSD:  decimal.RequireFromString("1.25").String(),
 		MaxConsecutive: 1,
 		InviterLayers:  2,
 	}
@@ -71,8 +82,23 @@ var (
 		RecommendMessage: uuid.NewString(),
 		Index:            uint32(1),
 		LastTaskID:       uuid.Nil.String(),
-		MaxRewardCount:   uint32(10),
-		CooldownSecord:   uint32(10),
+		MaxRewardCount:   uint32(1),
+		CooldownSecord:   uint32(120),
+		TaskType:         types.TaskType_BaseTask,
+		TaskTypeStr:      types.TaskType_BaseTask.String(),
+	}
+	taskConfig2 = taskconfigmwpb.TaskConfig{
+		EntID:            uuid.NewString(),
+		AppID:            appID,
+		EventID:          eventRet2.EntID,
+		Name:             uuid.NewString(),
+		TaskDesc:         uuid.NewString(),
+		StepGuide:        uuid.NewString(),
+		RecommendMessage: uuid.NewString(),
+		Index:            uint32(2),
+		LastTaskID:       taskConfig.EntID,
+		MaxRewardCount:   uint32(2),
+		CooldownSecord:   uint32(120),
 		TaskType:         types.TaskType_BaseTask,
 		TaskTypeStr:      types.TaskType_BaseTask.String(),
 	}
@@ -103,7 +129,7 @@ var (
 		EventID:      eventRet.EntID,
 		CoinConfigID: coinConfig.EntID,
 		CoinValue:    decimal.RequireFromString("5").String(),
-		CoinPreUSD:   decimal.RequireFromString("1.1").String(),
+		CoinPreUSD:   decimal.RequireFromString("0.1").String(),
 	}
 	eventCoinReq = eventcoinmwpb.EventCoinReq{
 		EntID:        &eventCoin.EntID,
@@ -119,7 +145,7 @@ var (
 		EventID:      eventRet.EntID,
 		CoinConfigID: coinConfig2.EntID,
 		CoinValue:    decimal.RequireFromString("10").String(),
-		CoinPreUSD:   decimal.RequireFromString("1.2").String(),
+		CoinPreUSD:   decimal.RequireFromString("0.15").String(),
 	}
 	eventCoinReq2 = eventcoinmwpb.EventCoinReq{
 		EntID:        &eventCoin2.EntID,
@@ -259,15 +285,72 @@ func resetup(t *testing.T) func(*testing.T) {
 		handler.ID = &info2.ID
 	}
 
+	h5, err := taskconfig1.NewHandler(
+		context.Background(),
+		taskconfig1.WithEntID(&taskConfig2.EntID, true),
+		taskconfig1.WithAppID(&taskConfig2.AppID, true),
+		taskconfig1.WithEventID(&taskConfig2.EventID, true),
+		taskconfig1.WithName(&taskConfig2.Name, true),
+		taskconfig1.WithTaskDesc(&taskConfig2.TaskDesc, true),
+		taskconfig1.WithStepGuide(&taskConfig2.StepGuide, true),
+		taskconfig1.WithRecommendMessage(&taskConfig2.RecommendMessage, true),
+		taskconfig1.WithIndex(&taskConfig2.Index, true),
+		taskconfig1.WithLastTaskID(&taskConfig2.LastTaskID, true),
+		taskconfig1.WithMaxRewardCount(&taskConfig2.MaxRewardCount, true),
+		taskconfig1.WithCooldownSecord(&taskConfig2.CooldownSecord, true),
+		taskconfig1.WithTaskType(&taskConfig2.TaskType, true),
+	)
+	assert.Nil(t, err)
+
+	err = h5.CreateTaskConfig(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h5.GetTaskConfig(context.Background())
+		if assert.Nil(t, err) {
+			taskConfig2.ID = info.ID
+			taskConfig2.CreatedAt = info.CreatedAt
+			taskConfig2.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &taskConfig2, info)
+			h5.ID = &info.ID
+		}
+	}
+
+	handler2, err := NewHandler(
+		context.Background(),
+		WithEntID(&eventRet2.EntID, true),
+		WithAppID(&eventRet2.AppID, true),
+		WithEventType(&eventRet2.EventType, true),
+		WithCouponIDs(eventRet2.CouponIDs, true),
+		WithCredits(&eventRet2.Credits, true),
+		WithCreditsPerUSD(&eventRet2.CreditsPerUSD, true),
+		WithMaxConsecutive(&eventRet2.MaxConsecutive, true),
+		WithInviterLayers(&eventRet2.InviterLayers, true),
+		WithCoins(coins),
+	)
+	assert.Nil(t, err)
+
+	info3, err := handler2.CreateEvent(context.Background())
+	if assert.Nil(t, err) {
+		eventRet2.ID = info3.ID
+		eventRet2.CreatedAt = info3.CreatedAt
+		eventRet2.UpdatedAt = info3.UpdatedAt
+		eventRet2.CouponIDsStr = info3.CouponIDsStr
+		eventRet2.Coins = info3.Coins
+		assert.Equal(t, info3, &eventRet2)
+		handler2.ID = &info3.ID
+	}
+
 	return func(*testing.T) {
 		_, _ = h1.DeleteCoupon(context.Background())
 		_ = h2.DeleteTaskConfig(context.Background())
 		_ = h3.DeleteCoinConfig(context.Background())
 		_ = h4.DeleteCoinConfig(context.Background())
+		_ = h5.DeleteTaskConfig(context.Background())
 		_, _ = handler.DeleteEvent(context.Background())
+		_, _ = handler2.DeleteEvent(context.Background())
 	}
 }
 
+//nolint:dupl
 func rewardEvent(t *testing.T) {
 	userID := uuid.NewString()
 	eventType := basetypes.UsedFor_NewLogin
@@ -283,9 +366,31 @@ func rewardEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	credit, err := handler.RewardEvent(context.Background())
+	reward, err := handler.RewardEvent(context.Background())
 	if assert.Nil(t, err) {
-		fmt.Println("credit: ", credit)
+		fmt.Println("reward: ", reward)
+	}
+}
+
+//nolint:dupl
+func rewardEvent2(t *testing.T) {
+	userID := uuid.NewString()
+	eventType := basetypes.UsedFor_SetWithdrawAddress
+	consecutive := uint32(1)
+	amount := decimal.NewFromInt(1).String()
+	handler, err := NewHandler(
+		context.Background(),
+		WithAppID(&eventRet2.AppID, true),
+		WithUserID(&userID, true),
+		WithEventType(&eventType, true),
+		WithConsecutive(&consecutive, true),
+		WithAmount(&amount, false),
+	)
+	assert.Nil(t, err)
+
+	reward, err := handler.RewardEvent(context.Background())
+	if assert.Nil(t, err) {
+		fmt.Println("reward: ", reward)
 	}
 }
 
@@ -298,4 +403,5 @@ func TestReward(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("rewardEvent", rewardEvent)
+	t.Run("rewardEvent2", rewardEvent2)
 }

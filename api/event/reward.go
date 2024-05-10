@@ -31,7 +31,7 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 		return &npool.RewardEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, err := handler.RewardEvent(ctx)
+	info, err := handler.RewardEvent(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"RewardEvent",
@@ -42,6 +42,6 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 	}
 
 	return &npool.RewardEventResponse{
-		Infos: infos,
+		Info: info,
 	}, nil
 }

@@ -35,11 +35,11 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 	if err != nil {
 		return err
 	}
-	credits, err := handler.RewardEvent(ctx)
+	reward, err := handler.RewardEvent(ctx)
 	if err != nil {
 		return err
 	}
-	if len(credits) == 0 {
+	if len(reward.Credits) == 0 {
 		return nil
 	}
 	if err := publisher.Update(
@@ -47,7 +47,7 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		nil,
 		nil,
 		nil,
-		credits,
+		reward.Credits,
 	); err != nil {
 		return err
 	}

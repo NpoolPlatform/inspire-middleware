@@ -150,7 +150,7 @@ func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) ([]*npool.C
 			return nil, err
 		}
 
-		return resp.Infos, nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, err

@@ -184,6 +184,8 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 			fallthrough //nolint
 		case basetypes.UsedFor_SimulateOrderProfit:
 			fallthrough //nolint
+		case basetypes.UsedFor_SetWithdrawAddress:
+			fallthrough //nolint
 		case basetypes.UsedFor_NewLogin:
 		// Not implemented
 		case basetypes.UsedFor_Signin:
@@ -191,8 +193,6 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_Update:
 			fallthrough //nolint
 		case basetypes.UsedFor_Contact:
-			fallthrough //nolint
-		case basetypes.UsedFor_SetWithdrawAddress:
 			fallthrough //nolint
 		case basetypes.UsedFor_Withdraw:
 			fallthrough //nolint

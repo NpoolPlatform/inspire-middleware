@@ -52,10 +52,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
-	_sql += "where not exists ("
-	_sql += "select 1 from user_credit_histories "
-	_sql += fmt.Sprintf("where app_id='%v' and user_id='%v'", *h.AppID, *h.UserID)
-	_sql += " limit 1)"
+
 	h.sql = _sql
 }
 
