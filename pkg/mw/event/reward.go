@@ -72,7 +72,23 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 	return info, nil
 }
 
-func (h *rewardHandler) calculateCredits(ctx context.Context, ev *npool.Event) (decimal.Decimal, error) {
+func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, error) {
+	credits, err := decimal.NewFromString(ev.Credits)
+	if err != nil {
+		return decimal.NewFromInt(0), err
+	}
+
+	_credits, err := decimal.NewFromString(ev.CreditsPerUSD)
+	if err != nil {
+		return decimal.NewFromInt(0), err
+	}
+
+	credits = credits.Add(_credits.Mul(*h.Amount))
+
+	return credits, nil
+}
+
+func (h *rewardHandler) allocatedCredits(ctx context.Context, ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
 		return decimal.NewFromInt(0), err
@@ -266,6 +282,78 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 	return coinRewards, nil
 }
 
+func (h *rewardHandler) calculateCoinRewards(ctx context.Context, ev *npool.Event) ([]*coinallocatedmwpb.CoinAllocated, error) {
+	coinRewards := []*coinallocatedmwpb.CoinAllocated{}
+	for _, eventCoin := range ev.Coins {
+		_id := eventCoin.CoinConfigID
+		handler, err := coinconfig1.NewHandler(
+			ctx,
+			coinconfig1.WithEntID(&_id, true),
+		)
+		if err != nil {
+			return nil, err
+		}
+		_coinConfig, err := handler.GetCoinConfig(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if _coinConfig == nil {
+			return nil, wlog.Errorf("invalid coinconfig")
+		}
+		if _coinConfig.MaxValue == _coinConfig.Allocated {
+			continue
+		}
+
+		userID := h.UserID.String()
+
+		coinValue, err := decimal.NewFromString(eventCoin.CoinValue)
+		if err != nil {
+			return nil, err
+		}
+		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
+		if err != nil {
+			return nil, err
+		}
+		amount := decimal.NewFromInt(0)
+		if h.Amount != nil {
+			amount = *h.Amount
+		}
+		coinPreUSDAmount := coinPreUSD.Mul(amount)
+		h.coinPreUSDAmount = coinPreUSDAmount
+
+		coins := coinValue.Add(coinPreUSDAmount)
+		if coins.Cmp(decimal.NewFromInt(0)) == 0 {
+			continue
+		}
+		allocated, err := decimal.NewFromString(_coinConfig.Allocated)
+		if err != nil {
+			return nil, err
+		}
+
+		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
+		if err != nil {
+			return nil, err
+		}
+
+		if coins.Add(allocated).Cmp(maxValue) >= 0 {
+			continue
+		}
+		coinsStr := coins.String()
+
+		id := uuid.NewString()
+		coinRewards = append(coinRewards, &coinallocatedmwpb.CoinAllocated{
+			EntID:        id,
+			AppID:        _coinConfig.AppID,
+			UserID:       userID,
+			CoinConfigID: _coinConfig.EntID,
+			CoinTypeID:   _coinConfig.CoinTypeID,
+			Value:        coinsStr,
+		})
+	}
+
+	return coinRewards, nil
+}
+
 func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
@@ -279,7 +367,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 		return nil, nil
 	}
 
-	credits, err := h.calculateCredits(ctx, ev)
+	credits, err := h.allocatedCredits(ctx, ev)
 	if err != nil {
 		return nil, err
 	}
@@ -494,7 +582,7 @@ func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	h.coinPreUSDAmount = decimal.NewFromInt(0)
 	h.couponAmount = decimal.NewFromInt(0)
 	h.couponCashableAmount = decimal.NewFromInt(0)
-	credits, err := h.calculateCredits(ctx, ev)
+	credits, err := h.allocatedCredits(ctx, ev)
 	if err != nil {
 		return nil, err
 	}
@@ -667,7 +755,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	h.coinPreUSDAmount = decimal.NewFromInt(0)
 	h.couponAmount = decimal.NewFromInt(0)
 	h.couponCashableAmount = decimal.NewFromInt(0)
-	credits, err := h.calculateCredits(ctx, ev)
+	credits, err := h.calculateCredits(ev)
 	if err != nil {
 		return nil, err
 	}
@@ -681,10 +769,10 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	}
 	h.addCredits = credits
 
-	allocateCoinRewards, err := h.allocateCoins(ctx, ev)
+	allocateCoinRewards, err := h.calculateCoinRewards(ctx, ev)
 	if err != nil {
 		logger.Sugar().Warnw(
-			"rewardTask allocateCoins",
+			"rewardTask calculateCoinRewards",
 			"Event", ev,
 			"Error", err,
 		)

@@ -36,6 +36,7 @@ func init() {
 
 var (
 	appID    = uuid.NewString()
+	userID   = uuid.NewString()
 	eventRet = npool.Event{
 		EntID:          uuid.NewString(),
 		AppID:          appID,
@@ -352,7 +353,6 @@ func resetup(t *testing.T) func(*testing.T) {
 
 //nolint:dupl
 func rewardEvent(t *testing.T) {
-	userID := uuid.NewString()
 	eventType := basetypes.UsedFor_NewLogin
 	consecutive := uint32(1)
 	amount := decimal.NewFromInt(10).String()
@@ -374,7 +374,6 @@ func rewardEvent(t *testing.T) {
 
 //nolint:dupl
 func rewardEvent2(t *testing.T) {
-	userID := uuid.NewString()
 	eventType := basetypes.UsedFor_SetWithdrawAddress
 	consecutive := uint32(1)
 	amount := decimal.NewFromInt(1).String()
