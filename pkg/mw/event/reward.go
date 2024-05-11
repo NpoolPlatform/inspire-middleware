@@ -646,6 +646,93 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 	return nil
 }
 
+func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
+	ev, err := h.getEvent(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if ev == nil {
+		return nil, nil
+	}
+
+	if *h.Consecutive > ev.MaxConsecutive {
+		return nil, nil
+	}
+
+	if err := h.validateTask(ctx, ev); err != nil {
+		return nil, err
+	}
+
+	h.addCredits = decimal.NewFromInt(0)
+	h.coinPreUSDAmount = decimal.NewFromInt(0)
+	h.couponAmount = decimal.NewFromInt(0)
+	h.couponCashableAmount = decimal.NewFromInt(0)
+	credits, err := h.calculateCredits(ctx, ev)
+	if err != nil {
+		return nil, err
+	}
+	_credits := []*npool.Credit{}
+	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
+		_credits = append(_credits, &npool.Credit{
+			AppID:   h.AppID.String(),
+			UserID:  h.UserID.String(),
+			Credits: credits.String(),
+		})
+	}
+	h.addCredits = credits
+
+	allocateCoinRewards, err := h.allocateCoins(ctx, ev)
+	if err != nil {
+		logger.Sugar().Warnw(
+			"rewardTask allocateCoins",
+			"Event", ev,
+			"Error", err,
+		)
+	}
+	coinRewards := []*npool.CoinReward{}
+	for _, coin := range allocateCoinRewards {
+		coinReward := npool.CoinReward{
+			AppID:       coin.AppID,
+			UserID:      coin.UserID,
+			CoinTypeID:  coin.CoinTypeID,
+			CoinRewards: coin.Value,
+		}
+		coinRewards = append(coinRewards, &coinReward)
+	}
+
+	_rewards := &npool.Reward{
+		Credits:     _credits,
+		CoinRewards: coinRewards,
+	}
+
+	return _rewards, nil
+}
+
+func (h *Handler) CalcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
+	handler := &rewardHandler{
+		Handler: h,
+	}
+
+	switch *h.EventType {
+	case basetypes.UsedFor_Signup:
+		fallthrough //nolint
+	case basetypes.UsedFor_Purchase:
+		fallthrough //nolint
+	case basetypes.UsedFor_SimulateOrderProfit:
+		return handler.rewardSelf(ctx)
+	case basetypes.UsedFor_NewLogin:
+		fallthrough //nolint
+	case basetypes.UsedFor_SetWithdrawAddress:
+		return handler.calcluateEventRewards(ctx)
+	case basetypes.UsedFor_AffiliateSignup:
+		fallthrough //nolint
+	case basetypes.UsedFor_AffiliatePurchase:
+		return handler.rewardAffiliate(ctx)
+	default:
+		return nil, wlog.Errorf("not implemented")
+	}
+}
+
 func (h *Handler) RewardEvent(ctx context.Context) (*npool.Reward, error) {
 	handler := &rewardHandler{
 		Handler: h,
