@@ -6,9 +6,11 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	orderstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order"
+	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
+	orderpaymentstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -17,10 +19,10 @@ import (
 type Handler struct {
 	ID *uint32
 	orderstatementcrud.Req
-	GoodCoinTypeID      *uuid.UUID
-	OrderStatementConds *orderstatementcrud.Conds
-	Offset              int32
-	Limit               int32
+	PaymentStatementReqs []*orderpaymentstatementcrud.Req
+	OrderStatementConds  *orderstatementcrud.Conds
+	Offset               int32
+	Limit                int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -315,6 +317,42 @@ func WithCommissionConfigType(value *types.CommissionConfigType, must bool) func
 			return wlog.Errorf("invalid commissionconfigtype")
 		}
 		h.CommissionConfigType = value
+		return nil
+	}
+}
+
+func WithPaymentStatements(reqs []*orderpaymentstatementmwpb.StatementReq, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, req := range reqs {
+			_req := &orderpaymentstatementcrud.Req{}
+			if req.EntID != nil {
+				id, err := uuid.Parse(req.GetEntID())
+				if err != nil {
+					return wlog.WrapError(err)
+				}
+				_req.EntID = &id
+			}
+
+			id1, err := uuid.Parse(req.GetPaymentCoinTypeID())
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			_req.PaymentCoinTypeID = &id1
+
+			amount1, err := decimal.NewFromString(req.GetAmount())
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			_req.Amount = &amount1
+
+			amount2, err := decimal.NewFromString(req.GetCommissionAmount())
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			_req.CommissionAmount = &amount2
+
+			h.PaymentStatementReqs = append(h.PaymentStatementReqs, _req)
+		}
 		return nil
 	}
 }
