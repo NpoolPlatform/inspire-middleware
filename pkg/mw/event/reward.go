@@ -789,6 +789,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	}
 
 	_rewards := &npool.Reward{
+		TaskID:      h.taskConfig.EntID,
 		Credits:     _credits,
 		CoinRewards: coinRewards,
 	}
