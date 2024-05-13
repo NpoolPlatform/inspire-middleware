@@ -22,7 +22,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
@@ -60,8 +64,16 @@ type Client struct {
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// GoodAchievement is the client for interacting with the GoodAchievement builders.
+	GoodAchievement *GoodAchievementClient
+	// GoodCoinAchievement is the client for interacting with the GoodCoinAchievement builders.
+	GoodCoinAchievement *GoodCoinAchievementClient
 	// InvitationCode is the client for interacting with the InvitationCode builders.
 	InvitationCode *InvitationCodeClient
+	// OrderPaymentStatement is the client for interacting with the OrderPaymentStatement builders.
+	OrderPaymentStatement *OrderPaymentStatementClient
+	// OrderStatement is the client for interacting with the OrderStatement builders.
+	OrderStatement *OrderStatementClient
 	// PubsubMessage is the client for interacting with the PubsubMessage builders.
 	PubsubMessage *PubsubMessageClient
 	// Registration is the client for interacting with the Registration builders.
@@ -93,7 +105,11 @@ func (c *Client) init() {
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
 	c.CouponScope = NewCouponScopeClient(c.config)
 	c.Event = NewEventClient(c.config)
+	c.GoodAchievement = NewGoodAchievementClient(c.config)
+	c.GoodCoinAchievement = NewGoodCoinAchievementClient(c.config)
 	c.InvitationCode = NewInvitationCodeClient(c.config)
+	c.OrderPaymentStatement = NewOrderPaymentStatementClient(c.config)
+	c.OrderStatement = NewOrderStatementClient(c.config)
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
 	c.Registration = NewRegistrationClient(c.config)
 	c.Statement = NewStatementClient(c.config)
@@ -142,7 +158,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
 		Event:                   NewEventClient(cfg),
+		GoodAchievement:         NewGoodAchievementClient(cfg),
+		GoodCoinAchievement:     NewGoodCoinAchievementClient(cfg),
 		InvitationCode:          NewInvitationCodeClient(cfg),
+		OrderPaymentStatement:   NewOrderPaymentStatementClient(cfg),
+		OrderStatement:          NewOrderStatementClient(cfg),
 		PubsubMessage:           NewPubsubMessageClient(cfg),
 		Registration:            NewRegistrationClient(cfg),
 		Statement:               NewStatementClient(cfg),
@@ -177,7 +197,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
 		Event:                   NewEventClient(cfg),
+		GoodAchievement:         NewGoodAchievementClient(cfg),
+		GoodCoinAchievement:     NewGoodCoinAchievementClient(cfg),
 		InvitationCode:          NewInvitationCodeClient(cfg),
+		OrderPaymentStatement:   NewOrderPaymentStatementClient(cfg),
+		OrderStatement:          NewOrderStatementClient(cfg),
 		PubsubMessage:           NewPubsubMessageClient(cfg),
 		Registration:            NewRegistrationClient(cfg),
 		Statement:               NewStatementClient(cfg),
@@ -222,7 +246,11 @@ func (c *Client) Use(hooks ...Hook) {
 	c.CouponAllocated.Use(hooks...)
 	c.CouponScope.Use(hooks...)
 	c.Event.Use(hooks...)
+	c.GoodAchievement.Use(hooks...)
+	c.GoodCoinAchievement.Use(hooks...)
 	c.InvitationCode.Use(hooks...)
+	c.OrderPaymentStatement.Use(hooks...)
+	c.OrderStatement.Use(hooks...)
 	c.PubsubMessage.Use(hooks...)
 	c.Registration.Use(hooks...)
 	c.Statement.Use(hooks...)
@@ -1320,6 +1348,188 @@ func (c *EventClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], event.Hooks[:]...)
 }
 
+// GoodAchievementClient is a client for the GoodAchievement schema.
+type GoodAchievementClient struct {
+	config
+}
+
+// NewGoodAchievementClient returns a client for the GoodAchievement from the given config.
+func NewGoodAchievementClient(c config) *GoodAchievementClient {
+	return &GoodAchievementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `goodachievement.Hooks(f(g(h())))`.
+func (c *GoodAchievementClient) Use(hooks ...Hook) {
+	c.hooks.GoodAchievement = append(c.hooks.GoodAchievement, hooks...)
+}
+
+// Create returns a builder for creating a GoodAchievement entity.
+func (c *GoodAchievementClient) Create() *GoodAchievementCreate {
+	mutation := newGoodAchievementMutation(c.config, OpCreate)
+	return &GoodAchievementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GoodAchievement entities.
+func (c *GoodAchievementClient) CreateBulk(builders ...*GoodAchievementCreate) *GoodAchievementCreateBulk {
+	return &GoodAchievementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GoodAchievement.
+func (c *GoodAchievementClient) Update() *GoodAchievementUpdate {
+	mutation := newGoodAchievementMutation(c.config, OpUpdate)
+	return &GoodAchievementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GoodAchievementClient) UpdateOne(ga *GoodAchievement) *GoodAchievementUpdateOne {
+	mutation := newGoodAchievementMutation(c.config, OpUpdateOne, withGoodAchievement(ga))
+	return &GoodAchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GoodAchievementClient) UpdateOneID(id uint32) *GoodAchievementUpdateOne {
+	mutation := newGoodAchievementMutation(c.config, OpUpdateOne, withGoodAchievementID(id))
+	return &GoodAchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GoodAchievement.
+func (c *GoodAchievementClient) Delete() *GoodAchievementDelete {
+	mutation := newGoodAchievementMutation(c.config, OpDelete)
+	return &GoodAchievementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GoodAchievementClient) DeleteOne(ga *GoodAchievement) *GoodAchievementDeleteOne {
+	return c.DeleteOneID(ga.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *GoodAchievementClient) DeleteOneID(id uint32) *GoodAchievementDeleteOne {
+	builder := c.Delete().Where(goodachievement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GoodAchievementDeleteOne{builder}
+}
+
+// Query returns a query builder for GoodAchievement.
+func (c *GoodAchievementClient) Query() *GoodAchievementQuery {
+	return &GoodAchievementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a GoodAchievement entity by its id.
+func (c *GoodAchievementClient) Get(ctx context.Context, id uint32) (*GoodAchievement, error) {
+	return c.Query().Where(goodachievement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GoodAchievementClient) GetX(ctx context.Context, id uint32) *GoodAchievement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GoodAchievementClient) Hooks() []Hook {
+	hooks := c.hooks.GoodAchievement
+	return append(hooks[:len(hooks):len(hooks)], goodachievement.Hooks[:]...)
+}
+
+// GoodCoinAchievementClient is a client for the GoodCoinAchievement schema.
+type GoodCoinAchievementClient struct {
+	config
+}
+
+// NewGoodCoinAchievementClient returns a client for the GoodCoinAchievement from the given config.
+func NewGoodCoinAchievementClient(c config) *GoodCoinAchievementClient {
+	return &GoodCoinAchievementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `goodcoinachievement.Hooks(f(g(h())))`.
+func (c *GoodCoinAchievementClient) Use(hooks ...Hook) {
+	c.hooks.GoodCoinAchievement = append(c.hooks.GoodCoinAchievement, hooks...)
+}
+
+// Create returns a builder for creating a GoodCoinAchievement entity.
+func (c *GoodCoinAchievementClient) Create() *GoodCoinAchievementCreate {
+	mutation := newGoodCoinAchievementMutation(c.config, OpCreate)
+	return &GoodCoinAchievementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GoodCoinAchievement entities.
+func (c *GoodCoinAchievementClient) CreateBulk(builders ...*GoodCoinAchievementCreate) *GoodCoinAchievementCreateBulk {
+	return &GoodCoinAchievementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GoodCoinAchievement.
+func (c *GoodCoinAchievementClient) Update() *GoodCoinAchievementUpdate {
+	mutation := newGoodCoinAchievementMutation(c.config, OpUpdate)
+	return &GoodCoinAchievementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GoodCoinAchievementClient) UpdateOne(gca *GoodCoinAchievement) *GoodCoinAchievementUpdateOne {
+	mutation := newGoodCoinAchievementMutation(c.config, OpUpdateOne, withGoodCoinAchievement(gca))
+	return &GoodCoinAchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GoodCoinAchievementClient) UpdateOneID(id uint32) *GoodCoinAchievementUpdateOne {
+	mutation := newGoodCoinAchievementMutation(c.config, OpUpdateOne, withGoodCoinAchievementID(id))
+	return &GoodCoinAchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GoodCoinAchievement.
+func (c *GoodCoinAchievementClient) Delete() *GoodCoinAchievementDelete {
+	mutation := newGoodCoinAchievementMutation(c.config, OpDelete)
+	return &GoodCoinAchievementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GoodCoinAchievementClient) DeleteOne(gca *GoodCoinAchievement) *GoodCoinAchievementDeleteOne {
+	return c.DeleteOneID(gca.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *GoodCoinAchievementClient) DeleteOneID(id uint32) *GoodCoinAchievementDeleteOne {
+	builder := c.Delete().Where(goodcoinachievement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GoodCoinAchievementDeleteOne{builder}
+}
+
+// Query returns a query builder for GoodCoinAchievement.
+func (c *GoodCoinAchievementClient) Query() *GoodCoinAchievementQuery {
+	return &GoodCoinAchievementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a GoodCoinAchievement entity by its id.
+func (c *GoodCoinAchievementClient) Get(ctx context.Context, id uint32) (*GoodCoinAchievement, error) {
+	return c.Query().Where(goodcoinachievement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GoodCoinAchievementClient) GetX(ctx context.Context, id uint32) *GoodCoinAchievement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GoodCoinAchievementClient) Hooks() []Hook {
+	hooks := c.hooks.GoodCoinAchievement
+	return append(hooks[:len(hooks):len(hooks)], goodcoinachievement.Hooks[:]...)
+}
+
 // InvitationCodeClient is a client for the InvitationCode schema.
 type InvitationCodeClient struct {
 	config
@@ -1409,6 +1619,188 @@ func (c *InvitationCodeClient) GetX(ctx context.Context, id uint32) *InvitationC
 func (c *InvitationCodeClient) Hooks() []Hook {
 	hooks := c.hooks.InvitationCode
 	return append(hooks[:len(hooks):len(hooks)], invitationcode.Hooks[:]...)
+}
+
+// OrderPaymentStatementClient is a client for the OrderPaymentStatement schema.
+type OrderPaymentStatementClient struct {
+	config
+}
+
+// NewOrderPaymentStatementClient returns a client for the OrderPaymentStatement from the given config.
+func NewOrderPaymentStatementClient(c config) *OrderPaymentStatementClient {
+	return &OrderPaymentStatementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderpaymentstatement.Hooks(f(g(h())))`.
+func (c *OrderPaymentStatementClient) Use(hooks ...Hook) {
+	c.hooks.OrderPaymentStatement = append(c.hooks.OrderPaymentStatement, hooks...)
+}
+
+// Create returns a builder for creating a OrderPaymentStatement entity.
+func (c *OrderPaymentStatementClient) Create() *OrderPaymentStatementCreate {
+	mutation := newOrderPaymentStatementMutation(c.config, OpCreate)
+	return &OrderPaymentStatementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderPaymentStatement entities.
+func (c *OrderPaymentStatementClient) CreateBulk(builders ...*OrderPaymentStatementCreate) *OrderPaymentStatementCreateBulk {
+	return &OrderPaymentStatementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderPaymentStatement.
+func (c *OrderPaymentStatementClient) Update() *OrderPaymentStatementUpdate {
+	mutation := newOrderPaymentStatementMutation(c.config, OpUpdate)
+	return &OrderPaymentStatementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderPaymentStatementClient) UpdateOne(ops *OrderPaymentStatement) *OrderPaymentStatementUpdateOne {
+	mutation := newOrderPaymentStatementMutation(c.config, OpUpdateOne, withOrderPaymentStatement(ops))
+	return &OrderPaymentStatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderPaymentStatementClient) UpdateOneID(id uint32) *OrderPaymentStatementUpdateOne {
+	mutation := newOrderPaymentStatementMutation(c.config, OpUpdateOne, withOrderPaymentStatementID(id))
+	return &OrderPaymentStatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderPaymentStatement.
+func (c *OrderPaymentStatementClient) Delete() *OrderPaymentStatementDelete {
+	mutation := newOrderPaymentStatementMutation(c.config, OpDelete)
+	return &OrderPaymentStatementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderPaymentStatementClient) DeleteOne(ops *OrderPaymentStatement) *OrderPaymentStatementDeleteOne {
+	return c.DeleteOneID(ops.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderPaymentStatementClient) DeleteOneID(id uint32) *OrderPaymentStatementDeleteOne {
+	builder := c.Delete().Where(orderpaymentstatement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderPaymentStatementDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderPaymentStatement.
+func (c *OrderPaymentStatementClient) Query() *OrderPaymentStatementQuery {
+	return &OrderPaymentStatementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderPaymentStatement entity by its id.
+func (c *OrderPaymentStatementClient) Get(ctx context.Context, id uint32) (*OrderPaymentStatement, error) {
+	return c.Query().Where(orderpaymentstatement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderPaymentStatementClient) GetX(ctx context.Context, id uint32) *OrderPaymentStatement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderPaymentStatementClient) Hooks() []Hook {
+	hooks := c.hooks.OrderPaymentStatement
+	return append(hooks[:len(hooks):len(hooks)], orderpaymentstatement.Hooks[:]...)
+}
+
+// OrderStatementClient is a client for the OrderStatement schema.
+type OrderStatementClient struct {
+	config
+}
+
+// NewOrderStatementClient returns a client for the OrderStatement from the given config.
+func NewOrderStatementClient(c config) *OrderStatementClient {
+	return &OrderStatementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderstatement.Hooks(f(g(h())))`.
+func (c *OrderStatementClient) Use(hooks ...Hook) {
+	c.hooks.OrderStatement = append(c.hooks.OrderStatement, hooks...)
+}
+
+// Create returns a builder for creating a OrderStatement entity.
+func (c *OrderStatementClient) Create() *OrderStatementCreate {
+	mutation := newOrderStatementMutation(c.config, OpCreate)
+	return &OrderStatementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderStatement entities.
+func (c *OrderStatementClient) CreateBulk(builders ...*OrderStatementCreate) *OrderStatementCreateBulk {
+	return &OrderStatementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderStatement.
+func (c *OrderStatementClient) Update() *OrderStatementUpdate {
+	mutation := newOrderStatementMutation(c.config, OpUpdate)
+	return &OrderStatementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderStatementClient) UpdateOne(os *OrderStatement) *OrderStatementUpdateOne {
+	mutation := newOrderStatementMutation(c.config, OpUpdateOne, withOrderStatement(os))
+	return &OrderStatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderStatementClient) UpdateOneID(id uint32) *OrderStatementUpdateOne {
+	mutation := newOrderStatementMutation(c.config, OpUpdateOne, withOrderStatementID(id))
+	return &OrderStatementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderStatement.
+func (c *OrderStatementClient) Delete() *OrderStatementDelete {
+	mutation := newOrderStatementMutation(c.config, OpDelete)
+	return &OrderStatementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderStatementClient) DeleteOne(os *OrderStatement) *OrderStatementDeleteOne {
+	return c.DeleteOneID(os.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderStatementClient) DeleteOneID(id uint32) *OrderStatementDeleteOne {
+	builder := c.Delete().Where(orderstatement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderStatementDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderStatement.
+func (c *OrderStatementClient) Query() *OrderStatementQuery {
+	return &OrderStatementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderStatement entity by its id.
+func (c *OrderStatementClient) Get(ctx context.Context, id uint32) (*OrderStatement, error) {
+	return c.Query().Where(orderstatement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderStatementClient) GetX(ctx context.Context, id uint32) *OrderStatement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderStatementClient) Hooks() []Hook {
+	hooks := c.hooks.OrderStatement
+	return append(hooks[:len(hooks):len(hooks)], orderstatement.Hooks[:]...)
 }
 
 // PubsubMessageClient is a client for the PubsubMessage schema.

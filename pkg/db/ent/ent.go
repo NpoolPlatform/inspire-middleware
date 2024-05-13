@@ -22,7 +22,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
@@ -58,7 +62,11 @@ func columnChecker(table string) func(string) error {
 		couponallocated.Table:         couponallocated.ValidColumn,
 		couponscope.Table:             couponscope.ValidColumn,
 		event.Table:                   event.ValidColumn,
+		goodachievement.Table:         goodachievement.ValidColumn,
+		goodcoinachievement.Table:     goodcoinachievement.ValidColumn,
 		invitationcode.Table:          invitationcode.ValidColumn,
+		orderpaymentstatement.Table:   orderpaymentstatement.ValidColumn,
+		orderstatement.Table:          orderstatement.ValidColumn,
 		pubsubmessage.Table:           pubsubmessage.ValidColumn,
 		registration.Table:            registration.ValidColumn,
 		statement.Table:               statement.ValidColumn,

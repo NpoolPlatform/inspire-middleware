@@ -40,7 +40,11 @@ type hooks struct {
 	CouponAllocated         []ent.Hook
 	CouponScope             []ent.Hook
 	Event                   []ent.Hook
+	GoodAchievement         []ent.Hook
+	GoodCoinAchievement     []ent.Hook
 	InvitationCode          []ent.Hook
+	OrderPaymentStatement   []ent.Hook
+	OrderStatement          []ent.Hook
 	PubsubMessage           []ent.Hook
 	Registration            []ent.Hook
 	Statement               []ent.Hook

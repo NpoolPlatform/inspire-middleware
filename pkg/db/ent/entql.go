@@ -15,7 +15,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
@@ -28,7 +32,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 20)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -342,6 +346,59 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   goodachievement.Table,
+			Columns: goodachievement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: goodachievement.FieldID,
+			},
+		},
+		Type: "GoodAchievement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			goodachievement.FieldCreatedAt:          {Type: field.TypeUint32, Column: goodachievement.FieldCreatedAt},
+			goodachievement.FieldUpdatedAt:          {Type: field.TypeUint32, Column: goodachievement.FieldUpdatedAt},
+			goodachievement.FieldDeletedAt:          {Type: field.TypeUint32, Column: goodachievement.FieldDeletedAt},
+			goodachievement.FieldEntID:              {Type: field.TypeUUID, Column: goodachievement.FieldEntID},
+			goodachievement.FieldAppID:              {Type: field.TypeUUID, Column: goodachievement.FieldAppID},
+			goodachievement.FieldUserID:             {Type: field.TypeUUID, Column: goodachievement.FieldUserID},
+			goodachievement.FieldGoodID:             {Type: field.TypeUUID, Column: goodachievement.FieldGoodID},
+			goodachievement.FieldAppGoodID:          {Type: field.TypeUUID, Column: goodachievement.FieldAppGoodID},
+			goodachievement.FieldTotalUnits:         {Type: field.TypeOther, Column: goodachievement.FieldTotalUnits},
+			goodachievement.FieldSelfUnits:          {Type: field.TypeOther, Column: goodachievement.FieldSelfUnits},
+			goodachievement.FieldTotalAmountUsd:     {Type: field.TypeOther, Column: goodachievement.FieldTotalAmountUsd},
+			goodachievement.FieldSelfAmountUsd:      {Type: field.TypeOther, Column: goodachievement.FieldSelfAmountUsd},
+			goodachievement.FieldTotalCommissionUsd: {Type: field.TypeOther, Column: goodachievement.FieldTotalCommissionUsd},
+			goodachievement.FieldSelfCommissionUsd:  {Type: field.TypeOther, Column: goodachievement.FieldSelfCommissionUsd},
+		},
+	}
+	graph.Nodes[13] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   goodcoinachievement.Table,
+			Columns: goodcoinachievement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: goodcoinachievement.FieldID,
+			},
+		},
+		Type: "GoodCoinAchievement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			goodcoinachievement.FieldCreatedAt:          {Type: field.TypeUint32, Column: goodcoinachievement.FieldCreatedAt},
+			goodcoinachievement.FieldUpdatedAt:          {Type: field.TypeUint32, Column: goodcoinachievement.FieldUpdatedAt},
+			goodcoinachievement.FieldDeletedAt:          {Type: field.TypeUint32, Column: goodcoinachievement.FieldDeletedAt},
+			goodcoinachievement.FieldEntID:              {Type: field.TypeUUID, Column: goodcoinachievement.FieldEntID},
+			goodcoinachievement.FieldAppID:              {Type: field.TypeUUID, Column: goodcoinachievement.FieldAppID},
+			goodcoinachievement.FieldUserID:             {Type: field.TypeUUID, Column: goodcoinachievement.FieldUserID},
+			goodcoinachievement.FieldGoodCoinTypeID:     {Type: field.TypeUUID, Column: goodcoinachievement.FieldGoodCoinTypeID},
+			goodcoinachievement.FieldTotalUnits:         {Type: field.TypeOther, Column: goodcoinachievement.FieldTotalUnits},
+			goodcoinachievement.FieldSelfUnits:          {Type: field.TypeOther, Column: goodcoinachievement.FieldSelfUnits},
+			goodcoinachievement.FieldTotalAmountUsd:     {Type: field.TypeOther, Column: goodcoinachievement.FieldTotalAmountUsd},
+			goodcoinachievement.FieldSelfAmountUsd:      {Type: field.TypeOther, Column: goodcoinachievement.FieldSelfAmountUsd},
+			goodcoinachievement.FieldTotalCommissionUsd: {Type: field.TypeOther, Column: goodcoinachievement.FieldTotalCommissionUsd},
+			goodcoinachievement.FieldSelfCommissionUsd:  {Type: field.TypeOther, Column: goodcoinachievement.FieldSelfCommissionUsd},
+		},
+	}
+	graph.Nodes[14] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -361,7 +418,60 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[13] = &sqlgraph.Node{
+	graph.Nodes[15] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderpaymentstatement.Table,
+			Columns: orderpaymentstatement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: orderpaymentstatement.FieldID,
+			},
+		},
+		Type: "OrderPaymentStatement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderpaymentstatement.FieldCreatedAt:         {Type: field.TypeUint32, Column: orderpaymentstatement.FieldCreatedAt},
+			orderpaymentstatement.FieldUpdatedAt:         {Type: field.TypeUint32, Column: orderpaymentstatement.FieldUpdatedAt},
+			orderpaymentstatement.FieldDeletedAt:         {Type: field.TypeUint32, Column: orderpaymentstatement.FieldDeletedAt},
+			orderpaymentstatement.FieldEntID:             {Type: field.TypeUUID, Column: orderpaymentstatement.FieldEntID},
+			orderpaymentstatement.FieldStatementID:       {Type: field.TypeUUID, Column: orderpaymentstatement.FieldStatementID},
+			orderpaymentstatement.FieldPaymentCoinTypeID: {Type: field.TypeUUID, Column: orderpaymentstatement.FieldPaymentCoinTypeID},
+			orderpaymentstatement.FieldAmount:            {Type: field.TypeOther, Column: orderpaymentstatement.FieldAmount},
+			orderpaymentstatement.FieldCommissionAmount:  {Type: field.TypeOther, Column: orderpaymentstatement.FieldCommissionAmount},
+		},
+	}
+	graph.Nodes[16] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderstatement.Table,
+			Columns: orderstatement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: orderstatement.FieldID,
+			},
+		},
+		Type: "OrderStatement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderstatement.FieldCreatedAt:            {Type: field.TypeUint32, Column: orderstatement.FieldCreatedAt},
+			orderstatement.FieldUpdatedAt:            {Type: field.TypeUint32, Column: orderstatement.FieldUpdatedAt},
+			orderstatement.FieldDeletedAt:            {Type: field.TypeUint32, Column: orderstatement.FieldDeletedAt},
+			orderstatement.FieldEntID:                {Type: field.TypeUUID, Column: orderstatement.FieldEntID},
+			orderstatement.FieldAppID:                {Type: field.TypeUUID, Column: orderstatement.FieldAppID},
+			orderstatement.FieldUserID:               {Type: field.TypeUUID, Column: orderstatement.FieldUserID},
+			orderstatement.FieldGoodID:               {Type: field.TypeUUID, Column: orderstatement.FieldGoodID},
+			orderstatement.FieldAppGoodID:            {Type: field.TypeUUID, Column: orderstatement.FieldAppGoodID},
+			orderstatement.FieldOrderID:              {Type: field.TypeUUID, Column: orderstatement.FieldOrderID},
+			orderstatement.FieldOrderUserID:          {Type: field.TypeUUID, Column: orderstatement.FieldOrderUserID},
+			orderstatement.FieldSelfOrder:            {Type: field.TypeBool, Column: orderstatement.FieldSelfOrder},
+			orderstatement.FieldGoodCoinTypeID:       {Type: field.TypeUUID, Column: orderstatement.FieldGoodCoinTypeID},
+			orderstatement.FieldUnits:                {Type: field.TypeUint32, Column: orderstatement.FieldUnits},
+			orderstatement.FieldGoodValueUsd:         {Type: field.TypeOther, Column: orderstatement.FieldGoodValueUsd},
+			orderstatement.FieldPaymentAmountUsd:     {Type: field.TypeOther, Column: orderstatement.FieldPaymentAmountUsd},
+			orderstatement.FieldCommissionAmountUsd:  {Type: field.TypeOther, Column: orderstatement.FieldCommissionAmountUsd},
+			orderstatement.FieldAppConfigID:          {Type: field.TypeUUID, Column: orderstatement.FieldAppConfigID},
+			orderstatement.FieldCommissionConfigID:   {Type: field.TypeUUID, Column: orderstatement.FieldCommissionConfigID},
+			orderstatement.FieldCommissionConfigType: {Type: field.TypeString, Column: orderstatement.FieldCommissionConfigType},
+		},
+	}
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -383,7 +493,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[14] = &sqlgraph.Node{
+	graph.Nodes[18] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -403,7 +513,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[19] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   statement.Table,
 			Columns: statement.Columns,
@@ -1704,6 +1814,221 @@ func (f *EventFilter) WhereInviterLayers(p entql.Uint32P) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (gaq *GoodAchievementQuery) addPredicate(pred func(s *sql.Selector)) {
+	gaq.predicates = append(gaq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the GoodAchievementQuery builder.
+func (gaq *GoodAchievementQuery) Filter() *GoodAchievementFilter {
+	return &GoodAchievementFilter{config: gaq.config, predicateAdder: gaq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *GoodAchievementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the GoodAchievementMutation builder.
+func (m *GoodAchievementMutation) Filter() *GoodAchievementFilter {
+	return &GoodAchievementFilter{config: m.config, predicateAdder: m}
+}
+
+// GoodAchievementFilter provides a generic filtering capability at runtime for GoodAchievementQuery.
+type GoodAchievementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *GoodAchievementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *GoodAchievementFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(goodachievement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *GoodAchievementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodachievement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *GoodAchievementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodachievement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *GoodAchievementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodachievement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *GoodAchievementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(goodachievement.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *GoodAchievementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(goodachievement.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *GoodAchievementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(goodachievement.FieldUserID))
+}
+
+// WhereGoodID applies the entql [16]byte predicate on the good_id field.
+func (f *GoodAchievementFilter) WhereGoodID(p entql.ValueP) {
+	f.Where(p.Field(goodachievement.FieldGoodID))
+}
+
+// WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
+func (f *GoodAchievementFilter) WhereAppGoodID(p entql.ValueP) {
+	f.Where(p.Field(goodachievement.FieldAppGoodID))
+}
+
+// WhereTotalUnits applies the entql other predicate on the total_units field.
+func (f *GoodAchievementFilter) WhereTotalUnits(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldTotalUnits))
+}
+
+// WhereSelfUnits applies the entql other predicate on the self_units field.
+func (f *GoodAchievementFilter) WhereSelfUnits(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldSelfUnits))
+}
+
+// WhereTotalAmountUsd applies the entql other predicate on the total_amount_usd field.
+func (f *GoodAchievementFilter) WhereTotalAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldTotalAmountUsd))
+}
+
+// WhereSelfAmountUsd applies the entql other predicate on the self_amount_usd field.
+func (f *GoodAchievementFilter) WhereSelfAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldSelfAmountUsd))
+}
+
+// WhereTotalCommissionUsd applies the entql other predicate on the total_commission_usd field.
+func (f *GoodAchievementFilter) WhereTotalCommissionUsd(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldTotalCommissionUsd))
+}
+
+// WhereSelfCommissionUsd applies the entql other predicate on the self_commission_usd field.
+func (f *GoodAchievementFilter) WhereSelfCommissionUsd(p entql.OtherP) {
+	f.Where(p.Field(goodachievement.FieldSelfCommissionUsd))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (gcaq *GoodCoinAchievementQuery) addPredicate(pred func(s *sql.Selector)) {
+	gcaq.predicates = append(gcaq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the GoodCoinAchievementQuery builder.
+func (gcaq *GoodCoinAchievementQuery) Filter() *GoodCoinAchievementFilter {
+	return &GoodCoinAchievementFilter{config: gcaq.config, predicateAdder: gcaq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *GoodCoinAchievementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the GoodCoinAchievementMutation builder.
+func (m *GoodCoinAchievementMutation) Filter() *GoodCoinAchievementFilter {
+	return &GoodCoinAchievementFilter{config: m.config, predicateAdder: m}
+}
+
+// GoodCoinAchievementFilter provides a generic filtering capability at runtime for GoodCoinAchievementQuery.
+type GoodCoinAchievementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *GoodCoinAchievementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *GoodCoinAchievementFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(goodcoinachievement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *GoodCoinAchievementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodcoinachievement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *GoodCoinAchievementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodcoinachievement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *GoodCoinAchievementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(goodcoinachievement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *GoodCoinAchievementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(goodcoinachievement.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *GoodCoinAchievementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(goodcoinachievement.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *GoodCoinAchievementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(goodcoinachievement.FieldUserID))
+}
+
+// WhereGoodCoinTypeID applies the entql [16]byte predicate on the good_coin_type_id field.
+func (f *GoodCoinAchievementFilter) WhereGoodCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(goodcoinachievement.FieldGoodCoinTypeID))
+}
+
+// WhereTotalUnits applies the entql other predicate on the total_units field.
+func (f *GoodCoinAchievementFilter) WhereTotalUnits(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldTotalUnits))
+}
+
+// WhereSelfUnits applies the entql other predicate on the self_units field.
+func (f *GoodCoinAchievementFilter) WhereSelfUnits(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldSelfUnits))
+}
+
+// WhereTotalAmountUsd applies the entql other predicate on the total_amount_usd field.
+func (f *GoodCoinAchievementFilter) WhereTotalAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldTotalAmountUsd))
+}
+
+// WhereSelfAmountUsd applies the entql other predicate on the self_amount_usd field.
+func (f *GoodCoinAchievementFilter) WhereSelfAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldSelfAmountUsd))
+}
+
+// WhereTotalCommissionUsd applies the entql other predicate on the total_commission_usd field.
+func (f *GoodCoinAchievementFilter) WhereTotalCommissionUsd(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldTotalCommissionUsd))
+}
+
+// WhereSelfCommissionUsd applies the entql other predicate on the self_commission_usd field.
+func (f *GoodCoinAchievementFilter) WhereSelfCommissionUsd(p entql.OtherP) {
+	f.Where(p.Field(goodcoinachievement.FieldSelfCommissionUsd))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (icq *InvitationCodeQuery) addPredicate(pred func(s *sql.Selector)) {
 	icq.predicates = append(icq.predicates, pred)
 }
@@ -1732,7 +2057,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1784,6 +2109,221 @@ func (f *InvitationCodeFilter) WhereDisabled(p entql.BoolP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (opsq *OrderPaymentStatementQuery) addPredicate(pred func(s *sql.Selector)) {
+	opsq.predicates = append(opsq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderPaymentStatementQuery builder.
+func (opsq *OrderPaymentStatementQuery) Filter() *OrderPaymentStatementFilter {
+	return &OrderPaymentStatementFilter{config: opsq.config, predicateAdder: opsq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderPaymentStatementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderPaymentStatementMutation builder.
+func (m *OrderPaymentStatementMutation) Filter() *OrderPaymentStatementFilter {
+	return &OrderPaymentStatementFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderPaymentStatementFilter provides a generic filtering capability at runtime for OrderPaymentStatementQuery.
+type OrderPaymentStatementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderPaymentStatementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *OrderPaymentStatementFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(orderpaymentstatement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderPaymentStatementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpaymentstatement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderPaymentStatementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpaymentstatement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderPaymentStatementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpaymentstatement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *OrderPaymentStatementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(orderpaymentstatement.FieldEntID))
+}
+
+// WhereStatementID applies the entql [16]byte predicate on the statement_id field.
+func (f *OrderPaymentStatementFilter) WhereStatementID(p entql.ValueP) {
+	f.Where(p.Field(orderpaymentstatement.FieldStatementID))
+}
+
+// WherePaymentCoinTypeID applies the entql [16]byte predicate on the payment_coin_type_id field.
+func (f *OrderPaymentStatementFilter) WherePaymentCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(orderpaymentstatement.FieldPaymentCoinTypeID))
+}
+
+// WhereAmount applies the entql other predicate on the amount field.
+func (f *OrderPaymentStatementFilter) WhereAmount(p entql.OtherP) {
+	f.Where(p.Field(orderpaymentstatement.FieldAmount))
+}
+
+// WhereCommissionAmount applies the entql other predicate on the commission_amount field.
+func (f *OrderPaymentStatementFilter) WhereCommissionAmount(p entql.OtherP) {
+	f.Where(p.Field(orderpaymentstatement.FieldCommissionAmount))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (osq *OrderStatementQuery) addPredicate(pred func(s *sql.Selector)) {
+	osq.predicates = append(osq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderStatementQuery builder.
+func (osq *OrderStatementQuery) Filter() *OrderStatementFilter {
+	return &OrderStatementFilter{config: osq.config, predicateAdder: osq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderStatementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderStatementMutation builder.
+func (m *OrderStatementMutation) Filter() *OrderStatementFilter {
+	return &OrderStatementFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderStatementFilter provides a generic filtering capability at runtime for OrderStatementQuery.
+type OrderStatementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderStatementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *OrderStatementFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(orderstatement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderStatementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstatement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderStatementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstatement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderStatementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderstatement.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *OrderStatementFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *OrderStatementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *OrderStatementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldUserID))
+}
+
+// WhereGoodID applies the entql [16]byte predicate on the good_id field.
+func (f *OrderStatementFilter) WhereGoodID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldGoodID))
+}
+
+// WhereAppGoodID applies the entql [16]byte predicate on the app_good_id field.
+func (f *OrderStatementFilter) WhereAppGoodID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldAppGoodID))
+}
+
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *OrderStatementFilter) WhereOrderID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldOrderID))
+}
+
+// WhereOrderUserID applies the entql [16]byte predicate on the order_user_id field.
+func (f *OrderStatementFilter) WhereOrderUserID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldOrderUserID))
+}
+
+// WhereSelfOrder applies the entql bool predicate on the self_order field.
+func (f *OrderStatementFilter) WhereSelfOrder(p entql.BoolP) {
+	f.Where(p.Field(orderstatement.FieldSelfOrder))
+}
+
+// WhereGoodCoinTypeID applies the entql [16]byte predicate on the good_coin_type_id field.
+func (f *OrderStatementFilter) WhereGoodCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldGoodCoinTypeID))
+}
+
+// WhereUnits applies the entql uint32 predicate on the units field.
+func (f *OrderStatementFilter) WhereUnits(p entql.Uint32P) {
+	f.Where(p.Field(orderstatement.FieldUnits))
+}
+
+// WhereGoodValueUsd applies the entql other predicate on the good_value_usd field.
+func (f *OrderStatementFilter) WhereGoodValueUsd(p entql.OtherP) {
+	f.Where(p.Field(orderstatement.FieldGoodValueUsd))
+}
+
+// WherePaymentAmountUsd applies the entql other predicate on the payment_amount_usd field.
+func (f *OrderStatementFilter) WherePaymentAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(orderstatement.FieldPaymentAmountUsd))
+}
+
+// WhereCommissionAmountUsd applies the entql other predicate on the commission_amount_usd field.
+func (f *OrderStatementFilter) WhereCommissionAmountUsd(p entql.OtherP) {
+	f.Where(p.Field(orderstatement.FieldCommissionAmountUsd))
+}
+
+// WhereAppConfigID applies the entql [16]byte predicate on the app_config_id field.
+func (f *OrderStatementFilter) WhereAppConfigID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldAppConfigID))
+}
+
+// WhereCommissionConfigID applies the entql [16]byte predicate on the commission_config_id field.
+func (f *OrderStatementFilter) WhereCommissionConfigID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldCommissionConfigID))
+}
+
+// WhereCommissionConfigType applies the entql string predicate on the commission_config_type field.
+func (f *OrderStatementFilter) WhereCommissionConfigType(p entql.StringP) {
+	f.Where(p.Field(orderstatement.FieldCommissionConfigType))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (pmq *PubsubMessageQuery) addPredicate(pred func(s *sql.Selector)) {
 	pmq.predicates = append(pmq.predicates, pred)
 }
@@ -1812,7 +2352,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1897,7 +2437,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1972,7 +2512,7 @@ type StatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *StatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

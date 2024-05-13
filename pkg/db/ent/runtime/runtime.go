@@ -17,7 +17,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/schema"
@@ -869,6 +873,150 @@ func init() {
 	eventDescInviterLayers := eventFields[8].Descriptor()
 	// event.DefaultInviterLayers holds the default value on creation for the inviter_layers field.
 	event.DefaultInviterLayers = eventDescInviterLayers.Default.(uint32)
+	goodachievementMixin := schema.GoodAchievement{}.Mixin()
+	goodachievement.Policy = privacy.NewPolicies(goodachievementMixin[0], schema.GoodAchievement{})
+	goodachievement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := goodachievement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	goodachievementMixinFields0 := goodachievementMixin[0].Fields()
+	_ = goodachievementMixinFields0
+	goodachievementMixinFields1 := goodachievementMixin[1].Fields()
+	_ = goodachievementMixinFields1
+	goodachievementFields := schema.GoodAchievement{}.Fields()
+	_ = goodachievementFields
+	// goodachievementDescCreatedAt is the schema descriptor for created_at field.
+	goodachievementDescCreatedAt := goodachievementMixinFields0[0].Descriptor()
+	// goodachievement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	goodachievement.DefaultCreatedAt = goodachievementDescCreatedAt.Default.(func() uint32)
+	// goodachievementDescUpdatedAt is the schema descriptor for updated_at field.
+	goodachievementDescUpdatedAt := goodachievementMixinFields0[1].Descriptor()
+	// goodachievement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	goodachievement.DefaultUpdatedAt = goodachievementDescUpdatedAt.Default.(func() uint32)
+	// goodachievement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	goodachievement.UpdateDefaultUpdatedAt = goodachievementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// goodachievementDescDeletedAt is the schema descriptor for deleted_at field.
+	goodachievementDescDeletedAt := goodachievementMixinFields0[2].Descriptor()
+	// goodachievement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	goodachievement.DefaultDeletedAt = goodachievementDescDeletedAt.Default.(func() uint32)
+	// goodachievementDescEntID is the schema descriptor for ent_id field.
+	goodachievementDescEntID := goodachievementMixinFields1[1].Descriptor()
+	// goodachievement.DefaultEntID holds the default value on creation for the ent_id field.
+	goodachievement.DefaultEntID = goodachievementDescEntID.Default.(func() uuid.UUID)
+	// goodachievementDescAppID is the schema descriptor for app_id field.
+	goodachievementDescAppID := goodachievementFields[0].Descriptor()
+	// goodachievement.DefaultAppID holds the default value on creation for the app_id field.
+	goodachievement.DefaultAppID = goodachievementDescAppID.Default.(func() uuid.UUID)
+	// goodachievementDescUserID is the schema descriptor for user_id field.
+	goodachievementDescUserID := goodachievementFields[1].Descriptor()
+	// goodachievement.DefaultUserID holds the default value on creation for the user_id field.
+	goodachievement.DefaultUserID = goodachievementDescUserID.Default.(func() uuid.UUID)
+	// goodachievementDescGoodID is the schema descriptor for good_id field.
+	goodachievementDescGoodID := goodachievementFields[2].Descriptor()
+	// goodachievement.DefaultGoodID holds the default value on creation for the good_id field.
+	goodachievement.DefaultGoodID = goodachievementDescGoodID.Default.(func() uuid.UUID)
+	// goodachievementDescAppGoodID is the schema descriptor for app_good_id field.
+	goodachievementDescAppGoodID := goodachievementFields[3].Descriptor()
+	// goodachievement.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	goodachievement.DefaultAppGoodID = goodachievementDescAppGoodID.Default.(func() uuid.UUID)
+	// goodachievementDescTotalUnits is the schema descriptor for total_units field.
+	goodachievementDescTotalUnits := goodachievementFields[4].Descriptor()
+	// goodachievement.DefaultTotalUnits holds the default value on creation for the total_units field.
+	goodachievement.DefaultTotalUnits = goodachievementDescTotalUnits.Default.(decimal.Decimal)
+	// goodachievementDescSelfUnits is the schema descriptor for self_units field.
+	goodachievementDescSelfUnits := goodachievementFields[5].Descriptor()
+	// goodachievement.DefaultSelfUnits holds the default value on creation for the self_units field.
+	goodachievement.DefaultSelfUnits = goodachievementDescSelfUnits.Default.(decimal.Decimal)
+	// goodachievementDescTotalAmountUsd is the schema descriptor for total_amount_usd field.
+	goodachievementDescTotalAmountUsd := goodachievementFields[6].Descriptor()
+	// goodachievement.DefaultTotalAmountUsd holds the default value on creation for the total_amount_usd field.
+	goodachievement.DefaultTotalAmountUsd = goodachievementDescTotalAmountUsd.Default.(decimal.Decimal)
+	// goodachievementDescSelfAmountUsd is the schema descriptor for self_amount_usd field.
+	goodachievementDescSelfAmountUsd := goodachievementFields[7].Descriptor()
+	// goodachievement.DefaultSelfAmountUsd holds the default value on creation for the self_amount_usd field.
+	goodachievement.DefaultSelfAmountUsd = goodachievementDescSelfAmountUsd.Default.(decimal.Decimal)
+	// goodachievementDescTotalCommissionUsd is the schema descriptor for total_commission_usd field.
+	goodachievementDescTotalCommissionUsd := goodachievementFields[8].Descriptor()
+	// goodachievement.DefaultTotalCommissionUsd holds the default value on creation for the total_commission_usd field.
+	goodachievement.DefaultTotalCommissionUsd = goodachievementDescTotalCommissionUsd.Default.(decimal.Decimal)
+	// goodachievementDescSelfCommissionUsd is the schema descriptor for self_commission_usd field.
+	goodachievementDescSelfCommissionUsd := goodachievementFields[9].Descriptor()
+	// goodachievement.DefaultSelfCommissionUsd holds the default value on creation for the self_commission_usd field.
+	goodachievement.DefaultSelfCommissionUsd = goodachievementDescSelfCommissionUsd.Default.(decimal.Decimal)
+	goodcoinachievementMixin := schema.GoodCoinAchievement{}.Mixin()
+	goodcoinachievement.Policy = privacy.NewPolicies(goodcoinachievementMixin[0], schema.GoodCoinAchievement{})
+	goodcoinachievement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := goodcoinachievement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	goodcoinachievementMixinFields0 := goodcoinachievementMixin[0].Fields()
+	_ = goodcoinachievementMixinFields0
+	goodcoinachievementMixinFields1 := goodcoinachievementMixin[1].Fields()
+	_ = goodcoinachievementMixinFields1
+	goodcoinachievementFields := schema.GoodCoinAchievement{}.Fields()
+	_ = goodcoinachievementFields
+	// goodcoinachievementDescCreatedAt is the schema descriptor for created_at field.
+	goodcoinachievementDescCreatedAt := goodcoinachievementMixinFields0[0].Descriptor()
+	// goodcoinachievement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	goodcoinachievement.DefaultCreatedAt = goodcoinachievementDescCreatedAt.Default.(func() uint32)
+	// goodcoinachievementDescUpdatedAt is the schema descriptor for updated_at field.
+	goodcoinachievementDescUpdatedAt := goodcoinachievementMixinFields0[1].Descriptor()
+	// goodcoinachievement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	goodcoinachievement.DefaultUpdatedAt = goodcoinachievementDescUpdatedAt.Default.(func() uint32)
+	// goodcoinachievement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	goodcoinachievement.UpdateDefaultUpdatedAt = goodcoinachievementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// goodcoinachievementDescDeletedAt is the schema descriptor for deleted_at field.
+	goodcoinachievementDescDeletedAt := goodcoinachievementMixinFields0[2].Descriptor()
+	// goodcoinachievement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	goodcoinachievement.DefaultDeletedAt = goodcoinachievementDescDeletedAt.Default.(func() uint32)
+	// goodcoinachievementDescEntID is the schema descriptor for ent_id field.
+	goodcoinachievementDescEntID := goodcoinachievementMixinFields1[1].Descriptor()
+	// goodcoinachievement.DefaultEntID holds the default value on creation for the ent_id field.
+	goodcoinachievement.DefaultEntID = goodcoinachievementDescEntID.Default.(func() uuid.UUID)
+	// goodcoinachievementDescAppID is the schema descriptor for app_id field.
+	goodcoinachievementDescAppID := goodcoinachievementFields[0].Descriptor()
+	// goodcoinachievement.DefaultAppID holds the default value on creation for the app_id field.
+	goodcoinachievement.DefaultAppID = goodcoinachievementDescAppID.Default.(func() uuid.UUID)
+	// goodcoinachievementDescUserID is the schema descriptor for user_id field.
+	goodcoinachievementDescUserID := goodcoinachievementFields[1].Descriptor()
+	// goodcoinachievement.DefaultUserID holds the default value on creation for the user_id field.
+	goodcoinachievement.DefaultUserID = goodcoinachievementDescUserID.Default.(func() uuid.UUID)
+	// goodcoinachievementDescGoodCoinTypeID is the schema descriptor for good_coin_type_id field.
+	goodcoinachievementDescGoodCoinTypeID := goodcoinachievementFields[2].Descriptor()
+	// goodcoinachievement.DefaultGoodCoinTypeID holds the default value on creation for the good_coin_type_id field.
+	goodcoinachievement.DefaultGoodCoinTypeID = goodcoinachievementDescGoodCoinTypeID.Default.(func() uuid.UUID)
+	// goodcoinachievementDescTotalUnits is the schema descriptor for total_units field.
+	goodcoinachievementDescTotalUnits := goodcoinachievementFields[3].Descriptor()
+	// goodcoinachievement.DefaultTotalUnits holds the default value on creation for the total_units field.
+	goodcoinachievement.DefaultTotalUnits = goodcoinachievementDescTotalUnits.Default.(decimal.Decimal)
+	// goodcoinachievementDescSelfUnits is the schema descriptor for self_units field.
+	goodcoinachievementDescSelfUnits := goodcoinachievementFields[4].Descriptor()
+	// goodcoinachievement.DefaultSelfUnits holds the default value on creation for the self_units field.
+	goodcoinachievement.DefaultSelfUnits = goodcoinachievementDescSelfUnits.Default.(decimal.Decimal)
+	// goodcoinachievementDescTotalAmountUsd is the schema descriptor for total_amount_usd field.
+	goodcoinachievementDescTotalAmountUsd := goodcoinachievementFields[5].Descriptor()
+	// goodcoinachievement.DefaultTotalAmountUsd holds the default value on creation for the total_amount_usd field.
+	goodcoinachievement.DefaultTotalAmountUsd = goodcoinachievementDescTotalAmountUsd.Default.(decimal.Decimal)
+	// goodcoinachievementDescSelfAmountUsd is the schema descriptor for self_amount_usd field.
+	goodcoinachievementDescSelfAmountUsd := goodcoinachievementFields[6].Descriptor()
+	// goodcoinachievement.DefaultSelfAmountUsd holds the default value on creation for the self_amount_usd field.
+	goodcoinachievement.DefaultSelfAmountUsd = goodcoinachievementDescSelfAmountUsd.Default.(decimal.Decimal)
+	// goodcoinachievementDescTotalCommissionUsd is the schema descriptor for total_commission_usd field.
+	goodcoinachievementDescTotalCommissionUsd := goodcoinachievementFields[7].Descriptor()
+	// goodcoinachievement.DefaultTotalCommissionUsd holds the default value on creation for the total_commission_usd field.
+	goodcoinachievement.DefaultTotalCommissionUsd = goodcoinachievementDescTotalCommissionUsd.Default.(decimal.Decimal)
+	// goodcoinachievementDescSelfCommissionUsd is the schema descriptor for self_commission_usd field.
+	goodcoinachievementDescSelfCommissionUsd := goodcoinachievementFields[8].Descriptor()
+	// goodcoinachievement.DefaultSelfCommissionUsd holds the default value on creation for the self_commission_usd field.
+	goodcoinachievement.DefaultSelfCommissionUsd = goodcoinachievementDescSelfCommissionUsd.Default.(decimal.Decimal)
 	invitationcodeMixin := schema.InvitationCode{}.Mixin()
 	invitationcode.Policy = privacy.NewPolicies(invitationcodeMixin[0], schema.InvitationCode{})
 	invitationcode.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -919,6 +1067,150 @@ func init() {
 	invitationcodeDescDisabled := invitationcodeFields[3].Descriptor()
 	// invitationcode.DefaultDisabled holds the default value on creation for the disabled field.
 	invitationcode.DefaultDisabled = invitationcodeDescDisabled.Default.(bool)
+	orderpaymentstatementMixin := schema.OrderPaymentStatement{}.Mixin()
+	orderpaymentstatement.Policy = privacy.NewPolicies(orderpaymentstatementMixin[0], schema.OrderPaymentStatement{})
+	orderpaymentstatement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderpaymentstatement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderpaymentstatementMixinFields0 := orderpaymentstatementMixin[0].Fields()
+	_ = orderpaymentstatementMixinFields0
+	orderpaymentstatementMixinFields1 := orderpaymentstatementMixin[1].Fields()
+	_ = orderpaymentstatementMixinFields1
+	orderpaymentstatementFields := schema.OrderPaymentStatement{}.Fields()
+	_ = orderpaymentstatementFields
+	// orderpaymentstatementDescCreatedAt is the schema descriptor for created_at field.
+	orderpaymentstatementDescCreatedAt := orderpaymentstatementMixinFields0[0].Descriptor()
+	// orderpaymentstatement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderpaymentstatement.DefaultCreatedAt = orderpaymentstatementDescCreatedAt.Default.(func() uint32)
+	// orderpaymentstatementDescUpdatedAt is the schema descriptor for updated_at field.
+	orderpaymentstatementDescUpdatedAt := orderpaymentstatementMixinFields0[1].Descriptor()
+	// orderpaymentstatement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderpaymentstatement.DefaultUpdatedAt = orderpaymentstatementDescUpdatedAt.Default.(func() uint32)
+	// orderpaymentstatement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderpaymentstatement.UpdateDefaultUpdatedAt = orderpaymentstatementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderpaymentstatementDescDeletedAt is the schema descriptor for deleted_at field.
+	orderpaymentstatementDescDeletedAt := orderpaymentstatementMixinFields0[2].Descriptor()
+	// orderpaymentstatement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderpaymentstatement.DefaultDeletedAt = orderpaymentstatementDescDeletedAt.Default.(func() uint32)
+	// orderpaymentstatementDescEntID is the schema descriptor for ent_id field.
+	orderpaymentstatementDescEntID := orderpaymentstatementMixinFields1[1].Descriptor()
+	// orderpaymentstatement.DefaultEntID holds the default value on creation for the ent_id field.
+	orderpaymentstatement.DefaultEntID = orderpaymentstatementDescEntID.Default.(func() uuid.UUID)
+	// orderpaymentstatementDescStatementID is the schema descriptor for statement_id field.
+	orderpaymentstatementDescStatementID := orderpaymentstatementFields[0].Descriptor()
+	// orderpaymentstatement.DefaultStatementID holds the default value on creation for the statement_id field.
+	orderpaymentstatement.DefaultStatementID = orderpaymentstatementDescStatementID.Default.(func() uuid.UUID)
+	// orderpaymentstatementDescPaymentCoinTypeID is the schema descriptor for payment_coin_type_id field.
+	orderpaymentstatementDescPaymentCoinTypeID := orderpaymentstatementFields[1].Descriptor()
+	// orderpaymentstatement.DefaultPaymentCoinTypeID holds the default value on creation for the payment_coin_type_id field.
+	orderpaymentstatement.DefaultPaymentCoinTypeID = orderpaymentstatementDescPaymentCoinTypeID.Default.(func() uuid.UUID)
+	// orderpaymentstatementDescAmount is the schema descriptor for amount field.
+	orderpaymentstatementDescAmount := orderpaymentstatementFields[2].Descriptor()
+	// orderpaymentstatement.DefaultAmount holds the default value on creation for the amount field.
+	orderpaymentstatement.DefaultAmount = orderpaymentstatementDescAmount.Default.(decimal.Decimal)
+	// orderpaymentstatementDescCommissionAmount is the schema descriptor for commission_amount field.
+	orderpaymentstatementDescCommissionAmount := orderpaymentstatementFields[3].Descriptor()
+	// orderpaymentstatement.DefaultCommissionAmount holds the default value on creation for the commission_amount field.
+	orderpaymentstatement.DefaultCommissionAmount = orderpaymentstatementDescCommissionAmount.Default.(decimal.Decimal)
+	orderstatementMixin := schema.OrderStatement{}.Mixin()
+	orderstatement.Policy = privacy.NewPolicies(orderstatementMixin[0], schema.OrderStatement{})
+	orderstatement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderstatement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderstatementMixinFields0 := orderstatementMixin[0].Fields()
+	_ = orderstatementMixinFields0
+	orderstatementMixinFields1 := orderstatementMixin[1].Fields()
+	_ = orderstatementMixinFields1
+	orderstatementFields := schema.OrderStatement{}.Fields()
+	_ = orderstatementFields
+	// orderstatementDescCreatedAt is the schema descriptor for created_at field.
+	orderstatementDescCreatedAt := orderstatementMixinFields0[0].Descriptor()
+	// orderstatement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orderstatement.DefaultCreatedAt = orderstatementDescCreatedAt.Default.(func() uint32)
+	// orderstatementDescUpdatedAt is the schema descriptor for updated_at field.
+	orderstatementDescUpdatedAt := orderstatementMixinFields0[1].Descriptor()
+	// orderstatement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orderstatement.DefaultUpdatedAt = orderstatementDescUpdatedAt.Default.(func() uint32)
+	// orderstatement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orderstatement.UpdateDefaultUpdatedAt = orderstatementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderstatementDescDeletedAt is the schema descriptor for deleted_at field.
+	orderstatementDescDeletedAt := orderstatementMixinFields0[2].Descriptor()
+	// orderstatement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	orderstatement.DefaultDeletedAt = orderstatementDescDeletedAt.Default.(func() uint32)
+	// orderstatementDescEntID is the schema descriptor for ent_id field.
+	orderstatementDescEntID := orderstatementMixinFields1[1].Descriptor()
+	// orderstatement.DefaultEntID holds the default value on creation for the ent_id field.
+	orderstatement.DefaultEntID = orderstatementDescEntID.Default.(func() uuid.UUID)
+	// orderstatementDescAppID is the schema descriptor for app_id field.
+	orderstatementDescAppID := orderstatementFields[0].Descriptor()
+	// orderstatement.DefaultAppID holds the default value on creation for the app_id field.
+	orderstatement.DefaultAppID = orderstatementDescAppID.Default.(func() uuid.UUID)
+	// orderstatementDescUserID is the schema descriptor for user_id field.
+	orderstatementDescUserID := orderstatementFields[1].Descriptor()
+	// orderstatement.DefaultUserID holds the default value on creation for the user_id field.
+	orderstatement.DefaultUserID = orderstatementDescUserID.Default.(func() uuid.UUID)
+	// orderstatementDescGoodID is the schema descriptor for good_id field.
+	orderstatementDescGoodID := orderstatementFields[2].Descriptor()
+	// orderstatement.DefaultGoodID holds the default value on creation for the good_id field.
+	orderstatement.DefaultGoodID = orderstatementDescGoodID.Default.(func() uuid.UUID)
+	// orderstatementDescAppGoodID is the schema descriptor for app_good_id field.
+	orderstatementDescAppGoodID := orderstatementFields[3].Descriptor()
+	// orderstatement.DefaultAppGoodID holds the default value on creation for the app_good_id field.
+	orderstatement.DefaultAppGoodID = orderstatementDescAppGoodID.Default.(func() uuid.UUID)
+	// orderstatementDescOrderID is the schema descriptor for order_id field.
+	orderstatementDescOrderID := orderstatementFields[4].Descriptor()
+	// orderstatement.DefaultOrderID holds the default value on creation for the order_id field.
+	orderstatement.DefaultOrderID = orderstatementDescOrderID.Default.(func() uuid.UUID)
+	// orderstatementDescOrderUserID is the schema descriptor for order_user_id field.
+	orderstatementDescOrderUserID := orderstatementFields[5].Descriptor()
+	// orderstatement.DefaultOrderUserID holds the default value on creation for the order_user_id field.
+	orderstatement.DefaultOrderUserID = orderstatementDescOrderUserID.Default.(func() uuid.UUID)
+	// orderstatementDescSelfOrder is the schema descriptor for self_order field.
+	orderstatementDescSelfOrder := orderstatementFields[6].Descriptor()
+	// orderstatement.DefaultSelfOrder holds the default value on creation for the self_order field.
+	orderstatement.DefaultSelfOrder = orderstatementDescSelfOrder.Default.(bool)
+	// orderstatementDescGoodCoinTypeID is the schema descriptor for good_coin_type_id field.
+	orderstatementDescGoodCoinTypeID := orderstatementFields[7].Descriptor()
+	// orderstatement.DefaultGoodCoinTypeID holds the default value on creation for the good_coin_type_id field.
+	orderstatement.DefaultGoodCoinTypeID = orderstatementDescGoodCoinTypeID.Default.(func() uuid.UUID)
+	// orderstatementDescUnits is the schema descriptor for units field.
+	orderstatementDescUnits := orderstatementFields[8].Descriptor()
+	// orderstatement.DefaultUnits holds the default value on creation for the units field.
+	orderstatement.DefaultUnits = orderstatementDescUnits.Default.(uint32)
+	// orderstatementDescGoodValueUsd is the schema descriptor for good_value_usd field.
+	orderstatementDescGoodValueUsd := orderstatementFields[9].Descriptor()
+	// orderstatement.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
+	orderstatement.DefaultGoodValueUsd = orderstatementDescGoodValueUsd.Default.(decimal.Decimal)
+	// orderstatementDescPaymentAmountUsd is the schema descriptor for payment_amount_usd field.
+	orderstatementDescPaymentAmountUsd := orderstatementFields[10].Descriptor()
+	// orderstatement.DefaultPaymentAmountUsd holds the default value on creation for the payment_amount_usd field.
+	orderstatement.DefaultPaymentAmountUsd = orderstatementDescPaymentAmountUsd.Default.(decimal.Decimal)
+	// orderstatementDescCommissionAmountUsd is the schema descriptor for commission_amount_usd field.
+	orderstatementDescCommissionAmountUsd := orderstatementFields[11].Descriptor()
+	// orderstatement.DefaultCommissionAmountUsd holds the default value on creation for the commission_amount_usd field.
+	orderstatement.DefaultCommissionAmountUsd = orderstatementDescCommissionAmountUsd.Default.(decimal.Decimal)
+	// orderstatementDescAppConfigID is the schema descriptor for app_config_id field.
+	orderstatementDescAppConfigID := orderstatementFields[12].Descriptor()
+	// orderstatement.DefaultAppConfigID holds the default value on creation for the app_config_id field.
+	orderstatement.DefaultAppConfigID = orderstatementDescAppConfigID.Default.(func() uuid.UUID)
+	// orderstatementDescCommissionConfigID is the schema descriptor for commission_config_id field.
+	orderstatementDescCommissionConfigID := orderstatementFields[13].Descriptor()
+	// orderstatement.DefaultCommissionConfigID holds the default value on creation for the commission_config_id field.
+	orderstatement.DefaultCommissionConfigID = orderstatementDescCommissionConfigID.Default.(func() uuid.UUID)
+	// orderstatementDescCommissionConfigType is the schema descriptor for commission_config_type field.
+	orderstatementDescCommissionConfigType := orderstatementFields[14].Descriptor()
+	// orderstatement.DefaultCommissionConfigType holds the default value on creation for the commission_config_type field.
+	orderstatement.DefaultCommissionConfigType = orderstatementDescCommissionConfigType.Default.(string)
 	pubsubmessageMixin := schema.PubsubMessage{}.Mixin()
 	pubsubmessage.Policy = privacy.NewPolicies(pubsubmessageMixin[0], schema.PubsubMessage{})
 	pubsubmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
