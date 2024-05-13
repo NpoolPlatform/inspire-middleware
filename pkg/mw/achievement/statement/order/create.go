@@ -9,15 +9,16 @@ import (
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 )
 
 type createHandler struct {
 	*Handler
 	sql                      string
 	sqlCreateGoodAchievement string
-	sqlUpdateGoodAchievement string
 }
 
 func (h *createHandler) constructSQL() {
@@ -86,15 +87,43 @@ func (h *createHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *createHandler) constructGoodAchievementSQLs(ctx context.Context) error {
+func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) error {
 	handler, err := goodachievement1.NewHandler(
 		ctx,
-		goodachievement1.WithAppID(h.AppID, true),
+		goodachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		goodachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		goodachievement1.WithGoodID(func() *string { s := h.GoodID.String(); return &s }(), true),
+		goodachievement1.WithAppGoodID(func() *string { s := h.AppGoodID.String(); return &s }(), true),
+		goodachievement1.WithTotalAmountUSD(func() *string { s := h.PaymentAmountUSD.String(); return &s }(), true),
+		goodachievement1.WithSelfAmountUSD(func() *string {
+			s := decimal.NewFromInt(0).String()
+			if *h.UserID == *h.OrderUserID {
+				s = h.PaymentAmountUSD.String()
+			}
+			return &s
+		}(), true),
+		goodachievement1.WithTotalUnits(func() *string { s := h.Units.String(); return &s }(), true),
+		goodachievement1.WithSelfUnits(func() *string {
+			s := decimal.NewFromInt(0).String()
+			if *h.UserID == *h.OrderUserID {
+				s = h.Units.String()
+			}
+			return &s
+		}(), true),
+		goodachievement1.WithTotalCommissionUSD(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		goodachievement1.WithSelfCommissionUSD(func() *string {
+			s := decimal.NewFromInt(0).String()
+			if *h.UserID == *h.OrderUserID {
+				s = h.CommissionAmountUSD.String()
+			}
+			return &s
+		}(), true),
 	)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
 	h.sqlCreateGoodAchievement = handler.ConstructCreateSQL()
+	return nil
 }
 
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
@@ -147,6 +176,9 @@ func (h *Handler) CreateStatement(ctx context.Context) error {
 	}
 
 	handler.constructSQL()
+	if err := handler.constructCreateGoodAchievementSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createOrderStatement(_ctx, tx); err != nil {
