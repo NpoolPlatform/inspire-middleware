@@ -460,7 +460,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatement.FieldAppGoodID:            {Type: field.TypeUUID, Column: orderstatement.FieldAppGoodID},
 			orderstatement.FieldOrderID:              {Type: field.TypeUUID, Column: orderstatement.FieldOrderID},
 			orderstatement.FieldOrderUserID:          {Type: field.TypeUUID, Column: orderstatement.FieldOrderUserID},
-			orderstatement.FieldSelfOrder:            {Type: field.TypeBool, Column: orderstatement.FieldSelfOrder},
 			orderstatement.FieldGoodCoinTypeID:       {Type: field.TypeUUID, Column: orderstatement.FieldGoodCoinTypeID},
 			orderstatement.FieldUnits:                {Type: field.TypeUint32, Column: orderstatement.FieldUnits},
 			orderstatement.FieldGoodValueUsd:         {Type: field.TypeOther, Column: orderstatement.FieldGoodValueUsd},
@@ -2276,11 +2275,6 @@ func (f *OrderStatementFilter) WhereOrderID(p entql.ValueP) {
 // WhereOrderUserID applies the entql [16]byte predicate on the order_user_id field.
 func (f *OrderStatementFilter) WhereOrderUserID(p entql.ValueP) {
 	f.Where(p.Field(orderstatement.FieldOrderUserID))
-}
-
-// WhereSelfOrder applies the entql bool predicate on the self_order field.
-func (f *OrderStatementFilter) WhereSelfOrder(p entql.BoolP) {
-	f.Where(p.Field(orderstatement.FieldSelfOrder))
 }
 
 // WhereGoodCoinTypeID applies the entql [16]byte predicate on the good_coin_type_id field.

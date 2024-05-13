@@ -150,13 +150,6 @@ func OrderUserID(v uuid.UUID) predicate.OrderStatement {
 	})
 }
 
-// SelfOrder applies equality check predicate on the "self_order" field. It's identical to SelfOrderEQ.
-func SelfOrder(v bool) predicate.OrderStatement {
-	return predicate.OrderStatement(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSelfOrder), v))
-	})
-}
-
 // GoodCoinTypeID applies equality check predicate on the "good_coin_type_id" field. It's identical to GoodCoinTypeIDEQ.
 func GoodCoinTypeID(v uuid.UUID) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
@@ -934,34 +927,6 @@ func OrderUserIDIsNil() predicate.OrderStatement {
 func OrderUserIDNotNil() predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldOrderUserID)))
-	})
-}
-
-// SelfOrderEQ applies the EQ predicate on the "self_order" field.
-func SelfOrderEQ(v bool) predicate.OrderStatement {
-	return predicate.OrderStatement(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldSelfOrder), v))
-	})
-}
-
-// SelfOrderNEQ applies the NEQ predicate on the "self_order" field.
-func SelfOrderNEQ(v bool) predicate.OrderStatement {
-	return predicate.OrderStatement(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldSelfOrder), v))
-	})
-}
-
-// SelfOrderIsNil applies the IsNil predicate on the "self_order" field.
-func SelfOrderIsNil() predicate.OrderStatement {
-	return predicate.OrderStatement(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldSelfOrder)))
-	})
-}
-
-// SelfOrderNotNil applies the NotNil predicate on the "self_order" field.
-func SelfOrderNotNil() predicate.OrderStatement {
-	return predicate.OrderStatement(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldSelfOrder)))
 	})
 }
 

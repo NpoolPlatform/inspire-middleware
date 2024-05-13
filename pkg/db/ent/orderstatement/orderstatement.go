@@ -33,8 +33,6 @@ const (
 	FieldOrderID = "order_id"
 	// FieldOrderUserID holds the string denoting the order_user_id field in the database.
 	FieldOrderUserID = "order_user_id"
-	// FieldSelfOrder holds the string denoting the self_order field in the database.
-	FieldSelfOrder = "self_order"
 	// FieldGoodCoinTypeID holds the string denoting the good_coin_type_id field in the database.
 	FieldGoodCoinTypeID = "good_coin_type_id"
 	// FieldUnits holds the string denoting the units field in the database.
@@ -68,7 +66,6 @@ var Columns = []string{
 	FieldAppGoodID,
 	FieldOrderID,
 	FieldOrderUserID,
-	FieldSelfOrder,
 	FieldGoodCoinTypeID,
 	FieldUnits,
 	FieldGoodValueUsd,
@@ -120,8 +117,6 @@ var (
 	DefaultOrderID func() uuid.UUID
 	// DefaultOrderUserID holds the default value on creation for the "order_user_id" field.
 	DefaultOrderUserID func() uuid.UUID
-	// DefaultSelfOrder holds the default value on creation for the "self_order" field.
-	DefaultSelfOrder bool
 	// DefaultGoodCoinTypeID holds the default value on creation for the "good_coin_type_id" field.
 	DefaultGoodCoinTypeID func() uuid.UUID
 	// DefaultUnits holds the default value on creation for the "units" field.

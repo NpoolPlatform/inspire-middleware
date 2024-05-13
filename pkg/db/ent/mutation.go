@@ -19993,7 +19993,6 @@ type OrderStatementMutation struct {
 	app_good_id            *uuid.UUID
 	order_id               *uuid.UUID
 	order_user_id          *uuid.UUID
-	self_order             *bool
 	good_coin_type_id      *uuid.UUID
 	units                  *uint32
 	addunits               *int32
@@ -20611,55 +20610,6 @@ func (m *OrderStatementMutation) ResetOrderUserID() {
 	delete(m.clearedFields, orderstatement.FieldOrderUserID)
 }
 
-// SetSelfOrder sets the "self_order" field.
-func (m *OrderStatementMutation) SetSelfOrder(b bool) {
-	m.self_order = &b
-}
-
-// SelfOrder returns the value of the "self_order" field in the mutation.
-func (m *OrderStatementMutation) SelfOrder() (r bool, exists bool) {
-	v := m.self_order
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSelfOrder returns the old "self_order" field's value of the OrderStatement entity.
-// If the OrderStatement object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStatementMutation) OldSelfOrder(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSelfOrder is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSelfOrder requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSelfOrder: %w", err)
-	}
-	return oldValue.SelfOrder, nil
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (m *OrderStatementMutation) ClearSelfOrder() {
-	m.self_order = nil
-	m.clearedFields[orderstatement.FieldSelfOrder] = struct{}{}
-}
-
-// SelfOrderCleared returns if the "self_order" field was cleared in this mutation.
-func (m *OrderStatementMutation) SelfOrderCleared() bool {
-	_, ok := m.clearedFields[orderstatement.FieldSelfOrder]
-	return ok
-}
-
-// ResetSelfOrder resets all changes to the "self_order" field.
-func (m *OrderStatementMutation) ResetSelfOrder() {
-	m.self_order = nil
-	delete(m.clearedFields, orderstatement.FieldSelfOrder)
-}
-
 // SetGoodCoinTypeID sets the "good_coin_type_id" field.
 func (m *OrderStatementMutation) SetGoodCoinTypeID(u uuid.UUID) {
 	m.good_coin_type_id = &u
@@ -21092,7 +21042,7 @@ func (m *OrderStatementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStatementMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, orderstatement.FieldCreatedAt)
 	}
@@ -21122,9 +21072,6 @@ func (m *OrderStatementMutation) Fields() []string {
 	}
 	if m.order_user_id != nil {
 		fields = append(fields, orderstatement.FieldOrderUserID)
-	}
-	if m.self_order != nil {
-		fields = append(fields, orderstatement.FieldSelfOrder)
 	}
 	if m.good_coin_type_id != nil {
 		fields = append(fields, orderstatement.FieldGoodCoinTypeID)
@@ -21178,8 +21125,6 @@ func (m *OrderStatementMutation) Field(name string) (ent.Value, bool) {
 		return m.OrderID()
 	case orderstatement.FieldOrderUserID:
 		return m.OrderUserID()
-	case orderstatement.FieldSelfOrder:
-		return m.SelfOrder()
 	case orderstatement.FieldGoodCoinTypeID:
 		return m.GoodCoinTypeID()
 	case orderstatement.FieldUnits:
@@ -21225,8 +21170,6 @@ func (m *OrderStatementMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldOrderID(ctx)
 	case orderstatement.FieldOrderUserID:
 		return m.OldOrderUserID(ctx)
-	case orderstatement.FieldSelfOrder:
-		return m.OldSelfOrder(ctx)
 	case orderstatement.FieldGoodCoinTypeID:
 		return m.OldGoodCoinTypeID(ctx)
 	case orderstatement.FieldUnits:
@@ -21321,13 +21264,6 @@ func (m *OrderStatementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderUserID(v)
-		return nil
-	case orderstatement.FieldSelfOrder:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSelfOrder(v)
 		return nil
 	case orderstatement.FieldGoodCoinTypeID:
 		v, ok := value.(uuid.UUID)
@@ -21484,9 +21420,6 @@ func (m *OrderStatementMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstatement.FieldOrderUserID) {
 		fields = append(fields, orderstatement.FieldOrderUserID)
 	}
-	if m.FieldCleared(orderstatement.FieldSelfOrder) {
-		fields = append(fields, orderstatement.FieldSelfOrder)
-	}
 	if m.FieldCleared(orderstatement.FieldGoodCoinTypeID) {
 		fields = append(fields, orderstatement.FieldGoodCoinTypeID)
 	}
@@ -21542,9 +21475,6 @@ func (m *OrderStatementMutation) ClearField(name string) error {
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ClearOrderUserID()
-		return nil
-	case orderstatement.FieldSelfOrder:
-		m.ClearSelfOrder()
 		return nil
 	case orderstatement.FieldGoodCoinTypeID:
 		m.ClearGoodCoinTypeID()
@@ -21607,9 +21537,6 @@ func (m *OrderStatementMutation) ResetField(name string) error {
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ResetOrderUserID()
-		return nil
-	case orderstatement.FieldSelfOrder:
-		m.ResetSelfOrder()
 		return nil
 	case orderstatement.FieldGoodCoinTypeID:
 		m.ResetGoodCoinTypeID()

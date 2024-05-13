@@ -64,10 +64,6 @@ func (OrderStatement) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Bool("self_order").
-			Optional().
-			Default(false),
-		field.
 			UUID("good_coin_type_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

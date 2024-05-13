@@ -1175,40 +1175,36 @@ func init() {
 	orderstatementDescOrderUserID := orderstatementFields[5].Descriptor()
 	// orderstatement.DefaultOrderUserID holds the default value on creation for the order_user_id field.
 	orderstatement.DefaultOrderUserID = orderstatementDescOrderUserID.Default.(func() uuid.UUID)
-	// orderstatementDescSelfOrder is the schema descriptor for self_order field.
-	orderstatementDescSelfOrder := orderstatementFields[6].Descriptor()
-	// orderstatement.DefaultSelfOrder holds the default value on creation for the self_order field.
-	orderstatement.DefaultSelfOrder = orderstatementDescSelfOrder.Default.(bool)
 	// orderstatementDescGoodCoinTypeID is the schema descriptor for good_coin_type_id field.
-	orderstatementDescGoodCoinTypeID := orderstatementFields[7].Descriptor()
+	orderstatementDescGoodCoinTypeID := orderstatementFields[6].Descriptor()
 	// orderstatement.DefaultGoodCoinTypeID holds the default value on creation for the good_coin_type_id field.
 	orderstatement.DefaultGoodCoinTypeID = orderstatementDescGoodCoinTypeID.Default.(func() uuid.UUID)
 	// orderstatementDescUnits is the schema descriptor for units field.
-	orderstatementDescUnits := orderstatementFields[8].Descriptor()
+	orderstatementDescUnits := orderstatementFields[7].Descriptor()
 	// orderstatement.DefaultUnits holds the default value on creation for the units field.
 	orderstatement.DefaultUnits = orderstatementDescUnits.Default.(uint32)
 	// orderstatementDescGoodValueUsd is the schema descriptor for good_value_usd field.
-	orderstatementDescGoodValueUsd := orderstatementFields[9].Descriptor()
+	orderstatementDescGoodValueUsd := orderstatementFields[8].Descriptor()
 	// orderstatement.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.
 	orderstatement.DefaultGoodValueUsd = orderstatementDescGoodValueUsd.Default.(decimal.Decimal)
 	// orderstatementDescPaymentAmountUsd is the schema descriptor for payment_amount_usd field.
-	orderstatementDescPaymentAmountUsd := orderstatementFields[10].Descriptor()
+	orderstatementDescPaymentAmountUsd := orderstatementFields[9].Descriptor()
 	// orderstatement.DefaultPaymentAmountUsd holds the default value on creation for the payment_amount_usd field.
 	orderstatement.DefaultPaymentAmountUsd = orderstatementDescPaymentAmountUsd.Default.(decimal.Decimal)
 	// orderstatementDescCommissionAmountUsd is the schema descriptor for commission_amount_usd field.
-	orderstatementDescCommissionAmountUsd := orderstatementFields[11].Descriptor()
+	orderstatementDescCommissionAmountUsd := orderstatementFields[10].Descriptor()
 	// orderstatement.DefaultCommissionAmountUsd holds the default value on creation for the commission_amount_usd field.
 	orderstatement.DefaultCommissionAmountUsd = orderstatementDescCommissionAmountUsd.Default.(decimal.Decimal)
 	// orderstatementDescAppConfigID is the schema descriptor for app_config_id field.
-	orderstatementDescAppConfigID := orderstatementFields[12].Descriptor()
+	orderstatementDescAppConfigID := orderstatementFields[11].Descriptor()
 	// orderstatement.DefaultAppConfigID holds the default value on creation for the app_config_id field.
 	orderstatement.DefaultAppConfigID = orderstatementDescAppConfigID.Default.(func() uuid.UUID)
 	// orderstatementDescCommissionConfigID is the schema descriptor for commission_config_id field.
-	orderstatementDescCommissionConfigID := orderstatementFields[13].Descriptor()
+	orderstatementDescCommissionConfigID := orderstatementFields[12].Descriptor()
 	// orderstatement.DefaultCommissionConfigID holds the default value on creation for the commission_config_id field.
 	orderstatement.DefaultCommissionConfigID = orderstatementDescCommissionConfigID.Default.(func() uuid.UUID)
 	// orderstatementDescCommissionConfigType is the schema descriptor for commission_config_type field.
-	orderstatementDescCommissionConfigType := orderstatementFields[14].Descriptor()
+	orderstatementDescCommissionConfigType := orderstatementFields[13].Descriptor()
 	// orderstatement.DefaultCommissionConfigType holds the default value on creation for the commission_config_type field.
 	orderstatement.DefaultCommissionConfigType = orderstatementDescCommissionConfigType.Default.(string)
 	pubsubmessageMixin := schema.PubsubMessage{}.Mixin()

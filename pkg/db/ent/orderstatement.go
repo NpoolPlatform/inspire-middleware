@@ -37,8 +37,6 @@ type OrderStatement struct {
 	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// OrderUserID holds the value of the "order_user_id" field.
 	OrderUserID uuid.UUID `json:"order_user_id,omitempty"`
-	// SelfOrder holds the value of the "self_order" field.
-	SelfOrder bool `json:"self_order,omitempty"`
 	// GoodCoinTypeID holds the value of the "good_coin_type_id" field.
 	GoodCoinTypeID uuid.UUID `json:"good_coin_type_id,omitempty"`
 	// Units holds the value of the "units" field.
@@ -64,8 +62,6 @@ func (*OrderStatement) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case orderstatement.FieldGoodValueUsd, orderstatement.FieldPaymentAmountUsd, orderstatement.FieldCommissionAmountUsd:
 			values[i] = new(decimal.Decimal)
-		case orderstatement.FieldSelfOrder:
-			values[i] = new(sql.NullBool)
 		case orderstatement.FieldID, orderstatement.FieldCreatedAt, orderstatement.FieldUpdatedAt, orderstatement.FieldDeletedAt, orderstatement.FieldUnits:
 			values[i] = new(sql.NullInt64)
 		case orderstatement.FieldCommissionConfigType:
@@ -152,12 +148,6 @@ func (os *OrderStatement) assignValues(columns []string, values []interface{}) e
 				return fmt.Errorf("unexpected type %T for field order_user_id", values[i])
 			} else if value != nil {
 				os.OrderUserID = *value
-			}
-		case orderstatement.FieldSelfOrder:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field self_order", values[i])
-			} else if value.Valid {
-				os.SelfOrder = value.Bool
 			}
 		case orderstatement.FieldGoodCoinTypeID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -264,9 +254,6 @@ func (os *OrderStatement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_user_id=")
 	builder.WriteString(fmt.Sprintf("%v", os.OrderUserID))
-	builder.WriteString(", ")
-	builder.WriteString("self_order=")
-	builder.WriteString(fmt.Sprintf("%v", os.SelfOrder))
 	builder.WriteString(", ")
 	builder.WriteString("good_coin_type_id=")
 	builder.WriteString(fmt.Sprintf("%v", os.GoodCoinTypeID))

@@ -219,26 +219,6 @@ func (osu *OrderStatementUpdate) ClearOrderUserID() *OrderStatementUpdate {
 	return osu
 }
 
-// SetSelfOrder sets the "self_order" field.
-func (osu *OrderStatementUpdate) SetSelfOrder(b bool) *OrderStatementUpdate {
-	osu.mutation.SetSelfOrder(b)
-	return osu
-}
-
-// SetNillableSelfOrder sets the "self_order" field if the given value is not nil.
-func (osu *OrderStatementUpdate) SetNillableSelfOrder(b *bool) *OrderStatementUpdate {
-	if b != nil {
-		osu.SetSelfOrder(*b)
-	}
-	return osu
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (osu *OrderStatementUpdate) ClearSelfOrder() *OrderStatementUpdate {
-	osu.mutation.ClearSelfOrder()
-	return osu
-}
-
 // SetGoodCoinTypeID sets the "good_coin_type_id" field.
 func (osu *OrderStatementUpdate) SetGoodCoinTypeID(u uuid.UUID) *OrderStatementUpdate {
 	osu.mutation.SetGoodCoinTypeID(u)
@@ -631,19 +611,6 @@ func (osu *OrderStatementUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: orderstatement.FieldOrderUserID,
 		})
 	}
-	if value, ok := osu.mutation.SelfOrder(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: orderstatement.FieldSelfOrder,
-		})
-	}
-	if osu.mutation.SelfOrderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: orderstatement.FieldSelfOrder,
-		})
-	}
 	if value, ok := osu.mutation.GoodCoinTypeID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -962,26 +929,6 @@ func (osuo *OrderStatementUpdateOne) SetNillableOrderUserID(u *uuid.UUID) *Order
 // ClearOrderUserID clears the value of the "order_user_id" field.
 func (osuo *OrderStatementUpdateOne) ClearOrderUserID() *OrderStatementUpdateOne {
 	osuo.mutation.ClearOrderUserID()
-	return osuo
-}
-
-// SetSelfOrder sets the "self_order" field.
-func (osuo *OrderStatementUpdateOne) SetSelfOrder(b bool) *OrderStatementUpdateOne {
-	osuo.mutation.SetSelfOrder(b)
-	return osuo
-}
-
-// SetNillableSelfOrder sets the "self_order" field if the given value is not nil.
-func (osuo *OrderStatementUpdateOne) SetNillableSelfOrder(b *bool) *OrderStatementUpdateOne {
-	if b != nil {
-		osuo.SetSelfOrder(*b)
-	}
-	return osuo
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (osuo *OrderStatementUpdateOne) ClearSelfOrder() *OrderStatementUpdateOne {
-	osuo.mutation.ClearSelfOrder()
 	return osuo
 }
 
@@ -1405,19 +1352,6 @@ func (osuo *OrderStatementUpdateOne) sqlSave(ctx context.Context) (_node *OrderS
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: orderstatement.FieldOrderUserID,
-		})
-	}
-	if value, ok := osuo.mutation.SelfOrder(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: orderstatement.FieldSelfOrder,
-		})
-	}
-	if osuo.mutation.SelfOrderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: orderstatement.FieldSelfOrder,
 		})
 	}
 	if value, ok := osuo.mutation.GoodCoinTypeID(); ok {

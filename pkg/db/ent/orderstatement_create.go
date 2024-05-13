@@ -163,20 +163,6 @@ func (osc *OrderStatementCreate) SetNillableOrderUserID(u *uuid.UUID) *OrderStat
 	return osc
 }
 
-// SetSelfOrder sets the "self_order" field.
-func (osc *OrderStatementCreate) SetSelfOrder(b bool) *OrderStatementCreate {
-	osc.mutation.SetSelfOrder(b)
-	return osc
-}
-
-// SetNillableSelfOrder sets the "self_order" field if the given value is not nil.
-func (osc *OrderStatementCreate) SetNillableSelfOrder(b *bool) *OrderStatementCreate {
-	if b != nil {
-		osc.SetSelfOrder(*b)
-	}
-	return osc
-}
-
 // SetGoodCoinTypeID sets the "good_coin_type_id" field.
 func (osc *OrderStatementCreate) SetGoodCoinTypeID(u uuid.UUID) *OrderStatementCreate {
 	osc.mutation.SetGoodCoinTypeID(u)
@@ -444,10 +430,6 @@ func (osc *OrderStatementCreate) defaults() error {
 		v := orderstatement.DefaultOrderUserID()
 		osc.mutation.SetOrderUserID(v)
 	}
-	if _, ok := osc.mutation.SelfOrder(); !ok {
-		v := orderstatement.DefaultSelfOrder
-		osc.mutation.SetSelfOrder(v)
-	}
 	if _, ok := osc.mutation.GoodCoinTypeID(); !ok {
 		if orderstatement.DefaultGoodCoinTypeID == nil {
 			return fmt.Errorf("ent: uninitialized orderstatement.DefaultGoodCoinTypeID (forgotten import ent/runtime?)")
@@ -619,14 +601,6 @@ func (osc *OrderStatementCreate) createSpec() (*OrderStatement, *sqlgraph.Create
 			Column: orderstatement.FieldOrderUserID,
 		})
 		_node.OrderUserID = value
-	}
-	if value, ok := osc.mutation.SelfOrder(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: orderstatement.FieldSelfOrder,
-		})
-		_node.SelfOrder = value
 	}
 	if value, ok := osc.mutation.GoodCoinTypeID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -917,24 +891,6 @@ func (u *OrderStatementUpsert) UpdateOrderUserID() *OrderStatementUpsert {
 // ClearOrderUserID clears the value of the "order_user_id" field.
 func (u *OrderStatementUpsert) ClearOrderUserID() *OrderStatementUpsert {
 	u.SetNull(orderstatement.FieldOrderUserID)
-	return u
-}
-
-// SetSelfOrder sets the "self_order" field.
-func (u *OrderStatementUpsert) SetSelfOrder(v bool) *OrderStatementUpsert {
-	u.Set(orderstatement.FieldSelfOrder, v)
-	return u
-}
-
-// UpdateSelfOrder sets the "self_order" field to the value that was provided on create.
-func (u *OrderStatementUpsert) UpdateSelfOrder() *OrderStatementUpsert {
-	u.SetExcluded(orderstatement.FieldSelfOrder)
-	return u
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (u *OrderStatementUpsert) ClearSelfOrder() *OrderStatementUpsert {
-	u.SetNull(orderstatement.FieldSelfOrder)
 	return u
 }
 
@@ -1338,27 +1294,6 @@ func (u *OrderStatementUpsertOne) UpdateOrderUserID() *OrderStatementUpsertOne {
 func (u *OrderStatementUpsertOne) ClearOrderUserID() *OrderStatementUpsertOne {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.ClearOrderUserID()
-	})
-}
-
-// SetSelfOrder sets the "self_order" field.
-func (u *OrderStatementUpsertOne) SetSelfOrder(v bool) *OrderStatementUpsertOne {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.SetSelfOrder(v)
-	})
-}
-
-// UpdateSelfOrder sets the "self_order" field to the value that was provided on create.
-func (u *OrderStatementUpsertOne) UpdateSelfOrder() *OrderStatementUpsertOne {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.UpdateSelfOrder()
-	})
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (u *OrderStatementUpsertOne) ClearSelfOrder() *OrderStatementUpsertOne {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.ClearSelfOrder()
 	})
 }
 
@@ -1952,27 +1887,6 @@ func (u *OrderStatementUpsertBulk) UpdateOrderUserID() *OrderStatementUpsertBulk
 func (u *OrderStatementUpsertBulk) ClearOrderUserID() *OrderStatementUpsertBulk {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.ClearOrderUserID()
-	})
-}
-
-// SetSelfOrder sets the "self_order" field.
-func (u *OrderStatementUpsertBulk) SetSelfOrder(v bool) *OrderStatementUpsertBulk {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.SetSelfOrder(v)
-	})
-}
-
-// UpdateSelfOrder sets the "self_order" field to the value that was provided on create.
-func (u *OrderStatementUpsertBulk) UpdateSelfOrder() *OrderStatementUpsertBulk {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.UpdateSelfOrder()
-	})
-}
-
-// ClearSelfOrder clears the value of the "self_order" field.
-func (u *OrderStatementUpsertBulk) ClearSelfOrder() *OrderStatementUpsertBulk {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.ClearSelfOrder()
 	})
 }
 
