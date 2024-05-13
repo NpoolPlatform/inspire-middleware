@@ -13,28 +13,25 @@ import (
 )
 
 type Req struct {
-	ID                     *uint32
-	EntID                  *uuid.UUID
-	AppID                  *uuid.UUID
-	UserID                 *uuid.UUID
-	GoodID                 *uuid.UUID
-	AppGoodID              *uuid.UUID
-	OrderID                *uuid.UUID
-	OrderUserID            *uuid.UUID
-	PaymentID              *uuid.UUID
-	CoinTypeID             *uuid.UUID
-	PaymentCoinTypeID      *uuid.UUID
-	PaymentCoinUSDCurrency *decimal.Decimal
-	Units                  *decimal.Decimal
-	Amount                 *decimal.Decimal
-	USDAmount              *decimal.Decimal
-	Commission             *decimal.Decimal
-	AppConfigID            *uuid.UUID
-	CommissionConfigID     *uuid.UUID
-	CommissionConfigType   *types.CommissionConfigType
+	ID                   *uint32
+	EntID                *uuid.UUID
+	AppID                *uuid.UUID
+	UserID               *uuid.UUID
+	GoodID               *uuid.UUID
+	AppGoodID            *uuid.UUID
+	OrderID              *uuid.UUID
+	OrderUserID          *uuid.UUID
+	GoodCoinTypeID       *uuid.UUID
+	Units                *decimal.Decimal
+	GoodValueUSD         *decimal.Decimal
+	PaymentAmountUSD     *decimal.Decimal
+	CommissionAmountUSD  *decimal.Decimal
+	AppConfigID          *uuid.UUID
+	CommissionConfigID   *uuid.UUID
+	CommissionConfigType *types.CommissionConfigType
 }
 
-func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
+func CreateSet(c *ent.OrderStatementCreate, req *Req) *ent.OrderStatementCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
@@ -53,32 +50,23 @@ func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
 	if req.OrderID != nil {
 		c.SetOrderID(*req.OrderID)
 	}
-	if req.DirectContributorID != nil {
-		c.SetDirectContributorID(*req.DirectContributorID)
+	if req.OrderUserID != nil {
+		c.SetOrderUserID(*req.OrderUserID)
 	}
-	if req.PaymentID != nil {
-		c.SetPaymentID(*req.PaymentID)
-	}
-	if req.CoinTypeID != nil {
-		c.SetCoinTypeID(*req.CoinTypeID)
-	}
-	if req.PaymentCoinTypeID != nil {
-		c.SetPaymentCoinTypeID(*req.PaymentCoinTypeID)
-	}
-	if req.PaymentCoinUSDCurrency != nil {
-		c.SetPaymentCoinUsdCurrency(*req.PaymentCoinUSDCurrency)
-	}
-	if req.Amount != nil {
-		c.SetAmount(*req.Amount)
-	}
-	if req.USDAmount != nil {
-		c.SetUsdAmount(*req.USDAmount)
-	}
-	if req.Commission != nil {
-		c.SetCommission(*req.Commission)
+	if req.GoodCoinTypeID != nil {
+		c.SetGoodCoinTypeID(*req.GoodCoinTypeID)
 	}
 	if req.Units != nil {
-		c.SetUnitsV1(*req.Units)
+		c.SetUnits(*req.Units)
+	}
+	if req.GoodValueUSD != nil {
+		c.SetGoodValueUsd(*req.GoodValueUSD)
+	}
+	if req.PaymentAmountUSD != nil {
+		c.SetPaymentAmountUsd(*req.PaymentAmountUSD)
+	}
+	if req.CommissionAmountUSD != nil {
+		c.SetCommissionAmountUsd(*req.CommissionAmountUSD)
 	}
 	if req.AppConfigID != nil {
 		c.SetAppConfigID(*req.AppConfigID)
@@ -93,27 +81,25 @@ func CreateSet(c *ent.StatementCreate, req *Req) *ent.StatementCreate {
 }
 
 type Conds struct {
+	IDs                  *cruder.Cond
 	EntID                *cruder.Cond
 	EntIDs               *cruder.Cond
-	IDs                  *cruder.Cond
 	AppID                *cruder.Cond
 	UserID               *cruder.Cond
-	DirectContributorID  *cruder.Cond
+	UserIDs              *cruder.Cond
 	GoodID               *cruder.Cond
 	AppGoodID            *cruder.Cond
 	OrderID              *cruder.Cond
-	PaymentID            *cruder.Cond
-	CoinTypeID           *cruder.Cond
-	PaymentCoinTypeID    *cruder.Cond
-	CreatedAt            *cruder.Cond
-	UserIDs              *cruder.Cond
+	OrderUserID          *cruder.Cond
+	GoodCoinTypeID       *cruder.Cond
 	AppConfigID          *cruder.Cond
 	CommissionConfigID   *cruder.Cond
 	CommissionConfigType *cruder.Cond
+	CreatedAt            *cruder.Cond
 }
 
-func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, error) { //nolint
-	q.Where(entstatement.DeletedAt(0))
+func SetQueryConds(q *ent.OrderStatementQuery, conds *Conds) (*ent.OrderStatementQuery, error) { //nolint
+	q.Where(entorderstatement.DeletedAt(0))
 	if conds == nil {
 		return q, nil
 	}
@@ -124,7 +110,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.EntID(id))
+			q.Where(entorderstatement.EntID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -136,7 +122,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.AppID(id))
+			q.Where(entorderstatement.AppID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -148,7 +134,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.UserID(id))
+			q.Where(entorderstatement.UserID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -160,7 +146,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.IDs.Op {
 		case cruder.IN:
-			q.Where(entstatement.IDIn(ids...))
+			q.Where(entorderstatement.IDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -172,7 +158,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
-			q.Where(entstatement.EntIDIn(ids...))
+			q.Where(entorderstatement.EntIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -184,19 +170,19 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.UserIDs.Op {
 		case cruder.IN:
-			q.Where(entstatement.UserIDIn(ids...))
+			q.Where(entorderstatement.UserIDIn(ids...))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
-	if conds.DirectContributorID != nil {
-		id, ok := conds.DirectContributorID.Val.(uuid.UUID)
+	if conds.OrderUserID != nil {
+		id, ok := conds.OrderUserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid directcontributorid")
+			return nil, fmt.Errorf("invalid orderuserid")
 		}
-		switch conds.DirectContributorID.Op {
+		switch conds.OrderUserID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.DirectContributorID(id))
+			q.Where(entorderstatement.OrderUserID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -208,7 +194,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.GoodID(id))
+			q.Where(entorderstatement.GoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -220,7 +206,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.AppGoodID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.AppGoodID(id))
+			q.Where(entorderstatement.AppGoodID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -232,43 +218,19 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.OrderID(id))
+			q.Where(entorderstatement.OrderID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
 	}
-	if conds.PaymentID != nil {
-		id, ok := conds.PaymentID.Val.(uuid.UUID)
+	if conds.GoodCoinTypeID != nil {
+		id, ok := conds.GoodCoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymentid")
+			return nil, fmt.Errorf("invalid goodcointypeid")
 		}
-		switch conds.PaymentID.Op {
+		switch conds.GoodCoinTypeID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.PaymentID(id))
-		default:
-			return nil, fmt.Errorf("invalid statement field")
-		}
-	}
-	if conds.CoinTypeID != nil {
-		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid cointypeid")
-		}
-		switch conds.CoinTypeID.Op {
-		case cruder.EQ:
-			q.Where(entstatement.CoinTypeID(id))
-		default:
-			return nil, fmt.Errorf("invalid statement field")
-		}
-	}
-	if conds.PaymentCoinTypeID != nil {
-		id, ok := conds.PaymentCoinTypeID.Val.(uuid.UUID)
-		if !ok {
-			return nil, fmt.Errorf("invalid paymentcointypeid")
-		}
-		switch conds.PaymentCoinTypeID.Op {
-		case cruder.EQ:
-			q.Where(entstatement.PaymentCoinTypeID(id))
+			q.Where(entorderstatement.GoodCoinTypeID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -280,7 +242,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.AppConfigID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.AppConfigID(id))
+			q.Where(entorderstatement.AppConfigID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -292,7 +254,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.CommissionConfigID.Op {
 		case cruder.EQ:
-			q.Where(entstatement.CommissionConfigID(id))
+			q.Where(entorderstatement.CommissionConfigID(id))
 		default:
 			return nil, fmt.Errorf("invalid statement field")
 		}
@@ -304,7 +266,7 @@ func SetQueryConds(q *ent.StatementQuery, conds *Conds) (*ent.StatementQuery, er
 		}
 		switch conds.CommissionConfigType.Op {
 		case cruder.EQ:
-			q.Where(entstatement.CommissionConfigType(commissionConfigType.String()))
+			q.Where(entorderstatement.CommissionConfigType(commissionConfigType.String()))
 		default:
 			return nil, fmt.Errorf("invalid commission field")
 		}

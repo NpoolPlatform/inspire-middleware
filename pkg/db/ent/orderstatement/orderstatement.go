@@ -120,7 +120,7 @@ var (
 	// DefaultGoodCoinTypeID holds the default value on creation for the "good_coin_type_id" field.
 	DefaultGoodCoinTypeID func() uuid.UUID
 	// DefaultUnits holds the default value on creation for the "units" field.
-	DefaultUnits uint32
+	DefaultUnits decimal.Decimal
 	// DefaultGoodValueUsd holds the default value on creation for the "good_value_usd" field.
 	DefaultGoodValueUsd decimal.Decimal
 	// DefaultPaymentAmountUsd holds the default value on creation for the "payment_amount_usd" field.

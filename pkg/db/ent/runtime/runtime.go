@@ -1182,7 +1182,7 @@ func init() {
 	// orderstatementDescUnits is the schema descriptor for units field.
 	orderstatementDescUnits := orderstatementFields[7].Descriptor()
 	// orderstatement.DefaultUnits holds the default value on creation for the units field.
-	orderstatement.DefaultUnits = orderstatementDescUnits.Default.(uint32)
+	orderstatement.DefaultUnits = orderstatementDescUnits.Default.(decimal.Decimal)
 	// orderstatementDescGoodValueUsd is the schema descriptor for good_value_usd field.
 	orderstatementDescGoodValueUsd := orderstatementFields[8].Descriptor()
 	// orderstatement.DefaultGoodValueUsd holds the default value on creation for the good_value_usd field.

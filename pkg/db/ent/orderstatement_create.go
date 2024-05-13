@@ -178,15 +178,15 @@ func (osc *OrderStatementCreate) SetNillableGoodCoinTypeID(u *uuid.UUID) *OrderS
 }
 
 // SetUnits sets the "units" field.
-func (osc *OrderStatementCreate) SetUnits(u uint32) *OrderStatementCreate {
-	osc.mutation.SetUnits(u)
+func (osc *OrderStatementCreate) SetUnits(d decimal.Decimal) *OrderStatementCreate {
+	osc.mutation.SetUnits(d)
 	return osc
 }
 
 // SetNillableUnits sets the "units" field if the given value is not nil.
-func (osc *OrderStatementCreate) SetNillableUnits(u *uint32) *OrderStatementCreate {
-	if u != nil {
-		osc.SetUnits(*u)
+func (osc *OrderStatementCreate) SetNillableUnits(d *decimal.Decimal) *OrderStatementCreate {
+	if d != nil {
+		osc.SetUnits(*d)
 	}
 	return osc
 }
@@ -612,7 +612,7 @@ func (osc *OrderStatementCreate) createSpec() (*OrderStatement, *sqlgraph.Create
 	}
 	if value, ok := osc.mutation.Units(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeOther,
 			Value:  value,
 			Column: orderstatement.FieldUnits,
 		})
@@ -913,7 +913,7 @@ func (u *OrderStatementUpsert) ClearGoodCoinTypeID() *OrderStatementUpsert {
 }
 
 // SetUnits sets the "units" field.
-func (u *OrderStatementUpsert) SetUnits(v uint32) *OrderStatementUpsert {
+func (u *OrderStatementUpsert) SetUnits(v decimal.Decimal) *OrderStatementUpsert {
 	u.Set(orderstatement.FieldUnits, v)
 	return u
 }
@@ -921,12 +921,6 @@ func (u *OrderStatementUpsert) SetUnits(v uint32) *OrderStatementUpsert {
 // UpdateUnits sets the "units" field to the value that was provided on create.
 func (u *OrderStatementUpsert) UpdateUnits() *OrderStatementUpsert {
 	u.SetExcluded(orderstatement.FieldUnits)
-	return u
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderStatementUpsert) AddUnits(v uint32) *OrderStatementUpsert {
-	u.Add(orderstatement.FieldUnits, v)
 	return u
 }
 
@@ -1319,16 +1313,9 @@ func (u *OrderStatementUpsertOne) ClearGoodCoinTypeID() *OrderStatementUpsertOne
 }
 
 // SetUnits sets the "units" field.
-func (u *OrderStatementUpsertOne) SetUnits(v uint32) *OrderStatementUpsertOne {
+func (u *OrderStatementUpsertOne) SetUnits(v decimal.Decimal) *OrderStatementUpsertOne {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.SetUnits(v)
-	})
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderStatementUpsertOne) AddUnits(v uint32) *OrderStatementUpsertOne {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.AddUnits(v)
 	})
 }
 
@@ -1912,16 +1899,9 @@ func (u *OrderStatementUpsertBulk) ClearGoodCoinTypeID() *OrderStatementUpsertBu
 }
 
 // SetUnits sets the "units" field.
-func (u *OrderStatementUpsertBulk) SetUnits(v uint32) *OrderStatementUpsertBulk {
+func (u *OrderStatementUpsertBulk) SetUnits(v decimal.Decimal) *OrderStatementUpsertBulk {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.SetUnits(v)
-	})
-}
-
-// AddUnits adds v to the "units" field.
-func (u *OrderStatementUpsertBulk) AddUnits(v uint32) *OrderStatementUpsertBulk {
-	return u.Update(func(s *OrderStatementUpsert) {
-		s.AddUnits(v)
 	})
 }
 

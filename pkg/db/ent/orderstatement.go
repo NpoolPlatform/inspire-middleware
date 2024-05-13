@@ -40,7 +40,7 @@ type OrderStatement struct {
 	// GoodCoinTypeID holds the value of the "good_coin_type_id" field.
 	GoodCoinTypeID uuid.UUID `json:"good_coin_type_id,omitempty"`
 	// Units holds the value of the "units" field.
-	Units uint32 `json:"units,omitempty"`
+	Units decimal.Decimal `json:"units,omitempty"`
 	// GoodValueUsd holds the value of the "good_value_usd" field.
 	GoodValueUsd decimal.Decimal `json:"good_value_usd,omitempty"`
 	// PaymentAmountUsd holds the value of the "payment_amount_usd" field.
@@ -60,9 +60,9 @@ func (*OrderStatement) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderstatement.FieldGoodValueUsd, orderstatement.FieldPaymentAmountUsd, orderstatement.FieldCommissionAmountUsd:
+		case orderstatement.FieldUnits, orderstatement.FieldGoodValueUsd, orderstatement.FieldPaymentAmountUsd, orderstatement.FieldCommissionAmountUsd:
 			values[i] = new(decimal.Decimal)
-		case orderstatement.FieldID, orderstatement.FieldCreatedAt, orderstatement.FieldUpdatedAt, orderstatement.FieldDeletedAt, orderstatement.FieldUnits:
+		case orderstatement.FieldID, orderstatement.FieldCreatedAt, orderstatement.FieldUpdatedAt, orderstatement.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case orderstatement.FieldCommissionConfigType:
 			values[i] = new(sql.NullString)
@@ -156,10 +156,10 @@ func (os *OrderStatement) assignValues(columns []string, values []interface{}) e
 				os.GoodCoinTypeID = *value
 			}
 		case orderstatement.FieldUnits:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field units", values[i])
-			} else if value.Valid {
-				os.Units = uint32(value.Int64)
+			} else if value != nil {
+				os.Units = *value
 			}
 		case orderstatement.FieldGoodValueUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {

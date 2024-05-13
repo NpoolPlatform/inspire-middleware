@@ -19994,8 +19994,7 @@ type OrderStatementMutation struct {
 	order_id               *uuid.UUID
 	order_user_id          *uuid.UUID
 	good_coin_type_id      *uuid.UUID
-	units                  *uint32
-	addunits               *int32
+	units                  *decimal.Decimal
 	good_value_usd         *decimal.Decimal
 	payment_amount_usd     *decimal.Decimal
 	commission_amount_usd  *decimal.Decimal
@@ -20660,13 +20659,12 @@ func (m *OrderStatementMutation) ResetGoodCoinTypeID() {
 }
 
 // SetUnits sets the "units" field.
-func (m *OrderStatementMutation) SetUnits(u uint32) {
-	m.units = &u
-	m.addunits = nil
+func (m *OrderStatementMutation) SetUnits(d decimal.Decimal) {
+	m.units = &d
 }
 
 // Units returns the value of the "units" field in the mutation.
-func (m *OrderStatementMutation) Units() (r uint32, exists bool) {
+func (m *OrderStatementMutation) Units() (r decimal.Decimal, exists bool) {
 	v := m.units
 	if v == nil {
 		return
@@ -20677,7 +20675,7 @@ func (m *OrderStatementMutation) Units() (r uint32, exists bool) {
 // OldUnits returns the old "units" field's value of the OrderStatement entity.
 // If the OrderStatement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderStatementMutation) OldUnits(ctx context.Context) (v uint32, err error) {
+func (m *OrderStatementMutation) OldUnits(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUnits is only allowed on UpdateOne operations")
 	}
@@ -20691,28 +20689,9 @@ func (m *OrderStatementMutation) OldUnits(ctx context.Context) (v uint32, err er
 	return oldValue.Units, nil
 }
 
-// AddUnits adds u to the "units" field.
-func (m *OrderStatementMutation) AddUnits(u int32) {
-	if m.addunits != nil {
-		*m.addunits += u
-	} else {
-		m.addunits = &u
-	}
-}
-
-// AddedUnits returns the value that was added to the "units" field in this mutation.
-func (m *OrderStatementMutation) AddedUnits() (r int32, exists bool) {
-	v := m.addunits
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ClearUnits clears the value of the "units" field.
 func (m *OrderStatementMutation) ClearUnits() {
 	m.units = nil
-	m.addunits = nil
 	m.clearedFields[orderstatement.FieldUnits] = struct{}{}
 }
 
@@ -20725,7 +20704,6 @@ func (m *OrderStatementMutation) UnitsCleared() bool {
 // ResetUnits resets all changes to the "units" field.
 func (m *OrderStatementMutation) ResetUnits() {
 	m.units = nil
-	m.addunits = nil
 	delete(m.clearedFields, orderstatement.FieldUnits)
 }
 
@@ -21273,7 +21251,7 @@ func (m *OrderStatementMutation) SetField(name string, value ent.Value) error {
 		m.SetGoodCoinTypeID(v)
 		return nil
 	case orderstatement.FieldUnits:
-		v, ok := value.(uint32)
+		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -21338,9 +21316,6 @@ func (m *OrderStatementMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, orderstatement.FieldDeletedAt)
 	}
-	if m.addunits != nil {
-		fields = append(fields, orderstatement.FieldUnits)
-	}
 	return fields
 }
 
@@ -21355,8 +21330,6 @@ func (m *OrderStatementMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case orderstatement.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case orderstatement.FieldUnits:
-		return m.AddedUnits()
 	}
 	return nil, false
 }
@@ -21386,13 +21359,6 @@ func (m *OrderStatementMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case orderstatement.FieldUnits:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUnits(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderStatement numeric field %s", name)

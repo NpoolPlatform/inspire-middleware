@@ -158,7 +158,7 @@ func GoodCoinTypeID(v uuid.UUID) predicate.OrderStatement {
 }
 
 // Units applies equality check predicate on the "units" field. It's identical to UnitsEQ.
-func Units(v uint32) predicate.OrderStatement {
+func Units(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUnits), v))
 	})
@@ -1009,21 +1009,21 @@ func GoodCoinTypeIDNotNil() predicate.OrderStatement {
 }
 
 // UnitsEQ applies the EQ predicate on the "units" field.
-func UnitsEQ(v uint32) predicate.OrderStatement {
+func UnitsEQ(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldUnits), v))
 	})
 }
 
 // UnitsNEQ applies the NEQ predicate on the "units" field.
-func UnitsNEQ(v uint32) predicate.OrderStatement {
+func UnitsNEQ(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldUnits), v))
 	})
 }
 
 // UnitsIn applies the In predicate on the "units" field.
-func UnitsIn(vs ...uint32) predicate.OrderStatement {
+func UnitsIn(vs ...decimal.Decimal) predicate.OrderStatement {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1034,7 +1034,7 @@ func UnitsIn(vs ...uint32) predicate.OrderStatement {
 }
 
 // UnitsNotIn applies the NotIn predicate on the "units" field.
-func UnitsNotIn(vs ...uint32) predicate.OrderStatement {
+func UnitsNotIn(vs ...decimal.Decimal) predicate.OrderStatement {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1045,28 +1045,28 @@ func UnitsNotIn(vs ...uint32) predicate.OrderStatement {
 }
 
 // UnitsGT applies the GT predicate on the "units" field.
-func UnitsGT(v uint32) predicate.OrderStatement {
+func UnitsGT(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldUnits), v))
 	})
 }
 
 // UnitsGTE applies the GTE predicate on the "units" field.
-func UnitsGTE(v uint32) predicate.OrderStatement {
+func UnitsGTE(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldUnits), v))
 	})
 }
 
 // UnitsLT applies the LT predicate on the "units" field.
-func UnitsLT(v uint32) predicate.OrderStatement {
+func UnitsLT(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldUnits), v))
 	})
 }
 
 // UnitsLTE applies the LTE predicate on the "units" field.
-func UnitsLTE(v uint32) predicate.OrderStatement {
+func UnitsLTE(v decimal.Decimal) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUnits), v))
 	})

@@ -240,23 +240,16 @@ func (osu *OrderStatementUpdate) ClearGoodCoinTypeID() *OrderStatementUpdate {
 }
 
 // SetUnits sets the "units" field.
-func (osu *OrderStatementUpdate) SetUnits(u uint32) *OrderStatementUpdate {
-	osu.mutation.ResetUnits()
-	osu.mutation.SetUnits(u)
+func (osu *OrderStatementUpdate) SetUnits(d decimal.Decimal) *OrderStatementUpdate {
+	osu.mutation.SetUnits(d)
 	return osu
 }
 
 // SetNillableUnits sets the "units" field if the given value is not nil.
-func (osu *OrderStatementUpdate) SetNillableUnits(u *uint32) *OrderStatementUpdate {
-	if u != nil {
-		osu.SetUnits(*u)
+func (osu *OrderStatementUpdate) SetNillableUnits(d *decimal.Decimal) *OrderStatementUpdate {
+	if d != nil {
+		osu.SetUnits(*d)
 	}
-	return osu
-}
-
-// AddUnits adds u to the "units" field.
-func (osu *OrderStatementUpdate) AddUnits(u int32) *OrderStatementUpdate {
-	osu.mutation.AddUnits(u)
 	return osu
 }
 
@@ -626,21 +619,14 @@ func (osu *OrderStatementUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := osu.mutation.Units(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderstatement.FieldUnits,
-		})
-	}
-	if value, ok := osu.mutation.AddedUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeOther,
 			Value:  value,
 			Column: orderstatement.FieldUnits,
 		})
 	}
 	if osu.mutation.UnitsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeOther,
 			Column: orderstatement.FieldUnits,
 		})
 	}
@@ -953,23 +939,16 @@ func (osuo *OrderStatementUpdateOne) ClearGoodCoinTypeID() *OrderStatementUpdate
 }
 
 // SetUnits sets the "units" field.
-func (osuo *OrderStatementUpdateOne) SetUnits(u uint32) *OrderStatementUpdateOne {
-	osuo.mutation.ResetUnits()
-	osuo.mutation.SetUnits(u)
+func (osuo *OrderStatementUpdateOne) SetUnits(d decimal.Decimal) *OrderStatementUpdateOne {
+	osuo.mutation.SetUnits(d)
 	return osuo
 }
 
 // SetNillableUnits sets the "units" field if the given value is not nil.
-func (osuo *OrderStatementUpdateOne) SetNillableUnits(u *uint32) *OrderStatementUpdateOne {
-	if u != nil {
-		osuo.SetUnits(*u)
+func (osuo *OrderStatementUpdateOne) SetNillableUnits(d *decimal.Decimal) *OrderStatementUpdateOne {
+	if d != nil {
+		osuo.SetUnits(*d)
 	}
-	return osuo
-}
-
-// AddUnits adds u to the "units" field.
-func (osuo *OrderStatementUpdateOne) AddUnits(u int32) *OrderStatementUpdateOne {
-	osuo.mutation.AddUnits(u)
 	return osuo
 }
 
@@ -1369,21 +1348,14 @@ func (osuo *OrderStatementUpdateOne) sqlSave(ctx context.Context) (_node *OrderS
 	}
 	if value, ok := osuo.mutation.Units(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderstatement.FieldUnits,
-		})
-	}
-	if value, ok := osuo.mutation.AddedUnits(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeOther,
 			Value:  value,
 			Column: orderstatement.FieldUnits,
 		})
 	}
 	if osuo.mutation.UnitsCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeOther,
 			Column: orderstatement.FieldUnits,
 		})
 	}

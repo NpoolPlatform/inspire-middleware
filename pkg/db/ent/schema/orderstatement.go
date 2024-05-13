@@ -70,9 +70,12 @@ func (OrderStatement) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
-			Uint32("units").
+			Other("units", decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL: "decimal(37,18)",
+			}).
 			Optional().
-			Default(0),
+			Default(decimal.Decimal{}),
 		field.
 			Other("good_value_usd", decimal.Decimal{}).
 			SchemaType(map[string]string{

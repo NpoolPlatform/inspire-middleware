@@ -461,7 +461,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatement.FieldOrderID:              {Type: field.TypeUUID, Column: orderstatement.FieldOrderID},
 			orderstatement.FieldOrderUserID:          {Type: field.TypeUUID, Column: orderstatement.FieldOrderUserID},
 			orderstatement.FieldGoodCoinTypeID:       {Type: field.TypeUUID, Column: orderstatement.FieldGoodCoinTypeID},
-			orderstatement.FieldUnits:                {Type: field.TypeUint32, Column: orderstatement.FieldUnits},
+			orderstatement.FieldUnits:                {Type: field.TypeOther, Column: orderstatement.FieldUnits},
 			orderstatement.FieldGoodValueUsd:         {Type: field.TypeOther, Column: orderstatement.FieldGoodValueUsd},
 			orderstatement.FieldPaymentAmountUsd:     {Type: field.TypeOther, Column: orderstatement.FieldPaymentAmountUsd},
 			orderstatement.FieldCommissionAmountUsd:  {Type: field.TypeOther, Column: orderstatement.FieldCommissionAmountUsd},
@@ -2282,8 +2282,8 @@ func (f *OrderStatementFilter) WhereGoodCoinTypeID(p entql.ValueP) {
 	f.Where(p.Field(orderstatement.FieldGoodCoinTypeID))
 }
 
-// WhereUnits applies the entql uint32 predicate on the units field.
-func (f *OrderStatementFilter) WhereUnits(p entql.Uint32P) {
+// WhereUnits applies the entql other predicate on the units field.
+func (f *OrderStatementFilter) WhereUnits(p entql.OtherP) {
 	f.Where(p.Field(orderstatement.FieldUnits))
 }
 
