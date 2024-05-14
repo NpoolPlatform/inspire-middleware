@@ -84,7 +84,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
-	_sql += "where not exist ("
+	_sql += "where not exists ("
 	_sql += "select 1 from order_statements "
 	_sql += fmt.Sprintf(
 		"where user_id = '%v' and order_id = '%v' ",
@@ -99,6 +99,7 @@ func (h *createHandler) constructSQL() {
 func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) error {
 	handler, err := goodachievement1.NewHandler(
 		ctx,
+		goodachievement1.WithEntID(func() *string { s := uuid.NewString(); return &s }(), true),
 		goodachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
 		goodachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
 		goodachievement1.WithGoodID(func() *string { s := h.GoodID.String(); return &s }(), true),
@@ -120,6 +121,7 @@ func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) e
 func (h *createHandler) constructCreateGoodCoinAchievementSQL(ctx context.Context) error {
 	handler, err := goodcoinachievement1.NewHandler(
 		ctx,
+		goodcoinachievement1.WithEntID(func() *string { s := uuid.NewString(); return &s }(), true),
 		goodcoinachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
 		goodcoinachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
 		goodcoinachievement1.WithGoodCoinTypeID(func() *string { s := h.GoodCoinTypeID.String(); return &s }(), true),
@@ -197,10 +199,12 @@ func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *e
 	if h.entGoodAchievement != nil {
 		return h.updateGoodAchievement(ctx, tx)
 	}
-	if err := h.execSQL(ctx, tx, h.sqlCreateGoodAchievement); err != nil {
-		if !wlog.Equal(err, cruder.ErrCreateNothing) {
-			return wlog.WrapError(err)
-		}
+	err := h.execSQL(ctx, tx, h.sqlCreateGoodAchievement)
+	if err == nil {
+		return nil
+	}
+	if !wlog.Equal(err, cruder.ErrCreateNothing) {
+		return wlog.WrapError(err)
 	}
 	if err := h.requireAchievement(ctx); err != nil {
 		return wlog.WrapError(err)
@@ -239,10 +243,12 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	if h.entGoodCoinAchievement != nil {
 		return h.updateGoodCoinAchievement(ctx, tx)
 	}
-	if err := h.execSQL(ctx, tx, h.sqlCreateGoodCoinAchievement); err != nil {
-		if !wlog.Equal(err, cruder.ErrCreateNothing) {
-			return wlog.WrapError(err)
-		}
+	err := h.execSQL(ctx, tx, h.sqlCreateGoodCoinAchievement)
+	if err == nil {
+		return nil
+	}
+	if !wlog.Equal(err, cruder.ErrCreateNothing) {
+		return wlog.WrapError(err)
 	}
 	if err := h.requireAchievement(ctx); err != nil {
 		return wlog.WrapError(err)

@@ -51,8 +51,8 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
-	_sql += "where not exist ("
-	_sql += "select 1 from good_statements "
+	_sql += "where not exists ("
+	_sql += "select 1 from good_achievements "
 	_sql += fmt.Sprintf(
 		"where user_id = '%v' and app_good_id = '%v' ",
 		*h.UserID,

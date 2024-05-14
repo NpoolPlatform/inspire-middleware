@@ -8,7 +8,7 @@ require (
 	github.com/AmirSoleimani/VoucherCodeGenerator/vcgen v0.0.0-20220706103434-bcb25b5bff9c
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20231010024452-78e081db856d
 	github.com/NpoolPlatform/go-service-framework v0.0.0-20240510075442-89278cb5cf47
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20240514073058-975e9476bcd3
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20240514082633-598d5fc7b1e3
 	github.com/NpoolPlatform/message v0.0.0-20240513080919-cb8d7f62eabc
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0

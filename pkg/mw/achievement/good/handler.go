@@ -163,7 +163,7 @@ func WithSelfUnits(value *string, must bool) func(context.Context, *Handler) err
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return wlog.Errorf("invalid selfunits")
 		}
 		h.SelfUnits = &amount
