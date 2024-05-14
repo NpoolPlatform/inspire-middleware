@@ -6,19 +6,25 @@ import (
 	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	goodachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
 type createHandler struct {
-	*Handler
+	*achievementQueryHandler
 	sql                      string
 	sqlCreateGoodAchievement string
+	selfOrder                bool
+	selfUnits                decimal.Decimal
+	selfAmountUSD            decimal.Decimal
+	selfCommissionAmountUSD  decimal.Decimal
 }
 
 func (h *createHandler) constructSQL() {
@@ -95,29 +101,11 @@ func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) e
 		goodachievement1.WithGoodID(func() *string { s := h.GoodID.String(); return &s }(), true),
 		goodachievement1.WithAppGoodID(func() *string { s := h.AppGoodID.String(); return &s }(), true),
 		goodachievement1.WithTotalAmountUSD(func() *string { s := h.PaymentAmountUSD.String(); return &s }(), true),
-		goodachievement1.WithSelfAmountUSD(func() *string {
-			s := decimal.NewFromInt(0).String()
-			if *h.UserID == *h.OrderUserID {
-				s = h.PaymentAmountUSD.String()
-			}
-			return &s
-		}(), true),
+		goodachievement1.WithSelfAmountUSD(func() *string { s := h.selfAmountUSD.String(); return &s }(), true),
 		goodachievement1.WithTotalUnits(func() *string { s := h.Units.String(); return &s }(), true),
-		goodachievement1.WithSelfUnits(func() *string {
-			s := decimal.NewFromInt(0).String()
-			if *h.UserID == *h.OrderUserID {
-				s = h.Units.String()
-			}
-			return &s
-		}(), true),
+		goodachievement1.WithSelfUnits(func() *string { s := h.selfUnits.String(); return &s }(), true),
 		goodachievement1.WithTotalCommissionUSD(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
-		goodachievement1.WithSelfCommissionUSD(func() *string {
-			s := decimal.NewFromInt(0).String()
-			if *h.UserID == *h.OrderUserID {
-				s = h.CommissionAmountUSD.String()
-			}
-			return &s
-		}(), true),
+		goodachievement1.WithSelfCommissionUSD(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
 	)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -132,8 +120,11 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
-	if err != nil || n != 1 {
+	if err != nil || n > 1 {
 		return wlog.Errorf("fail create orderstatement: %v", err)
+	}
+	if n == 0 {
+		return wlog.WrapError(cruder.ErrCreateNothing)
 	}
 	return nil
 }
@@ -154,10 +145,44 @@ func (h *createHandler) createPaymentStatements(ctx context.Context, tx *ent.Tx)
 	return nil
 }
 
+func (h *createHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
+	_, err := goodachievementcrud.UpdateSet(
+		tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
+		&goodachievementcrud.Req{
+			AppID:          h.AppID,
+			UserID:         h.UserID,
+			GoodID:         h.GoodID,
+			AppGoodID:      h.AppGoodID,
+			TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.PaymentAmountUSD); return &d }(),
+			SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
+			TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
+			SelfUnits:      func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
+			TotalCommissionUSD: func() *decimal.Decimal {
+				d := h.entGoodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
+				return &d
+			}(),
+			SelfCommissionUSD: func() *decimal.Decimal {
+				d := h.entGoodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
+				return &d
+			}(),
+		},
+	).Save(ctx)
+	return wlog.WrapError(err)
+}
+
 func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	// TODO: create achievement if coin type id is not exist
-	// TODO: update achievement
-	return nil
+	if h.entGoodAchievement != nil {
+		return h.updateGoodAchievement(ctx, tx)
+	}
+	if err := h.execSQL(ctx, tx, h.sqlCreateGoodAchievement); err != nil {
+		if !wlog.Equal(err, cruder.ErrCreateNothing) {
+			return wlog.WrapError(err)
+		}
+	}
+	if err := h.requireAchievement(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return h.updateGoodAchievement(ctx, tx)
 }
 
 func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
@@ -172,7 +197,32 @@ func (h *Handler) CreateStatement(ctx context.Context) error {
 		req.StatementID = h.EntID
 	}
 	handler := &createHandler{
-		Handler: h,
+		achievementQueryHandler: &achievementQueryHandler{
+			Handler: h,
+		},
+		selfOrder: *h.OrderUserID == *h.UserID,
+		selfUnits: func() decimal.Decimal {
+			if *h.OrderUserID == *h.UserID {
+				return *h.Units
+			}
+			return decimal.NewFromInt(0)
+		}(),
+		selfAmountUSD: func() decimal.Decimal {
+			if *h.OrderUserID == *h.UserID {
+				return *h.PaymentAmountUSD
+			}
+			return decimal.NewFromInt(0)
+		}(),
+		selfCommissionAmountUSD: func() decimal.Decimal {
+			if *h.OrderUserID == *h.UserID {
+				return *h.CommissionAmountUSD
+			}
+			return decimal.NewFromInt(0)
+		}(),
+	}
+
+	if err := handler.getAchievement(ctx); err != nil {
+		return wlog.WrapError(err)
 	}
 
 	handler.constructSQL()
