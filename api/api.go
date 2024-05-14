@@ -7,7 +7,8 @@ import (
 
 	goodachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good"
 	goodcoinachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good/coin"
-	"github.com/NpoolPlatform/inspire-middleware/api/achievement/statement"
+	orderstatement "github.com/NpoolPlatform/inspire-middleware/api/achievement/statement/order"
+	orderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/api/achievement/statement/order/payment"
 	"github.com/NpoolPlatform/inspire-middleware/api/achievement/user"
 	appcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/commission/config"
 	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
@@ -44,7 +45,8 @@ func Register(server grpc.ServiceRegistrar) {
 	goodcoinachievement.Register(server)
 	calculate.Register(server)
 	event.Register(server)
-	statement.Register(server)
+	orderstatement.Register(server)
+	orderpaymentstatement.Register(server)
 	cashcontrol.Register(server)
 	appconfig.Register(server)
 	appcommissionconfig.Register(server)
@@ -62,7 +64,10 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := goodcoinachievement.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
-	if err := statement.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := orderstatement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := orderpaymentstatement.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := calculate.RegisterGateway(mux, endpoint, opts); err != nil {
