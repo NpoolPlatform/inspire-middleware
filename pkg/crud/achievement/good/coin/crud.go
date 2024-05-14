@@ -22,6 +22,7 @@ type Req struct {
 	SelfUnits          *decimal.Decimal
 	TotalCommissionUSD *decimal.Decimal
 	SelfCommissionUSD  *decimal.Decimal
+	DeletedAt          *uint32
 }
 
 func CreateSet(c *ent.GoodCoinAchievementCreate, req *Req) *ent.GoodCoinAchievementCreate {
@@ -77,6 +78,9 @@ func UpdateSet(u *ent.GoodCoinAchievementUpdateOne, req *Req) *ent.GoodCoinAchie
 	}
 	if req.SelfCommissionUSD != nil {
 		u = u.SetSelfCommissionUsd(*req.SelfCommissionUSD)
+	}
+	if req.DeletedAt != nil {
+		u = u.SetDeletedAt(*req.DeletedAt)
 	}
 	return u
 }
