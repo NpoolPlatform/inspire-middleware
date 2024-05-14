@@ -7,7 +7,7 @@ import (
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	goodcoinachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good/coin"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/good/coin"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
