@@ -1,4 +1,4 @@
-package goodachievement
+package goodcoinachievement
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())
 
-	_sql := "insert into good_achievements "
+	_sql := "insert into good_coin_achievements "
 	_sql += "("
 	if h.EntID != nil {
 		_sql += "ent_id"
@@ -18,8 +18,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += comma + "app_id"
 	comma = ", "
 	_sql += comma + "user_id"
-	_sql += comma + "good_id"
-	_sql += comma + "app_good_id"
+	_sql += comma + "good_coin_type_id"
 	_sql += comma + "total_units"
 	_sql += comma + "self_units"
 	_sql += comma + "total_amount_usd"
@@ -39,8 +38,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v'%v' as app_id", comma, *h.AppID)
 	comma = ", "
 	_sql += fmt.Sprintf("%v'%v' as user_id", comma, *h.UserID)
-	_sql += fmt.Sprintf("%v'%v' as good_id", comma, *h.GoodID)
-	_sql += fmt.Sprintf("%v'%v' as app_good_id", comma, *h.AppGoodID)
+	_sql += fmt.Sprintf("%v'%v' as good_coin_type_id", comma, *h.GoodCoinTypeID)
 	_sql += fmt.Sprintf("%v'%v' as total_units", comma, *h.TotalUnits)
 	_sql += fmt.Sprintf("%v'%v' as self_units", comma, *h.SelfUnits)
 	_sql += fmt.Sprintf("%v'%v' as total_amount_usd", comma, *h.TotalAmountUSD)
@@ -52,11 +50,11 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
 	_sql += "where not exist ("
-	_sql += "select 1 from good_statements "
+	_sql += "select 1 from good_coin_statements "
 	_sql += fmt.Sprintf(
-		"where user_id = '%v' and app_good_id = '%v' ",
+		"where user_id = '%v' and good_coin_type_id = '%v' ",
 		*h.UserID,
-		*h.AppGoodID,
+		*h.GoodCoinTypeID,
 	)
 	_sql += "limit 1)"
 	return _sql
