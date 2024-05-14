@@ -23,7 +23,6 @@ func (OrderPaymentStatement) Mixin() []ent.Mixin {
 }
 
 // Fields of the OrderPaymentStatement.
-//nolint:funlen
 func (OrderPaymentStatement) Fields() []ent.Field {
 	return []ent.Field{
 		field.

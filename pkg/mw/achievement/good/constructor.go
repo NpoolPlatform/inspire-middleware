@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//nolint:goconst
 func (h *Handler) ConstructCreateSQL() string {
 	comma := ""
 	now := uint32(time.Now().Unix())

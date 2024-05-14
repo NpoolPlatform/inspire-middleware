@@ -1,4 +1,3 @@
-//nolint:dupl
 package orderstatement
 
 import (
@@ -47,7 +46,7 @@ var ret = &orderstatementmwpb.Statement{
 	CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
 }
 
-func setup(t *testing.T) func(*testing.T) {
+func setup(t *testing.T) func(*testing.T) { //nolint
 	ret.CommissionConfigTypeStr = ret.CommissionConfigType.String()
 	return func(*testing.T) {}
 }

@@ -22,7 +22,6 @@ func (h *queryHandler) scan(ctx context.Context) error {
 }
 
 func (h *queryHandler) formalize() {
-	// TODO
 }
 
 func (h *Handler) GetAchievement(ctx context.Context) (*npool.Achievement, error) {

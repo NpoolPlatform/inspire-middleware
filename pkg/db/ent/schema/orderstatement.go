@@ -24,7 +24,6 @@ func (OrderStatement) Mixin() []ent.Mixin {
 }
 
 // Fields of the OrderStatement.
-//nolint:funlen
 func (OrderStatement) Fields() []ent.Field {
 	return []ent.Field{
 		field.

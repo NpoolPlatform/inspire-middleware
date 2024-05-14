@@ -93,7 +93,7 @@ type Conds struct {
 	UserIDs        *cruder.Cond
 }
 
-func SetQueryConds(q *ent.GoodCoinAchievementQuery, conds *Conds) (*ent.GoodCoinAchievementQuery, error) { //nolint
+func SetQueryConds(q *ent.GoodCoinAchievementQuery, conds *Conds) (*ent.GoodCoinAchievementQuery, error) {
 	q.Where(entgoodcoinachievement.DeletedAt(0))
 	if conds == nil {
 		return q, nil

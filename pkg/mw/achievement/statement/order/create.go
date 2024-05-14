@@ -1,3 +1,4 @@
+//nolint:dupl
 package orderstatement
 
 import (
@@ -30,6 +31,7 @@ type createHandler struct {
 	selfCommissionAmountUSD      decimal.Decimal
 }
 
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())

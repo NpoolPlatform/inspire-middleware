@@ -1,3 +1,4 @@
+//nolint:dupl
 package goodachievement
 
 import (
@@ -251,7 +252,6 @@ func WithSelfCommissionUSD(value *string, must bool) func(context.Context, *Hand
 	}
 }
 
-//nolint:funlen
 func (h *Handler) withGoodAchievementConds(conds *npool.Conds) error {
 	if conds.EntID != nil {
 		id, err := uuid.Parse(conds.GetEntID().GetValue())
