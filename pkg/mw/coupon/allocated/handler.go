@@ -148,6 +148,13 @@ func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) er
 	}
 }
 
+func WithCashable(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Cashable = value
+		return nil
+	}
+}
+
 func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*allocatedcrud.Req{}
@@ -166,6 +173,9 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 			}
 			if req.Used != nil {
 				_req.Used = req.Used
+			}
+			if req.Cashable != nil {
+				_req.Cashable = req.Cashable
 			}
 			if req.UsedByOrderID != nil {
 				id, err := uuid.Parse(*req.UsedByOrderID)

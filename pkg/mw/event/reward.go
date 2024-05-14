@@ -22,6 +22,7 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	coinallocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
+	couponallocatedmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	taskconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/config"
 	taskusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/user"
@@ -352,6 +353,72 @@ func (h *rewardHandler) calculateCoinRewards(ctx context.Context, ev *npool.Even
 	}
 
 	return coinRewards, nil
+}
+
+func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Event) ([]*couponallocatedmwpb.Coupon, error) {
+	couponRewards := []*couponallocatedmwpb.Coupon{}
+	coups := []*couponmwpb.Coupon{}
+	for _, id := range ev.CouponIDs {
+		_id := id
+		handler, err := coupon1.NewHandler(
+			ctx,
+			coupon1.WithEntID(&_id, true),
+		)
+		if err != nil {
+			return nil, err
+		}
+		_coupon, err := handler.GetCoupon(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if _coupon == nil {
+			return nil, wlog.Errorf("invalid coupon")
+		}
+
+		now := time.Now().Unix()
+		if now < int64(_coupon.StartAt) || now > int64(_coupon.EndAt) {
+			logger.Sugar().Errorw("coupon can not be issued in current time")
+			continue
+		}
+		coups = append(coups, _coupon)
+	}
+	for _, coup := range coups {
+		// calculate coupon
+		userID := h.UserID.String()
+
+		handler, err := allocated1.NewHandler(
+			ctx,
+			allocated1.WithAppID(&coup.AppID, true),
+			allocated1.WithUserID(&userID, true),
+			allocated1.WithCouponID(&coup.EntID, true),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		info, err := handler.CalcluateAllocatedCoupon(ctx)
+		if err != nil {
+			return nil, err
+		}
+		couponAmount, err := decimal.NewFromString(info.Allocated)
+		if err != nil {
+			return nil, err
+		}
+		couponCashableAmount := decimal.NewFromInt(0)
+		if info.Cashable {
+			couponCashableAmount = couponAmount
+		}
+		h.couponAmount = couponAmount
+		h.couponCashableAmount = couponCashableAmount
+
+		if err != nil {
+			return nil, err
+		}
+
+		couponRewards = append(couponRewards, info)
+	}
+
+	return couponRewards, nil
 }
 
 func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
@@ -787,11 +854,27 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 		}
 		coinRewards = append(coinRewards, &coinReward)
 	}
+	allocateCouponRewards, err := h.calculateCouponRewards(ctx, ev)
+	if err != nil {
+		return nil, err
+	}
+	couponRewards := []*npool.CouponReward{}
+	for _, coupon := range allocateCouponRewards {
+		couponReward := npool.CouponReward{
+			AppID:        coupon.AppID,
+			UserID:       coupon.UserID,
+			CouponID:     coupon.CouponID,
+			Cashable:     coupon.Cashable,
+			Denomination: coupon.Denomination,
+		}
+		couponRewards = append(couponRewards, &couponReward)
+	}
 
 	_rewards := &npool.Reward{
-		TaskID:      h.taskConfig.EntID,
-		Credits:     _credits,
-		CoinRewards: coinRewards,
+		TaskID:        h.taskConfig.EntID,
+		Credits:       _credits,
+		CoinRewards:   coinRewards,
+		CouponRewards: couponRewards,
 	}
 
 	return _rewards, nil

@@ -134,3 +134,19 @@ func GetCouponOnly(ctx context.Context, conds *npool.Conds) (*npool.Coupon, erro
 	}
 	return infos.([]*npool.Coupon)[0], nil
 }
+
+func CreateDirectCoupon(ctx context.Context, in *npool.CouponReq) (*npool.Coupon, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CreateDirectCoupon(ctx, &npool.CreateDirectCouponRequest{
+			Info: in,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.Coupon), nil
+}

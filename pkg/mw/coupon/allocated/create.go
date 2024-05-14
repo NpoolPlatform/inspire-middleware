@@ -82,6 +82,27 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 	return nil
 }
 
+func (h *createHandler) createDirectAllocatedCoupon(ctx context.Context, tx *ent.Tx) error {
+	startAt := uint32(time.Now().Unix())
+	couponScope := inspiretypes.CouponScope(inspiretypes.CouponScope_value[h.coupon.CouponScope])
+	if _, err := allocatedcrud.CreateSet(
+		tx.CouponAllocated.Create(),
+		&allocatedcrud.Req{
+			EntID:        h.EntID,
+			AppID:        h.AppID,
+			CouponID:     h.CouponID,
+			UserID:       h.UserID,
+			StartAt:      &startAt,
+			Denomination: &h.coupon.Denomination,
+			CouponScope:  &couponScope,
+			Cashable:     h.Cashable,
+		},
+	).Save(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	allocated := h.coupon.Allocated
 	switch h.coupon.CouponType {
@@ -106,6 +127,7 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
+//nolint:dupl
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	id := uuid.New()
 	if h.EntID == nil {
@@ -133,4 +155,53 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	}
 
 	return h.GetCoupon(ctx)
+}
+
+//nolint:dupl
+func (h *Handler) CreateDirectCoupon(ctx context.Context) (*npool.Coupon, error) {
+	id := uuid.New()
+	if h.EntID == nil {
+		h.EntID = &id
+	}
+
+	handler := &createHandler{
+		Handler: h,
+	}
+	if err := handler.getCoupon(ctx); err != nil {
+		return nil, err
+	}
+	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.createDirectAllocatedCoupon(ctx, tx); err != nil {
+			return err
+		}
+		if err := handler.updateCoupon(ctx, tx); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return h.GetCoupon(ctx)
+}
+
+func (h *Handler) CalcluateAllocatedCoupon(ctx context.Context) (*npool.Coupon, error) {
+	handler := &createHandler{
+		Handler: h,
+	}
+	if err := handler.getCoupon(ctx); err != nil {
+		return nil, err
+	}
+
+	_cashable := handler.cashable()
+	coupon := &npool.Coupon{
+		AppID:        h.AppID.String(),
+		CouponID:     h.CouponID.String(),
+		UserID:       h.UserID.String(),
+		Denomination: handler.coupon.Denomination.String(),
+		Cashable:     _cashable,
+	}
+
+	return coupon, nil
 }
