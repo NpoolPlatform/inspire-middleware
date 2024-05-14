@@ -29,6 +29,7 @@ type Req struct {
 	AppConfigID          *uuid.UUID
 	CommissionConfigID   *uuid.UUID
 	CommissionConfigType *types.CommissionConfigType
+	DeletedAt            *uint32
 }
 
 func CreateSet(c *ent.OrderStatementCreate, req *Req) *ent.OrderStatementCreate {
@@ -78,6 +79,13 @@ func CreateSet(c *ent.OrderStatementCreate, req *Req) *ent.OrderStatementCreate 
 		c.SetCommissionConfigType(req.CommissionConfigType.String())
 	}
 	return c
+}
+
+func UpdateSet(u *ent.OrderStatementUpdateOne, req *Req) *ent.OrderStatementUpdateOne {
+	if req.DeletedAt != nil {
+		u.SetDeletedAt(*req.DeletedAt)
+	}
+	return u
 }
 
 type Conds struct {

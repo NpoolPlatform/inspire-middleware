@@ -174,10 +174,6 @@ func (h *createHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) e
 	_, err := goodachievementcrud.UpdateSet(
 		tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
 		&goodachievementcrud.Req{
-			AppID:          h.AppID,
-			UserID:         h.UserID,
-			GoodID:         h.GoodID,
-			AppGoodID:      h.AppGoodID,
 			TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.PaymentAmountUSD); return &d }(),
 			SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
 			TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
@@ -216,9 +212,6 @@ func (h *createHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 	_, err := goodcoinachievementcrud.UpdateSet(
 		tx.GoodCoinAchievement.UpdateOneID(h.entGoodCoinAchievement.ID),
 		&goodcoinachievementcrud.Req{
-			AppID:          h.AppID,
-			UserID:         h.UserID,
-			GoodCoinTypeID: h.GoodCoinTypeID,
 			TotalAmountUSD: func() *decimal.Decimal {
 				d := h.entGoodCoinAchievement.TotalAmountUsd.Add(*h.PaymentAmountUSD)
 				return &d
@@ -256,7 +249,7 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 
-func (h *Handler) CreateStatement(ctx context.Context) error {
+func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
@@ -300,16 +293,20 @@ func (h *Handler) CreateStatement(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 
+	if err := handler.createOrderStatement(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.createPaymentStatements(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.createOrUpdateGoodAchievement(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return handler.createOrUpdateGoodCoinAchievement(ctx, tx)
+}
+
+func (h *Handler) CreateStatement(ctx context.Context) error {
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createOrderStatement(_ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := handler.createPaymentStatements(_ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := handler.createOrUpdateGoodAchievement(_ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
-		return handler.createOrUpdateGoodCoinAchievement(_ctx, tx)
+		return h.CreateStatementWithTx(_ctx, tx)
 	})
 }
