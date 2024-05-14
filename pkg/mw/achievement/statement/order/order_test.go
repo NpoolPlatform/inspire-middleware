@@ -78,6 +78,18 @@ func createStatement(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func deleteStatement(t *testing.T) {
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID, true),
+		WithEntID(&ret.EntID, true),
+	)
+	assert.Nil(t, err)
+
+	err = handler.DeleteStatement(context.Background())
+	assert.Nil(t, err)
+}
+
 func TestAchievement(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
@@ -87,4 +99,5 @@ func TestAchievement(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createStatement", createStatement)
+	t.Run("deleteStatement", deleteStatement)
 }
