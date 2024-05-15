@@ -23,6 +23,7 @@ type createHandler struct {
 	coupon *ent.Coupon
 }
 
+//nolint:dupl
 func (h *createHandler) getCoupon(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		coupon, err := cli.
@@ -103,6 +104,7 @@ func (h *createHandler) createDirectAllocatedCoupon(ctx context.Context, tx *ent
 	return nil
 }
 
+//nolint:dupl
 func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	allocated := h.coupon.Allocated
 	switch h.coupon.CouponType {
