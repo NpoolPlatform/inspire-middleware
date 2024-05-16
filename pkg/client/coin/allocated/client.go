@@ -118,12 +118,3 @@ func DeleteCoinAllocated(ctx context.Context, id *uint32, entID *string) error {
 	})
 	return err
 }
-
-func UpdateCoinAllocated(ctx context.Context, req *npool.CoinAllocatedReq) error {
-	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		return cli.UpdateCoinAllocated(_ctx, &npool.UpdateCoinAllocatedRequest{
-			Info: req,
-		})
-	})
-	return err
-}

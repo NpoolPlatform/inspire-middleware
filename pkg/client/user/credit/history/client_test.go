@@ -67,21 +67,6 @@ func createUserCreditHistory(t *testing.T) {
 	}
 }
 
-func updateUserCreditHistory(t *testing.T) {
-	err := UpdateUserCreditHistory(context.Background(), &npool.UserCreditHistoryReq{
-		ID:      &ret.ID,
-		EntID:   &ret.EntID,
-		Credits: &ret.Credits,
-	})
-	if assert.Nil(t, err) {
-		info, err := GetUserCreditHistory(context.Background(), ret.EntID)
-		if assert.Nil(t, err) {
-			ret.UpdatedAt = info.UpdatedAt
-			assert.Equal(t, ret, info)
-		}
-	}
-}
-
 func getUserCreditHistory(t *testing.T) {
 	info, err := GetUserCreditHistory(context.Background(), ret.EntID)
 	if assert.Nil(t, err) {
@@ -148,7 +133,6 @@ func TestUserCreditHistory(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createUserCreditHistory", createUserCreditHistory)
-	t.Run("updateUserCreditHistory", updateUserCreditHistory)
 	t.Run("getUserCreditHistory", getUserCreditHistory)
 	t.Run("getUserCreditHistories", getUserCreditHistories)
 	t.Run("getUserCreditHistoryOnly", getUserCreditHistoryOnly)

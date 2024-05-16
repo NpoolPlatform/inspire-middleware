@@ -9,7 +9,9 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	coinconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/config"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
+	coinconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/config"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
@@ -36,10 +38,41 @@ var (
 		UserID:       uuid.NewString(),
 		Value:        decimal.RequireFromString("2.25").String(),
 	}
+	coinConfig = coinconfigmwpb.CoinConfig{
+		EntID:      ret.CoinConfigID,
+		AppID:      ret.AppID,
+		CoinTypeID: ret.CoinTypeID,
+		MaxValue:   decimal.RequireFromString("20").String(),
+		Allocated:  decimal.RequireFromString("0").String(),
+	}
 )
 
 func setup(t *testing.T) func(*testing.T) {
-	return func(*testing.T) {}
+	h1, err := coinconfig1.NewHandler(
+		context.Background(),
+		coinconfig1.WithEntID(&coinConfig.EntID, true),
+		coinconfig1.WithAppID(&coinConfig.AppID, true),
+		coinconfig1.WithCoinTypeID(&coinConfig.CoinTypeID, true),
+		coinconfig1.WithMaxValue(&coinConfig.MaxValue, true),
+		coinconfig1.WithAllocated(&coinConfig.Allocated, true),
+	)
+	assert.Nil(t, err)
+
+	err = h1.CreateCoinConfig(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h1.GetCoinConfig(context.Background())
+		if assert.Nil(t, err) {
+			coinConfig.ID = info.ID
+			coinConfig.CreatedAt = info.CreatedAt
+			coinConfig.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &coinConfig, info)
+			h1.ID = &info.ID
+		}
+	}
+
+	return func(*testing.T) {
+		_ = h1.DeleteCoinConfig(context.Background())
+	}
 }
 
 func createCoinAllocated(t *testing.T) {

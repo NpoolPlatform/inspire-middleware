@@ -32,6 +32,7 @@ var (
 		EntID:       uuid.NewString(),
 		AppID:       uuid.NewString(),
 		UserID:      uuid.NewString(),
+		CoinTypeID:  uuid.NewString(),
 		CoinRewards: decimal.RequireFromString("11.25").String(),
 	}
 )
@@ -46,6 +47,7 @@ func createUserCoinReward(t *testing.T) {
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithUserID(&ret.UserID, true),
+		WithCoinTypeID(&ret.CoinTypeID, true),
 		WithCoinRewards(&ret.CoinRewards, true),
 	)
 	assert.Nil(t, err)

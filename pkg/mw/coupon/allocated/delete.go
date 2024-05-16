@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	"github.com/google/uuid"
 
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
@@ -81,6 +82,8 @@ func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
 	handler := &deleteHandler{
 		Handler: h,
 	}
+	id := uuid.MustParse(info.CouponID)
+	h.CouponID = &id
 	if err := handler.getCoupon(ctx); err != nil {
 		return nil, err
 	}

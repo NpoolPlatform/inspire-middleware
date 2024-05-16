@@ -38,6 +38,7 @@ var ret = &npool.UserCoinReward{
 	EntID:       uuid.NewString(),
 	AppID:       uuid.NewString(),
 	UserID:      uuid.NewString(),
+	CoinTypeID:  uuid.NewString(),
 	CoinRewards: decimal.RequireFromString("12.25").String(),
 }
 
@@ -50,8 +51,10 @@ func createUserCoinReward(t *testing.T) {
 		EntID:       &ret.EntID,
 		AppID:       &ret.AppID,
 		UserID:      &ret.UserID,
+		CoinTypeID:  &ret.CoinTypeID,
 		CoinRewards: &ret.CoinRewards,
 	})
+	fmt.Println("err: ", err)
 	if assert.Nil(t, err) {
 		info, err := GetUserCoinReward(context.Background(), ret.EntID)
 		if assert.Nil(t, err) {
