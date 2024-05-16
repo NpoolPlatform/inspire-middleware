@@ -400,7 +400,7 @@ func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Ev
 		if err != nil {
 			return nil, err
 		}
-		couponAmount, err := decimal.NewFromString(info.Allocated)
+		couponAmount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
 			return nil, err
 		}

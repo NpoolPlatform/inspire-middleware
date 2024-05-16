@@ -20,6 +20,10 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
 
+	"github.com/NpoolPlatform/inspire-middleware/api/achievement/user"
+	appcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/commission/config"
+	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
+	appgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/good/commission/config"
 	taskconfig "github.com/NpoolPlatform/inspire-middleware/api/task/config"
 	taskuser "github.com/NpoolPlatform/inspire-middleware/api/task/user"
 	usercoinreward "github.com/NpoolPlatform/inspire-middleware/api/user/coin/reward"
@@ -55,6 +59,10 @@ func Register(server grpc.ServiceRegistrar) {
 	usercoinreward.Register(server)
 	usercredithistory.Register(server)
 	userreward.Register(server)
+	appconfig.Register(server)
+	appcommissionconfig.Register(server)
+	appgoodcommissionconfig.Register(server)
+	user.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -110,6 +118,12 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := userreward.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := appgoodcommissionconfig.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := user.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
