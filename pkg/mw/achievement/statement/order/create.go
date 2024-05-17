@@ -12,6 +12,7 @@ import (
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -251,6 +252,28 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 
+func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *ent.Tx) error {
+	info, err := tx.
+		AchievementUser.
+		Query().
+		Where(
+			entachievementuser.AppID(*h.AppID),
+			entachievementuser.UserID(*h.UserID),
+			entachievementuser.DeletedAt(0),
+		).Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return err
+		}
+	}
+	if info == nil {
+		// TODO
+		// 找不到创建
+	}
+	// 找到了一个则更新
+	return nil
+}
+
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
@@ -304,7 +327,10 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.createOrUpdateGoodAchievement(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	return handler.createOrUpdateGoodCoinAchievement(ctx, tx)
+	if err := handler.createOrUpdateGoodCoinAchievement(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return handler.createOrUpdateAchievementUser(ctx, tx)
 }
 
 func (h *Handler) CreateStatement(ctx context.Context) error {
