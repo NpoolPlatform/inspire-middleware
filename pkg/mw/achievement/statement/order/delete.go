@@ -9,8 +9,10 @@ import (
 	goodachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good"
 	goodcoinachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good/coin"
 	orderstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order"
+	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
 
 	"github.com/google/uuid"
@@ -100,6 +102,44 @@ func (h *deleteHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 	return wlog.WrapError(err)
 }
 
+func (h *deleteHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) error {
+	info, err := tx.
+		AchievementUser.
+		Query().
+		Where(
+			entachievementuser.AppID(*h.AppID),
+			entachievementuser.UserID(*h.UserID),
+			entachievementuser.DeletedAt(0),
+		).Only(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+
+	if _, err := achievementusercrud.UpdateSet(
+		tx.AchievementUser.UpdateOneID(info.ID),
+		&achievementusercrud.Req{
+			TotalCommission: func() *decimal.Decimal {
+				d := info.TotalCommission.Sub(h.commissionAmountUSD)
+				return &d
+			}(),
+			SelfCommission: func() *decimal.Decimal {
+				d := info.SelfCommission.Sub(h.selfCommissionAmountUSD)
+				return &d
+			}(),
+			DirectConsumeAmount: func() *decimal.Decimal {
+				d := info.DirectConsumeAmount.Sub(h.selfPaymentAmountUSD)
+				return &d
+			}(),
+			InviteeConsumeAmount: func() *decimal.Decimal {
+				d := info.InviteeConsumeAmount.Sub(h.paymentAmountUSD)
+				return &d
+			}(),
+		}).Save(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return nil
+}
+
 func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	info, err := h.GetStatement(ctx)
 	if err != nil {
@@ -111,6 +151,7 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 
 	h.ID = &info.ID
 	h.EntID = func() *uuid.UUID { uid, _ := uuid.Parse(info.EntID); return &uid }()
+	h.AppID = func() *uuid.UUID { uid, _ := uuid.Parse(info.AppID); return &uid }()
 	h.UserID = func() *uuid.UUID { uid, _ := uuid.Parse(info.UserID); return &uid }()
 	h.AppGoodID = func() *uuid.UUID { uid, _ := uuid.Parse(info.AppGoodID); return &uid }()
 	h.GoodCoinTypeID = func() *uuid.UUID { uid, _ := uuid.Parse(info.GoodCoinTypeID); return &uid }()
@@ -144,7 +185,10 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.updateGoodAchievement(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	return handler.updateGoodCoinAchievement(ctx, tx)
+	if err := handler.updateGoodCoinAchievement(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return handler.updateAchievementUser(ctx, tx)
 }
 
 func (h *Handler) DeleteStatement(ctx context.Context) error {

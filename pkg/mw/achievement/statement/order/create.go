@@ -264,7 +264,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 		).Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	if info == nil {
