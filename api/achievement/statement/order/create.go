@@ -39,6 +39,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		orderstatement1.WithAppConfigID(req.AppConfigID, true),
 		orderstatement1.WithCommissionConfigID(req.CommissionConfigID, true),
 		orderstatement1.WithCommissionConfigType(req.CommissionConfigType, true),
+		orderstatement1.WithPaymentStatements(req.PaymentStatements, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -89,6 +90,7 @@ func (s *Server) CreateStatements(ctx context.Context, in *npool.CreateStatement
 			orderstatement1.WithAppConfigID(req.AppConfigID, true),
 			orderstatement1.WithCommissionConfigID(req.CommissionConfigID, true),
 			orderstatement1.WithCommissionConfigType(req.CommissionConfigType, true),
+			orderstatement1.WithPaymentStatements(req.PaymentStatements, true),
 		)
 		if err != nil {
 			logger.Sugar().Errorw(
