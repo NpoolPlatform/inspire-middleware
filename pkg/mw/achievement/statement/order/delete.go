@@ -167,7 +167,7 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 
-	handler.paymentAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.PaymentAmountUSD); return amount }()
+	handler.paymentAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount }()
 	handler.units = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.Units); return amount }()
 	handler.commissionAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.CommissionAmountUSD); return amount }()
 	if info.UserID == info.OrderUserID {

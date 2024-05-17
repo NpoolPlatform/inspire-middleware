@@ -108,7 +108,7 @@ func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) e
 		goodachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
 		goodachievement1.WithGoodID(func() *string { s := h.GoodID.String(); return &s }(), true),
 		goodachievement1.WithAppGoodID(func() *string { s := h.AppGoodID.String(); return &s }(), true),
-		goodachievement1.WithTotalAmountUSD(func() *string { s := h.PaymentAmountUSD.String(); return &s }(), true),
+		goodachievement1.WithTotalAmountUSD(func() *string { s := h.GoodValueUSD.String(); return &s }(), true),
 		goodachievement1.WithSelfAmountUSD(func() *string { s := h.selfAmountUSD.String(); return &s }(), true),
 		goodachievement1.WithTotalUnits(func() *string { s := h.Units.String(); return &s }(), true),
 		goodachievement1.WithSelfUnits(func() *string { s := h.selfUnits.String(); return &s }(), true),
@@ -129,7 +129,7 @@ func (h *createHandler) constructCreateGoodCoinAchievementSQL(ctx context.Contex
 		goodcoinachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
 		goodcoinachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
 		goodcoinachievement1.WithGoodCoinTypeID(func() *string { s := h.GoodCoinTypeID.String(); return &s }(), true),
-		goodcoinachievement1.WithTotalAmountUSD(func() *string { s := h.PaymentAmountUSD.String(); return &s }(), true),
+		goodcoinachievement1.WithTotalAmountUSD(func() *string { s := h.GoodValueUSD.String(); return &s }(), true),
 		goodcoinachievement1.WithSelfAmountUSD(func() *string { s := h.selfAmountUSD.String(); return &s }(), true),
 		goodcoinachievement1.WithTotalUnits(func() *string { s := h.Units.String(); return &s }(), true),
 		goodcoinachievement1.WithSelfUnits(func() *string { s := h.selfUnits.String(); return &s }(), true),
@@ -178,7 +178,7 @@ func (h *createHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) e
 	_, err := goodachievementcrud.UpdateSet(
 		tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
 		&goodachievementcrud.Req{
-			TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.PaymentAmountUSD); return &d }(),
+			TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.GoodValueUSD); return &d }(),
 			SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
 			TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
 			SelfUnits:      func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
@@ -217,7 +217,7 @@ func (h *createHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 		tx.GoodCoinAchievement.UpdateOneID(h.entGoodCoinAchievement.ID),
 		&goodcoinachievementcrud.Req{
 			TotalAmountUSD: func() *decimal.Decimal {
-				d := h.entGoodCoinAchievement.TotalAmountUsd.Add(*h.PaymentAmountUSD)
+				d := h.entGoodCoinAchievement.TotalAmountUsd.Add(*h.GoodValueUSD)
 				return &d
 			}(),
 			SelfAmountUSD: func() *decimal.Decimal { d := h.entGoodCoinAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
@@ -275,7 +275,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 				UserID:               h.UserID,
 				TotalCommission:      h.CommissionAmountUSD,
 				SelfCommission:       &h.selfCommissionAmountUSD,
-				InviteeConsumeAmount: h.PaymentAmountUSD,
+				InviteeConsumeAmount: h.GoodValueUSD,
 				DirectConsumeAmount:  &h.selfAmountUSD,
 			}).Save(ctx); err != nil {
 			return wlog.WrapError(err)
@@ -299,7 +299,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 				return &d
 			}(),
 			InviteeConsumeAmount: func() *decimal.Decimal {
-				d := info.InviteeConsumeAmount.Add(*h.PaymentAmountUSD)
+				d := info.InviteeConsumeAmount.Add(*h.GoodValueUSD)
 				return &d
 			}(),
 		}).Save(ctx); err != nil {
@@ -328,7 +328,7 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		}(),
 		selfAmountUSD: func() decimal.Decimal {
 			if *h.OrderUserID == *h.UserID {
-				return *h.PaymentAmountUSD
+				return *h.GoodValueUSD
 			}
 			return decimal.NewFromInt(0)
 		}(),
