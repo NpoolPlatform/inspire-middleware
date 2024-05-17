@@ -857,7 +857,11 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	}
 	allocateCouponRewards, err := h.calculateCouponRewards(ctx, ev)
 	if err != nil {
-		return nil, err
+		logger.Sugar().Warnw(
+			"rewardTask allocateCouponRewards",
+			"Event", ev,
+			"Error", err,
+		)
 	}
 	couponRewards := []*npool.CouponReward{}
 	for _, coupon := range allocateCouponRewards {

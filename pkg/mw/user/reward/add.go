@@ -43,6 +43,8 @@ func (h *addHandler) getUserCoinReward(ctx context.Context) error {
 		return nil
 	}
 	h.info = infos[0]
+	id := infos[0].ID
+	h.ID = &id
 	return nil
 }
 
