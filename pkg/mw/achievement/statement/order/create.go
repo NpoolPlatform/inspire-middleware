@@ -10,6 +10,7 @@ import (
 	goodachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good"
 	goodcoinachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good/coin"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
+	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
@@ -267,10 +268,43 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 		}
 	}
 	if info == nil {
-		// TODO
-		// 找不到创建
+		if _, err := achievementusercrud.CreateSet(
+			tx.AchievementUser.Create(),
+			&achievementusercrud.Req{
+				AppID:                h.AppID,
+				UserID:               h.UserID,
+				TotalCommission:      h.CommissionAmountUSD,
+				SelfCommission:       &h.selfCommissionAmountUSD,
+				InviteeConsumeAmount: h.PaymentAmountUSD,
+				DirectConsumeAmount:  &h.selfAmountUSD,
+			}).Save(ctx); err != nil {
+			return wlog.WrapError(err)
+		}
+		return nil
 	}
-	// 找到了一个则更新
+
+	if _, err := achievementusercrud.UpdateSet(
+		tx.AchievementUser.UpdateOneID(info.ID),
+		&achievementusercrud.Req{
+			TotalCommission: func() *decimal.Decimal {
+				d := info.TotalCommission.Add(*h.CommissionAmountUSD)
+				return &d
+			}(),
+			SelfCommission: func() *decimal.Decimal {
+				d := info.SelfCommission.Add(h.selfCommissionAmountUSD)
+				return &d
+			}(),
+			DirectConsumeAmount: func() *decimal.Decimal {
+				d := info.DirectConsumeAmount.Add(h.selfAmountUSD)
+				return &d
+			}(),
+			InviteeConsumeAmount: func() *decimal.Decimal {
+				d := info.InviteeConsumeAmount.Add(*h.PaymentAmountUSD)
+				return &d
+			}(),
+		}).Save(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
 	return nil
 }
 
