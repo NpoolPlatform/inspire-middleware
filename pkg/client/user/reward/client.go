@@ -127,3 +127,21 @@ func UpdateUserReward(ctx context.Context, req *npool.UserRewardReq) error {
 	})
 	return err
 }
+
+func AddUserReward(ctx context.Context, req *npool.UserRewardReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.AddUserReward(_ctx, &npool.AddUserRewardRequest{
+			Info: req,
+		})
+	})
+	return err
+}
+
+func SubUserReward(ctx context.Context, req *npool.UserRewardReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.SubUserReward(_ctx, &npool.SubUserRewardRequest{
+			Info: req,
+		})
+	})
+	return err
+}
