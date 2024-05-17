@@ -847,10 +847,11 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	coinRewards := []*npool.CoinReward{}
 	for _, coin := range allocateCoinRewards {
 		coinReward := npool.CoinReward{
-			AppID:       coin.AppID,
-			UserID:      coin.UserID,
-			CoinTypeID:  coin.CoinTypeID,
-			CoinRewards: coin.Value,
+			AppID:        coin.AppID,
+			UserID:       coin.UserID,
+			CoinTypeID:   coin.CoinTypeID,
+			CoinConfigID: coin.CoinConfigID,
+			CoinRewards:  coin.Value,
 		}
 		coinRewards = append(coinRewards, &coinReward)
 	}
