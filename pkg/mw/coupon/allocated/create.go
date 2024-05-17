@@ -120,11 +120,24 @@ func (h *createHandler) validateAllocated() error {
 	return nil
 }
 
+//nolint:dupl
 func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
+	allocated := h.coupon.Allocated
+	switch h.coupon.CouponType {
+	case inspiretypes.CouponType_FixAmount.String():
+		allocated = allocated.Add(h.coupon.Denomination)
+	case inspiretypes.CouponType_Discount.String():
+		allocated = allocated.Add(decimal.NewFromInt(1))
+	default:
+		return fmt.Errorf("invalid coupontype")
+	}
+	if allocated.Cmp(h.coupon.Circulation) > 0 {
+		return fmt.Errorf("insufficient circulation")
+	}
 	if _, err := tx.
 		Coupon.
 		UpdateOne(h.coupon).
-		SetAllocated(h.coupon.Allocated).
+		SetAllocated(allocated).
 		Save(ctx); err != nil {
 		return err
 	}
@@ -147,9 +160,6 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createAllocatedCoupon(ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.validateAllocated(); err != nil {
 			return err
 		}
 		if err := handler.updateCoupon(ctx, tx); err != nil {
@@ -179,9 +189,6 @@ func (h *Handler) CreateDirectCoupon(ctx context.Context) (*npool.Coupon, error)
 	}
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createDirectAllocatedCoupon(ctx, tx); err != nil {
-			return err
-		}
-		if err := handler.validateAllocated(); err != nil {
 			return err
 		}
 		if err := handler.updateCoupon(ctx, tx); err != nil {

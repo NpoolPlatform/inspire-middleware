@@ -45,6 +45,7 @@ func (h *deleteHandler) getCoupon(ctx context.Context) error {
 	})
 }
 
+//nolint:dupl
 func (h *deleteHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	allocated := h.coupon.Allocated
 	switch h.coupon.CouponType {
