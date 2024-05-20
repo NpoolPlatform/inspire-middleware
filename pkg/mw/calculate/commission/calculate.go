@@ -84,9 +84,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		}
 
 		amount := h.PaymentAmount
-		if comm2.SettleMode == types.SettleMode_SettleWithGoodValue {
-			amount = h.GoodValue
-		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			amount = decimal.NewFromInt(0)
@@ -114,9 +111,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 	}
 
 	amount := h.PaymentAmount
-	if commLast.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValue
-	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		amount = decimal.NewFromInt(0)
@@ -317,9 +311,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		}
 
 		amount := h.PaymentAmount
-		if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-			amount = h.GoodValue
-		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			amount = decimal.NewFromInt(0)
@@ -366,9 +357,6 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 	}
 
 	amount := h.PaymentAmount
-	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValue
-	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		amount = decimal.NewFromInt(0)
@@ -452,9 +440,6 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		}
 
 		amount := h.PaymentAmount
-		if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-			amount = h.GoodValue
-		}
 
 		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 			amount = decimal.NewFromInt(0)
@@ -500,9 +485,6 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 	}
 
 	amount := h.PaymentAmount
-	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValue
-	}
 
 	if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 		amount = decimal.NewFromInt(0)
