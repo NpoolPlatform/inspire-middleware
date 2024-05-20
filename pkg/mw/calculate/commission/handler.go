@@ -25,7 +25,6 @@ type Handler struct {
 	AchievementUsers         map[string]*achievementusermwpb.AchievementUser
 	PaymentAmount            decimal.Decimal
 	PaymentCoinUSDCurrency   decimal.Decimal
-	GoodValue                decimal.Decimal
 	GoodValueUSD             decimal.Decimal
 }
 
@@ -113,17 +112,6 @@ func WithPaymentCoinUSDCurrency(value string) func(context.Context, *Handler) er
 			return err
 		}
 		h.PaymentCoinUSDCurrency = amount
-		return nil
-	}
-}
-
-func WithGoodValue(value string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		amount, err := decimal.NewFromString(value)
-		if err != nil {
-			return err
-		}
-		h.GoodValue = amount
 		return nil
 	}
 }
