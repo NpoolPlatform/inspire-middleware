@@ -24,6 +24,7 @@ type Handler struct {
 	AppGoodCommissionConfigs []*appgoodcommissionconfigmwpb.AppGoodCommissionConfig
 	AchievementUsers         map[string]*achievementusermwpb.AchievementUser
 	PaymentAmount            decimal.Decimal
+	PaymentAmountUSD         decimal.Decimal
 	PaymentCoinUSDCurrency   decimal.Decimal
 	GoodValueUSD             decimal.Decimal
 }
@@ -101,6 +102,17 @@ func WithPaymentAmount(value string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.PaymentAmount = amount
+		return nil
+	}
+}
+
+func WithPaymentAmountUSD(value string) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		amount, err := decimal.NewFromString(value)
+		if err != nil {
+			return err
+		}
+		h.PaymentAmountUSD = amount
 		return nil
 	}
 }
