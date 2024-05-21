@@ -7,7 +7,6 @@ import (
 	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
-	goodachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good"
 	goodcoinachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good/coin"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
@@ -26,6 +25,7 @@ type createHandler struct {
 	*achievementQueryHandler
 	sql                          string
 	sqlCreateGoodAchievement     string
+	sqlUpdateGoodAchievement     string
 	sqlCreateGoodCoinAchievement string
 	selfOrder                    bool
 	selfUnits                    decimal.Decimal
@@ -98,6 +98,40 @@ func (h *createHandler) constructSQL() {
 	_sql += "limit 1)"
 
 	h.sql = _sql
+}
+
+func (h *createHandler) constructUpdateGoodAchievementSQL(table string) {
+	sql := fmt.Sprintf(
+		`update %v
+		set
+		  total_amount_usd = total_amount_usd + %v`,
+		table,
+		*h.GoodValueUSD,
+	)
+	sql += fmt.Sprintf(
+		`, self_amount_usd = self_amount_usd + %v`,
+		h.selfAmountUSD,
+	)
+
+	sql += fmt.Sprintf(
+		`, total_units = total_units + %v`,
+		*h.Units,
+	)
+	sql += fmt.Sprintf(
+		`, total_commission_usd = total_commission_usd + %v`,
+		*h.CommissionAmountUSD,
+	)
+	sql += fmt.Sprintf(
+		`, self_commission_usd = self_commission_usd + %v`,
+		h.selfCommissionAmountUSD,
+	)
+
+	sql += fmt.Sprintf(
+		` where user_id = %v and app_good_id = %v and deleted_at = 0 `,
+		h.UserID.String(), h.AppGoodID.String(),
+	)
+	h.sqlUpdateGoodAchievement = sql
+	fmt.Println("sql update: ", sql)
 }
 
 func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) error {
@@ -175,30 +209,35 @@ func (h *createHandler) createPaymentStatements(ctx context.Context, tx *ent.Tx)
 }
 
 func (h *createHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	_, err := goodachievementcrud.UpdateSet(
-		tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
-		&goodachievementcrud.Req{
-			TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.GoodValueUSD); return &d }(),
-			SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
-			TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
-			SelfUnits:      func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
-			TotalCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
-				return &d
-			}(),
-			SelfCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
-				return &d
-			}(),
-		},
-	).Save(ctx)
-	return wlog.WrapError(err)
+	h.constructUpdateGoodAchievementSQL("good_achievements")
+	// if err := h.execSQL(ctx, tx, h.sqlUpdateGoodAchievement); err != nil {
+	// 	return wlog.WrapError(err)
+	// }
+	// _, err := goodachievementcrud.UpdateSet(
+	// 	tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
+	// 	&goodachievementcrud.Req{
+	// 		TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.GoodValueUSD); return &d }(),
+	// 		SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
+	// 		TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
+	// 		SelfUnits:      func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
+	// 		TotalCommissionUSD: func() *decimal.Decimal {
+	// 			d := h.entGoodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
+	// 			return &d
+	// 		}(),
+	// 		SelfCommissionUSD: func() *decimal.Decimal {
+	// 			d := h.entGoodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
+	// 			return &d
+	// 		}(),
+	// 	},
+	// ).Save(ctx)
+	// return wlog.WrapError(err)
+	return wlog.Errorf("-----")
 }
 
 func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	if h.entGoodAchievement != nil {
-		return h.updateGoodAchievement(ctx, tx)
-	}
+	// if h.entGoodAchievement != nil {
+	// 	return h.updateGoodAchievement(ctx, tx)
+	// }
 	err := h.execSQL(ctx, tx, h.sqlCreateGoodAchievement)
 	if err == nil {
 		return nil
@@ -206,9 +245,9 @@ func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *e
 	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	if err := h.requireAchievement(ctx); err != nil {
-		return wlog.WrapError(err)
-	}
+	// if err := h.requireAchievement(ctx); err != nil {
+	// 	return wlog.WrapError(err)
+	// }
 	return h.updateGoodAchievement(ctx, tx)
 }
 
@@ -237,9 +276,9 @@ func (h *createHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 }
 
 func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
-	if h.entGoodCoinAchievement != nil {
-		return h.updateGoodCoinAchievement(ctx, tx)
-	}
+	// if h.entGoodCoinAchievement != nil {
+	// 	return h.updateGoodCoinAchievement(ctx, tx)
+	// }
 	err := h.execSQL(ctx, tx, h.sqlCreateGoodCoinAchievement)
 	if err == nil {
 		return nil
@@ -247,9 +286,9 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	if err := h.requireAchievement(ctx); err != nil {
-		return wlog.WrapError(err)
-	}
+	// if err := h.requireAchievement(ctx); err != nil {
+	// 	return wlog.WrapError(err)
+	// }
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 
