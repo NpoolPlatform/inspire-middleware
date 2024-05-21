@@ -2,8 +2,9 @@ package goodachievement
 
 import (
 	"fmt"
-	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"time"
+
+	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 )
 
 //nolint:goconst
@@ -64,7 +65,7 @@ func (h *Handler) ConstructCreateSQL() string {
 	return _sql
 }
 
-func (h Handler) ConstructUpdateSQL() string {
+func (h *Handler) ConstructUpdateSQL() string {
 	sql := fmt.Sprintf(
 		`update %v set total_amount_usd = total_amount_usd + %v`,
 		entgoodachievement.Table,

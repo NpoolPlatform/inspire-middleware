@@ -2,8 +2,9 @@ package goodcoinachievement
 
 import (
 	"fmt"
-	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"time"
+
+	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 )
 
 //nolint:goconst
