@@ -2,8 +2,8 @@ package calculate
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	"github.com/google/uuid"
@@ -16,13 +16,12 @@ type Handler struct {
 	GoodID                 uuid.UUID
 	AppGoodID              uuid.UUID
 	OrderID                uuid.UUID
-	PaymentID              uuid.UUID
-	CoinTypeID             uuid.UUID
+	GoodCoinTypeID         uuid.UUID
 	PaymentCoinTypeID      uuid.UUID
 	PaymentCoinUSDCurrency decimal.Decimal
 	Units                  decimal.Decimal
 	PaymentAmount          decimal.Decimal
-	GoodValue              decimal.Decimal
+	PaymentAmountUSD       decimal.Decimal
 	GoodValueUSD           decimal.Decimal
 	SettleType             types.SettleType
 	SettleAmountType       types.SettleAmountType
@@ -95,24 +94,13 @@ func WithOrderID(id string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithPaymentID(id string) func(context.Context, *Handler) error {
+func WithGoodCoinTypeID(id string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_id, err := uuid.Parse(id)
 		if err != nil {
 			return err
 		}
-		h.PaymentID = _id
-		return nil
-	}
-}
-
-func WithCoinTypeID(id string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_id, err := uuid.Parse(id)
-		if err != nil {
-			return err
-		}
-		h.CoinTypeID = _id
+		h.GoodCoinTypeID = _id
 		return nil
 	}
 }
@@ -161,13 +149,13 @@ func WithPaymentAmount(value string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithGoodValue(value string) func(context.Context, *Handler) error {
+func WithPaymentAmountUSD(value string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_amount, err := decimal.NewFromString(value)
 		if err != nil {
 			return err
 		}
-		h.GoodValue = _amount
+		h.PaymentAmountUSD = _amount
 		return nil
 	}
 }
@@ -189,7 +177,7 @@ func WithSettleType(settleType types.SettleType) func(context.Context, *Handler)
 		case types.SettleType_GoodOrderPayment:
 		case types.SettleType_TechniqueServiceFee:
 		default:
-			return fmt.Errorf("invalid settletype")
+			return wlog.Errorf("invalid settletype")
 		}
 		h.SettleType = settleType
 		return nil
@@ -202,7 +190,7 @@ func WithSettleAmountType(settleAmount types.SettleAmountType) func(context.Cont
 		case types.SettleAmountType_SettleByPercent:
 		case types.SettleAmountType_SettleByAmount:
 		default:
-			return fmt.Errorf("invalid settleamount")
+			return wlog.Errorf("invalid settleamount")
 		}
 		h.SettleAmountType = settleAmount
 		return nil
