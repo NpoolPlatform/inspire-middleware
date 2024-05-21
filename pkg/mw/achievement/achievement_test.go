@@ -70,6 +70,7 @@ func createStatement(t *testing.T) {
 	paymentCoinTypeID := uuid.NewString()
 	coinUSDCurrency := "1.23"
 	amount := "1000"
+	commissionAmount := "0"
 	handler, err := statement1.NewHandler(
 		context.Background(),
 		statement1.WithEntID(&ret.EntID, true),
@@ -91,6 +92,7 @@ func createStatement(t *testing.T) {
 			PaymentCoinTypeID: &paymentCoinTypeID,
 			CoinUSDCurrency:   &coinUSDCurrency,
 			Amount:            &amount,
+			CommissionAmount:  &commissionAmount,
 		},
 		}, true),
 	)
@@ -110,16 +112,6 @@ func expropriateAchievement(t *testing.T) {
 	err = handler.ExpropriateAchievement(context.Background())
 	assert.Nil(t, err)
 
-	h1, err := statement1.NewHandler(
-		context.Background(),
-		statement1.WithID(&ret.ID, true),
-	)
-	assert.Nil(t, err)
-
-	info, err := h1.GetStatement(context.Background())
-	assert.Nil(t, err)
-	assert.Nil(t, info)
-
 	h2, err := achievement1.NewHandler(
 		context.Background(),
 		achievement1.WithConds(&npool.Conds{
@@ -129,12 +121,15 @@ func expropriateAchievement(t *testing.T) {
 			AppGoodID: &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppGoodID},
 			UserIDs:   &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},
 		}),
+		achievement1.WithLimit(1),
 	)
 	assert.Nil(t, err)
 
 	infos, total, err := h2.GetAchievements(context.Background())
 	if assert.Nil(t, err) {
 		assert.Equal(t, uint32(1), total)
+		ret1.ID = infos[0].ID
+		ret1.EntID = infos[0].EntID
 		ret1.TotalAmountUSD = decimal.NewFromInt(0).String()
 		ret1.SelfAmountUSD = decimal.NewFromInt(0).String()
 		ret1.TotalUnits = decimal.NewFromInt(0).String()

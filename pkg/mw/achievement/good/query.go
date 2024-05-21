@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/good"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -21,7 +22,23 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) formalizeString(amount string) string {
+	_amount, err := decimal.NewFromString(amount)
+	if err != nil {
+		return decimal.NewFromInt(0).String()
+	}
+	return _amount.String()
+}
+
 func (h *queryHandler) formalize() {
+	for _, info := range h.infos {
+		info.SelfAmountUSD = h.formalizeString(info.SelfAmountUSD)
+		info.TotalAmountUSD = h.formalizeString(info.TotalAmountUSD)
+		info.SelfCommissionUSD = h.formalizeString(info.SelfCommissionUSD)
+		info.TotalCommissionUSD = h.formalizeString(info.TotalCommissionUSD)
+		info.SelfUnits = h.formalizeString(info.SelfUnits)
+		info.TotalUnits = h.formalizeString(info.TotalUnits)
+	}
 }
 
 func (h *Handler) GetAchievement(ctx context.Context) (*npool.Achievement, error) {
