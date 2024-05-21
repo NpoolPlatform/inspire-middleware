@@ -7,12 +7,12 @@ import (
 	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
-	goodcoinachievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/good/coin"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -27,6 +27,7 @@ type createHandler struct {
 	sqlCreateGoodAchievement     string
 	sqlUpdateGoodAchievement     string
 	sqlCreateGoodCoinAchievement string
+	sqlUpdateGoodCoinAchievement string
 	selfOrder                    bool
 	selfUnits                    decimal.Decimal
 	selfAmountUSD                decimal.Decimal
@@ -100,40 +101,6 @@ func (h *createHandler) constructSQL() {
 	h.sql = _sql
 }
 
-func (h *createHandler) constructUpdateGoodAchievementSQL(table string) {
-	sql := fmt.Sprintf(
-		`update %v
-		set
-		  total_amount_usd = total_amount_usd + %v`,
-		table,
-		*h.GoodValueUSD,
-	)
-	sql += fmt.Sprintf(
-		`, self_amount_usd = self_amount_usd + %v`,
-		h.selfAmountUSD,
-	)
-
-	sql += fmt.Sprintf(
-		`, total_units = total_units + %v`,
-		*h.Units,
-	)
-	sql += fmt.Sprintf(
-		`, total_commission_usd = total_commission_usd + %v`,
-		*h.CommissionAmountUSD,
-	)
-	sql += fmt.Sprintf(
-		`, self_commission_usd = self_commission_usd + %v`,
-		h.selfCommissionAmountUSD,
-	)
-
-	sql += fmt.Sprintf(
-		` where user_id = %v and app_good_id = %v and deleted_at = 0 `,
-		h.UserID.String(), h.AppGoodID.String(),
-	)
-	h.sqlUpdateGoodAchievement = sql
-	fmt.Println("sql update: ", sql)
-}
-
 func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) error {
 	handler, err := goodachievement1.NewHandler(
 		ctx,
@@ -153,6 +120,7 @@ func (h *createHandler) constructCreateGoodAchievementSQL(ctx context.Context) e
 		return wlog.WrapError(err)
 	}
 	h.sqlCreateGoodAchievement = handler.ConstructCreateSQL()
+	h.sqlUpdateGoodAchievement = handler.ConstructUpdateSQL()
 	return nil
 }
 
@@ -174,6 +142,7 @@ func (h *createHandler) constructCreateGoodCoinAchievementSQL(ctx context.Contex
 		return wlog.WrapError(err)
 	}
 	h.sqlCreateGoodCoinAchievement = handler.ConstructCreateSQL()
+	h.sqlUpdateGoodCoinAchievement = handler.ConstructUpdateSQL()
 	return nil
 }
 
@@ -209,35 +178,10 @@ func (h *createHandler) createPaymentStatements(ctx context.Context, tx *ent.Tx)
 }
 
 func (h *createHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	h.constructUpdateGoodAchievementSQL("good_achievements")
-	// if err := h.execSQL(ctx, tx, h.sqlUpdateGoodAchievement); err != nil {
-	// 	return wlog.WrapError(err)
-	// }
-	// _, err := goodachievementcrud.UpdateSet(
-	// 	tx.GoodAchievement.UpdateOneID(h.entGoodAchievement.ID),
-	// 	&goodachievementcrud.Req{
-	// 		TotalAmountUSD: func() *decimal.Decimal { d := h.entGoodAchievement.TotalAmountUsd.Add(*h.GoodValueUSD); return &d }(),
-	// 		SelfAmountUSD:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
-	// 		TotalUnits:     func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Add(*h.Units); return &d }(),
-	// 		SelfUnits:      func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
-	// 		TotalCommissionUSD: func() *decimal.Decimal {
-	// 			d := h.entGoodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
-	// 			return &d
-	// 		}(),
-	// 		SelfCommissionUSD: func() *decimal.Decimal {
-	// 			d := h.entGoodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
-	// 			return &d
-	// 		}(),
-	// 	},
-	// ).Save(ctx)
-	// return wlog.WrapError(err)
-	return wlog.Errorf("-----")
+	return h.execSQL(ctx, tx, h.sqlUpdateGoodAchievement)
 }
 
 func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	// if h.entGoodAchievement != nil {
-	// 	return h.updateGoodAchievement(ctx, tx)
-	// }
 	err := h.execSQL(ctx, tx, h.sqlCreateGoodAchievement)
 	if err == nil {
 		return nil
@@ -245,40 +189,14 @@ func (h *createHandler) createOrUpdateGoodAchievement(ctx context.Context, tx *e
 	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	// if err := h.requireAchievement(ctx); err != nil {
-	// 	return wlog.WrapError(err)
-	// }
 	return h.updateGoodAchievement(ctx, tx)
 }
 
 func (h *createHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
-	_, err := goodcoinachievementcrud.UpdateSet(
-		tx.GoodCoinAchievement.UpdateOneID(h.entGoodCoinAchievement.ID),
-		&goodcoinachievementcrud.Req{
-			TotalAmountUSD: func() *decimal.Decimal {
-				d := h.entGoodCoinAchievement.TotalAmountUsd.Add(*h.GoodValueUSD)
-				return &d
-			}(),
-			SelfAmountUSD: func() *decimal.Decimal { d := h.entGoodCoinAchievement.SelfAmountUsd.Add(h.selfAmountUSD); return &d }(),
-			TotalUnits:    func() *decimal.Decimal { d := h.entGoodCoinAchievement.TotalUnits.Add(*h.Units); return &d }(),
-			SelfUnits:     func() *decimal.Decimal { d := h.entGoodCoinAchievement.SelfUnits.Add(h.selfUnits); return &d }(),
-			TotalCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodCoinAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
-				return &d
-			}(),
-			SelfCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodCoinAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
-				return &d
-			}(),
-		},
-	).Save(ctx)
-	return wlog.WrapError(err)
+	return h.execSQL(ctx, tx, h.sqlUpdateGoodCoinAchievement)
 }
 
 func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
-	// if h.entGoodCoinAchievement != nil {
-	// 	return h.updateGoodCoinAchievement(ctx, tx)
-	// }
 	err := h.execSQL(ctx, tx, h.sqlCreateGoodCoinAchievement)
 	if err == nil {
 		return nil
@@ -286,9 +204,6 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	// if err := h.requireAchievement(ctx); err != nil {
-	// 	return wlog.WrapError(err)
-	// }
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 

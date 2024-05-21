@@ -2,6 +2,7 @@ package goodcoinachievement
 
 import (
 	"fmt"
+	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"time"
 )
 
@@ -59,4 +60,39 @@ func (h *Handler) ConstructCreateSQL() string {
 	)
 	_sql += "limit 1)"
 	return _sql
+}
+
+func (h *Handler) ConstructUpdateSQL() string {
+	sql := fmt.Sprintf(
+		`update %v set total_units = total_units + %v`,
+		entgoodcoinachievement.Table,
+		*h.TotalUnits,
+	)
+	sql += fmt.Sprintf(
+		`, self_units = self_units + %v`,
+		*h.SelfUnits,
+	)
+
+	sql += fmt.Sprintf(
+		`, total_amount_usd = total_amount_usd + %v`,
+		*h.TotalAmountUSD,
+	)
+	sql += fmt.Sprintf(
+		`, self_amount_usd = self_amount_usd + %v`,
+		*h.SelfAmountUSD,
+	)
+	sql += fmt.Sprintf(
+		`, total_commission_usd = total_commission_usd + %v`,
+		*h.TotalCommissionUSD,
+	)
+	sql += fmt.Sprintf(
+		`, self_commission_usd = self_commission_usd + %v`,
+		h.SelfCommissionUSD,
+	)
+
+	sql += fmt.Sprintf(
+		" where user_id = '%v' and good_coin_type_id = '%v' and deleted_at = 0 ",
+		h.UserID.String(), h.GoodCoinTypeID.String(),
+	)
+	return sql
 }
