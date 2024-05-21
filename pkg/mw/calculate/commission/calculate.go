@@ -131,7 +131,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
 		Amount:               amountLast,
-		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(),
+		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
 
 	return _comms, nil
@@ -375,7 +375,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
 		Amount:               amountLast,
-		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(),
+		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
 
 	return _comms, nil
@@ -507,7 +507,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
 		Amount:               amountLast,
-		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(),
+		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(),//nolint
 	})
 
 	return _comms, nil

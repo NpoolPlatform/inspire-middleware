@@ -323,6 +323,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	return handler.generateStatements(commMap, appconfigs[0].EntID, commissionConfigType)
 }
 
+//nolint
 func (h *calculateHandler) generateStatements(
 	commMap map[string]*commission2.Commission,
 	appConfigID string,
