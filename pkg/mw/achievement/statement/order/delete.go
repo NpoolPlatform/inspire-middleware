@@ -63,11 +63,11 @@ func (h *deleteHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) e
 			TotalUnits: func() *decimal.Decimal { d := h.entGoodAchievement.TotalUnits.Sub(h.units); return &d }(),
 			SelfUnits:  func() *decimal.Decimal { d := h.entGoodAchievement.SelfUnits.Sub(h.selfUnits); return &d }(),
 			TotalCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodAchievement.TotalCommissionUsd.Add(h.commissionAmountUSD)
+				d := h.entGoodAchievement.TotalCommissionUsd.Sub(h.commissionAmountUSD)
 				return &d
 			}(),
 			SelfCommissionUSD: func() *decimal.Decimal {
-				d := h.entGoodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
+				d := h.entGoodAchievement.SelfCommissionUsd.Sub(h.selfCommissionAmountUSD)
 				return &d
 			}(),
 		},
