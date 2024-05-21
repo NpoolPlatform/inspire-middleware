@@ -1343,8 +1343,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 		_paymentAmount := decimal.RequireFromString(paymentAmount)
 		found := false
 		for _, comm := range comms {
-			if comm.UserID == &comm1.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm1.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1353,8 +1353,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm2.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm2.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1363,8 +1363,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm3.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm3.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1373,8 +1373,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm4.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm4.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1383,8 +1383,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm5.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(10).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm5.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(10).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1393,8 +1393,8 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm6.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm6.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1444,8 +1444,8 @@ func calculateWithoutCommission(t *testing.T) {
 		_paymentAmount := decimal.RequireFromString(paymentAmount)
 		found := false
 		for _, comm := range comms {
-			if comm.UserID == &comm1.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm1.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1454,8 +1454,8 @@ func calculateWithoutCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm2.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm2.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1464,8 +1464,8 @@ func calculateWithoutCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm3.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm3.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1474,8 +1474,8 @@ func calculateWithoutCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm4.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm4.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1484,8 +1484,8 @@ func calculateWithoutCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm5.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(10).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm5.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(10).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -1494,8 +1494,8 @@ func calculateWithoutCommission(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == &comm6.UserID {
-				assert.Equal(t, comm.PaymentStatements[0].Amount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm6.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, _paymentAmount.Mul(decimal.NewFromInt(0).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
