@@ -2,10 +2,10 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 
@@ -115,7 +115,7 @@ func GetCommissionConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.Ap
 		return nil, nil
 	}
 	if len(infos.([]*npool.AppGoodCommissionConfig)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.AppGoodCommissionConfig)[0], nil
 }

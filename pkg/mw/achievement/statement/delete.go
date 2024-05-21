@@ -2,9 +2,9 @@ package statement
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -46,7 +46,7 @@ func (h *Handler) DeleteStatements(ctx context.Context) ([]*npool.Statement, err
 	ids := []uint32{}
 	for _, req := range h.Reqs {
 		if req.ID == nil {
-			return nil, fmt.Errorf("invalid statement id")
+			return nil, wlog.Errorf("invalid statement id")
 		}
 		ids = append(ids, *req.ID)
 	}
@@ -60,7 +60,7 @@ func (h *Handler) DeleteStatements(ctx context.Context) ([]*npool.Statement, err
 		return nil, err
 	}
 	if len(infos) != len(h.Reqs) {
-		return nil, fmt.Errorf("statement not found")
+		return nil, wlog.Errorf("statement not found")
 	}
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

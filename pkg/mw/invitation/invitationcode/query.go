@@ -2,7 +2,8 @@ package invitationcode
 
 import (
 	"context"
-	"fmt"
+
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	"entgo.io/ent/dialect/sql"
 	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
@@ -28,7 +29,7 @@ func (h *queryHandler) selectInvitationCode(stm *ent.InvitationCodeQuery) *ent.I
 
 func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.InvitationCode.Query().Where(entinvitationcode.DeletedAt(0))
 	if h.ID != nil {
@@ -44,7 +45,7 @@ func (h *queryHandler) queryInvitationCode(cli *ent.Client) error {
 func (h *queryHandler) queryInvitationCodes(cli *ent.Client) (*ent.InvitationCodeSelect, error) {
 	stm, err := invitationcodecrud.SetQueryConds(cli.InvitationCode.Query(), h.Conds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectInvitationCode(stm), nil
 }
@@ -73,13 +74,13 @@ func (h *queryHandler) queryJoin() error {
 		h.queryJoinMyself(s)
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if h.stmCount == nil {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {})
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -94,21 +95,21 @@ func (h *Handler) GetInvitationCode(ctx context.Context) (*npool.InvitationCode,
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryInvitationCode(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	return handler.infos[0], nil
@@ -124,18 +125,18 @@ func (h *Handler) GetInvitationCodes(ctx context.Context) ([]*npool.InvitationCo
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryInvitationCodes(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryInvitationCodes(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
@@ -144,7 +145,7 @@ func (h *Handler) GetInvitationCodes(ctx context.Context) ([]*npool.InvitationCo
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	return handler.infos, handler.total, nil

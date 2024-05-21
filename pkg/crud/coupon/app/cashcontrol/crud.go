@@ -1,8 +1,7 @@
 package coin
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcashcontrol "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -70,55 +69,55 @@ func SetQueryConds(q *ent.CashControlQuery, conds *Conds) (*ent.CashControlQuery
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entcashcontrol.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid entid field")
+			return nil, wlog.Errorf("invalid entid field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entcashcontrol.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid appid field")
+			return nil, wlog.Errorf("invalid appid field")
 		}
 	}
 	if conds.CouponID != nil {
 		id, ok := conds.CouponID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid cointypeid")
+			return nil, wlog.Errorf("invalid cointypeid")
 		}
 		switch conds.CouponID.Op {
 		case cruder.EQ:
 			q.Where(entcashcontrol.CouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid cointypeid field")
+			return nil, wlog.Errorf("invalid cointypeid field")
 		}
 	}
 	if conds.CouponIDs != nil {
 		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponids")
+			return nil, wlog.Errorf("invalid couponids")
 		}
 		switch conds.CouponIDs.Op {
 		case cruder.IN:
 			q.Where(entcashcontrol.CouponIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid couponids field")
+			return nil, wlog.Errorf("invalid couponids field")
 		}
 	}
 	if conds.ControlType != nil {
 		controlType, ok := conds.ControlType.Val.(types.ControlType)
 		if !ok {
-			return nil, fmt.Errorf("invalid control type")
+			return nil, wlog.Errorf("invalid control type")
 		}
 		switch conds.ControlType.Op {
 		case cruder.EQ:
@@ -126,7 +125,7 @@ func SetQueryConds(q *ent.CashControlQuery, conds *Conds) (*ent.CashControlQuery
 		case cruder.NEQ:
 			q.Where(entcashcontrol.ControlTypeNEQ(controlType.String()))
 		default:
-			return nil, fmt.Errorf("invalid control type field")
+			return nil, wlog.Errorf("invalid control type field")
 		}
 	}
 	return q, nil

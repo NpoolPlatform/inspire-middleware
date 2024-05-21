@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	achievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
@@ -312,7 +313,7 @@ func (h *createHandler) updateExistStatement(ctx context.Context, req *statement
 		return "", err
 	}
 	if req.Amount.Cmp(amount) != 0 {
-		return "", fmt.Errorf("mismatch amount")
+		return "", wlog.Errorf("mismatch amount")
 	}
 
 	commission, err := decimal.NewFromString(info.Commission)

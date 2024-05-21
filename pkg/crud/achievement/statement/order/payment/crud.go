@@ -1,8 +1,7 @@
 package orderpaymentstatement
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -55,61 +54,61 @@ func SetQueryConds(q *ent.OrderPaymentStatementQuery, conds *Conds) (*ent.OrderP
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		switch conds.IDs.Op {
 		case cruder.IN:
 			q.Where(entorderpaymentstatement.IDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entorderpaymentstatement.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entorderpaymentstatement.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.StatementID != nil {
 		id, ok := conds.StatementID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid statementid")
+			return nil, wlog.Errorf("invalid statementid")
 		}
 		switch conds.StatementID.Op {
 		case cruder.EQ:
 			q.Where(entorderpaymentstatement.StatementID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.PaymentCoinTypeID != nil {
 		id, ok := conds.PaymentCoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid paymentcointypeid")
+			return nil, wlog.Errorf("invalid paymentcointypeid")
 		}
 		switch conds.PaymentCoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entorderpaymentstatement.PaymentCoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	return q, nil

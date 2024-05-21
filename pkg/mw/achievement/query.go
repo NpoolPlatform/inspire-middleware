@@ -2,8 +2,8 @@ package achievement
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievement"
@@ -43,7 +43,7 @@ func (h *queryHandler) selectAchievement(stm *ent.AchievementQuery) {
 
 func (h *queryHandler) queryAchievement(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.Achievement.Query().Where(entachievement.DeletedAt(0))
 	if h.ID != nil {
@@ -133,7 +133,7 @@ func (h *Handler) GetAchievement(ctx context.Context) (*npool.Achievement, error
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()

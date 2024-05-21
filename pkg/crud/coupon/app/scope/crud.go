@@ -1,8 +1,7 @@
 package scope
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappgoodscope "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -68,55 +67,55 @@ func SetQueryConds(q *ent.AppGoodScopeQuery, conds *Conds) (*ent.AppGoodScopeQue
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entappgoodscope.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid entid field")
+			return nil, wlog.Errorf("invalid entid field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entappgoodscope.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid appid field")
+			return nil, wlog.Errorf("invalid appid field")
 		}
 	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
+			return nil, wlog.Errorf("invalid appgoodid")
 		}
 		switch conds.AppGoodID.Op {
 		case cruder.EQ:
 			q.Where(entappgoodscope.AppGoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid appgoodid field")
+			return nil, wlog.Errorf("invalid appgoodid field")
 		}
 	}
 	if conds.CouponID != nil {
 		id, ok := conds.CouponID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponid")
+			return nil, wlog.Errorf("invalid couponid")
 		}
 		switch conds.CouponID.Op {
 		case cruder.EQ:
 			q.Where(entappgoodscope.CouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid couponid field")
+			return nil, wlog.Errorf("invalid couponid field")
 		}
 	}
 	if conds.CouponScope != nil {
 		scope, ok := conds.CouponScope.Val.(types.CouponScope)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponscope")
+			return nil, wlog.Errorf("invalid couponscope")
 		}
 		switch conds.CouponScope.Op {
 		case cruder.EQ:
@@ -124,19 +123,19 @@ func SetQueryConds(q *ent.AppGoodScopeQuery, conds *Conds) (*ent.AppGoodScopeQue
 		case cruder.NEQ:
 			q.Where(entappgoodscope.CouponScopeNEQ(scope.String()))
 		default:
-			return nil, fmt.Errorf("invalid couponscope field")
+			return nil, wlog.Errorf("invalid couponscope field")
 		}
 	}
 	if conds.CouponIDs != nil {
 		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponids")
+			return nil, wlog.Errorf("invalid couponids")
 		}
 		switch conds.CouponIDs.Op {
 		case cruder.IN:
 			q.Where(entappgoodscope.CouponIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid couponids field")
+			return nil, wlog.Errorf("invalid couponids field")
 		}
 	}
 	return q, nil

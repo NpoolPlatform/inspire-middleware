@@ -1,8 +1,7 @@
 package orderstatement
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -114,169 +113,169 @@ func SetQueryConds(q *ent.OrderStatementQuery, conds *Conds) (*ent.OrderStatemen
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userid")
+			return nil, wlog.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.IDs != nil {
 		ids, ok := conds.IDs.Val.([]uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		switch conds.IDs.Op {
 		case cruder.IN:
 			q.Where(entorderstatement.IDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entorderstatement.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.UserIDs != nil {
 		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userids")
+			return nil, wlog.Errorf("invalid userids")
 		}
 		switch conds.UserIDs.Op {
 		case cruder.IN:
 			q.Where(entorderstatement.UserIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.OrderUserID != nil {
 		id, ok := conds.OrderUserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderuserid")
+			return nil, wlog.Errorf("invalid orderuserid")
 		}
 		switch conds.OrderUserID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.OrderUserID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.GoodID != nil {
 		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
+			return nil, wlog.Errorf("invalid goodid")
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
+			return nil, wlog.Errorf("invalid appgoodid")
 		}
 		switch conds.AppGoodID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.AppGoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.OrderID != nil {
 		id, ok := conds.OrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid orderid")
+			return nil, wlog.Errorf("invalid orderid")
 		}
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.OrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.GoodCoinTypeID != nil {
 		id, ok := conds.GoodCoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid goodcointypeid")
+			return nil, wlog.Errorf("invalid goodcointypeid")
 		}
 		switch conds.GoodCoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.GoodCoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.AppConfigID != nil {
 		id, ok := conds.AppConfigID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appconfigid")
+			return nil, wlog.Errorf("invalid appconfigid")
 		}
 		switch conds.AppConfigID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.AppConfigID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.CommissionConfigID != nil {
 		id, ok := conds.CommissionConfigID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid commissionconfigid")
+			return nil, wlog.Errorf("invalid commissionconfigid")
 		}
 		switch conds.CommissionConfigID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.CommissionConfigID(id))
 		default:
-			return nil, fmt.Errorf("invalid statement field")
+			return nil, wlog.Errorf("invalid statement field")
 		}
 	}
 	if conds.CommissionConfigType != nil {
 		commissionConfigType, ok := conds.CommissionConfigType.Val.(types.CommissionConfigType)
 		if !ok {
-			return nil, fmt.Errorf("invalid commissionconfigtype")
+			return nil, wlog.Errorf("invalid commissionconfigtype")
 		}
 		switch conds.CommissionConfigType.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.CommissionConfigType(commissionConfigType.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	return q, nil

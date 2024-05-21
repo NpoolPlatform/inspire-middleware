@@ -1,8 +1,7 @@
 package event
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -105,73 +104,73 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entevent.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entevent.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entevent.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	if conds.EventType != nil {
 		_type, ok := conds.EventType.Val.(basetypes.UsedFor)
 		if !ok {
-			return nil, fmt.Errorf("invalid eventtype")
+			return nil, wlog.Errorf("invalid eventtype")
 		}
 		switch conds.EventType.Op {
 		case cruder.EQ:
 			q.Where(entevent.EventType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	if conds.GoodID != nil {
 		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
+			return nil, wlog.Errorf("invalid goodid")
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entevent.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
+			return nil, wlog.Errorf("invalid appgoodid")
 		}
 		switch conds.AppGoodID.Op {
 		case cruder.EQ:
 			q.Where(entevent.AppGoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid event field")
+			return nil, wlog.Errorf("invalid event field")
 		}
 	}
 	return q, nil

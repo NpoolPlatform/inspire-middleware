@@ -2,7 +2,8 @@ package registration
 
 import (
 	"context"
-	"fmt"
+
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -29,7 +30,7 @@ func (h *queryHandler) selectRegistration(stm *ent.RegistrationQuery) *ent.Regis
 
 func (h *queryHandler) queryRegistration(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.Registration.Query().Where(entregistration.DeletedAt(0))
 	if h.ID != nil {
@@ -45,7 +46,7 @@ func (h *queryHandler) queryRegistration(cli *ent.Client) error {
 func (h *queryHandler) queryRegistrations(cli *ent.Client) (*ent.RegistrationSelect, error) {
 	stm, err := registrationcrud.SetQueryConds(cli.Registration.Query(), h.Conds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectRegistration(stm), nil
 }
@@ -73,13 +74,13 @@ func (h *queryHandler) queryJoin() error {
 		h.queryJoinMyself(s)
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if h.stmCount == nil {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {})
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -94,21 +95,21 @@ func (h *Handler) GetRegistration(ctx context.Context) (*npool.Registration, err
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryRegistration(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	return handler.infos[0], nil
@@ -124,18 +125,18 @@ func (h *Handler) GetRegistrations(ctx context.Context) ([]*npool.Registration, 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryRegistrations(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryRegistrations(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
@@ -144,7 +145,7 @@ func (h *Handler) GetRegistrations(ctx context.Context) ([]*npool.Registration, 
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	return handler.infos, handler.total, nil

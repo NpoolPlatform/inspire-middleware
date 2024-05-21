@@ -2,8 +2,9 @@ package orderstatement
 
 import (
 	"context"
-	"fmt"
 	"time"
+
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -99,12 +100,12 @@ func DeleteStatements(ctx context.Context, in []*npool.StatementReq) ([]*npool.S
 			Infos: in,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("fail delete statements: %v", err)
+			return nil, wlog.Errorf("fail delete statements: %v", err)
 		}
 		return resp.GetInfos(), nil
 	})
 	if err != nil {
-		return nil, fmt.Errorf("fail delete statements: %v", err)
+		return nil, wlog.Errorf("fail delete statements: %v", err)
 	}
 	return infos.([]*npool.Statement), nil
 }

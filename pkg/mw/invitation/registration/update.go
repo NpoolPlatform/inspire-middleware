@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
@@ -36,13 +37,13 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	info, err := stm.Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	if info == nil {
@@ -74,7 +75,7 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 		tx.AchievementUser.UpdateOneID(info.ID),
 		_req,
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil
@@ -94,7 +95,7 @@ func (h *updateHandler) getTotalInvites(ctx context.Context) error {
 	}
 	achivmentUsers, _, err := handler.GetAchievementUsers(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(achivmentUsers) == 0 {
 		return nil
@@ -111,7 +112,7 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		*req.InviterID,
 	)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -125,13 +126,13 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	info, err := stm.Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -152,7 +153,7 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 			tx.AchievementUser.Create(),
 			_req,
 		).Save(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	}
@@ -174,7 +175,7 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		tx.AchievementUser.UpdateOneID(info.ID),
 		_req,
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil
@@ -191,7 +192,7 @@ func (h *updateHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 			InviterID: &inviterID,
 		}
 		if err := h.createOrAddInvites(ctx, tx, req); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -209,7 +210,7 @@ func (h *updateHandler) subInvites(ctx context.Context, tx *ent.Tx) error {
 			InviterID: &inviterID,
 		}
 		if err := h.subAchievementInvites(ctx, tx, req); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -219,7 +220,7 @@ func (h *updateHandler) subInvites(ctx context.Context, tx *ent.Tx) error {
 func (h *updateHandler) getInviters(ctx context.Context, inviterID *uuid.UUID) ([]string, error) {
 	handler, err := NewHandler(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	handler.AppID = h.AppID
@@ -227,7 +228,7 @@ func (h *updateHandler) getInviters(ctx context.Context, inviterID *uuid.UUID) (
 
 	_, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return inviterIDs, nil
 }
@@ -235,17 +236,17 @@ func (h *updateHandler) getInviters(ctx context.Context, inviterID *uuid.UUID) (
 func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, error) {
 	info, err := h.GetRegistration(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if info == nil {
-		return nil, fmt.Errorf("registration not found")
+		return nil, wlog.Errorf("registration not found")
 	}
 	if info.InviterID == h.InviterID.String() || info.InviteeID == h.InviterID.String() {
-		return nil, fmt.Errorf("invalid inviterid")
+		return nil, wlog.Errorf("invalid inviterid")
 	}
 
 	if err := h.validateInvitationCode(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	handler := &updateHandler{
@@ -257,18 +258,18 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 	}
 
 	if err := handler.getTotalInvites(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	inviteeID := uuid.MustParse(handler.registration.InviterID)
 	subInviters, err := handler.getInviters(ctx, &inviteeID)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	addInviters, err := handler.getInviters(ctx, h.InviterID)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	handler.subInviterIDs = subInviters
@@ -285,7 +286,7 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 				InviterID: h.InviterID,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.addInvites(ctx, tx); err != nil {
 			return nil
@@ -294,7 +295,7 @@ func (h *Handler) UpdateRegistration(ctx context.Context) (*npool.Registration, 
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetRegistration(ctx)

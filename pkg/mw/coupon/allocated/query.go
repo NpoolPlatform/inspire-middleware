@@ -2,12 +2,12 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -35,7 +35,7 @@ func (h *queryHandler) selectCoupon(stm *ent.CouponAllocatedQuery) *ent.CouponAl
 
 func (h *queryHandler) queryCoupon(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.CouponAllocated.Query().Where(entcouponallocated.DeletedAt(0))
 	if h.ID != nil {
@@ -52,7 +52,7 @@ func (h *queryHandler) queryCoupon(cli *ent.Client) error {
 func (h *queryHandler) queryCoupons(cli *ent.Client) (*ent.CouponAllocatedSelect, error) {
 	stm, err := allocatedcrud.SetQueryConds(cli.CouponAllocated.Query(), h.Conds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectCoupon(stm), nil
 }
@@ -92,7 +92,7 @@ func (h *queryHandler) queryJoinCoupon(s *sql.Selector) error {
 	if h.Conds != nil && h.Conds.CouponType != nil {
 		couponType, ok := h.Conds.CouponType.Val.(types.CouponType)
 		if !ok {
-			return fmt.Errorf("invalid coupontype")
+			return wlog.Errorf("invalid coupontype")
 		}
 		s.Where(
 			sql.EQ(t.C(entcoupon.FieldCouponType), couponType.String()),
@@ -120,7 +120,7 @@ func (h *queryHandler) queryJoin() error {
 		err = h.queryJoinCoupon(s)
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if h.stmCount == nil {
 		return nil
@@ -128,7 +128,7 @@ func (h *queryHandler) queryJoin() error {
 	h.stmCount.Modify(func(s *sql.Selector) {
 		err = h.queryJoinCoupon(s)
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -166,21 +166,21 @@ func (h *Handler) GetCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryCoupon(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -197,18 +197,18 @@ func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, erro
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryCoupons(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryCoupons(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
@@ -217,7 +217,7 @@ func (h *Handler) GetCoupons(ctx context.Context) ([]*npool.Coupon, uint32, erro
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

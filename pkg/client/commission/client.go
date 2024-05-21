@@ -2,10 +2,10 @@ package commission
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 
@@ -115,7 +115,7 @@ func GetCommissionOnly(ctx context.Context, conds *npool.Conds) (*npool.Commissi
 		return nil, nil
 	}
 	if len(infos.([]*npool.Commission)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.Commission)[0], nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -85,11 +86,11 @@ func (h *updateHandler) constructSQL() error {
 func (h *updateHandler) updateCommissionConfig(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail update appgoodcommissionconfig: %v", err)
+		return wlog.Errorf("fail update appgoodcommissionconfig: %v", err)
 	}
 	return nil
 }
@@ -100,10 +101,10 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) error {
 	}
 	info, err := h.GetCommissionConfig(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return fmt.Errorf("invalid appgoodcommissionconfig")
+		return wlog.Errorf("invalid appgoodcommissionconfig")
 	}
 
 	h.ID = &info.ID
@@ -122,7 +123,7 @@ func (h *Handler) UpdateCommissionConfig(ctx context.Context) error {
 	handler.settleType = info.SettleTypeStr
 
 	if err := handler.constructSQL(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

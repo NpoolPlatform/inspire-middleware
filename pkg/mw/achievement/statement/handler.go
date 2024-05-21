@@ -2,8 +2,8 @@ package statement
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -36,7 +36,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -48,7 +48,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -65,7 +65,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
@@ -82,7 +82,7 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
@@ -99,7 +99,7 @@ func WithDirectContributorID(id *string, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid directcontributorid")
+				return wlog.Errorf("invalid directcontributorid")
 			}
 			return nil
 		}
@@ -116,7 +116,7 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
@@ -133,7 +133,7 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
@@ -150,7 +150,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -174,7 +174,7 @@ func WithPaymentID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid paymentid")
+				return wlog.Errorf("invalid paymentid")
 			}
 			return nil
 		}
@@ -191,7 +191,7 @@ func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid cointypeid")
+				return wlog.Errorf("invalid cointypeid")
 			}
 			return nil
 		}
@@ -208,7 +208,7 @@ func WithPaymentCoinTypeID(id *string, must bool) func(context.Context, *Handler
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid paymentcointypeid")
+				return wlog.Errorf("invalid paymentcointypeid")
 			}
 			return nil
 		}
@@ -225,7 +225,7 @@ func WithPaymentCoinUSDCurrency(amount *string, must bool) func(context.Context,
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid paymentcoinusdcurrency")
+				return wlog.Errorf("invalid paymentcoinusdcurrency")
 			}
 			return nil
 		}
@@ -242,7 +242,7 @@ func WithUnits(amount *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid units")
+				return wlog.Errorf("invalid units")
 			}
 			return nil
 		}
@@ -259,7 +259,7 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid amount")
+				return wlog.Errorf("invalid amount")
 			}
 			return nil
 		}
@@ -276,7 +276,7 @@ func WithUSDAmount(amount *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid usdamount")
+				return wlog.Errorf("invalid usdamount")
 			}
 			return nil
 		}
@@ -293,7 +293,7 @@ func WithCommission(amount *string, must bool) func(context.Context, *Handler) e
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid commission")
+				return wlog.Errorf("invalid commission")
 			}
 			return nil
 		}
@@ -310,7 +310,7 @@ func WithAppConfigID(id *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appconfigid")
+				return wlog.Errorf("invalid appconfigid")
 			}
 			return nil
 		}
@@ -327,7 +327,7 @@ func WithCommissionConfigID(id *string, must bool) func(context.Context, *Handle
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid commissionconfigid")
+				return wlog.Errorf("invalid commissionconfigid")
 			}
 			return nil
 		}
@@ -344,7 +344,7 @@ func WithCommissionConfigType(value *types.CommissionConfigType, must bool) func
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid commissionconfigtype")
+				return wlog.Errorf("invalid commissionconfigtype")
 			}
 			return nil
 		}
@@ -354,7 +354,7 @@ func WithCommissionConfigType(value *types.CommissionConfigType, must bool) func
 		case types.CommissionConfigType_LegacyCommissionConfig:
 		case types.CommissionConfigType_WithoutCommissionConfig:
 		default:
-			return fmt.Errorf("invalid commissionconfigtype")
+			return wlog.Errorf("invalid commissionconfigtype")
 		}
 		h.CommissionConfigType = value
 		return nil
@@ -370,57 +370,57 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		for _, req := range reqs {
 			if must {
 				if req.AppID == nil {
-					return fmt.Errorf("invalid appid")
+					return wlog.Errorf("invalid appid")
 				}
 				if req.UserID == nil {
-					return fmt.Errorf("invalid userid")
+					return wlog.Errorf("invalid userid")
 				}
 				if req.GoodID == nil {
-					return fmt.Errorf("invalid goodid")
+					return wlog.Errorf("invalid goodid")
 				}
 				if req.AppGoodID == nil {
-					return fmt.Errorf("invalid appgoodid")
+					return wlog.Errorf("invalid appgoodid")
 				}
 				if req.OrderID == nil {
-					return fmt.Errorf("invalid orderid")
+					return wlog.Errorf("invalid orderid")
 				}
 				if req.PaymentID == nil {
-					return fmt.Errorf("invalid paymentid")
+					return wlog.Errorf("invalid paymentid")
 				}
 				if req.CoinTypeID == nil {
-					return fmt.Errorf("invalid paymentid")
+					return wlog.Errorf("invalid paymentid")
 				}
 				if req.PaymentCoinTypeID == nil {
-					return fmt.Errorf("invalid paymentcointypeid")
+					return wlog.Errorf("invalid paymentcointypeid")
 				}
 				if req.PaymentCoinUSDCurrency == nil {
-					return fmt.Errorf("invalid paymentcoinusdcurrency")
+					return wlog.Errorf("invalid paymentcoinusdcurrency")
 				}
 				if req.Units == nil {
-					return fmt.Errorf("invalid units")
+					return wlog.Errorf("invalid units")
 				}
 				if req.Amount == nil {
-					return fmt.Errorf("invalid amount")
+					return wlog.Errorf("invalid amount")
 				}
 				if req.USDAmount == nil {
-					return fmt.Errorf("invalid usdamount")
+					return wlog.Errorf("invalid usdamount")
 				}
 				if req.Commission == nil {
-					return fmt.Errorf("invalid commission")
+					return wlog.Errorf("invalid commission")
 				}
 				if req.AppConfigID == nil {
-					return fmt.Errorf("invalid appconfigid")
+					return wlog.Errorf("invalid appconfigid")
 				}
 				if req.CommissionConfigID == nil {
-					return fmt.Errorf("invalid commissionconfigid")
+					return wlog.Errorf("invalid commissionconfigid")
 				}
 				if req.CommissionConfigType == nil {
-					return fmt.Errorf("invalid commissionconfigtype")
+					return wlog.Errorf("invalid commissionconfigtype")
 				}
 			}
 			if !must {
 				if req.ID == nil {
-					return fmt.Errorf("invalid id")
+					return wlog.Errorf("invalid id")
 				}
 			}
 			_req := &statementcrud.Req{
@@ -574,7 +574,7 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 				case types.CommissionConfigType_LegacyCommissionConfig:
 				case types.CommissionConfigType_WithoutCommissionConfig:
 				default:
-					return fmt.Errorf("invalid commissionconfigtype")
+					return wlog.Errorf("invalid commissionconfigtype")
 				}
 				_req.CommissionConfigType = req.CommissionConfigType
 			}
@@ -589,10 +589,10 @@ func WithReqs(reqs []*npool.StatementReq, must bool) func(context.Context, *Hand
 		}
 
 		if len(appMap) > 1 {
-			return fmt.Errorf("too many apps")
+			return wlog.Errorf("too many apps")
 		}
 		if len(orderMap) > 1 {
-			return fmt.Errorf("too many orders")
+			return wlog.Errorf("too many orders")
 		}
 
 		h.Reqs = _reqs

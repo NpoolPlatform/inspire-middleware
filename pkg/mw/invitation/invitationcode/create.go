@@ -12,6 +12,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/google/uuid"
@@ -20,7 +21,7 @@ import (
 func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCode, error) {
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInvitationCode, *h.AppID, *h.UserID)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -32,17 +33,17 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 	}
 	exist, err := h.ExistInvitationCodeConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("already exists")
+		return nil, wlog.Errorf("already exists")
 	}
 
 	var code string
 	for {
 		code, err = codegenerator.Generate()
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		h.Conds = &invitationcodecrud.Conds{
 			AppID:          &cruder.Cond{Op: cruder.EQ, Val: *h.AppID},
@@ -50,12 +51,12 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 		}
 		key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInvitationCode, *h.AppID, code)
 		if err := redis2.TryLock(key1, 0); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		exist, err := h.ExistInvitationCodeConds(ctx)
 		if err != nil {
 			_ = redis2.Unlock(key1)
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		_ = redis2.Unlock(key1)
 		if exist {
@@ -66,7 +67,7 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 
 	key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateInvitationCode, *h.AppID, code)
 	if err := redis2.TryLock(key1, 0); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key1)
@@ -74,10 +75,10 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 
 	exist, err = h.ExistInvitationCodeConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("already exists")
+		return nil, wlog.Errorf("already exists")
 	}
 
 	id := uuid.New()
@@ -95,12 +96,12 @@ func (h *Handler) CreateInvitationCode(ctx context.Context) (*npool.InvitationCo
 				InvitationCode: &code,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetInvitationCode(ctx)

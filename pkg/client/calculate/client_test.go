@@ -350,12 +350,12 @@ func calculate(t *testing.T) {
 	assert.Nil(t, err)
 
 	orderID := uuid.NewString()
-	paymentID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
 	paymentCoinUSDCurrency := decimal.RequireFromString("12.345")
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000)
+	paymentAmountUSD := decimal.NewFromInt(2000)
 	goodValue := decimal.NewFromInt(3000)
 	goodValueUSD := decimal.NewFromInt(30000)
 	settleType := types.SettleType_GoodOrderPayment
@@ -368,13 +368,13 @@ func calculate(t *testing.T) {
 			GoodID:                 comm6.GetGoodID(),
 			AppGoodID:              comm6.GetAppGoodID(),
 			OrderID:                orderID,
-			PaymentID:              paymentID,
-			CoinTypeID:             coinTypeID,
+			GoodCoinTypeID:         coinTypeID,
 			PaymentCoinTypeID:      paymentCoinTypeID,
 			PaymentCoinUSDCurrency: paymentCoinUSDCurrency.String(),
 			Units:                  units,
 			SettleType:             settleType,
 			PaymentAmount:          paymentAmount.String(),
+			PaymentAmountUSD:       paymentAmountUSD.String(),
 			GoodValue:              goodValue.String(),
 			GoodValueUSD:           goodValueUSD.String(),
 			HasCommission:          true,

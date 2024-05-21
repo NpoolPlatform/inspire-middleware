@@ -1,8 +1,7 @@
 package goodachievement
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -106,73 +105,73 @@ func SetQueryConds(q *ent.GoodAchievementQuery, conds *Conds) (*ent.GoodAchievem
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entgoodachievement.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entgoodachievement.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entgoodachievement.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	if conds.UserIDs != nil {
 		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userids")
+			return nil, wlog.Errorf("invalid userids")
 		}
 		switch conds.UserIDs.Op {
 		case cruder.IN:
 			q.Where(entgoodachievement.UserIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	if conds.GoodID != nil {
 		id, ok := conds.GoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid goodid")
+			return nil, wlog.Errorf("invalid goodid")
 		}
 		switch conds.GoodID.Op {
 		case cruder.EQ:
 			q.Where(entgoodachievement.GoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	if conds.AppGoodID != nil {
 		id, ok := conds.AppGoodID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appgoodid")
+			return nil, wlog.Errorf("invalid appgoodid")
 		}
 		switch conds.AppGoodID.Op {
 		case cruder.EQ:
 			q.Where(entgoodachievement.AppGoodID(id))
 		default:
-			return nil, fmt.Errorf("invalid goodachievement field")
+			return nil, wlog.Errorf("invalid goodachievement field")
 		}
 	}
 	return q, nil

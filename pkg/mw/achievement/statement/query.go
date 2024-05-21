@@ -2,8 +2,8 @@ package statement
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	statementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -51,7 +51,7 @@ func (h *queryHandler) selectStatement(stm *ent.StatementQuery) {
 
 func (h *queryHandler) queryStatement(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.Statement.Query().Where(entstatement.DeletedAt(0))
 	if h.ID != nil {
@@ -137,7 +137,7 @@ func (h *Handler) GetStatement(ctx context.Context) (*npool.Statement, error) {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -188,7 +188,7 @@ func (h *Handler) GetStatementOnly(ctx context.Context) (*npool.Statement, error
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
