@@ -335,6 +335,7 @@ func (h *calculateHandler) generateStatements(
 		}
 
 		commission := decimal.NewFromInt(0).String()
+		commissionAmountUSD := decimal.NewFromInt(0).String()
 		commissionConfigID := uuid.Nil.String()
 		comm, ok := commMap[inviter.InviterID]
 		if ok {
@@ -343,6 +344,7 @@ func (h *calculateHandler) generateStatements(
 		}
 		if ok && h.HasCommission {
 			commission = comm.Amount
+			commissionAmountUSD = comm.CommissionAmountUSD
 		}
 		statements = append(statements, &statementmwpb.StatementReq{
 			AppID: func() *string {
@@ -380,7 +382,7 @@ func (h *calculateHandler) generateStatements(
 				paymentAmountUSD := h.PaymentAmountUSD.String()
 				return &paymentAmountUSD
 			}(),
-			CommissionAmountUSD:  &comm.CommissionAmountUSD,
+			CommissionAmountUSD:  &commissionAmountUSD,
 			AppConfigID:          &appConfigID,
 			CommissionConfigID:   &commissionConfigID,
 			CommissionConfigType: &commissionConfigType,
@@ -405,10 +407,12 @@ func (h *calculateHandler) generateStatements(
 	}
 
 	commission := decimal.NewFromInt(0).String()
+	commissionAmountUSD := decimal.NewFromInt(0).String()
 	commissionConfigID := uuid.Nil.String()
 	comm, ok := commMap[h.UserID.String()]
 	if ok && h.HasCommission {
 		commission = comm.Amount
+		commissionAmountUSD = comm.CommissionAmountUSD
 		commissionConfigID = comm.CommissionConfigID
 		commissionConfigType = comm.CommissionConfigType
 	}
@@ -447,11 +451,11 @@ func (h *calculateHandler) generateStatements(
 			goodValueUSD := h.GoodValueUSD.String()
 			return &goodValueUSD
 		}(),
-		PaymentAmountUSD: func() *string { // TODO
+		PaymentAmountUSD: func() *string {
 			paymentAmountUSD := h.PaymentAmountUSD.String()
 			return &paymentAmountUSD
 		}(),
-		CommissionAmountUSD:  &comm.CommissionAmountUSD,
+		CommissionAmountUSD:  &commissionAmountUSD,
 		AppConfigID:          &appConfigID,
 		CommissionConfigID:   &commissionConfigID,
 		CommissionConfigType: &commissionConfigType,

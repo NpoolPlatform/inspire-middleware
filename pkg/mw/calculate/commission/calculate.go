@@ -152,9 +152,6 @@ func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommi
 	_comm := &appgoodcommissionconfig.AppGoodCommissionConfig{}
 	useful := false
 	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
-	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValueUSD
-	}
 	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
 	achivmentUser, ok := h.AchievementUsers[userID]
 	if ok {
@@ -206,9 +203,6 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 	_comm := &appcommissionconfig.AppCommissionConfig{}
 	useful := false
 	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
-	if h.AppConfig.SettleMode == types.SettleMode_SettleWithGoodValue {
-		amount = h.GoodValueUSD
-	}
 	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
 	achivmentUser, ok := h.AchievementUsers[userID]
 	if ok {
