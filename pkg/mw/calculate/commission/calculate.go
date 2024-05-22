@@ -20,6 +20,7 @@ type Commission struct {
 	AppID                   string
 	UserID                  string
 	DirectContributorUserID *string
+	PaymentAmount           string
 	Amount                  string
 	CommissionAmountUSD     string
 }
@@ -79,6 +80,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 				AppID:                   inviter.AppID,
 				UserID:                  inviter.InviterID,
 				DirectContributorUserID: &inviter.InviteeID,
+				PaymentAmount:           h.PaymentAmount.String(),
 				Amount:                  "0",
 				CommissionAmountUSD:     "0",
 			})
@@ -98,6 +100,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
 			DirectContributorUserID: &inviter.InviteeID,
+			PaymentAmount:           h.PaymentAmount.String(),
 			Amount:                  amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(),             //nolint
 			CommissionAmountUSD:     h.PaymentAmountUSD.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
@@ -130,6 +133,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*Commission, error) {
 		CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		PaymentAmount:        h.PaymentAmount.String(),
 		Amount:               amountLast,
 		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
@@ -204,6 +208,7 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 	useful := false
 	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
 	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+
 	achivmentUser, ok := h.AchievementUsers[userID]
 	if ok {
 		directConsumeAmount, err := decimal.NewFromString(achivmentUser.DirectConsumeAmount)
@@ -303,6 +308,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 				AppID:                   inviter.AppID,
 				UserID:                  inviter.InviterID,
 				DirectContributorUserID: &inviter.InviteeID,
+				PaymentAmount:           h.PaymentAmount.String(),
 				Amount:                  "0",
 				CommissionAmountUSD:     "0",
 			})
@@ -322,6 +328,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
 			DirectContributorUserID: &inviter.InviteeID,
+			PaymentAmount:           h.PaymentAmount.String(),
 			Amount:                  amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(),             //nolint
 			CommissionAmountUSD:     h.PaymentAmountUSD.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
@@ -334,6 +341,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 			CommissionConfigType: types.CommissionConfigType_WithoutCommissionConfig,
 			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+			PaymentAmount:        h.PaymentAmount.String(),
 			Amount:               "0",
 			CommissionAmountUSD:  "0",
 		})
@@ -374,6 +382,7 @@ func (h *Handler) CalculateByAppCommConfig(ctx context.Context) ([]*Commission, 
 		CommissionConfigType: types.CommissionConfigType_AppCommissionConfig,
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		PaymentAmount:        h.PaymentAmount.String(),
 		Amount:               amountLast,
 		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
@@ -436,6 +445,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 				AppID:                   inviter.AppID,
 				UserID:                  inviter.InviterID,
 				DirectContributorUserID: &inviter.InviteeID,
+				PaymentAmount:           h.PaymentAmount.String(),
 				Amount:                  "0",
 				CommissionAmountUSD:     "0",
 			})
@@ -455,6 +465,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 			AppID:                   inviter.AppID,
 			UserID:                  inviter.InviterID,
 			DirectContributorUserID: &inviter.InviteeID,
+			PaymentAmount:           h.PaymentAmount.String(),
 			Amount:                  amount.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(),             //nolint
 			CommissionAmountUSD:     h.PaymentAmountUSD.Mul(percent2.Sub(percent1)).Div(decimal.NewFromInt(100)).String(), //nolint
 		})
@@ -467,6 +478,7 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 			CommissionConfigType: types.CommissionConfigType_WithoutCommissionConfig,
 			AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 			UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+			PaymentAmount:        h.PaymentAmount.String(),
 			Amount:               "0",
 			CommissionAmountUSD:  "0",
 		})
@@ -506,8 +518,9 @@ func (h *Handler) CalculateByAppGoodCommConfig(ctx context.Context) ([]*Commissi
 		CommissionConfigType: types.CommissionConfigType_AppGoodCommissionConfig,
 		AppID:                h.Inviters[len(h.Inviters)-1].AppID,
 		UserID:               h.Inviters[len(h.Inviters)-1].InviteeID,
+		PaymentAmount:        h.PaymentAmount.String(),
 		Amount:               amountLast,
-		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(),//nolint
+		CommissionAmountUSD:  h.PaymentAmountUSD.Mul(percent).Div(decimal.NewFromInt(100)).String(), //nolint
 	})
 
 	return _comms, nil

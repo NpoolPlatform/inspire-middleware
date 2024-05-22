@@ -141,7 +141,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
 
 	if len(appconfigs) == 0 {
-		return handler.generateStatements(map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
+		return handler.generateStatements(map[string]map[string]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 	}
 	appconfig := appconfigs[0]
 
@@ -160,7 +160,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 			return nil, wlog.WrapError(err)
 		}
 		if len(handler.inviters) == 0 {
-			return handler.generateStatements(map[string]*commission2.Commission{}, appconfig.EntID, commissionConfigType)
+			return handler.generateStatements(map[string]map[string]*commission2.Commission{}, appconfig.EntID, commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
 	default:
@@ -172,152 +172,181 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 		return nil, wlog.WrapError(err)
 	}
 
-	_comms := []*commission2.Commission{}
+	commMap := map[string]map[string]*commission2.Commission{} // userid->cointypeid->commission
 	if h.HasCommission {
-		switch appconfig.CommissionType {
-		case types.CommissionType_LegacyCommission:
-			h2, err := commission1.NewHandler(
-				ctx,
-				commission1.WithConds(&commmwpb.Conds{
-					AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-					UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: handler.inviterIDs},
-					GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
-					AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-					SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
-					StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-					EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-				}),
-				commission1.WithOffset(0),
-				commission1.WithLimit(int32(len(handler.inviterIDs))),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
+		for _, payment := range h.Payments {
+			_comms := []*commission2.Commission{}
 
-			comms, _, err := h2.GetCommissions(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			handler, err := commission2.NewHandler(
-				ctx,
-				commission2.WithSettleType(h.SettleType),
-				commission2.WithSettleAmountType(h.SettleAmountType),
-				commission2.WithInviters(handler.inviters),
-				commission2.WithAppConfig(appconfig),
-				commission2.WithCommissions(comms),
-				commission2.WithPaymentAmount(h.PaymentAmount.String()),
-				commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
-				commission2.WithAchievementUsers(achievementUsers),
-				commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
-				commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			_comms, err = handler.Calculate(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-		case types.CommissionType_LayeredCommission:
-			fallthrough //nolint
-		case types.CommissionType_DirectCommission:
-			h2, err := appgoodcommissionconfig1.NewHandler(
-				ctx,
-				appgoodcommissionconfig1.WithConds(&appgoodcommissionconfigmwpb.Conds{
-					AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-					GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
-					AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-					SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
-					EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-					StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-					Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
-				}),
-				appgoodcommissionconfig1.WithOffset(0),
-				appgoodcommissionconfig1.WithLimit(0),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
+			switch appconfig.CommissionType {
+			case types.CommissionType_LegacyCommission:
+				h2, err := commission1.NewHandler(
+					ctx,
+					commission1.WithConds(&commmwpb.Conds{
+						AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+						UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: handler.inviterIDs},
+						GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+						AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
+						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
+						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+					}),
+					commission1.WithOffset(0),
+					commission1.WithLimit(int32(len(handler.inviterIDs))),
+				)
+				if err != nil {
+					return nil, wlog.WrapError(err)
+				}
 
-			goodcomms, _, err := h2.GetCommissionConfigs(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			if len(goodcomms) > 0 {
+				comms, _, err := h2.GetCommissions(ctx)
+				if err != nil {
+					return nil, wlog.WrapError(err)
+				}
 				handler, err := commission2.NewHandler(
 					ctx,
 					commission2.WithSettleType(h.SettleType),
 					commission2.WithSettleAmountType(h.SettleAmountType),
 					commission2.WithInviters(handler.inviters),
 					commission2.WithAppConfig(appconfig),
-					commission2.WithAppGoodCommissionConfigs(goodcomms),
-					commission2.WithPaymentAmount(h.PaymentAmount.String()),
+					commission2.WithCommissions(comms),
+					commission2.WithPaymentAmount(payment.Amount),
 					commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
 					commission2.WithAchievementUsers(achievementUsers),
-					commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
+					commission2.WithPaymentCoinUSDCurrency(payment.CoinUSDCurrency),
 					commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
 				)
 				if err != nil {
 					return nil, wlog.WrapError(err)
 				}
-				_comms, err = handler.CalculateByAppGoodCommConfig(ctx)
+				_comms, err = handler.Calculate(ctx)
 				if err != nil {
 					return nil, wlog.WrapError(err)
 				}
-				break
-			}
-
-			h3, err := appcommissionconfig1.NewHandler(
-				ctx,
-				appcommissionconfig1.WithConds(&appcommissionconfigmwpb.Conds{
-					AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-					SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
-					EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-					StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-					Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
-				}),
-				appcommissionconfig1.WithOffset(0),
-				appcommissionconfig1.WithLimit(0),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-
-			appcomms, _, err := h3.GetCommissionConfigs(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			if len(appcomms) > 0 {
-				handler, err := commission2.NewHandler(
+			case types.CommissionType_LayeredCommission:
+				fallthrough //nolint
+			case types.CommissionType_DirectCommission:
+				h2, err := appgoodcommissionconfig1.NewHandler(
 					ctx,
-					commission2.WithSettleType(h.SettleType),
-					commission2.WithSettleAmountType(h.SettleAmountType),
-					commission2.WithInviters(handler.inviters),
-					commission2.WithAppConfig(appconfig),
-					commission2.WithAppCommissionConfigs(appcomms),
-					commission2.WithPaymentAmount(h.PaymentAmount.String()),
-					commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
-					commission2.WithAchievementUsers(achievementUsers),
-					commission2.WithPaymentCoinUSDCurrency(h.PaymentCoinUSDCurrency.String()),
-					commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
+					appgoodcommissionconfig1.WithConds(&appgoodcommissionconfigmwpb.Conds{
+						AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+						GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+						AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
+						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
+						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
+					}),
+					appgoodcommissionconfig1.WithOffset(0),
+					appgoodcommissionconfig1.WithLimit(0),
 				)
 				if err != nil {
 					return nil, wlog.WrapError(err)
 				}
-				_comms, err = handler.CalculateByAppCommConfig(ctx)
+
+				goodcomms, _, err := h2.GetCommissionConfigs(ctx)
 				if err != nil {
 					return nil, wlog.WrapError(err)
 				}
+				if len(goodcomms) > 0 {
+					handler, err := commission2.NewHandler(
+						ctx,
+						commission2.WithSettleType(h.SettleType),
+						commission2.WithSettleAmountType(h.SettleAmountType),
+						commission2.WithInviters(handler.inviters),
+						commission2.WithAppConfig(appconfig),
+						commission2.WithAppGoodCommissionConfigs(goodcomms),
+						commission2.WithPaymentAmount(payment.Amount),
+						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
+						commission2.WithAchievementUsers(achievementUsers),
+						commission2.WithPaymentCoinUSDCurrency(payment.CoinUSDCurrency),
+						commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
+					)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					_comms, err = handler.CalculateByAppGoodCommConfig(ctx)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					break
+				}
+
+				h3, err := appcommissionconfig1.NewHandler(
+					ctx,
+					appcommissionconfig1.WithConds(&appcommissionconfigmwpb.Conds{
+						AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
+						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
+						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
+					}),
+					appcommissionconfig1.WithOffset(0),
+					appcommissionconfig1.WithLimit(0),
+				)
+				if err != nil {
+					return nil, wlog.WrapError(err)
+				}
+
+				appcomms, _, err := h3.GetCommissionConfigs(ctx)
+				if err != nil {
+					return nil, wlog.WrapError(err)
+				}
+				if len(appcomms) > 0 {
+					handler, err := commission2.NewHandler(
+						ctx,
+						commission2.WithSettleType(h.SettleType),
+						commission2.WithSettleAmountType(h.SettleAmountType),
+						commission2.WithInviters(handler.inviters),
+						commission2.WithAppConfig(appconfig),
+						commission2.WithAppCommissionConfigs(appcomms),
+						commission2.WithPaymentAmount(payment.Amount),
+						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
+						commission2.WithAchievementUsers(achievementUsers),
+						commission2.WithPaymentCoinUSDCurrency(payment.CoinUSDCurrency),
+						commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
+					)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					_comms, err = handler.CalculateByAppCommConfig(ctx)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+				}
+			case types.CommissionType_WithoutCommission:
+			default:
+				return nil, wlog.Errorf("invalid commissiontype")
 			}
-		case types.CommissionType_WithoutCommission:
-		default:
-			return nil, wlog.Errorf("invalid commissiontype")
+
+			for _, _com := range _comms {
+				com, ok := commMap[_com.UserID][payment.CoinTypeID]
+				if !ok {
+					commMap[com.UserID][payment.CoinTypeID] = com
+				} else {
+					oldAmount, err := decimal.NewFromString(com.Amount)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					amount, err := decimal.NewFromString(_com.Amount)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					com.Amount = oldAmount.Add(amount).String()
+
+					oldCommAmountUSD, err := decimal.NewFromString(com.CommissionAmountUSD)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					commAmountUSD, err := decimal.NewFromString(_com.CommissionAmountUSD)
+					if err != nil {
+						return nil, wlog.WrapError(err)
+					}
+					com.CommissionAmountUSD = oldCommAmountUSD.Add(commAmountUSD).String()
+
+					commMap[_com.UserID][payment.CoinTypeID] = com
+				}
+			}
+
 		}
-	}
-
-	commMap := map[string]*commission2.Commission{}
-	for _, comm := range _comms {
-		commMap[comm.UserID] = comm
 	}
 
 	return handler.generateStatements(commMap, appconfigs[0].EntID, commissionConfigType)
@@ -325,7 +354,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 
 //nolint
 func (h *calculateHandler) generateStatements(
-	commMap map[string]*commission2.Commission,
+	userCoinCommMap map[string]map[string]*commission2.Commission,
 	appConfigID string,
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
@@ -335,18 +364,27 @@ func (h *calculateHandler) generateStatements(
 			continue
 		}
 
-		commission := decimal.NewFromInt(0).String()
 		commissionAmountUSD := decimal.NewFromInt(0).String()
 		commissionConfigID := uuid.Nil.String()
-		comm, ok := commMap[inviter.InviterID]
+
+		payments := []*paymentmwpb.StatementReq{}
+
+		userCommMap, ok := userCoinCommMap[inviter.InviterID]
 		if ok {
-			commissionConfigID = comm.CommissionConfigID
-			commissionConfigType = comm.CommissionConfigType
+			for key, value := range userCommMap {
+				payments = append(payments, &paymentmwpb.StatementReq{
+					PaymentCoinTypeID: &key,
+					Amount:            &value.PaymentAmount,
+					CommissionAmount:  &value.Amount,
+				})
+				commissionConfigID = value.CommissionConfigID
+				commissionConfigType = value.CommissionConfigType
+				if h.HasCommission {
+					commissionAmountUSD = value.CommissionAmountUSD
+				}
+			}
 		}
-		if ok && h.HasCommission {
-			commission = comm.Amount
-			commissionAmountUSD = comm.CommissionAmountUSD
-		}
+
 		statements = append(statements, &statementmwpb.StatementReq{
 			AppID: func() *string {
 				id := h.AppID.String()
@@ -387,35 +425,28 @@ func (h *calculateHandler) generateStatements(
 			AppConfigID:          &appConfigID,
 			CommissionConfigID:   &commissionConfigID,
 			CommissionConfigType: &commissionConfigType,
-			PaymentStatements: []*paymentmwpb.StatementReq{
-				{
-					PaymentCoinTypeID: func() *string {
-						id := h.PaymentCoinTypeID.String()
-						return &id
-					}(),
-					CoinUSDCurrency: func() *string {
-						currency := h.PaymentCoinUSDCurrency.String()
-						return &currency
-					}(),
-					Amount: func() *string {
-						amount := h.PaymentAmount.String()
-						return &amount
-					}(),
-					CommissionAmount: &commission,
-				},
-			},
+			PaymentStatements:    payments,
 		})
 	}
 
-	commission := decimal.NewFromInt(0).String()
 	commissionAmountUSD := decimal.NewFromInt(0).String()
 	commissionConfigID := uuid.Nil.String()
-	comm, ok := commMap[h.UserID.String()]
-	if ok && h.HasCommission {
-		commission = comm.Amount
-		commissionAmountUSD = comm.CommissionAmountUSD
-		commissionConfigID = comm.CommissionConfigID
-		commissionConfigType = comm.CommissionConfigType
+	payments := []*paymentmwpb.StatementReq{}
+
+	userCommMap, ok := userCoinCommMap[h.UserID.String()]
+	if ok {
+		for key, value := range userCommMap {
+			payments = append(payments, &paymentmwpb.StatementReq{
+				PaymentCoinTypeID: &key,
+				Amount:            &value.PaymentAmount,
+				CommissionAmount:  &value.Amount,
+			})
+			commissionConfigID = value.CommissionConfigID
+			commissionConfigType = value.CommissionConfigType
+			if h.HasCommission {
+				commissionAmountUSD = value.CommissionAmountUSD
+			}
+		}
 	}
 
 	statements = append(statements, &statementmwpb.StatementReq{
@@ -460,23 +491,7 @@ func (h *calculateHandler) generateStatements(
 		AppConfigID:          &appConfigID,
 		CommissionConfigID:   &commissionConfigID,
 		CommissionConfigType: &commissionConfigType,
-		PaymentStatements: []*paymentmwpb.StatementReq{
-			{
-				PaymentCoinTypeID: func() *string {
-					id := h.PaymentCoinTypeID.String()
-					return &id
-				}(),
-				CoinUSDCurrency: func() *string {
-					currency := h.PaymentCoinUSDCurrency.String()
-					return &currency
-				}(),
-				Amount: func() *string {
-					amount := h.PaymentAmount.String()
-					return &amount
-				}(),
-				CommissionAmount: &commission,
-			},
-		},
+		PaymentStatements:    payments,
 	})
 
 	return statements, nil

@@ -5,28 +5,27 @@ import (
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	calculatemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
 type Handler struct {
-	AppID                  uuid.UUID
-	UserID                 uuid.UUID
-	GoodID                 uuid.UUID
-	AppGoodID              uuid.UUID
-	OrderID                uuid.UUID
-	GoodCoinTypeID         uuid.UUID
-	PaymentCoinTypeID      uuid.UUID
-	PaymentCoinUSDCurrency decimal.Decimal
-	Units                  decimal.Decimal
-	PaymentAmount          decimal.Decimal
-	PaymentAmountUSD       decimal.Decimal
-	GoodValueUSD           decimal.Decimal
-	SettleType             types.SettleType
-	SettleAmountType       types.SettleAmountType
-	HasCommission          bool
-	OrderCreatedAt         uint32
+	AppID            uuid.UUID
+	UserID           uuid.UUID
+	GoodID           uuid.UUID
+	AppGoodID        uuid.UUID
+	OrderID          uuid.UUID
+	GoodCoinTypeID   uuid.UUID
+	Units            decimal.Decimal
+	PaymentAmountUSD decimal.Decimal
+	GoodValueUSD     decimal.Decimal
+	SettleType       types.SettleType
+	SettleAmountType types.SettleAmountType
+	HasCommission    bool
+	OrderCreatedAt   uint32
+	Payments         []calculatemwpb.Payment
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -105,28 +104,6 @@ func WithGoodCoinTypeID(id string) func(context.Context, *Handler) error {
 	}
 }
 
-func WithPaymentCoinTypeID(id string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_id, err := uuid.Parse(id)
-		if err != nil {
-			return err
-		}
-		h.PaymentCoinTypeID = _id
-		return nil
-	}
-}
-
-func WithPaymentCoinUSDCurrency(value string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_amount, err := decimal.NewFromString(value)
-		if err != nil {
-			return err
-		}
-		h.PaymentCoinUSDCurrency = _amount
-		return nil
-	}
-}
-
 func WithUnits(value string) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_amount, err := decimal.NewFromString(value)
@@ -134,17 +111,6 @@ func WithUnits(value string) func(context.Context, *Handler) error {
 			return err
 		}
 		h.Units = _amount
-		return nil
-	}
-}
-
-func WithPaymentAmount(value string) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_amount, err := decimal.NewFromString(value)
-		if err != nil {
-			return err
-		}
-		h.PaymentAmount = _amount
 		return nil
 	}
 }
@@ -207,6 +173,35 @@ func WithHasCommission(value bool) func(context.Context, *Handler) error {
 func WithOrderCreatedAt(value uint32) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.OrderCreatedAt = value
+		return nil
+	}
+}
+
+func WithPayments(payments []*calculatemwpb.Payment) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if len(payments) == 0 {
+			return wlog.Errorf("invalid payments")
+		}
+		for _, payment := range payments {
+			if _, err := uuid.Parse(payment.CoinTypeID); err != nil {
+				return err
+			}
+			if _, err := decimal.NewFromString(payment.CoinUSDCurrency); err != nil {
+				return err
+			}
+			amount, err := decimal.NewFromString(payment.Amount)
+			if err != nil {
+				return err
+			}
+			if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+				return wlog.Errorf("invalid amount")
+			}
+			h.Payments = append(h.Payments, calculatemwpb.Payment{
+				CoinTypeID:      payment.CoinTypeID,
+				CoinUSDCurrency: payment.CoinUSDCurrency,
+				Amount:          payment.Amount,
+			})
+		}
 		return nil
 	}
 }

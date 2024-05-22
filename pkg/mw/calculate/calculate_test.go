@@ -12,6 +12,7 @@ import (
 	appcommconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
 	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	appgoodcommconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
+	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	regmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
@@ -1021,15 +1022,19 @@ func calculateLegacyCommission(t *testing.T) {
 		WithAppGoodID(comm6.AppGoodID),
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
-		WithPaymentCoinTypeID(paymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
 		WithUnits(units),
-		WithPaymentAmount(paymentAmount),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
+		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
+		}),
 	)
 	assert.Nil(t, err)
 
@@ -1122,15 +1127,19 @@ func calculateAppCommission(t *testing.T) {
 		WithAppGoodID(comm6.AppGoodID),
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
-		WithPaymentCoinTypeID(paymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
 		WithUnits(units),
-		WithPaymentAmount(paymentAmount),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
+		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
+		}),
 	)
 	assert.Nil(t, err)
 
@@ -1223,15 +1232,19 @@ func calculateAppGoodCommission(t *testing.T) {
 		WithAppGoodID(comm6.AppGoodID),
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
-		WithPaymentCoinTypeID(paymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
 		WithUnits(units),
-		WithPaymentAmount(paymentAmount),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
+		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
+		}),
 	)
 	assert.Nil(t, err)
 
@@ -1324,15 +1337,19 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 		WithAppGoodID(comm6.AppGoodID),
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
-		WithPaymentCoinTypeID(paymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
 		WithUnits(units),
-		WithPaymentAmount(paymentAmount),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
+		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
+		}),
 	)
 	assert.Nil(t, err)
 
@@ -1425,15 +1442,19 @@ func calculateWithoutCommission(t *testing.T) {
 		WithAppGoodID(comm6.AppGoodID),
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
-		WithPaymentCoinTypeID(paymentCoinTypeID),
-		WithPaymentCoinUSDCurrency(paymentCoinUSDCurrency),
 		WithUnits(units),
-		WithPaymentAmount(paymentAmount),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
+		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
+		}),
 	)
 	assert.Nil(t, err)
 

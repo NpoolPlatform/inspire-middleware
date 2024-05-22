@@ -27,9 +27,7 @@ func (s *Server) Calculate(ctx context.Context, in *npool.CalculateRequest) (*np
 		calculate1.WithGoodValueUSD(in.GetGoodValueUSD()),
 		calculate1.WithHasCommission(in.GetHasCommission()),
 		calculate1.WithOrderCreatedAt(in.GetOrderCreatedAt()),
-		calculate1.WithPaymentCoinTypeID(in.GetPaymentCoinTypeID()),
-		calculate1.WithPaymentCoinUSDCurrency(in.GetPaymentCoinUSDCurrency()),
-		calculate1.WithPaymentAmount(in.GetPaymentAmount()),
+		calculate1.WithPayments(in.GetPayments()),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
