@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
-
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
@@ -24,36 +22,22 @@ func withClient(ctx context.Context, handler func(context.Context, npool.Middlew
 	)
 }
 
-func CreateStatement(ctx context.Context, req *npool.StatementReq) (*npool.Statement, error) {
-	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.CreateStatement(ctx, &npool.CreateStatementRequest{
+func CreateStatement(ctx context.Context, req *npool.StatementReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.CreateStatement(ctx, &npool.CreateStatementRequest{
 			Info: req,
 		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Statement), nil
+	return err
 }
 
-func CreateStatements(ctx context.Context, reqs []*npool.StatementReq) ([]*npool.Statement, error) {
-	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.CreateStatements(ctx, &npool.CreateStatementsRequest{
+func CreateStatements(ctx context.Context, reqs []*npool.StatementReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.CreateStatements(ctx, &npool.CreateStatementsRequest{
 			Infos: reqs,
 		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Statement), nil
+	return err
 }
 
 func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Statement, uint32, error) {
@@ -76,36 +60,23 @@ func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32)
 	return infos.([]*npool.Statement), total, nil
 }
 
-func DeleteStatement(ctx context.Context, id uint32) (*npool.Statement, error) {
-	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.DeleteStatement(ctx, &npool.DeleteStatementRequest{
+func DeleteStatement(ctx context.Context, id *uint32, entID *string) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.DeleteStatement(ctx, &npool.DeleteStatementRequest{
 			Info: &npool.StatementReq{
-				ID: &id,
+				ID:    id,
+				EntID: entID,
 			},
 		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Statement), nil
+	return err
 }
 
-func DeleteStatements(ctx context.Context, in []*npool.StatementReq) ([]*npool.Statement, error) {
-	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.DeleteStatements(ctx, &npool.DeleteStatementsRequest{
+func DeleteStatements(ctx context.Context, in []*npool.StatementReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.DeleteStatements(ctx, &npool.DeleteStatementsRequest{
 			Infos: in,
 		})
-		if err != nil {
-			return nil, wlog.Errorf("fail delete statements: %v", err)
-		}
-		return resp.GetInfos(), nil
 	})
-	if err != nil {
-		return nil, wlog.Errorf("fail delete statements: %v", err)
-	}
-	return infos.([]*npool.Statement), nil
+	return err
 }
