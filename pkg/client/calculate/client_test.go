@@ -352,12 +352,10 @@ func calculate(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345")
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000)
 	paymentAmountUSD := decimal.NewFromInt(2000)
 	goodValueUSD := decimal.NewFromInt(30000)
-	settleType := types.SettleType_GoodOrderPayment
 
 	comms, err := Calculate(
 		context.Background(),
@@ -369,16 +367,14 @@ func calculate(t *testing.T) {
 			OrderID:          orderID,
 			GoodCoinTypeID:   coinTypeID,
 			Units:            units,
-			SettleType:       settleType,
 			PaymentAmountUSD: paymentAmountUSD.String(),
 			GoodValueUSD:     goodValueUSD.String(),
 			HasCommission:    true,
 			OrderCreatedAt:   uint32(time.Now().Unix()),
 			Payments: []*npool.Payment{
 				{
-					CoinTypeID:      paymentCoinTypeID,
-					CoinUSDCurrency: paymentCoinUSDCurrency.String(),
-					Amount:          paymentAmount.String(),
+					CoinTypeID: paymentCoinTypeID,
+					Amount:     paymentAmount.String(),
 				},
 			},
 		},

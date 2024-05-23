@@ -1005,7 +1005,6 @@ func calculateLegacyCommission(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	paymentAmountUSD := decimal.NewFromInt(3000).String()
@@ -1030,9 +1029,8 @@ func calculateLegacyCommission(t *testing.T) {
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 		}),
 	)
@@ -1110,7 +1108,6 @@ func calculateAppCommission(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	paymentAmountUSD := decimal.NewFromInt(3000).String()
@@ -1135,9 +1132,8 @@ func calculateAppCommission(t *testing.T) {
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 		}),
 	)
@@ -1215,7 +1211,6 @@ func calculateAppGoodCommission(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	paymentAmountUSD := decimal.NewFromInt(3000).String()
@@ -1240,9 +1235,8 @@ func calculateAppGoodCommission(t *testing.T) {
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 		}),
 	)
@@ -1320,7 +1314,6 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	paymentAmountUSD := decimal.NewFromInt(3000).String()
@@ -1345,14 +1338,12 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 		}),
 	)
@@ -1430,7 +1421,6 @@ func calculateWithoutCommission(t *testing.T) {
 	orderID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345").String()
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000).String()
 	paymentAmountUSD := decimal.NewFromInt(3000).String()
@@ -1455,14 +1445,12 @@ func calculateWithoutCommission(t *testing.T) {
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 			{
-				CoinTypeID:      paymentCoinTypeID,
-				CoinUSDCurrency: paymentCoinUSDCurrency,
-				Amount:          paymentAmount,
+				CoinTypeID: paymentCoinTypeID,
+				Amount:     paymentAmount,
 			},
 		}),
 	)

@@ -186,9 +186,6 @@ func WithPayments(payments []*calculatemwpb.Payment) func(context.Context, *Hand
 			if _, err := uuid.Parse(payment.CoinTypeID); err != nil {
 				return err
 			}
-			if _, err := decimal.NewFromString(payment.CoinUSDCurrency); err != nil {
-				return err
-			}
 			amount, err := decimal.NewFromString(payment.Amount)
 			if err != nil {
 				return err
@@ -197,9 +194,8 @@ func WithPayments(payments []*calculatemwpb.Payment) func(context.Context, *Hand
 				return wlog.Errorf("invalid amount")
 			}
 			h.Payments = append(h.Payments, calculatemwpb.Payment{
-				CoinTypeID:      payment.CoinTypeID,
-				CoinUSDCurrency: payment.CoinUSDCurrency,
-				Amount:          payment.Amount,
+				CoinTypeID: payment.CoinTypeID,
+				Amount:     payment.Amount,
 			})
 		}
 		return nil

@@ -155,8 +155,8 @@ func (h *calculateHandler) getAppGoodCommLevelConf(userID string) (*appgoodcommi
 	invites := h.getInvites(userID)
 	_comm := &appgoodcommissionconfig.AppGoodCommissionConfig{}
 	useful := false
-	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
-	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	amount := h.PaymentAmountUSD
+	consumeAmount := h.PaymentAmountUSD
 	achivmentUser, ok := h.AchievementUsers[userID]
 	if ok {
 		directConsumeAmount, err := decimal.NewFromString(achivmentUser.DirectConsumeAmount)
@@ -206,8 +206,8 @@ func (h *calculateHandler) getAppCommLevelConf(userID string) (*appcommissioncon
 	invites := h.getInvites(userID)
 	_comm := &appcommissionconfig.AppCommissionConfig{}
 	useful := false
-	amount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
-	consumeAmount := h.PaymentAmount.Mul(h.PaymentCoinUSDCurrency)
+	amount := h.PaymentAmountUSD
+	consumeAmount := h.PaymentAmountUSD
 
 	achivmentUser, ok := h.AchievementUsers[userID]
 	if ok {
