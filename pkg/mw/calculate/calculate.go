@@ -172,7 +172,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 		return nil, wlog.WrapError(err)
 	}
 
-	commMap := map[string]map[string][]*commission2.Commission{} // userid->cointypeid->commission
+	commMap := map[string]map[string][]*commission2.Commission{} // userid->cointypeid->commissions
 	if h.HasCommission {
 		for _, payment := range h.Payments {
 			_comms := []*commission2.Commission{}
@@ -365,7 +365,8 @@ func (h *calculateHandler) generateStatements(
 				PaymentAmount:        payment.Amount,
 				Amount:               "0",
 				CommissionAmountUSD:  "0",
-				CommissionConfigID:   appConfigID,
+				AppConfigID:          appConfigID,
+				CommissionConfigID:   uuid.Nil.String(),
 				CommissionConfigType: commissionConfigType,
 			}
 			commissions, ok := userCoinCommMap[h.UserID.String()][payment.CoinTypeID]
