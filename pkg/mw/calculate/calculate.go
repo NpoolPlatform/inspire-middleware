@@ -172,7 +172,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 		return nil, wlog.WrapError(err)
 	}
 
-	commMap := map[string]map[string][]*commission2.Commission{} // userid->cointypeid->commission
+	commMap := map[string]map[string][]*commission2.Commission{} // userid->cointypeid->commissions
 	if h.HasCommission {
 		for _, payment := range h.Payments {
 			_comms := []*commission2.Commission{}
@@ -186,7 +186,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: handler.inviterIDs},
 						GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
 						AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 					}),
@@ -229,7 +229,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 						GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
 						AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
@@ -272,7 +272,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 					ctx,
 					appcommissionconfig1.WithConds(&appcommissionconfigmwpb.Conds{
 						AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
+						SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
 						EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 						StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
@@ -327,11 +327,14 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 
 			if len(_comms) == 0 {
 				_com := &commission2.Commission{
-					AppID:               h.AppID.String(),
-					UserID:              h.UserID.String(),
-					PaymentAmount:       payment.Amount,
-					Amount:              "0",
-					CommissionAmountUSD: "0",
+					AppID:                h.AppID.String(),
+					UserID:               h.UserID.String(),
+					PaymentAmount:        payment.Amount,
+					Amount:               "0",
+					CommissionAmountUSD:  "0",
+					AppConfigID:          appconfig.EntID,
+					CommissionConfigID:   uuid.Nil.String(),
+					CommissionConfigType: types.CommissionConfigType(appconfig.CommissionType),
 				}
 				commissions, ok := commMap[h.UserID.String()][payment.CoinTypeID]
 				if !ok {
@@ -354,6 +357,29 @@ func (h *calculateHandler) generateStatements(
 	appConfigID string,
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
+	if len(userCoinCommMap) == 0 {
+		for _, payment := range h.Payments {
+			_com := &commission2.Commission{
+				AppID:                h.AppID.String(),
+				UserID:               h.UserID.String(),
+				PaymentAmount:        payment.Amount,
+				Amount:               "0",
+				CommissionAmountUSD:  "0",
+				AppConfigID:          appConfigID,
+				CommissionConfigID:   uuid.Nil.String(),
+				CommissionConfigType: commissionConfigType,
+			}
+			commissions, ok := userCoinCommMap[h.UserID.String()][payment.CoinTypeID]
+			if !ok {
+				commissions = []*commission2.Commission{}
+			}
+			commissions = append(commissions, _com)
+			coinCommMap := map[string][]*commission2.Commission{}
+			coinCommMap[payment.CoinTypeID] = commissions
+			userCoinCommMap[h.UserID.String()] = coinCommMap
+		}
+	}
+
 	statements := []*statementmwpb.StatementReq{}
 	for _, inviter := range h.inviters {
 		if inviter.InviterID == uuid.Nil.String() {

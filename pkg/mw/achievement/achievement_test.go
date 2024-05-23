@@ -67,7 +67,6 @@ var ret1 = &npool.Achievement{
 
 func createStatement(t *testing.T) {
 	paymentCoinTypeID := uuid.NewString()
-	coinUSDCurrency := "1.23"
 	amount := "1000"
 	commissionAmount := "0"
 	handler, err := statement1.NewHandler(
@@ -89,7 +88,6 @@ func createStatement(t *testing.T) {
 		statement1.WithCommissionConfigType(&ret.CommissionConfigType, true),
 		statement1.WithPaymentStatements([]*paymentmwpb.StatementReq{{
 			PaymentCoinTypeID: &paymentCoinTypeID,
-			CoinUSDCurrency:   &coinUSDCurrency,
 			Amount:            &amount,
 			CommissionAmount:  &commissionAmount,
 		},
