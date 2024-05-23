@@ -1349,6 +1349,11 @@ func calculateDirectAppGoodCommission(t *testing.T) {
 				CoinUSDCurrency: paymentCoinUSDCurrency,
 				Amount:          paymentAmount,
 			},
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
 		}),
 	)
 	assert.Nil(t, err)
@@ -1449,6 +1454,11 @@ func calculateWithoutCommission(t *testing.T) {
 		WithSettleType(settleType),
 		WithSettleAmountType(settleAmount),
 		WithPayments([]*calculate.Payment{
+			{
+				CoinTypeID:      paymentCoinTypeID,
+				CoinUSDCurrency: paymentCoinUSDCurrency,
+				Amount:          paymentAmount,
+			},
 			{
 				CoinTypeID:      paymentCoinTypeID,
 				CoinUSDCurrency: paymentCoinUSDCurrency,
