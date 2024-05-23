@@ -327,11 +327,14 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 
 			if len(_comms) == 0 {
 				_com := &commission2.Commission{
-					AppID:               h.AppID.String(),
-					UserID:              h.UserID.String(),
-					PaymentAmount:       payment.Amount,
-					Amount:              "0",
-					CommissionAmountUSD: "0",
+					AppID:                h.AppID.String(),
+					UserID:               h.UserID.String(),
+					PaymentAmount:        payment.Amount,
+					Amount:               "0",
+					CommissionAmountUSD:  "0",
+					AppConfigID:          appconfig.EntID,
+					CommissionConfigID:   uuid.Nil.String(),
+					CommissionConfigType: types.CommissionConfigType(appconfig.CommissionType),
 				}
 				commissions, ok := commMap[h.UserID.String()][payment.CoinTypeID]
 				if !ok {
@@ -357,11 +360,13 @@ func (h *calculateHandler) generateStatements(
 	if len(userCoinCommMap) == 0 {
 		for _, payment := range h.Payments {
 			_com := &commission2.Commission{
-				AppID:               h.AppID.String(),
-				UserID:              h.UserID.String(),
-				PaymentAmount:       payment.Amount,
-				Amount:              "0",
-				CommissionAmountUSD: "0",
+				AppID:                h.AppID.String(),
+				UserID:               h.UserID.String(),
+				PaymentAmount:        payment.Amount,
+				Amount:               "0",
+				CommissionAmountUSD:  "0",
+				CommissionConfigID:   appConfigID,
+				CommissionConfigType: commissionConfigType,
 			}
 			commissions, ok := userCoinCommMap[h.UserID.String()][payment.CoinTypeID]
 			if !ok {
