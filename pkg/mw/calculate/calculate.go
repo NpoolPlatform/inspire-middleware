@@ -354,6 +354,26 @@ func (h *calculateHandler) generateStatements(
 	appConfigID string,
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
+	if len(userCoinCommMap) == 0 {
+		for _, payment := range h.Payments {
+			_com := &commission2.Commission{
+				AppID:               h.AppID.String(),
+				UserID:              h.UserID.String(),
+				PaymentAmount:       payment.Amount,
+				Amount:              "0",
+				CommissionAmountUSD: "0",
+			}
+			commissions, ok := userCoinCommMap[h.UserID.String()][payment.CoinTypeID]
+			if !ok {
+				commissions = []*commission2.Commission{}
+			}
+			commissions = append(commissions, _com)
+			coinCommMap := map[string][]*commission2.Commission{}
+			coinCommMap[payment.CoinTypeID] = commissions
+			userCoinCommMap[h.UserID.String()] = coinCommMap
+		}
+	}
+
 	statements := []*statementmwpb.StatementReq{}
 	for _, inviter := range h.inviters {
 		if inviter.InviterID == uuid.Nil.String() {
