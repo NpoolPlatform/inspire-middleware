@@ -17,13 +17,15 @@ import (
 
 type Handler struct {
 	eventcrud.Req
-	Coins       []*eventcoinmw.EventCoinReq
-	Consecutive *uint32
-	Amount      *decimal.Decimal
-	UserID      *uuid.UUID
-	Conds       *eventcrud.Conds
-	Offset      int32
-	Limit       int32
+	Coins           []*eventcoinmw.EventCoinReq
+	RemoveCouponIDs *bool
+	RemoveCoins     *bool
+	Consecutive     *uint32
+	Amount          *decimal.Decimal
+	UserID          *uuid.UUID
+	Conds           *eventcrud.Conds
+	Offset          int32
+	Limit           int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -298,6 +300,20 @@ func WithCoins(coins []*eventcoinmw.EventCoinReq) func(context.Context, *Handler
 			}
 		}
 		h.Coins = coins
+		return nil
+	}
+}
+
+func WithRemoveCouponIDs(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RemoveCouponIDs = value
+		return nil
+	}
+}
+
+func WithRemoveCoins(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RemoveCoins = value
 		return nil
 	}
 }

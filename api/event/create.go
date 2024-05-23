@@ -34,6 +34,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 		event1.WithGoodID(req.GoodID, false),
 		event1.WithAppGoodID(req.AppGoodID, false),
 		event1.WithInviterLayers(req.InviterLayers, false),
+		event1.WithCoins(req.Coins),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

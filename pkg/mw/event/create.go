@@ -6,13 +6,14 @@ import (
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	eventcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coin"
+	eventcouponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	eventcoin1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coin"
-	eventcoupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coupon"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
@@ -21,47 +22,48 @@ type createHandler struct {
 	*Handler
 }
 
-func (h *createHandler) createEventCoupons(ctx context.Context) error {
-	appID := h.AppID.String()
-	eventID := h.EntID.String()
-	for _, couponID := range h.CouponIDs {
-		id := uuid.NewString()
-		couponIDStr := couponID.String()
-		handler, err := eventcoupon1.NewHandler(
-			ctx,
-			eventcoupon1.WithEntID(&id, true),
-			eventcoupon1.WithAppID(&appID, true),
-			eventcoupon1.WithEventID(&eventID, true),
-			eventcoupon1.WithCouponID(&couponIDStr, true),
-		)
-		if err != nil {
-			return err
-		}
-		if err := handler.CreateEventCoupon(ctx); err != nil {
+func (h *createHandler) createEventCoupons(ctx context.Context, tx *ent.Tx) error {
+	for _, val := range h.CouponIDs {
+		id := uuid.New()
+		couponID := val
+		if _, err := eventcouponcrud.CreateSet(
+			tx.EventCoupon.Create(),
+			&eventcouponcrud.Req{
+				EntID:    &id,
+				AppID:    h.AppID,
+				EventID:  h.EntID,
+				CouponID: &couponID,
+			},
+		).Save(ctx); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (h *createHandler) createEventCoins(ctx context.Context) error {
-	appID := h.AppID.String()
-	eventID := h.EntID.String()
+func (h *createHandler) createEventCoins(ctx context.Context, tx *ent.Tx) error {
 	for _, coin := range h.Coins {
-		id := uuid.NewString()
-		handler, err := eventcoin1.NewHandler(
-			ctx,
-			eventcoin1.WithEntID(&id, true),
-			eventcoin1.WithAppID(&appID, true),
-			eventcoin1.WithEventID(&eventID, true),
-			eventcoin1.WithCoinConfigID(coin.CoinConfigID, true),
-			eventcoin1.WithCoinValue(coin.CoinValue, true),
-			eventcoin1.WithCoinPreUSD(coin.CoinPreUSD, true),
-		)
+		id := uuid.New()
+		coinID := uuid.MustParse(*coin.CoinConfigID)
+		coinValue, err := decimal.NewFromString(*coin.CoinValue)
 		if err != nil {
 			return err
 		}
-		if err := handler.CreateEventCoin(ctx); err != nil {
+		coinPreUSD, err := decimal.NewFromString(*coin.CoinPreUSD)
+		if err != nil {
+			return err
+		}
+		if _, err := eventcoincrud.CreateSet(
+			tx.EventCoin.Create(),
+			&eventcoincrud.Req{
+				EntID:        &id,
+				AppID:        h.AppID,
+				EventID:      h.EntID,
+				CoinConfigID: &coinID,
+				CoinValue:    &coinValue,
+				CoinPreUSD:   &coinPreUSD,
+			},
+		).Save(ctx); err != nil {
 			return err
 		}
 	}
@@ -101,20 +103,19 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 		h.EntID = &id
 	}
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.createEventCoupons(ctx); err != nil {
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.createEventCoupons(ctx, tx); err != nil {
 			return err
 		}
-		if err := handler.createEventCoins(ctx); err != nil {
+		if err := handler.createEventCoins(ctx, tx); err != nil {
 			return err
 		}
 		if _, err := eventcrud.CreateSet(
-			cli.Event.Create(),
+			tx.Event.Create(),
 			&eventcrud.Req{
 				EntID:          h.EntID,
 				AppID:          h.AppID,
 				EventType:      h.EventType,
-				CouponIDs:      h.CouponIDs,
 				Credits:        h.Credits,
 				CreditsPerUSD:  h.CreditsPerUSD,
 				MaxConsecutive: h.MaxConsecutive,

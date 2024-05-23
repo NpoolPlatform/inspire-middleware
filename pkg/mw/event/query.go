@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -74,7 +73,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entevent.FieldEntID), "ent_id"),
 			sql.As(t.C(entevent.FieldAppID), "app_id"),
 			sql.As(t.C(entevent.FieldEventType), "event_type"),
-			sql.As(t.C(entevent.FieldCouponIds), "coupon_ids"),
 			sql.As(t.C(entevent.FieldCredits), "credits"),
 			sql.As(t.C(entevent.FieldCreditsPerUsd), "credits_per_usd"),
 			sql.As(t.C(entevent.FieldMaxConsecutive), "max_consecutive"),
@@ -207,7 +205,6 @@ func (h *queryHandler) queryEventCoupons(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EventType = basetypes.UsedFor(basetypes.UsedFor_value[info.EventTypeStr])
-		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
