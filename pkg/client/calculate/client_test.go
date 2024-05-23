@@ -356,6 +356,7 @@ func calculate(t *testing.T) {
 	paymentAmount := decimal.NewFromInt(2000)
 	paymentAmountUSD := decimal.NewFromInt(2000)
 	goodValueUSD := decimal.NewFromInt(30000)
+	settleType := types.SettleType_GoodOrderPayment
 
 	comms, err := Calculate(
 		context.Background(),
@@ -366,6 +367,7 @@ func calculate(t *testing.T) {
 			AppGoodID:        comm6.GetAppGoodID(),
 			OrderID:          orderID,
 			GoodCoinTypeID:   coinTypeID,
+			SettleType:       settleType,
 			Units:            units,
 			PaymentAmountUSD: paymentAmountUSD.String(),
 			GoodValueUSD:     goodValueUSD.String(),

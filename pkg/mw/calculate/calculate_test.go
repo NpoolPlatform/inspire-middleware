@@ -1438,6 +1438,7 @@ func calculateWithoutCommission(t *testing.T) {
 		WithOrderID(orderID),
 		WithGoodCoinTypeID(coinTypeID),
 		WithUnits(units),
+		WithSettleType(settleType),
 		WithPaymentAmountUSD(paymentAmountUSD),
 		WithHasCommission(hasCommission),
 		WithOrderCreatedAt(orderCreatedAt),
