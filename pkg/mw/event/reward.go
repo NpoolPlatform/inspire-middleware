@@ -594,6 +594,13 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 		return wlog.Errorf("invalid maxrewardcount")
 	}
 
+	// check daily task
+	nowTime := time.Now()
+	midnightTime := uint32(time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 0, 0, 0, 0, nowTime.Location()).Unix())
+	if h.taskConfig.TaskType == types.TaskType_DailyTask && taskUsers[len(taskUsers)-1].CreatedAt > midnightTime {
+		return wlog.Errorf("dailytask have been completed")
+	}
+
 	// check user next task startat
 	now := uint32(time.Now().Unix())
 	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecord > now {

@@ -24,8 +24,8 @@ func (s *Server) UpdateCoinConfig(ctx context.Context, in *npool.UpdateCoinConfi
 	handler, err := config1.NewHandler(
 		ctx,
 		config1.WithID(req.ID, true),
-		config1.WithMaxValue(req.MaxValue, true),
-		config1.WithAllocated(req.Allocated, true),
+		config1.WithMaxValue(req.MaxValue, false),
+		config1.WithAllocated(req.Allocated, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

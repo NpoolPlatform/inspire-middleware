@@ -44,6 +44,12 @@ func CreateSet(c *ent.EventCoinCreate, req *Req) *ent.EventCoinCreate {
 }
 
 func UpdateSet(u *ent.EventCoinUpdateOne, req *Req) *ent.EventCoinUpdateOne {
+	if req.CoinValue != nil {
+		u.SetCoinValue(*req.CoinValue)
+	}
+	if req.CoinPreUSD != nil {
+		u.SetCoinPreUsd(*req.CoinPreUSD)
+	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}

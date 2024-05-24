@@ -71,7 +71,7 @@ func (h *updateHandler) constructSQL() error {
 	_sql += fmt.Sprintf("id = %v ", *h.ID)
 	_sql += "and not exists ("
 	_sql += "select 1 from (select * from task_configs) as di "
-	_sql += fmt.Sprintf("where di.app_id = '%v' and di.event_id = '%v' and di.task_type = '%v' and di.id != %v and deleted_at=0", h.appID, *h.EventID, h.TaskType.String(), *h.ID)
+	_sql += fmt.Sprintf("where di.app_id = '%v' and di.event_id = '%v' and di.task_type = '%v' and di.id != %v and deleted_at=0", h.appID, h.eventID, h.TaskType.String(), *h.ID)
 	_sql += " limit 1)"
 
 	if h.EventID != nil {
@@ -112,10 +112,7 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 	if h.TaskType == nil {
 		h.TaskType = &info.TaskType
 	}
-	if h.EventID == nil {
-		id := uuid.MustParse(info.EventID)
-		h.EventID = &id
-	}
+
 	if h.EntID == nil {
 		id := uuid.MustParse(info.EntID)
 		h.EntID = &id

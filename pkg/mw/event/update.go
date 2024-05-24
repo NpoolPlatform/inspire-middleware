@@ -23,11 +23,11 @@ type updateHandler struct {
 	*Handler
 }
 
-//nolint:dupl
 func (h *updateHandler) removeEventCoupons(ctx context.Context, tx *ent.Tx) error {
 	if h.RemoveCouponIDs == nil || !*h.RemoveCouponIDs {
 		return nil
 	}
+	// get current event coupons
 	infos, err := tx.
 		EventCoupon.
 		Query().
@@ -41,7 +41,7 @@ func (h *updateHandler) removeEventCoupons(ctx context.Context, tx *ent.Tx) erro
 	if err != nil {
 		return err
 	}
-
+	// delete event coupons
 	now := uint32(time.Now().Unix())
 	for _, info := range infos {
 		if _, err := eventcouponcrud.UpdateSet(
@@ -57,12 +57,12 @@ func (h *updateHandler) removeEventCoupons(ctx context.Context, tx *ent.Tx) erro
 	return nil
 }
 
-//nolint:dupl
 func (h *updateHandler) removeEventCoins(ctx context.Context, tx *ent.Tx) error {
 	if h.RemoveCoins == nil || !*h.RemoveCoins {
 		return nil
 	}
 
+	// get current event coins
 	infos, err := tx.
 		EventCoin.
 		Query().
@@ -76,6 +76,7 @@ func (h *updateHandler) removeEventCoins(ctx context.Context, tx *ent.Tx) error 
 	if err != nil {
 		return err
 	}
+	// delete event coins
 	now := uint32(time.Now().Unix())
 	for _, info := range infos {
 		if _, err := eventcoincrud.UpdateSet(
@@ -98,6 +99,7 @@ func (h *updateHandler) updateEventCoupons(ctx context.Context, tx *ent.Tx) erro
 	if len(h.CouponIDs) == 0 {
 		return nil
 	}
+	// get db data
 	infos, err := tx.
 		EventCoupon.
 		Query().
@@ -116,6 +118,7 @@ func (h *updateHandler) updateEventCoupons(ctx context.Context, tx *ent.Tx) erro
 	inputCouponIDsMap := map[string]string{}
 	newCouponsIDs := []string{}
 	removeEventCouponsIDs := []uint32{}
+	// check input and db data
 	for _, info := range infos {
 		existCouponIDsMap[info.CouponID.String()] = info.CouponID.String()
 	}
@@ -133,6 +136,7 @@ func (h *updateHandler) updateEventCoupons(ctx context.Context, tx *ent.Tx) erro
 		}
 	}
 
+	// remove not in input but in db data
 	now := uint32(time.Now().Unix())
 	for _, id := range removeEventCouponsIDs {
 		if _, err := eventcouponcrud.UpdateSet(
@@ -145,6 +149,7 @@ func (h *updateHandler) updateEventCoupons(ctx context.Context, tx *ent.Tx) erro
 		}
 	}
 
+	// create in input but not in db data
 	for _, id := range newCouponsIDs {
 		entID := uuid.New()
 		couponID := uuid.MustParse(id)
@@ -164,6 +169,7 @@ func (h *updateHandler) updateEventCoupons(ctx context.Context, tx *ent.Tx) erro
 	return nil
 }
 
+//nolint:funlen
 func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error {
 	if h.RemoveCoins != nil && *h.RemoveCoins {
 		return nil
@@ -171,6 +177,7 @@ func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error 
 	if len(h.Coins) == 0 {
 		return nil
 	}
+	// get db data
 	infos, err := tx.
 		EventCoin.
 		Query().
@@ -189,15 +196,19 @@ func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error 
 	newCoins := []*eventcoinmw.EventCoinReq{}
 	updateCoins := []*eventcoinmw.EventCoinReq{}
 	removeEventCoinIDs := []uint32{}
+	// check input and db data
 	for _, info := range infos {
 		existCoinsMap[info.CoinConfigID.String()] = info
 	}
 	for _, coin := range h.Coins {
 		inputCoinsMap[*coin.CoinConfigID] = coin
-		_, ok := existCoinsMap[*coin.CoinConfigID]
-		if !ok {
-			newCoins = append(newCoins, coin)
+		existCoin, ok := existCoinsMap[*coin.CoinConfigID]
+		if ok {
+			coin.ID = &existCoin.ID
+			updateCoins = append(updateCoins, coin)
+			continue
 		}
+		newCoins = append(newCoins, coin)
 	}
 	for _, info := range infos {
 		_, ok := inputCoinsMap[info.CoinConfigID.String()]
@@ -206,6 +217,7 @@ func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error 
 		}
 	}
 
+	// remove not in input but in db data
 	now := uint32(time.Now().Unix())
 	for _, id := range removeEventCoinIDs {
 		if _, err := eventcoincrud.UpdateSet(
@@ -218,6 +230,7 @@ func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error 
 		}
 	}
 
+	// create in input but not in db data
 	for _, coin := range newCoins {
 		entID := uuid.New()
 		coinID := uuid.MustParse(*coin.CoinConfigID)
@@ -244,6 +257,7 @@ func (h *updateHandler) updateEventCoins(ctx context.Context, tx *ent.Tx) error 
 		}
 	}
 
+	// update in input and in db data
 	for _, coin := range updateCoins {
 		coinValue, err := decimal.NewFromString(*coin.CoinValue)
 		if err != nil {
