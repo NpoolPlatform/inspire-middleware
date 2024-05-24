@@ -66,7 +66,7 @@ func (h *createHandler) constructSQL() {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from task_configs "
-	_sql += fmt.Sprintf("where app_id='%v' and event_id='%v'", *h.AppID, *h.EventID)
+	_sql += fmt.Sprintf("where app_id='%v' and event_id='%v' and deleted_at=0", *h.AppID, *h.EventID)
 	_sql += " limit 1)"
 	h.sql = _sql
 }
@@ -89,6 +89,9 @@ func (h *Handler) CreateTaskConfig(ctx context.Context) error {
 	}
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
+	}
+	if h.LastTaskID == nil {
+		h.LastTaskID = func() *uuid.UUID { s := uuid.Nil; return &s }()
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

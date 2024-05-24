@@ -32,7 +32,7 @@ func (s *Server) CreateTaskConfig(ctx context.Context, in *npool.CreateTaskConfi
 		config1.WithStepGuide(req.StepGuide, true),
 		config1.WithRecommendMessage(req.RecommendMessage, true),
 		config1.WithIndex(req.Index, true),
-		config1.WithLastTaskID(req.LastTaskID, true),
+		config1.WithLastTaskID(req.LastTaskID, false),
 		config1.WithMaxRewardCount(req.MaxRewardCount, true),
 		config1.WithCooldownSecord(req.CooldownSecord, true),
 	)

@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/user/reward"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -61,6 +62,10 @@ func (h *addHandler) calculateReward() error {
 		if h.CouponCashableAmount == nil {
 			value := decimal.NewFromInt32(0)
 			h.CouponCashableAmount = &value
+		}
+		if h.EntID == nil {
+			id := uuid.New()
+			h.EntID = &id
 		}
 		sql := h.constructCreateSQL()
 		h.sql = sql

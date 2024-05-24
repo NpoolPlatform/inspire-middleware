@@ -24,6 +24,7 @@ func (s *Server) AddUserReward(ctx context.Context, in *npool.AddUserRewardReque
 	}
 	handler, err := reward1.NewHandler(
 		ctx,
+		reward1.WithEntID(req.EntID, false),
 		reward1.WithAppID(req.AppID, true),
 		reward1.WithUserID(req.UserID, false),
 		reward1.WithActionCredits(req.ActionCredits, false),
