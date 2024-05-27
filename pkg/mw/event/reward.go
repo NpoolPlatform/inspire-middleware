@@ -64,11 +64,11 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 		EventType: &cruder.Cond{Op: cruder.EQ, Val: *h.EventType},
 	}
 	if err := h.condGood(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	info, err := h.GetEventOnly(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info, nil
 }
@@ -76,12 +76,12 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	_credits, err := decimal.NewFromString(ev.CreditsPerUSD)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	credits = credits.Add(_credits.Mul(*h.Amount))
@@ -92,12 +92,12 @@ func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, erro
 func (h *rewardHandler) allocatedCredits(ctx context.Context, ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	_credits, err := decimal.NewFromString(ev.CreditsPerUSD)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	credits = credits.Add(_credits.Mul(*h.Amount))
@@ -113,10 +113,10 @@ func (h *rewardHandler) allocatedCredits(ctx context.Context, ev *npool.Event) (
 		usercredithistory1.WithCredits(&creditsStr, true),
 	)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 	if err := handler.CreateUserCreditHistory(ctx); err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 	return credits, nil
 }
@@ -130,11 +130,11 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			coupon1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_coupon, err := handler.GetCoupon(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if _coupon == nil {
 			return wlog.Errorf("invalid coupon")
@@ -158,16 +158,16 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			allocated1.WithCouponID(&coup.EntID, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		info, err := handler.CreateCoupon(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		couponAmount, err := decimal.NewFromString(info.Allocated)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		couponCashableAmount := decimal.NewFromInt(0)
 		if info.Cashable {
@@ -177,7 +177,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 		h.couponCashableAmount = couponCashableAmount
 
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -194,11 +194,11 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 			coinconfig1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		_coinConfig, err := handler.GetCoinConfig(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		if _coinConfig == nil {
 			return nil, wlog.Errorf("invalid coinconfig")
@@ -211,11 +211,11 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 
 		coinValue, err := decimal.NewFromString(eventCoin.CoinValue)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		amount := decimal.NewFromInt(0)
 		if h.Amount != nil {
@@ -230,12 +230,12 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 		}
 		allocated, err := decimal.NewFromString(_coinConfig.Allocated)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		if coins.Add(allocated).Cmp(maxValue) >= 0 {
@@ -259,7 +259,7 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 		coinRewardIDs = append(coinRewardIDs, id)
 
 		if err := handler2.CreateCoinAllocated(ctx); err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 	}
 
@@ -273,11 +273,11 @@ func (h *rewardHandler) allocateCoins(ctx context.Context, ev *npool.Event) ([]*
 		coinallocated1.WithLimit(int32(len(coinRewardIDs))),
 	)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	coinRewards, _, err := handler3.GetCoinAllocateds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return coinRewards, nil
@@ -292,11 +292,11 @@ func (h *rewardHandler) calculateCoinRewards(ctx context.Context, ev *npool.Even
 			coinconfig1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		_coinConfig, err := handler.GetCoinConfig(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		if _coinConfig == nil {
 			return nil, wlog.Errorf("invalid coinconfig")
@@ -309,11 +309,11 @@ func (h *rewardHandler) calculateCoinRewards(ctx context.Context, ev *npool.Even
 
 		coinValue, err := decimal.NewFromString(eventCoin.CoinValue)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		amount := decimal.NewFromInt(0)
 		if h.Amount != nil {
@@ -328,12 +328,12 @@ func (h *rewardHandler) calculateCoinRewards(ctx context.Context, ev *npool.Even
 		}
 		allocated, err := decimal.NewFromString(_coinConfig.Allocated)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		maxValue, err := decimal.NewFromString(_coinConfig.MaxValue)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		if coins.Add(allocated).Cmp(maxValue) >= 0 {
@@ -365,11 +365,11 @@ func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Ev
 			coupon1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		_coupon, err := handler.GetCoupon(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		if _coupon == nil {
 			return nil, wlog.Errorf("invalid coupon")
@@ -393,16 +393,16 @@ func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Ev
 			allocated1.WithCouponID(&coup.EntID, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		info, err := handler.CalcluateAllocatedCoupon(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		couponAmount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 		couponCashableAmount := decimal.NewFromInt(0)
 		if info.Cashable {
@@ -412,7 +412,7 @@ func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Ev
 		h.couponCashableAmount = couponCashableAmount
 
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		couponRewards = append(couponRewards, info)
@@ -424,7 +424,7 @@ func (h *rewardHandler) calculateCouponRewards(ctx context.Context, ev *npool.Ev
 func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -436,7 +436,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 
 	credits, err := h.allocatedCredits(ctx, ev)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	// We don't care about result of allocate coupon
@@ -468,14 +468,14 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, error) {
 	handler, err := registration1.NewHandler(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	handler.AppID = h.AppID
 	handler.InviteeID = h.UserID
 
 	_, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(inviterIDs) == 0 {
 		return nil, nil
@@ -483,7 +483,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, err
 
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -515,7 +515,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, err
 			WithAmount(&amount, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		_handler := &rewardHandler{
@@ -524,7 +524,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, err
 
 		reward, err := _handler.rewardSelf(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		j--
@@ -554,11 +554,11 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 		taskconfig1.WithLimit(constant.DefaultRowLimit),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	configs, _, err := handler.GetTaskConfigs(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(configs) == 0 {
 		return wlog.Errorf("invalid taskconfig")
@@ -577,14 +577,14 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 		taskuser1.WithLimit(int32(configs[0].MaxRewardCount+1)),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	taskUsers, _, err := handler2.GetTaskUsers(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(taskUsers) == 0 {
 		return nil
@@ -621,11 +621,11 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 			taskuser1.WithLimit(constant.DefaultRowLimit),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		lastTaskUsers, _, err := handler3.GetTaskUsers(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if len(lastTaskUsers) == 0 {
 			return wlog.Errorf("invalid last task")
@@ -638,7 +638,7 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -649,7 +649,7 @@ func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	}
 
 	if err := h.validateTask(ctx, ev); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	h.addCredits = decimal.NewFromInt(0)
@@ -658,7 +658,7 @@ func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	h.couponCashableAmount = decimal.NewFromInt(0)
 	credits, err := h.allocatedCredits(ctx, ev)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	// We don't care about result of allocate coupon
@@ -689,10 +689,10 @@ func (h *rewardHandler) rewardTask(ctx context.Context) (*npool.Reward, error) {
 	h.addCredits = credits
 
 	if err := h.createTaskUser(ctx, ev); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if err := h.createOrUpdateUserReward(ctx, ev); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	coinRewards := []*npool.CoinReward{}
@@ -728,10 +728,10 @@ func (h *rewardHandler) createTaskUser(ctx context.Context, ev *npool.Event) err
 		taskuser1.WithRewardState(&rewardState, true),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler.CreateTaskUser(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -748,11 +748,11 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 		userreward1.WithLimit(constant.DefaultRowLimit),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	userrewards, _, err := handler.GetUserRewards(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(userrewards) == 0 {
 		credits := h.addCredits.String()
@@ -767,28 +767,28 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 			userreward1.WithCouponCashableAmount(&couponCashableAmount, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler2.CreateUserReward(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	}
 
 	oldActionCredits, err := decimal.NewFromString(userrewards[0].ActionCredits)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	actionCredits := oldActionCredits.Add(h.addCredits).String()
 
 	oldCouponAmount, err := decimal.NewFromString(userrewards[0].CouponAmount)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	couponAmount := oldCouponAmount.Add(h.couponAmount).String()
 	oldCouponCashableAmount, err := decimal.NewFromString(userrewards[0].CouponCashableAmount)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	couponCashableAmount := oldCouponCashableAmount.Add(h.couponAmount).String()
 
@@ -800,10 +800,10 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 		userreward1.WithCouponCashableAmount(&couponCashableAmount, true),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := handler2.UpdateUserReward(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -811,7 +811,7 @@ func (h *rewardHandler) createOrUpdateUserReward(ctx context.Context, ev *npool.
 func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -822,7 +822,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	}
 
 	if err := h.validateTask(ctx, ev); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	h.addCredits = decimal.NewFromInt(0)
@@ -831,7 +831,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	h.couponCashableAmount = decimal.NewFromInt(0)
 	credits, err := h.calculateCredits(ev)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	_credits := []*npool.Credit{}
 	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
