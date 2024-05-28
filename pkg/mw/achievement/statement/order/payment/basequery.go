@@ -73,6 +73,15 @@ func (h *baseQueryHandler) queryJoinOrderStatement(s *sql.Selector) error {
 			sql.EQ(t.C(entorderstatement.FieldUserID), id),
 		)
 	}
+	if h.OrderStatementConds.OrderID != nil {
+		id, ok := h.OrderStatementConds.OrderID.Val.(uuid.UUID)
+		if !ok {
+			return wlog.Errorf("invalid userid")
+		}
+		s.OnP(
+			sql.EQ(t.C(entorderstatement.FieldOrderID), id),
+		)
+	}
 	s.AppendSelect(
 		t.C(entorderstatement.FieldAppID),
 		t.C(entorderstatement.FieldUserID),

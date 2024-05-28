@@ -67,6 +67,13 @@ func (h *Handler) withOrderStatementConds(conds *npool.Conds) error {
 		}
 		h.OrderStatementConds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 	}
+	if conds.OrderID != nil {
+		id, err := uuid.Parse(conds.GetOrderID().GetValue())
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.OrderStatementConds.OrderID = &cruder.Cond{Op: conds.GetOrderID().GetOp(), Val: id}
+	}
 	return nil
 }
 
