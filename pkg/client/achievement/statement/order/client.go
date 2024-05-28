@@ -60,6 +60,22 @@ func GetStatements(ctx context.Context, conds *npool.Conds, offset, limit int32)
 	return infos.([]*npool.Statement), total, nil
 }
 
+func ExistStatementConds(ctx context.Context, conds *npool.Conds) (bool, error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		in, err := cli.ExistStatementConds(ctx, &npool.ExistStatementCondsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return in.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return info.(bool), nil
+}
+
 func DeleteStatement(ctx context.Context, id *uint32, entID *string) error {
 	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		return cli.DeleteStatement(ctx, &npool.DeleteStatementRequest{
