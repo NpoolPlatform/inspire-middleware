@@ -188,10 +188,48 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 			fallthrough //nolint
 		case basetypes.UsedFor_SetWithdrawAddress:
 			fallthrough //nolint
-		case basetypes.UsedFor_NewLogin:
-		// Not implemented
+		case basetypes.UsedFor_ConsecutiveLogin:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodSocialSharing:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstOrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetAddress:
+			fallthrough //nolint
+		case basetypes.UsedFor_Set2FA:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstBenefit:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteComment:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteRecommend:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodScoring:
+			fallthrough //nolint
+		case basetypes.UsedFor_SubmitTicket:
+			fallthrough //nolint
+		case basetypes.UsedFor_IntallApp:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetNFTAvatar:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetPersonalImage:
+			fallthrough //nolint
 		case basetypes.UsedFor_Signin:
 			fallthrough //nolint
+		case basetypes.UsedFor_KYCApproved:
+			fallthrough //nolint
+		case basetypes.UsedFor_OrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_WithdrawalCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_DepositReceived:
+			fallthrough //nolint
+		case basetypes.UsedFor_UpdatePassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_ResetPassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_InternalTransfer:
+		// Not implemented
 		case basetypes.UsedFor_Update:
 			fallthrough //nolint
 		case basetypes.UsedFor_Contact:
@@ -206,13 +244,9 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 			fallthrough //nolint
 		case basetypes.UsedFor_WithdrawalRequest:
 			fallthrough //nolint
-		case basetypes.UsedFor_WithdrawalCompleted:
-			fallthrough //nolint
-		case basetypes.UsedFor_DepositReceived:
-			fallthrough //nolint
-		case basetypes.UsedFor_KYCApproved:
-			fallthrough //nolint
 		case basetypes.UsedFor_KYCRejected:
+			fallthrough //nolint
+		case basetypes.UsedFor_NewLogin:
 			return fmt.Errorf("not implemented")
 		default:
 			return fmt.Errorf("invalid eventtype")

@@ -892,6 +892,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	return _rewards, nil
 }
 
+//nolint:funlen
 func (h *Handler) CalcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
 	handler := &rewardHandler{
 		Handler: h,
@@ -903,10 +904,50 @@ func (h *Handler) CalcluateEventRewards(ctx context.Context) (*npool.Reward, err
 	case basetypes.UsedFor_Purchase:
 		fallthrough //nolint
 	case basetypes.UsedFor_SimulateOrderProfit:
-		return handler.rewardSelf(ctx)
-	case basetypes.UsedFor_NewLogin:
 		fallthrough //nolint
 	case basetypes.UsedFor_SetWithdrawAddress:
+		fallthrough //nolint
+	case basetypes.UsedFor_ConsecutiveLogin:
+		fallthrough //nolint
+	case basetypes.UsedFor_GoodSocialSharing:
+		fallthrough //nolint
+	case basetypes.UsedFor_FirstOrderCompleted:
+		fallthrough //nolint
+	case basetypes.UsedFor_SetAddress:
+		fallthrough //nolint
+	case basetypes.UsedFor_Set2FA:
+		fallthrough //nolint
+	case basetypes.UsedFor_FirstBenefit:
+		fallthrough //nolint
+	case basetypes.UsedFor_WriteComment:
+		fallthrough //nolint
+	case basetypes.UsedFor_WriteRecommend:
+		fallthrough //nolint
+	case basetypes.UsedFor_GoodScoring:
+		fallthrough //nolint
+	case basetypes.UsedFor_SubmitTicket:
+		fallthrough //nolint
+	case basetypes.UsedFor_IntallApp:
+		fallthrough //nolint
+	case basetypes.UsedFor_SetNFTAvatar:
+		fallthrough //nolint
+	case basetypes.UsedFor_SetPersonalImage:
+		fallthrough //nolint
+	case basetypes.UsedFor_Signin:
+		fallthrough //nolint
+	case basetypes.UsedFor_KYCApproved:
+		fallthrough //nolint
+	case basetypes.UsedFor_OrderCompleted:
+		fallthrough //nolint
+	case basetypes.UsedFor_WithdrawalCompleted:
+		fallthrough //nolint
+	case basetypes.UsedFor_DepositReceived:
+		fallthrough //nolint
+	case basetypes.UsedFor_UpdatePassword:
+		fallthrough //nolint
+	case basetypes.UsedFor_ResetPassword:
+		fallthrough //nolint
+	case basetypes.UsedFor_InternalTransfer:
 		return handler.calcluateEventRewards(ctx)
 	case basetypes.UsedFor_AffiliateSignup:
 		fallthrough //nolint
