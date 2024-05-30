@@ -138,7 +138,7 @@ func WithTaskState(value *basetypes.TaskState, must bool) func(context.Context, 
 		}
 
 		switch *value {
-		case basetypes.TaskState_InProGress:
+		case basetypes.TaskState_InProgress:
 		case basetypes.TaskState_Done:
 		default:
 			return fmt.Errorf("invalid taskstate")
