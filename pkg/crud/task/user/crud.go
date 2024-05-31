@@ -77,6 +77,7 @@ type Conds struct {
 	TaskID      *cruder.Cond
 	EventID     *cruder.Cond
 	ID          *cruder.Cond
+	CreatedAt   *cruder.Cond
 }
 
 //nolint:funlen
@@ -191,6 +192,28 @@ func SetQueryConds(q *ent.TaskUserQuery, conds *Conds) (*ent.TaskUserQuery, erro
 			q.Where(enttaskuser.ID(id))
 		case cruder.NEQ:
 			q.Where(enttaskuser.IDNEQ(id))
+		default:
+			return nil, fmt.Errorf("invalid taskuser field")
+		}
+	}
+	if conds.CreatedAt != nil {
+		at, ok := conds.CreatedAt.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid createdat")
+		}
+		switch conds.CreatedAt.Op {
+		case cruder.LT:
+			q.Where(enttaskuser.CreatedAtLT(at))
+		case cruder.LTE:
+			q.Where(enttaskuser.CreatedAtLTE(at))
+		case cruder.GT:
+			q.Where(enttaskuser.CreatedAtGT(at))
+		case cruder.GTE:
+			q.Where(enttaskuser.CreatedAtGTE(at))
+		case cruder.EQ:
+			q.Where(enttaskuser.CreatedAt(at))
+		case cruder.NEQ:
+			q.Where(enttaskuser.CreatedAtNEQ(at))
 		default:
 			return nil, fmt.Errorf("invalid taskuser field")
 		}
