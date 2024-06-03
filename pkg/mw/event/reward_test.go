@@ -40,9 +40,9 @@ var (
 	eventRet = npool.Event{
 		EntID:          uuid.NewString(),
 		AppID:          appID,
-		EventType:      basetypes.UsedFor_FirstOrderCompleted,
-		EventTypeStr:   basetypes.UsedFor_FirstOrderCompleted.String(),
-		CouponIDs:      []string{},
+		EventType:      basetypes.UsedFor_Signup,
+		EventTypeStr:   basetypes.UsedFor_Signup.String(),
+		CouponIDs:      []string{eventcoupon.EntID},
 		Credits:        decimal.RequireFromString("100").String(),
 		CreditsPerUSD:  decimal.RequireFromString("12.25").String(),
 		MaxConsecutive: 1,
@@ -353,7 +353,7 @@ func resetup(t *testing.T) func(*testing.T) {
 
 //nolint:dupl
 func rewardEvent(t *testing.T) {
-	eventType := basetypes.UsedFor_NewLogin
+	eventType := basetypes.UsedFor_Signup
 	consecutive := uint32(1)
 	amount := decimal.NewFromInt(10).String()
 	handler, err := NewHandler(
@@ -366,7 +366,7 @@ func rewardEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	reward, err := handler.RewardEvent(context.Background())
+	reward, err := handler.CalcluateEventRewards(context.Background())
 	if assert.Nil(t, err) {
 		fmt.Println("reward: ", reward)
 	}
@@ -387,7 +387,7 @@ func rewardEvent2(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	reward, err := handler.RewardEvent(context.Background())
+	reward, err := handler.CalcluateEventRewards(context.Background())
 	if assert.Nil(t, err) {
 		fmt.Println("reward: ", reward)
 	}
