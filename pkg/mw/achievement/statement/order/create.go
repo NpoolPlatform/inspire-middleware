@@ -31,6 +31,7 @@ type createHandler struct {
 	selfUnits                    decimal.Decimal
 	selfAmountUSD                decimal.Decimal
 	selfCommissionAmountUSD      decimal.Decimal
+	inviteeConsumeAmount         decimal.Decimal
 }
 
 //nolint:goconst,funlen
@@ -228,7 +229,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 				UserID:               h.UserID,
 				TotalCommission:      h.CommissionAmountUSD,
 				SelfCommission:       &h.selfCommissionAmountUSD,
-				InviteeConsumeAmount: h.GoodValueUSD,
+				InviteeConsumeAmount: &h.inviteeConsumeAmount,
 				DirectConsumeAmount:  &h.selfAmountUSD,
 			}).Save(ctx); err != nil {
 			return wlog.WrapError(err)
@@ -252,7 +253,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 				return &d
 			}(),
 			InviteeConsumeAmount: func() *decimal.Decimal {
-				d := info.InviteeConsumeAmount.Add(*h.GoodValueUSD)
+				d := info.InviteeConsumeAmount.Add(h.inviteeConsumeAmount)
 				return &d
 			}(),
 		}).Save(ctx); err != nil {
@@ -290,6 +291,12 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 				return *h.CommissionAmountUSD
 			}
 			return decimal.NewFromInt(0)
+		}(),
+		inviteeConsumeAmount: func() decimal.Decimal {
+			if *h.OrderUserID == *h.UserID {
+				return decimal.NewFromInt(0)
+			}
+			return *h.GoodValueUSD
 		}(),
 	}
 
