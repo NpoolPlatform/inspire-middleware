@@ -46,7 +46,9 @@ func (h *deleteHandler) deletePaymentStatements(ctx context.Context, tx *ent.Tx)
 		Update().
 		Where(
 			entorderpaymentstatement.StatementID(*h.EntID),
+			entorderpaymentstatement.DeletedAt(0),
 		).
+		SetDeletedAt(h.now).
 		Save(ctx)
 	return err
 }
