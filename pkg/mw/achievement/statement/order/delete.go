@@ -28,6 +28,7 @@ type deleteHandler struct {
 	selfUnits               decimal.Decimal
 	commissionAmountUSD     decimal.Decimal
 	selfCommissionAmountUSD decimal.Decimal
+	inviteeConsumeAmount    decimal.Decimal
 }
 
 func (h *deleteHandler) deleteOrderStatement(ctx context.Context, tx *ent.Tx) error {
@@ -133,7 +134,7 @@ func (h *deleteHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) e
 				return &d
 			}(),
 			InviteeConsumeAmount: func() *decimal.Decimal {
-				d := info.InviteeConsumeAmount.Sub(h.paymentAmountUSD)
+				d := info.InviteeConsumeAmount.Sub(h.inviteeConsumeAmount)
 				return &d
 			}(),
 		}).Save(ctx); err != nil {
@@ -170,12 +171,14 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	handler.paymentAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount }()
+	handler.inviteeConsumeAmount = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount }()
 	handler.units = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.Units); return amount }()
 	handler.commissionAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.CommissionAmountUSD); return amount }()
 	if info.UserID == info.OrderUserID {
 		handler.selfPaymentAmountUSD = handler.paymentAmountUSD
 		handler.selfUnits = handler.units
 		handler.selfCommissionAmountUSD = handler.commissionAmountUSD
+		handler.inviteeConsumeAmount = decimal.NewFromInt(0)
 	}
 
 	if err := handler.deleteOrderStatement(ctx, tx); err != nil {
