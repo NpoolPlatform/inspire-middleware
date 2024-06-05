@@ -151,8 +151,8 @@ func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) ([]*npool.C
 	return infos.([]*npool.Credit), nil
 }
 
-func CalcluateEventRewards(ctx context.Context, req *npool.CalcluateEventRewardsRequest) (*npool.Reward, error) {
-	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+func CalcluateEventRewards(ctx context.Context, req *npool.CalcluateEventRewardsRequest) ([]*npool.Reward, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.CalcluateEventRewards(ctx, req)
 		if err != nil {
 			return nil, err
@@ -163,5 +163,5 @@ func CalcluateEventRewards(ctx context.Context, req *npool.CalcluateEventRewards
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Reward), nil
+	return infos.([]*npool.Reward), nil
 }

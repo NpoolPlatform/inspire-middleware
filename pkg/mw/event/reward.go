@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -363,7 +364,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) (*npool.Reward, error) {
 	return _rewards, nil
 }
 
-func (h *rewardHandler) calcluateAffiliate(ctx context.Context) (*npool.Reward, error) {
+func (h *rewardHandler) calcluateAffiliate(ctx context.Context) ([]*npool.Reward, error) {
 	handler, err := registration1.NewHandler(ctx)
 	if err != nil {
 		return nil, wlog.WrapError(err)
@@ -375,6 +376,7 @@ func (h *rewardHandler) calcluateAffiliate(ctx context.Context) (*npool.Reward, 
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
+	fmt.Println("inviterIDs: ", inviterIDs)
 	if len(inviterIDs) == 0 {
 		return nil, nil
 	}
@@ -391,18 +393,25 @@ func (h *rewardHandler) calcluateAffiliate(ctx context.Context) (*npool.Reward, 
 		return nil, nil
 	}
 
-	credits := []*npool.Credit{}
-	coinRewards := []*npool.CoinReward{}
-	couponRewards := []*npool.CouponReward{}
+	rewards := []*npool.Reward{}
 
 	i := uint32(0)
 	const inviterIgnore = 2
 	j := len(inviterIDs) - inviterIgnore
 
 	appID := h.AppID.String()
-	goodID := h.GoodID.String()
-	appGoodID := h.AppGoodID.String()
-	amount := h.Amount.String()
+	goodID := uuid.Nil.String()
+	if h.GoodID != nil {
+		goodID = h.GoodID.String()
+	}
+	appGoodID := uuid.Nil.String()
+	if h.AppGoodID != nil {
+		appGoodID = h.AppGoodID.String()
+	}
+	amount := "0"
+	if h.Amount != nil {
+		amount = h.Amount.String()
+	}
 
 	for ; i < ev.InviterLayers && j >= 0; i++ {
 		handler, err := NewHandler(
@@ -427,27 +436,16 @@ func (h *rewardHandler) calcluateAffiliate(ctx context.Context) (*npool.Reward, 
 		if err != nil {
 			return nil, wlog.WrapError(err)
 		}
+		rewards = append(rewards, reward...)
 
 		j--
-		if len(reward.Credits) != 0 {
-			credits = append(credits, reward.Credits...)
-		}
-		if len(reward.CoinRewards) != 0 {
-			coinRewards = append(coinRewards, reward.CoinRewards...)
-		}
-		if len(reward.CouponRewards) != 0 {
-			couponRewards = append(couponRewards, reward.CouponRewards...)
-		}
 	}
 
-	_rewards := &npool.Reward{
-		TaskID:        h.taskConfig.EntID,
-		Credits:       credits,
-		CoinRewards:   coinRewards,
-		CouponRewards: couponRewards,
+	if h.taskConfig == nil {
+		return nil, nil
 	}
 
-	return _rewards, nil
+	return rewards, nil
 }
 
 func (h *rewardHandler) rewardAffiliate(ctx context.Context) (*npool.Reward, error) {
@@ -620,7 +618,7 @@ func (h *rewardHandler) validateTask(ctx context.Context, ev *npool.Event) error
 	return nil
 }
 
-func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
+func (h *rewardHandler) calcluateEventRewards(ctx context.Context) ([]*npool.Reward, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
 		return nil, wlog.WrapError(err)
@@ -641,6 +639,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	h.coinPreUSDAmount = decimal.NewFromInt(0)
 	h.couponAmount = decimal.NewFromInt(0)
 	h.couponCashableAmount = decimal.NewFromInt(0)
+	userID := h.UserID.String()
 	credits, err := h.calculateCredits(ev)
 	if err != nil {
 		return nil, wlog.WrapError(err)
@@ -649,7 +648,7 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
 		_credits = append(_credits, &npool.Credit{
 			AppID:   h.AppID.String(),
-			UserID:  h.UserID.String(),
+			UserID:  userID,
 			Credits: credits.String(),
 		})
 	}
@@ -696,16 +695,17 @@ func (h *rewardHandler) calcluateEventRewards(ctx context.Context) (*npool.Rewar
 
 	_rewards := &npool.Reward{
 		TaskID:        h.taskConfig.EntID,
+		UserID:        userID,
 		Credits:       _credits,
 		CoinRewards:   coinRewards,
 		CouponRewards: couponRewards,
 	}
 
-	return _rewards, nil
+	return []*npool.Reward{_rewards}, nil
 }
 
 //nolint:funlen
-func (h *Handler) CalcluateEventRewards(ctx context.Context) (*npool.Reward, error) {
+func (h *Handler) CalcluateEventRewards(ctx context.Context) ([]*npool.Reward, error) {
 	handler := &rewardHandler{
 		Handler: h,
 	}
