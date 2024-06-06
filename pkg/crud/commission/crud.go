@@ -91,6 +91,7 @@ func UpdateSet(u *ent.CommissionUpdateOne, req *Req) *ent.CommissionUpdateOne {
 }
 
 type Conds struct {
+	ID         *cruder.Cond
 	EntID      *cruder.Cond
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
@@ -107,6 +108,18 @@ func SetQueryConds(q *ent.CommissionQuery, conds *Conds) (*ent.CommissionQuery, 
 	q.Where(entcommission.DeletedAt(0))
 	if conds == nil {
 		return q, nil
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uint32)
+		if !ok {
+			return nil, wlog.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entcommission.ID(id))
+		default:
+			return nil, wlog.Errorf("invalid id field")
+		}
 	}
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
