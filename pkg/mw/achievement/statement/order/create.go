@@ -288,7 +288,7 @@ func (h *Handler) verifyCommConfigTypeAndCommission(ctx context.Context, tx *ent
 					return err
 				}
 				if comm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-					return fmt.Errorf("commisison config type %v mismatch commission %v, percent is %v", h.CommissionConfigType.String(), req.CommissionAmount.String(), comm.AmountOrPercent)
+					return fmt.Errorf("commission config type %v mismatch commission %v, percent is %v", h.CommissionConfigType.String(), req.CommissionAmount.String(), comm.AmountOrPercent)
 				}
 			}
 		}
