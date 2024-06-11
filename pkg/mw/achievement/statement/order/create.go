@@ -11,6 +11,8 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
@@ -262,7 +264,45 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 	return nil
 }
 
+func (h *Handler) verifyCommConfigTypeAndCommission(ctx context.Context, tx *ent.Tx) error {
+	for _, req := range h.PaymentStatementReqs {
+		if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
+			if !req.CommissionAmount.Equal(decimal.NewFromInt(0)) {
+				return fmt.Errorf("commission config type %v mismatch commission %v", h.CommissionConfigType.String(), req.CommissionAmount.String())
+
+			}
+		}
+		if *h.CommissionConfigType == types.CommissionConfigType_LegacyCommissionConfig {
+			if (req.CommissionAmount.Cmp(decimal.NewFromInt(0))) > 0 {
+				comm, err := tx.
+					Commission.
+					Query().
+					Where(
+						entcommission.AppID(*h.AppID),
+						entcommission.UserID(*h.UserID),
+						entcommission.GoodID(*h.GoodID),
+						entcommission.AppGoodID(*h.AppGoodID),
+						entcommission.EndAt(0),
+					).
+					Only(ctx)
+				if err != nil {
+					return err
+				}
+				if comm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
+					return fmt.Errorf("commisison config type %v mismatch commission %v, percent is %v", h.CommissionConfigType.String(), req.CommissionAmount.String(), comm.AmountOrPercent)
+				}
+			}
+		}
+
+	}
+	return nil
+}
+
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
+	if err := h.verifyCommConfigTypeAndCommission(ctx, tx); err != nil {
+		return err
+	}
+
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
