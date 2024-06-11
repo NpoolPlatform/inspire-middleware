@@ -269,7 +269,6 @@ func (h *Handler) verifyCommConfigTypeAndCommission(ctx context.Context, tx *ent
 		if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
 			if !req.CommissionAmount.Equal(decimal.NewFromInt(0)) {
 				return fmt.Errorf("commission config type %v mismatch commission %v", h.CommissionConfigType.String(), req.CommissionAmount.String())
-
 			}
 		}
 		if *h.CommissionConfigType == types.CommissionConfigType_LegacyCommissionConfig {
@@ -293,12 +292,45 @@ func (h *Handler) verifyCommConfigTypeAndCommission(ctx context.Context, tx *ent
 				}
 			}
 		}
+	}
+	return nil
+}
 
+func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
+	if h.CommissionConfigID == nil {
+		if *h.CommissionConfigType == types.CommissionConfigType_AppCommissionConfig ||
+			*h.CommissionConfigType == types.CommissionConfigType_AppGoodCommissionConfig {
+			return fmt.Errorf("invalid commission config id: %v", *h.CommissionConfigID)
+		}
+		if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
+			h.CommissionConfigID = &uuid.Nil
+		}
+		if *h.CommissionConfigType == types.CommissionConfigType_LegacyCommissionConfig {
+			if _, err := tx.
+				Commission.
+				Query().
+				Where(
+					entcommission.AppID(*h.AppID),
+					entcommission.UserID(*h.UserID),
+					entcommission.GoodID(*h.GoodID),
+					entcommission.AppGoodID(*h.AppGoodID),
+					entcommission.EndAt(0),
+				).
+				Only(ctx); err != nil {
+				if !ent.IsNotFound(err) {
+					return err
+				}
+				h.CommissionConfigID = &uuid.Nil
+			}
+		}
 	}
 	return nil
 }
 
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
+	if err := h.verifyCommConfigID(ctx, tx); err != nil {
+		return err
+	}
 	if err := h.verifyCommConfigTypeAndCommission(ctx, tx); err != nil {
 		return err
 	}

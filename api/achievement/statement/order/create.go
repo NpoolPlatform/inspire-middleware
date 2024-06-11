@@ -37,7 +37,7 @@ func (s *Server) CreateStatement(ctx context.Context, in *npool.CreateStatementR
 		orderstatement1.WithPaymentAmountUSD(req.PaymentAmountUSD, true),
 		orderstatement1.WithCommissionAmountUSD(req.CommissionAmountUSD, true),
 		orderstatement1.WithAppConfigID(req.AppConfigID, true),
-		orderstatement1.WithCommissionConfigID(req.CommissionConfigID, true),
+		orderstatement1.WithCommissionConfigID(req.CommissionConfigID, false),
 		orderstatement1.WithCommissionConfigType(req.CommissionConfigType, true),
 		orderstatement1.WithPaymentStatements(req.PaymentStatements, true),
 	)
