@@ -55,9 +55,10 @@ func (h *Handler) ConstructCreateSQL() string {
 	_sql += "where not exists ("
 	_sql += "select 1 from good_coin_achievements "
 	_sql += fmt.Sprintf(
-		"where user_id = '%v' and good_coin_type_id = '%v' ",
-		*h.UserID,
-		*h.GoodCoinTypeID,
+		"where app_id = '%v' and user_id = '%v' and good_coin_type_id = '%v' ",
+		h.AppID.String(),
+		h.UserID.String(),
+		h.GoodCoinTypeID.String(),
 	)
 	_sql += "limit 1)"
 	return _sql
@@ -73,7 +74,6 @@ func (h *Handler) ConstructUpdateSQL() string {
 		`, self_units = self_units + %v`,
 		*h.SelfUnits,
 	)
-
 	sql += fmt.Sprintf(
 		`, total_amount_usd = total_amount_usd + %v`,
 		*h.TotalAmountUSD,
@@ -90,10 +90,11 @@ func (h *Handler) ConstructUpdateSQL() string {
 		`, self_commission_usd = self_commission_usd + %v`,
 		h.SelfCommissionUSD,
 	)
-
 	sql += fmt.Sprintf(
-		" where user_id = '%v' and good_coin_type_id = '%v' and deleted_at = 0 ",
-		h.UserID.String(), h.GoodCoinTypeID.String(),
+		" where app_id = '%v' and user_id = '%v' and good_coin_type_id = '%v' and deleted_at = 0 ",
+		h.AppID.String(),
+		h.UserID.String(),
+		h.GoodCoinTypeID.String(),
 	)
 	return sql
 }
