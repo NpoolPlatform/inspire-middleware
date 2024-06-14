@@ -42,9 +42,9 @@ var ret = &orderstatementmwpb.Statement{
 	Units:                decimal.NewFromInt(10).String(),
 	GoodValueUSD:         decimal.NewFromInt(120).String(),
 	PaymentAmountUSD:     decimal.NewFromInt(120).String(),
-	CommissionAmountUSD:  decimal.NewFromInt(30).String(),
+	CommissionAmountUSD:  decimal.NewFromInt(0).String(),
 	AppConfigID:          uuid.NewString(),
-	CommissionConfigID:   uuid.NewString(),
+	CommissionConfigID:   uuid.Nil.String(),
 	CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
 }
 
