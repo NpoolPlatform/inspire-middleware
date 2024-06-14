@@ -284,11 +284,11 @@ func (h *Handler) verifyAppConfigID(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) verifyCommissionAmount(ctx context.Context, tx *ent.Tx) error {
+func (h *Handler) verifyCommissionAmount() error {
 	for _, req := range h.PaymentStatementReqs {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) <= 0 {
 			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) > 0 {
-				return wlog.Errorf("invalid commisison amount")
+				return wlog.Errorf("invalid commission amount")
 			}
 		}
 	}
@@ -380,7 +380,7 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := h.verifyCommConfigID(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := h.verifyCommissionAmount(ctx, tx); err != nil {
+	if err := h.verifyCommissionAmount(); err != nil {
 		return wlog.WrapError(err)
 	}
 
