@@ -6,7 +6,9 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	orderstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
 	paymentmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
@@ -16,6 +18,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/good"
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
@@ -31,6 +34,22 @@ func init() {
 	if err := testinit.Init(); err != nil {
 		fmt.Printf("cannot init test stub: %v\n", err)
 	}
+}
+
+var appconfig = appconfigmwpb.AppConfig{
+	EntID:               uuid.NewString(),
+	AppID:               uuid.NewString(),
+	SettleMode:          types.SettleMode_SettleWithGoodValue,
+	SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+	SettleAmountType:    types.SettleAmountType_SettleByPercent,
+	SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+	SettleInterval:      types.SettleInterval_SettleYearly,
+	SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+	CommissionType:      types.CommissionType_LayeredCommission,
+	CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+	SettleBenefit:       false,
+	StartAt:             uint32(time.Now().Unix()),
+	MaxLevel:            uint32(5),
 }
 
 var ret = &orderstatementmwpb.Statement{
@@ -63,6 +82,33 @@ var ret1 = &npool.Achievement{
 	SelfUnits:          "0",
 	TotalCommissionUSD: ret.CommissionAmountUSD,
 	SelfCommissionUSD:  "0",
+}
+
+func createAppConfig(t *testing.T) {
+	handler, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithEntID(&ret.AppConfigID, true),
+		commission1.WithAppID(&ret.AppID, true),
+		commission1.WithCommissionType(&appconfig.CommissionType, true),
+		commission1.WithSettleMode(&appconfig.SettleMode, true),
+		commission1.WithSettleAmountType(&appconfig.SettleAmountType, true),
+		commission1.WithSettleInterval(&appconfig.SettleInterval, true),
+		commission1.WithSettleBenefit(&appconfig.SettleBenefit, true),
+		commission1.WithStartAt(&appconfig.StartAt, true),
+		commission1.WithMaxLevel(&appconfig.MaxLevel, true),
+	)
+	assert.Nil(t, err)
+
+	err = handler.CreateAppConfig(context.Background())
+	if assert.Nil(t, err) {
+		info, err := handler.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			ret.ID = info.ID
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
+	}
 }
 
 func createStatement(t *testing.T) {
@@ -144,6 +190,7 @@ func TestAchievement(t *testing.T) {
 		return
 	}
 
+	t.Run("createAppConfig", createAppConfig)
 	t.Run("createStatement", createStatement)
 	t.Run("expropriateAchievement", expropriateAchievement)
 }
