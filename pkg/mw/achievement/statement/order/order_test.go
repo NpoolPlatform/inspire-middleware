@@ -6,10 +6,12 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
-	// cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
+
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
-	// basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	orderstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
@@ -46,9 +48,51 @@ var ret = &orderstatementmwpb.Statement{
 	CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
 }
 
-func setup(t *testing.T) func(*testing.T) { //nolint
+var appconfig = appconfigmwpb.AppConfig{
+	EntID:               ret.AppConfigID,
+	AppID:               ret.AppID,
+	SettleMode:          types.SettleMode_SettleWithGoodValue,
+	SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+	SettleAmountType:    types.SettleAmountType_SettleByPercent,
+	SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+	SettleInterval:      types.SettleInterval_SettleYearly,
+	SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+	CommissionType:      types.CommissionType_LayeredCommission,
+	CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+	SettleBenefit:       false,
+	StartAt:             uint32(time.Now().Unix()),
+	MaxLevel:            uint32(5),
+}
+
+func setup(t *testing.T) func(*testing.T) {
 	ret.CommissionConfigTypeStr = ret.CommissionConfigType.String()
-	return func(*testing.T) {}
+	handler, err := commission1.NewHandler(
+		context.Background(),
+		commission1.WithEntID(&ret.AppConfigID, true),
+		commission1.WithAppID(&ret.AppID, true),
+		commission1.WithCommissionType(&appconfig.CommissionType, true),
+		commission1.WithSettleMode(&appconfig.SettleMode, true),
+		commission1.WithSettleAmountType(&appconfig.SettleAmountType, true),
+		commission1.WithSettleInterval(&appconfig.SettleInterval, true),
+		commission1.WithSettleBenefit(&appconfig.SettleBenefit, true),
+		commission1.WithStartAt(&appconfig.StartAt, true),
+		commission1.WithMaxLevel(&appconfig.MaxLevel, true),
+	)
+	assert.Nil(t, err)
+
+	err = handler.CreateAppConfig(context.Background())
+	if assert.Nil(t, err) {
+		info, err := handler.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			appconfig.ID = info.ID
+			appconfig.CreatedAt = info.CreatedAt
+			appconfig.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &appconfig)
+		}
+	}
+	return func(*testing.T) {
+		_ = handler.DeleteAppConfig(context.Background())
+	}
 }
 
 func createStatement(t *testing.T) {
