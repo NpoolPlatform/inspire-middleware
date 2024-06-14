@@ -36,22 +36,6 @@ func init() {
 	}
 }
 
-var appconfig = appconfigmwpb.AppConfig{
-	EntID:               uuid.NewString(),
-	AppID:               uuid.NewString(),
-	SettleMode:          types.SettleMode_SettleWithGoodValue,
-	SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
-	SettleAmountType:    types.SettleAmountType_SettleByPercent,
-	SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
-	SettleInterval:      types.SettleInterval_SettleYearly,
-	SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
-	CommissionType:      types.CommissionType_LayeredCommission,
-	CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
-	SettleBenefit:       false,
-	StartAt:             uint32(time.Now().Unix()),
-	MaxLevel:            uint32(5),
-}
-
 var ret = &orderstatementmwpb.Statement{
 	EntID:                   uuid.NewString(),
 	AppID:                   uuid.NewString(),
@@ -64,7 +48,7 @@ var ret = &orderstatementmwpb.Statement{
 	Units:                   decimal.NewFromInt(10).String(),
 	GoodValueUSD:            decimal.NewFromInt(120).String(),
 	PaymentAmountUSD:        decimal.NewFromInt(120).String(),
-	CommissionAmountUSD:     decimal.NewFromInt(30).String(),
+	CommissionAmountUSD:     decimal.NewFromInt(0).String(),
 	AppConfigID:             uuid.NewString(),
 	CommissionConfigID:      uuid.NewString(),
 	CommissionConfigType:    types.CommissionConfigType_LegacyCommissionConfig,
@@ -82,6 +66,22 @@ var ret1 = &npool.Achievement{
 	SelfUnits:          "0",
 	TotalCommissionUSD: ret.CommissionAmountUSD,
 	SelfCommissionUSD:  "0",
+}
+
+var appconfig = appconfigmwpb.AppConfig{
+	EntID:               ret.AppConfigID,
+	AppID:               ret.AppID,
+	SettleMode:          types.SettleMode_SettleWithGoodValue,
+	SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+	SettleAmountType:    types.SettleAmountType_SettleByPercent,
+	SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+	SettleInterval:      types.SettleInterval_SettleYearly,
+	SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+	CommissionType:      types.CommissionType_LayeredCommission,
+	CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+	SettleBenefit:       false,
+	StartAt:             uint32(time.Now().Unix()),
+	MaxLevel:            uint32(5),
 }
 
 func createAppConfig(t *testing.T) {
@@ -103,10 +103,10 @@ func createAppConfig(t *testing.T) {
 	if assert.Nil(t, err) {
 		info, err := handler.GetAppConfig(context.Background())
 		if assert.Nil(t, err) {
-			ret.ID = info.ID
-			ret.CreatedAt = info.CreatedAt
-			ret.UpdatedAt = info.UpdatedAt
-			assert.Equal(t, info, &ret)
+			appconfig.ID = info.ID
+			appconfig.CreatedAt = info.CreatedAt
+			appconfig.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &appconfig)
 		}
 	}
 }
