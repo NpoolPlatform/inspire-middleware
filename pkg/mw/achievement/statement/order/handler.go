@@ -199,7 +199,7 @@ func WithUnits(value *string, must bool) func(context.Context, *Handler) error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return wlog.Errorf("units is less than or equal to 0")
 		}
 		h.Units = &amount
