@@ -193,6 +193,7 @@ func updateCoupons(t *testing.T) {
 	if assert.Nil(t, err) {
 		assert.Equal(t, int(1), len(infos))
 		ret1.UsedAt = infos[0].UsedAt
+		ret1.UpdatedAt = infos[0].UpdatedAt
 		assert.Equal(t, &ret1, infos[0])
 	}
 }

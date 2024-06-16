@@ -500,7 +500,10 @@ func (h *calculateHandler) generateStatements(
 			id := h.OrderID.String()
 			return &id
 		}(),
-
+		GoodCoinTypeID: func() *string {
+			id := h.GoodCoinTypeID.String()
+			return &id
+		}(),
 		Units: func() *string {
 			units := h.Units.String()
 			return &units
