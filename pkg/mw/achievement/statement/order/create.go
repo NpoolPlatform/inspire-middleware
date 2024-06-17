@@ -304,7 +304,7 @@ func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
 			return wlog.Errorf("commission config id mismatch commission config type")
 		case types.CommissionConfigType_LegacyCommissionConfig:
 			h.CommissionConfigID = &uuid.Nil
-			fallthrough //nolint
+			fallthrough
 		case types.CommissionConfigType_WithoutCommissionConfig:
 			if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 				return wlog.Errorf("commission config type mismatch commission amount usd")
