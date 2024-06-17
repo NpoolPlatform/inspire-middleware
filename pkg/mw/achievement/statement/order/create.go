@@ -304,7 +304,7 @@ func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
 			return wlog.Errorf("commission config id mismatch commission config type")
 		case types.CommissionConfigType_LegacyCommissionConfig:
 			h.CommissionConfigID = &uuid.Nil
-			fallthrough //nolint
+			fallthrough
 		case types.CommissionConfigType_WithoutCommissionConfig:
 			if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 				return wlog.Errorf("commission config type mismatch commission amount usd")
@@ -314,58 +314,62 @@ func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
 		return nil
 	}
 
-	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-		switch *h.CommissionConfigType {
-		case types.CommissionConfigType_LegacyCommissionConfig:
-			comm, err := tx.
-				Commission.
-				Query().
-				Where(
-					entcommission.AppID(*h.AppID),
-					entcommission.EntID(*h.CommissionConfigID),
-					entcommission.UserID(*h.UserID),
-					entcommission.GoodID(*h.GoodID),
-					entcommission.AppGoodID(*h.AppGoodID),
-					entcommission.EndAt(0),
-				).
-				Only(ctx)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
+	switch *h.CommissionConfigType {
+	case types.CommissionConfigType_LegacyCommissionConfig:
+		comm, err := tx.
+			Commission.
+			Query().
+			Where(
+				entcommission.AppID(*h.AppID),
+				entcommission.EntID(*h.CommissionConfigID),
+				entcommission.UserID(*h.UserID),
+				entcommission.GoodID(*h.GoodID),
+				entcommission.AppGoodID(*h.AppGoodID),
+				entcommission.EndAt(0),
+			).
+			Only(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			if comm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
 				return wlog.Errorf("invalid commission amount or percent")
 			}
-		case types.CommissionConfigType_AppCommissionConfig:
-			appcomm, err := tx.
-				AppCommissionConfig.
-				Query().
-				Where(
-					entappcommissionconfig.AppID(*h.AppID),
-					entappcommissionconfig.EntID(*h.CommissionConfigID),
-					entappcommissionconfig.EndAt(0),
-				).
-				Only(ctx)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
+		}
+	case types.CommissionConfigType_AppCommissionConfig:
+		appcomm, err := tx.
+			AppCommissionConfig.
+			Query().
+			Where(
+				entappcommissionconfig.AppID(*h.AppID),
+				entappcommissionconfig.EntID(*h.CommissionConfigID),
+				entappcommissionconfig.EndAt(0),
+			).
+			Only(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			if appcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
 				return wlog.Errorf("invalid app commission amount or percent")
 			}
-		case types.CommissionConfigType_AppGoodCommissionConfig:
-			appgoodcomm, err := tx.
-				AppGoodCommissionConfig.
-				Query().
-				Where(
-					entappgoodcommissionconfig.AppID(*h.AppID),
-					entappgoodcommissionconfig.EntID(*h.CommissionConfigID),
-					entappgoodcommissionconfig.GoodID(*h.GoodID),
-					entappgoodcommissionconfig.AppGoodID(*h.AppGoodID),
-					entappgoodcommissionconfig.EndAt(0),
-				).
-				Only(ctx)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
+		}
+	case types.CommissionConfigType_AppGoodCommissionConfig:
+		appgoodcomm, err := tx.
+			AppGoodCommissionConfig.
+			Query().
+			Where(
+				entappgoodcommissionconfig.AppID(*h.AppID),
+				entappgoodcommissionconfig.EntID(*h.CommissionConfigID),
+				entappgoodcommissionconfig.GoodID(*h.GoodID),
+				entappgoodcommissionconfig.AppGoodID(*h.AppGoodID),
+				entappgoodcommissionconfig.EndAt(0),
+			).
+			Only(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			if appgoodcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
 				return wlog.Errorf("invalid appgood commission amount or percent")
 			}
