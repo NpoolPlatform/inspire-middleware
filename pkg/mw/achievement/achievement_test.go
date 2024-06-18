@@ -50,7 +50,7 @@ var ret = &orderstatementmwpb.Statement{
 	PaymentAmountUSD:        decimal.NewFromInt(120).String(),
 	CommissionAmountUSD:     decimal.NewFromInt(0).String(),
 	AppConfigID:             uuid.NewString(),
-	CommissionConfigID:      uuid.NewString(),
+	CommissionConfigID:      uuid.Nil.String(),
 	CommissionConfigType:    types.CommissionConfigType_LegacyCommissionConfig,
 	CommissionConfigTypeStr: types.CommissionConfigType_LegacyCommissionConfig.String(),
 }
