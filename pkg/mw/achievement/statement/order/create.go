@@ -374,6 +374,8 @@ func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
 				return wlog.Errorf("invalid appgood commission amount or percent")
 			}
 		}
+	case types.CommissionConfigType_WithoutCommissionConfig:
+		return wlog.Errorf("commission config type mismatch commission config id")
 	}
 	return nil
 }
