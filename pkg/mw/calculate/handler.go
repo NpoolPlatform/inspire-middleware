@@ -179,9 +179,6 @@ func WithOrderCreatedAt(value uint32) func(context.Context, *Handler) error {
 
 func WithPayments(payments []*calculatemwpb.Payment) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if len(payments) == 0 {
-			return wlog.Errorf("invalid payments")
-		}
 		for _, payment := range payments {
 			if _, err := uuid.Parse(payment.CoinTypeID); err != nil {
 				return err
