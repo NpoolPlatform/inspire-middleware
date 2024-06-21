@@ -301,7 +301,7 @@ func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
 		case types.CommissionConfigType_AppCommissionConfig:
 			fallthrough //nolint
 		case types.CommissionConfigType_AppGoodCommissionConfig:
-			return wlog.Errorf("commission config id mismatch commission config type")
+			h.CommissionConfigID = &uuid.Nil
 		case types.CommissionConfigType_LegacyCommissionConfig:
 			h.CommissionConfigID = &uuid.Nil
 			fallthrough
