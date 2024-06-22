@@ -1,23 +1,27 @@
 package user
 
-/*
 import (
 	"context"
 	"fmt"
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
-	statement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/statement"
-	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	inspiretypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	statement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/statement/order"
+	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
+
+	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
+	orderstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,85 +34,118 @@ func init() {
 	}
 }
 
-var ret = &statementmwpb.Statement{
-	EntID:                   uuid.NewString(),
-	AppID:                   uuid.NewString(),
-	UserID:                  uuid.NewString(),
-	DirectContributorID:     uuid.NewString(),
-	GoodID:                  uuid.NewString(),
-	AppGoodID:               uuid.NewString(),
-	OrderID:                 uuid.NewString(),
-	SelfOrder:               true,
-	PaymentID:               uuid.NewString(),
-	CoinTypeID:              uuid.NewString(),
-	PaymentCoinTypeID:       uuid.NewString(),
-	PaymentCoinUSDCurrency:  "10.101",
-	Units:                   "10",
-	Amount:                  "10000",
-	USDAmount:               "20000",
-	Commission:              "300",
-	AppConfigID:             uuid.NewString(),
-	CommissionConfigID:      uuid.NewString(),
-	CommissionConfigType:    inspiretypes.CommissionConfigType_LegacyCommissionConfig,
-	CommissionConfigTypeStr: inspiretypes.CommissionConfigType_LegacyCommissionConfig.String(),
+var appconfig = appconfigmwpb.AppConfig{
+	EntID:               uuid.NewString(),
+	AppID:               uuid.NewString(),
+	SettleMode:          types.SettleMode_SettleWithGoodValue,
+	SettleModeStr:       types.SettleMode_SettleWithGoodValue.String(),
+	SettleAmountType:    types.SettleAmountType_SettleByPercent,
+	SettleAmountTypeStr: types.SettleAmountType_SettleByPercent.String(),
+	SettleInterval:      types.SettleInterval_SettleYearly,
+	SettleIntervalStr:   types.SettleInterval_SettleYearly.String(),
+	CommissionType:      types.CommissionType_LayeredCommission,
+	CommissionTypeStr:   types.CommissionType_LayeredCommission.String(),
+	SettleBenefit:       false,
+	StartAt:             uint32(time.Now().Unix()),
+	MaxLevel:            uint32(5),
 }
 
-var ret2 = &npool.AchievementUser{
-	AppID:                ret.AppID,
-	UserID:               ret.UserID,
-	TotalCommission:      "3030.3",
-	SelfCommission:       "3030.3",
-	DirectConsumeAmount:  "20000",
-	DirectInvites:        uint32(0),
-	IndirectInvites:      uint32(0),
-	InviteeConsumeAmount: "0",
+var userID = uuid.NewString()
+var statement = &orderstatementmwpb.Statement{
+	EntID:                uuid.NewString(),
+	AppID:                appconfig.AppID,
+	UserID:               userID,
+	GoodID:               uuid.NewString(),
+	AppGoodID:            uuid.NewString(),
+	OrderID:              uuid.NewString(),
+	OrderUserID:          userID,
+	GoodCoinTypeID:       uuid.NewString(),
+	Units:                decimal.NewFromInt(10).String(),
+	GoodValueUSD:         decimal.NewFromInt(120).String(),
+	PaymentAmountUSD:     decimal.NewFromInt(120).String(),
+	CommissionAmountUSD:  decimal.NewFromInt(0).String(),
+	AppConfigID:          appconfig.EntID,
+	CommissionConfigID:   uuid.Nil.String(),
+	CommissionConfigType: types.CommissionConfigType_LegacyCommissionConfig,
 }
 
 func setup(t *testing.T) func(*testing.T) {
-	h1, err := statement1.NewHandler(
+	statement.CommissionConfigTypeStr = statement.CommissionConfigType.String()
+	handler, err := commission1.NewHandler(
 		context.Background(),
-		statement1.WithEntID(&ret.EntID, true),
-		statement1.WithAppID(&ret.AppID, true),
-		statement1.WithUserID(&ret.UserID, true),
-		statement1.WithDirectContributorID(&ret.DirectContributorID, true),
-		statement1.WithGoodID(&ret.GoodID, true),
-		statement1.WithAppGoodID(&ret.AppGoodID, true),
-		statement1.WithOrderID(&ret.OrderID, true),
-		statement1.WithSelfOrder(&ret.SelfOrder, true),
-		statement1.WithPaymentID(&ret.PaymentID, true),
-		statement1.WithCoinTypeID(&ret.CoinTypeID, true),
-		statement1.WithPaymentCoinTypeID(&ret.PaymentCoinTypeID, true),
-		statement1.WithPaymentCoinUSDCurrency(&ret.PaymentCoinUSDCurrency, true),
-		statement1.WithUnits(&ret.Units, true),
-		statement1.WithAmount(&ret.Amount, true),
-		statement1.WithUSDAmount(&ret.USDAmount, true),
-		statement1.WithCommission(&ret.Commission, true),
-		statement1.WithAppConfigID(&ret.AppConfigID, true),
-		statement1.WithCommissionConfigID(&ret.CommissionConfigID, true),
-		statement1.WithCommissionConfigType(&ret.CommissionConfigType, true),
+		commission1.WithEntID(&statement.AppConfigID, true),
+		commission1.WithAppID(&statement.AppID, true),
+		commission1.WithCommissionType(&appconfig.CommissionType, true),
+		commission1.WithSettleMode(&appconfig.SettleMode, true),
+		commission1.WithSettleAmountType(&appconfig.SettleAmountType, true),
+		commission1.WithSettleInterval(&appconfig.SettleInterval, true),
+		commission1.WithSettleBenefit(&appconfig.SettleBenefit, true),
+		commission1.WithStartAt(&appconfig.StartAt, true),
+		commission1.WithMaxLevel(&appconfig.MaxLevel, true),
 	)
 	assert.Nil(t, err)
 
-	info, err := h1.CreateStatement(context.Background())
+	err = handler.CreateAppConfig(context.Background())
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		h1.ID = &info.ID
+		info, err := handler.GetAppConfig(context.Background())
+		if assert.Nil(t, err) {
+			appconfig.ID = info.ID
+			appconfig.CreatedAt = info.CreatedAt
+			appconfig.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &appconfig)
+		}
 	}
 
+	// statement
+	statementHandler, err := statement1.NewHandler(
+		context.Background(),
+		statement1.WithEntID(&statement.EntID, true),
+		statement1.WithAppID(&statement.AppID, true),
+		statement1.WithUserID(&statement.UserID, true),
+		statement1.WithGoodID(&statement.GoodID, true),
+		statement1.WithAppGoodID(&statement.AppGoodID, true),
+		statement1.WithOrderID(&statement.OrderID, true),
+		statement1.WithOrderUserID(&statement.OrderUserID, true),
+		statement1.WithGoodCoinTypeID(&statement.GoodCoinTypeID, true),
+		statement1.WithUnits(&statement.Units, true),
+		statement1.WithGoodValueUSD(&statement.GoodValueUSD, true),
+		statement1.WithPaymentAmountUSD(&statement.PaymentAmountUSD, true),
+		statement1.WithCommissionAmountUSD(&statement.CommissionAmountUSD, true),
+		statement1.WithAppConfigID(&statement.AppConfigID, true),
+		statement1.WithCommissionConfigID(&statement.CommissionConfigID, true),
+		statement1.WithCommissionConfigType(&statement.CommissionConfigType, true),
+	)
+	assert.Nil(t, err)
+
+	err = statementHandler.CreateStatement(context.Background())
+	assert.Nil(t, err)
+
 	return func(*testing.T) {
-		_, _ = h1.DeleteStatement(context.Background())
+		_ = handler.DeleteAppConfig(context.Background())
+		_ = statementHandler.DeleteStatement(context.Background())
 	}
+}
+
+var ret = npool.AchievementUser{
+	AppID:                statement.AppID,
+	UserID:               statement.UserID,
+	TotalCommission:      decimal.Zero.String(),
+	SelfCommission:       decimal.Zero.String(),
+	DirectInvites:        0,
+	IndirectInvites:      0,
+	DirectConsumeAmount:  statement.GoodValueUSD,
+	InviteeConsumeAmount: decimal.Zero.String(),
 }
 
 func getAchievementUsers(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithConds(&npool.Conds{
-			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: ret.AppID},
-			UserID:  &basetypes.StringVal{Op: cruder.EQ, Value: ret.UserID},
-			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{ret.UserID}},
+			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: statement.AppID},
+			UserID:  &basetypes.StringVal{Op: cruder.EQ, Value: statement.UserID},
+			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: []string{statement.UserID}},
 		}),
-		WithLimit(0),
+		WithLimit(1),
 	)
 	assert.Nil(t, err)
 
@@ -116,16 +153,16 @@ func getAchievementUsers(t *testing.T) {
 	if assert.Nil(t, err) {
 		assert.Equal(t, uint32(1), total)
 		if assert.Equal(t, 1, len(infos)) {
-			ret2.ID = infos[0].ID
-			ret2.EntID = infos[0].EntID
-			ret2.CreatedAt = infos[0].CreatedAt
-			ret2.UpdatedAt = infos[0].UpdatedAt
-			assert.Equal(t, infos[0], ret2)
+			ret.ID = infos[0].ID
+			ret.EntID = infos[0].EntID
+			ret.CreatedAt = infos[0].CreatedAt
+			ret.UpdatedAt = infos[0].UpdatedAt
+			assert.Equal(t, &ret, infos[0])
 		}
 	}
 }
 
-func TestAchievement(t *testing.T) {
+func TestAchievementUser(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}
@@ -135,5 +172,3 @@ func TestAchievement(t *testing.T) {
 
 	t.Run("getAchievementUsers", getAchievementUsers)
 }
-
-*/
