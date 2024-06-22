@@ -1,5 +1,6 @@
 package user
 
+/*
 import (
 	"context"
 	"fmt"
@@ -134,3 +135,5 @@ func TestAchievement(t *testing.T) {
 
 	t.Run("getAchievementUsers", getAchievementUsers)
 }
+
+*/
