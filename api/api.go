@@ -5,6 +5,7 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1"
 
+	achievement "github.com/NpoolPlatform/inspire-middleware/api/achievement"
 	goodachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good"
 	goodcoinachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good/coin"
 	orderstatement "github.com/NpoolPlatform/inspire-middleware/api/achievement/statement/order"
@@ -42,6 +43,7 @@ func Register(server grpc.ServiceRegistrar) {
 	scope1.Register(server)
 	commission.Register(server)
 	goodachievement.Register(server)
+	achievement.Register(server)
 	goodcoinachievement.Register(server)
 	calculate.Register(server)
 	event.Register(server)
@@ -56,6 +58,9 @@ func Register(server grpc.ServiceRegistrar) {
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
 	if err := npool.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := achievement.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := goodachievement.RegisterGateway(mux, endpoint, opts); err != nil {
