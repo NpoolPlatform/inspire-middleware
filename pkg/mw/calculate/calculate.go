@@ -7,7 +7,7 @@ import (
 
 	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	appcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/commission/config"
-	appconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
+	appConfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	appgoodcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/good/commission/config"
 	commission2 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/calculate/commission"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
@@ -16,7 +16,7 @@ import (
 	paymentmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
 	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/commission/config"
-	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
+	appConfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	appgoodcommissionconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/good/commission/config"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	registrationmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
@@ -113,21 +113,21 @@ func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]
 
 //nolint
 func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq, error) {
-	h1, err := appconfig1.NewHandler(
+	h1, err := appConfig1.NewHandler(
 		ctx,
-		appconfig1.WithConds(&appconfigmwpb.Conds{
+		appConfig1.WithConds(&appConfigmwpb.Conds{
 			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			StartAt: &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
 			EndAt:   &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
 		}),
-		appconfig1.WithOffset(0),
-		appconfig1.WithLimit(1),
+		appConfig1.WithOffset(0),
+		appConfig1.WithLimit(1),
 	)
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
 
-	appconfigs, _, err := h1.GetAppConfigs(ctx)
+	appConfigs, _, err := h1.GetAppConfigs(ctx)
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
@@ -140,12 +140,12 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 
 	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
 
-	if len(appconfigs) == 0 {
+	if len(appConfigs) == 0 {
 		return handler.generateStatements(map[string]map[string][]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 	}
-	appconfig := appconfigs[0]
+	appConfig := appConfigs[0]
 
-	switch appconfig.CommissionType {
+	switch appConfig.CommissionType {
 	case types.CommissionType_LegacyCommission:
 		commissionConfigType = types.CommissionConfigType_LegacyCommissionConfig
 		fallthrough //nolint
@@ -160,7 +160,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 			return nil, wlog.WrapError(err)
 		}
 		if len(handler.inviters) == 0 {
-			return handler.generateStatements(map[string]map[string][]*commission2.Commission{}, appconfig.EntID, commissionConfigType)
+			return handler.generateStatements(map[string]map[string][]*commission2.Commission{}, appConfig.EntID, commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
 	default:
@@ -177,7 +177,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 		for _, payment := range h.Payments {
 			_comms := []*commission2.Commission{}
 
-			switch appconfig.CommissionType {
+			switch appConfig.CommissionType {
 			case types.CommissionType_LegacyCommission:
 				h2, err := commission1.NewHandler(
 					ctx,
@@ -206,7 +206,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 					commission2.WithSettleType(types.SettleType_GoodOrderPayment),
 					commission2.WithSettleAmountType(h.SettleAmountType),
 					commission2.WithInviters(handler.inviters),
-					commission2.WithAppConfig(appconfig),
+					commission2.WithAppConfig(appConfig),
 					commission2.WithCommissions(comms),
 					commission2.WithPaymentAmount(payment.Amount),
 					commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
@@ -251,7 +251,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						commission2.WithSettleType(types.SettleType_GoodOrderPayment),
 						commission2.WithSettleAmountType(h.SettleAmountType),
 						commission2.WithInviters(handler.inviters),
-						commission2.WithAppConfig(appconfig),
+						commission2.WithAppConfig(appConfig),
 						commission2.WithAppGoodCommissionConfigs(goodcomms),
 						commission2.WithPaymentAmount(payment.Amount),
 						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
@@ -294,7 +294,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						commission2.WithSettleType(types.SettleType_GoodOrderPayment),
 						commission2.WithSettleAmountType(h.SettleAmountType),
 						commission2.WithInviters(handler.inviters),
-						commission2.WithAppConfig(appconfig),
+						commission2.WithAppConfig(appConfig),
 						commission2.WithAppCommissionConfigs(appcomms),
 						commission2.WithPaymentAmount(payment.Amount),
 						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
@@ -315,12 +315,15 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 			}
 
 			for _, _com := range _comms {
-				commissions, ok := commMap[_com.UserID][payment.CoinTypeID]
+				coinCommMap, ok := commMap[_com.UserID]
+				if !ok {
+					coinCommMap = map[string][]*commission2.Commission{}
+				}
+				commissions, ok := coinCommMap[payment.CoinTypeID]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap := map[string][]*commission2.Commission{}
 				coinCommMap[payment.CoinTypeID] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
@@ -332,23 +335,26 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 					PaymentAmount:        payment.Amount,
 					Amount:               "0",
 					CommissionAmountUSD:  "0",
-					AppConfigID:          appconfig.EntID,
+					AppConfigID:          appConfig.EntID,
 					CommissionConfigID:   uuid.Nil.String(),
-					CommissionConfigType: types.CommissionConfigType(appconfig.CommissionType),
+					CommissionConfigType: types.CommissionConfigType(appConfig.CommissionType),
 				}
-				commissions, ok := commMap[h.UserID.String()][payment.CoinTypeID]
+				coinCommMap, ok := commMap[_com.UserID]
+				if !ok {
+					coinCommMap = map[string][]*commission2.Commission{}
+				}
+				commissions, ok := coinCommMap[payment.CoinTypeID]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap := map[string][]*commission2.Commission{}
 				coinCommMap[payment.CoinTypeID] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
 		}
 	}
 
-	return handler.generateStatements(commMap, appconfigs[0].EntID, commissionConfigType)
+	return handler.generateStatements(commMap, appConfigs[0].EntID, commissionConfigType)
 }
 
 //nolint
