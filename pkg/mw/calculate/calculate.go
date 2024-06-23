@@ -375,12 +375,15 @@ func (h *calculateHandler) generateStatements(
 				CommissionConfigID:   uuid.Nil.String(),
 				CommissionConfigType: commissionConfigType,
 			}
-			commissions, ok := userCoinCommMap[h.UserID.String()][payment.CoinTypeID]
+			coinCommMap, ok := userCoinCommMap[_com.UserID]
+			if !ok {
+				coinCommMap = map[string][]*commission2.Commission{}
+			}
+			commissions, ok := coinCommMap[payment.CoinTypeID]
 			if !ok {
 				commissions = []*commission2.Commission{}
 			}
 			commissions = append(commissions, _com)
-			coinCommMap := map[string][]*commission2.Commission{}
 			coinCommMap[payment.CoinTypeID] = commissions
 			userCoinCommMap[h.UserID.String()] = coinCommMap
 		}
@@ -400,9 +403,10 @@ func (h *calculateHandler) generateStatements(
 		userCommMap, ok := userCoinCommMap[inviter.InviterID]
 		if ok {
 			for key, commissions := range userCommMap {
+				_key := key
 				for _, commission := range commissions {
 					payments = append(payments, &paymentmwpb.StatementReq{
-						PaymentCoinTypeID: &key,
+						PaymentCoinTypeID: &_key,
 						Amount:            &commission.PaymentAmount,
 						CommissionAmount:  &commission.Amount,
 					})
@@ -466,9 +470,10 @@ func (h *calculateHandler) generateStatements(
 	userCommMap, ok := userCoinCommMap[h.UserID.String()]
 	if ok {
 		for key, commissions := range userCommMap {
+			_key := key
 			for _, commission := range commissions {
 				payments = append(payments, &paymentmwpb.StatementReq{
-					PaymentCoinTypeID: &key,
+					PaymentCoinTypeID: &_key,
 					Amount:            &commission.PaymentAmount,
 					CommissionAmount:  &commission.Amount,
 				})
