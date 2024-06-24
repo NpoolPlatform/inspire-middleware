@@ -357,14 +357,15 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	return handler.generateStatements(commMap, appConfigs[0].EntID, commissionConfigType)
 }
 
-//nolint
+//nolint:funlen
 func (h *calculateHandler) generateStatements(
 	userCoinCommMap map[string]map[string][]*commission2.Commission,
 	appConfigID string,
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
 	if len(userCoinCommMap) == 0 {
-		for _, payment := range h.Payments {
+		for i := range h.Payments {
+			payment := &h.Payments[i]
 			_com := &commission2.Commission{
 				AppID:                h.AppID.String(),
 				UserID:               h.UserID.String(),
