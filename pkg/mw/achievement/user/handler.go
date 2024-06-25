@@ -1,3 +1,4 @@
+//nolint:dupl
 package user
 
 import (
@@ -8,13 +9,14 @@ import (
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
 
 type Handler struct {
-	ID     *uint32
-	EntID  *uuid.UUID
+	ID *uint32
+	achievementusercrud.Req
 	Conds  *achievementusercrud.Conds
 	Offset int32
 	Limit  int32
@@ -56,6 +58,120 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 			return err
 		}
 		h.EntID = &_id
+		return nil
+	}
+}
+
+func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid appid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.AppID = &_id
+		return nil
+	}
+}
+
+func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid userid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.UserID = &_id
+		return nil
+	}
+}
+
+func WithDirectConsumeAmount(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid direct consume amount")
+			}
+			return nil
+		}
+		amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid direct consume amount")
+		}
+		h.DirectConsumeAmount = &amount
+		return nil
+	}
+}
+
+func WithInviteeConsumeAmount(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid invitee consume amount")
+			}
+			return nil
+		}
+		amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid invitee consume amount")
+		}
+		h.InviteeConsumeAmount = &amount
+		return nil
+	}
+}
+
+func WithTotalCommission(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid total commission")
+			}
+			return nil
+		}
+		amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid total commission")
+		}
+		h.TotalCommission = &amount
+		return nil
+	}
+}
+
+func WithSelfCommission(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid self commission")
+			}
+			return nil
+		}
+		amount, err := decimal.NewFromString(*value)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid self commission")
+		}
+		h.SelfCommission = &amount
 		return nil
 	}
 }

@@ -7,10 +7,8 @@ import (
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
-	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	entappcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
 	entappgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
@@ -20,6 +18,7 @@ import (
 
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
@@ -33,6 +32,8 @@ type createHandler struct {
 	sqlUpdateGoodAchievement     string
 	sqlCreateGoodCoinAchievement string
 	sqlUpdateGoodCoinAchievement string
+	sqlCreateAchievementUser     string
+	sqlUpdateAchievementUser     string
 	selfOrder                    bool
 	selfUnits                    decimal.Decimal
 	selfAmountUSD                decimal.Decimal
@@ -198,6 +199,25 @@ func (h *createHandler) constructCreateGoodCoinAchievementSQL(ctx context.Contex
 	return nil
 }
 
+func (h *createHandler) constructCreateAchievementUserSQL(ctx context.Context) error {
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithEntID(func() *string { s := uuid.NewString(); return &s }(), true),
+		achievementuser1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		achievementuser1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		achievementuser1.WithTotalCommission(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithSelfCommission(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithDirectConsumeAmount(func() *string { s := h.selfAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithInviteeConsumeAmount(func() *string { s := h.inviteeConsumeAmount.String(); return &s }(), true),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	h.sqlCreateAchievementUser = handler.ConstructCreateSQL()
+	h.sqlUpdateAchievementUser = handler.ConstructUpdateSQL()
+	return nil
+}
+
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
@@ -259,59 +279,19 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 
+func (h *createHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlUpdateAchievementUser)
+}
+
 func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *ent.Tx) error {
-	info, err := tx.
-		AchievementUser.
-		Query().
-		Where(
-			entachievementuser.AppID(*h.AppID),
-			entachievementuser.UserID(*h.UserID),
-			entachievementuser.DeletedAt(0),
-		).Only(ctx)
-	if err != nil {
-		if !ent.IsNotFound(err) {
-			return wlog.WrapError(err)
-		}
-	}
-	if info == nil {
-		if _, err := achievementusercrud.CreateSet(
-			tx.AchievementUser.Create(),
-			&achievementusercrud.Req{
-				AppID:                h.AppID,
-				UserID:               h.UserID,
-				TotalCommission:      h.CommissionAmountUSD,
-				SelfCommission:       &h.selfCommissionAmountUSD,
-				InviteeConsumeAmount: &h.inviteeConsumeAmount,
-				DirectConsumeAmount:  &h.selfAmountUSD,
-			}).Save(ctx); err != nil {
-			return wlog.WrapError(err)
-		}
+	err := h.execSQL(ctx, tx, h.sqlCreateAchievementUser)
+	if err == nil {
 		return nil
 	}
-
-	if _, err := achievementusercrud.UpdateSet(
-		tx.AchievementUser.UpdateOneID(info.ID),
-		&achievementusercrud.Req{
-			TotalCommission: func() *decimal.Decimal {
-				d := info.TotalCommission.Add(*h.CommissionAmountUSD)
-				return &d
-			}(),
-			SelfCommission: func() *decimal.Decimal {
-				d := info.SelfCommission.Add(h.selfCommissionAmountUSD)
-				return &d
-			}(),
-			DirectConsumeAmount: func() *decimal.Decimal {
-				d := info.DirectConsumeAmount.Add(h.selfAmountUSD)
-				return &d
-			}(),
-			InviteeConsumeAmount: func() *decimal.Decimal {
-				d := info.InviteeConsumeAmount.Add(h.inviteeConsumeAmount)
-				return &d
-			}(),
-		}).Save(ctx); err != nil {
+	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	return nil
+	return h.updateAchievementUser(ctx, tx)
 }
 
 func (h *Handler) validateCommissionAmount() error {
@@ -381,6 +361,9 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if err := handler.constructCreateGoodCoinAchievementSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructCreateAchievementUserSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 
