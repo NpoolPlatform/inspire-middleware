@@ -111,7 +111,7 @@ func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]
 	return achievementUserMap, nil
 }
 
-//nolint
+//nolint:funlen
 func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq, error) {
 	h1, err := appConfig1.NewHandler(
 		ctx,
@@ -148,7 +148,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	switch appConfig.CommissionType {
 	case types.CommissionType_LegacyCommission:
 		commissionConfigType = types.CommissionConfigType_LegacyCommissionConfig
-		fallthrough //nolint
+		fallthrough
 	case types.CommissionType_LayeredCommission:
 		err := handler.getLayeredInviters(ctx)
 		if err != nil {
@@ -235,7 +235,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
 					}),
 					appgoodcommissionconfig1.WithOffset(0),
-					appgoodcommissionconfig1.WithLimit(0),
+					appgoodcommissionconfig1.WithLimit(1),
 				)
 				if err != nil {
 					return nil, wlog.WrapError(err)
@@ -396,7 +396,8 @@ func (h *calculateHandler) generateStatements(
 		}
 
 		commissionAmountUSD := decimal.NewFromInt(0).String()
-		commissionConfigID := uuid.Nil.String()
+		inviterCommissionConfigID := uuid.Nil.String()
+		inviterCommissionConfigType := commissionConfigType
 
 		payments := []*paymentmwpb.StatementReq{}
 
@@ -410,8 +411,8 @@ func (h *calculateHandler) generateStatements(
 						Amount:            &commission.PaymentAmount,
 						CommissionAmount:  &commission.Amount,
 					})
-					commissionConfigID = commission.CommissionConfigID
-					commissionConfigType = commission.CommissionConfigType
+					inviterCommissionConfigID = commission.CommissionConfigID
+					inviterCommissionConfigType = commission.CommissionConfigType
 					if h.HasCommission {
 						commissionAmountUSD = commission.CommissionAmountUSD
 					}
@@ -454,8 +455,8 @@ func (h *calculateHandler) generateStatements(
 			}(),
 			CommissionAmountUSD:  &commissionAmountUSD,
 			AppConfigID:          &appConfigID,
-			CommissionConfigID:   &commissionConfigID,
-			CommissionConfigType: &commissionConfigType,
+			CommissionConfigID:   &inviterCommissionConfigID,
+			CommissionConfigType: &inviterCommissionConfigType,
 			PaymentStatements:    payments,
 		})
 	}
