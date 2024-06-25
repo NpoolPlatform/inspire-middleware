@@ -11,6 +11,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	entappcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
+	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
+	entappgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
+	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
+	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
@@ -40,7 +45,7 @@ func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
 
-	_sql := "insert into order_statements "
+	_sql := fmt.Sprintf("insert into %v ", entorderstatement.Table)
 	_sql += "("
 	if h.EntID != nil {
 		_sql += "ent_id"
@@ -91,7 +96,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
 	_sql += "where not exists ("
-	_sql += "select 1 from order_statements "
+	_sql += fmt.Sprintf("select 1 from %v ", entorderstatement.Table)
 	_sql += fmt.Sprintf(
 		"where user_id = '%v' and order_id = '%v' ",
 		*h.UserID,
@@ -101,7 +106,7 @@ func (h *createHandler) constructSQL() {
 
 	if h.AppConfigID != nil {
 		_sql += " and exists ("
-		_sql += "select 1 from app_configs "
+		_sql += fmt.Sprintf("select 1 from %v ", entappconfig.Table)
 		_sql += fmt.Sprintf(
 			"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
 			*h.AppID,
@@ -114,7 +119,7 @@ func (h *createHandler) constructSQL() {
 		switch *h.CommissionConfigType {
 		case types.CommissionConfigType_LegacyCommissionConfig:
 			_sql += " and exists ("
-			_sql += "select 1 from commissions "
+			_sql += fmt.Sprintf("select 1 from %v ", entcommission.Table)
 			_sql += fmt.Sprintf(
 				"where app_id = '%v' and ent_id = '%v' and user_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
 				*h.AppID,
@@ -125,7 +130,7 @@ func (h *createHandler) constructSQL() {
 			)
 		case types.CommissionConfigType_AppCommissionConfig:
 			_sql += " and exists ("
-			_sql += "select 1 from app_commission_configs "
+			_sql += fmt.Sprintf("select 1 from %v ", entappcommissionconfig.Table)
 			_sql += fmt.Sprintf(
 				"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
 				*h.AppID,
@@ -133,7 +138,7 @@ func (h *createHandler) constructSQL() {
 			)
 		case types.CommissionConfigType_AppGoodCommissionConfig:
 			_sql += " and exists ("
-			_sql += "select 1 from app_good_commission_configs "
+			_sql += fmt.Sprintf("select 1 from %v ", entappgoodcommissionconfig.Table)
 			_sql += fmt.Sprintf(
 				"where app_id = '%v' and ent_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
 				*h.AppID,
