@@ -314,7 +314,12 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 	return nil
 }
 
-func (h *Handler) verifyCommissionAmount() error {
+func (h *Handler) validateCommissionAmount() error {
+	if h.CommissionConfigID == nil {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+			return wlog.Errorf("commission config id mismatch commission amount usd")
+		}
+	}
 	for _, req := range h.PaymentStatementReqs {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) <= 0 {
 			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) > 0 {
@@ -325,20 +330,8 @@ func (h *Handler) verifyCommissionAmount() error {
 	return nil
 }
 
-func (h *Handler) checkCommAmountUSD() error {
-	if h.CommissionConfigID == nil || *h.CommissionConfigID == uuid.Nil {
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			return wlog.Errorf("commission config id mismatch commission amount usd")
-		}
-	}
-	return nil
-}
-
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.checkCommAmountUSD(); err != nil {
-		return wlog.WrapError(err)
-	}
-	if err := h.verifyCommissionAmount(); err != nil {
+	if err := h.validateCommissionAmount(); err != nil {
 		return wlog.WrapError(err)
 	}
 
