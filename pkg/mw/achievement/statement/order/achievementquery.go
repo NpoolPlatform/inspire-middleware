@@ -4,6 +4,7 @@ import (
 	"context"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
@@ -45,20 +46,29 @@ func (h *achievementQueryHandler) getGoodCoinAchievement(ctx context.Context, cl
 	return err
 }
 
-func (h *achievementQueryHandler) _getAchievementWithTx(ctx context.Context, tx *ent.Tx, must bool) error {
+func (h *achievementQueryHandler) _processAchievement(ctx context.Context, cli *ent.Client, must bool) error {
 	if h.AppGoodID == nil || h.UserID == nil || h.GoodCoinTypeID == nil {
 		return wlog.Errorf("invalid goodid")
 	}
-	if err := h.getGoodAchievement(ctx, tx.Client(), must); err != nil {
+	if err := h.getGoodAchievement(ctx, cli, must); err != nil {
 		return wlog.WrapError(err)
 	}
-	return h.getGoodCoinAchievement(ctx, tx.Client(), must)
+	return h.getGoodCoinAchievement(ctx, cli, must)
+}
+
+func (h *achievementQueryHandler) _getAchievement(ctx context.Context, tx *ent.Tx, must bool) error {
+	if tx != nil {
+		return h._processAchievement(ctx, tx.Client(), must)
+	}
+	return db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		return h._processAchievement(ctx, cli, must)
+	})
 }
 
 func (h *achievementQueryHandler) getAchievementWithTx(ctx context.Context, tx *ent.Tx) error {
-	return h._getAchievementWithTx(ctx, tx, false)
+	return h._getAchievement(ctx, tx, false)
 }
 
 func (h *achievementQueryHandler) requireAchievementWithTx(ctx context.Context, tx *ent.Tx) error {
-	return h._getAchievementWithTx(ctx, tx, true)
+	return h._getAchievement(ctx, tx, true)
 }

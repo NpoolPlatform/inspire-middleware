@@ -29,21 +29,25 @@ func (h *queryHandler) formalize() {
 }
 
 func (h *Handler) GetStatement(ctx context.Context) (*npool.Statement, error) {
+	return h._getStatement(ctx, nil)
+}
+
+func (h *Handler) GetStatementWithTx(ctx context.Context, tx *ent.Tx) (*npool.Statement, error) {
+	return h._getStatement(ctx, tx.Client())
+}
+
+func (h *Handler) _getStatement(ctx context.Context, cli *ent.Client) (*npool.Statement, error) {
 	handler := &queryHandler{
 		baseQueryHandler: &baseQueryHandler{
 			Handler: h,
 		},
 	}
-
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryOrderStatement(cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		handler.queryJoin()
-		return handler.scan(_ctx)
-	})
-	if err != nil {
+	if err := handler.queryOrderStatement(cli); err != nil {
 		return nil, wlog.WrapError(err)
+	}
+	handler.queryJoin()
+	if err := handler.scan(ctx); err != nil {
+		return nil, err
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
@@ -53,7 +57,6 @@ func (h *Handler) GetStatement(ctx context.Context) (*npool.Statement, error) {
 	}
 
 	handler.formalize()
-
 	return handler.infos[0], nil
 }
 

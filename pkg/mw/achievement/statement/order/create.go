@@ -7,18 +7,18 @@ import (
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
-	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	entappcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
 	entappgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
+	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
 	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
@@ -32,6 +32,8 @@ type createHandler struct {
 	sqlUpdateGoodAchievement     string
 	sqlCreateGoodCoinAchievement string
 	sqlUpdateGoodCoinAchievement string
+	sqlCreateAchievementUser     string
+	sqlUpdateAchievementUser     string
 	selfOrder                    bool
 	selfUnits                    decimal.Decimal
 	selfAmountUSD                decimal.Decimal
@@ -44,7 +46,7 @@ func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())
 
-	_sql := "insert into order_statements "
+	_sql := fmt.Sprintf("insert into %v ", entorderstatement.Table)
 	_sql += "("
 	if h.EntID != nil {
 		_sql += "ent_id"
@@ -95,13 +97,59 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
 	_sql += "where not exists ("
-	_sql += "select 1 from order_statements "
+	_sql += fmt.Sprintf("select 1 from %v ", entorderstatement.Table)
 	_sql += fmt.Sprintf(
 		"where user_id = '%v' and order_id = '%v' ",
 		*h.UserID,
 		*h.OrderID,
 	)
 	_sql += "limit 1)"
+
+	if h.AppConfigID != nil {
+		_sql += " and exists ("
+		_sql += fmt.Sprintf("select 1 from %v ", entappconfig.Table)
+		_sql += fmt.Sprintf(
+			"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+			*h.AppID,
+			*h.AppConfigID,
+		)
+		_sql += "limit 1)"
+	}
+
+	if h.CommissionConfigID != nil && *h.CommissionConfigID != uuid.Nil {
+		switch *h.CommissionConfigType {
+		case types.CommissionConfigType_LegacyCommissionConfig:
+			_sql += " and exists ("
+			_sql += fmt.Sprintf("select 1 from %v ", entcommission.Table)
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and user_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+				*h.UserID,
+				*h.GoodID,
+				*h.AppGoodID,
+			)
+		case types.CommissionConfigType_AppCommissionConfig:
+			_sql += " and exists ("
+			_sql += fmt.Sprintf("select 1 from %v ", entappcommissionconfig.Table)
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+			)
+		case types.CommissionConfigType_AppGoodCommissionConfig:
+			_sql += " and exists ("
+			_sql += fmt.Sprintf("select 1 from %v ", entappgoodcommissionconfig.Table)
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+				*h.GoodID,
+				*h.AppGoodID,
+			)
+		}
+		_sql += "limit 1)"
+	}
 
 	h.sql = _sql
 }
@@ -148,6 +196,25 @@ func (h *createHandler) constructCreateGoodCoinAchievementSQL(ctx context.Contex
 	}
 	h.sqlCreateGoodCoinAchievement = handler.ConstructCreateSQL()
 	h.sqlUpdateGoodCoinAchievement = handler.ConstructUpdateSQL()
+	return nil
+}
+
+func (h *createHandler) constructCreateAchievementUserSQL(ctx context.Context) error {
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithEntID(func() *string { s := uuid.NewString(); return &s }(), true),
+		achievementuser1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		achievementuser1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		achievementuser1.WithTotalCommission(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithSelfCommission(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithDirectConsumeAmount(func() *string { s := h.selfAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithInviteeConsumeAmount(func() *string { s := h.inviteeConsumeAmount.String(); return &s }(), true),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	h.sqlCreateAchievementUser = handler.ConstructCreateSQL()
+	h.sqlUpdateAchievementUser = handler.ConstructUpdateSQL()
 	return nil
 }
 
@@ -212,79 +279,27 @@ func (h *createHandler) createOrUpdateGoodCoinAchievement(ctx context.Context, t
 	return h.updateGoodCoinAchievement(ctx, tx)
 }
 
+func (h *createHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlUpdateAchievementUser)
+}
+
 func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *ent.Tx) error {
-	info, err := tx.
-		AchievementUser.
-		Query().
-		Where(
-			entachievementuser.AppID(*h.AppID),
-			entachievementuser.UserID(*h.UserID),
-			entachievementuser.DeletedAt(0),
-		).Only(ctx)
-	if err != nil {
-		if !ent.IsNotFound(err) {
-			return wlog.WrapError(err)
-		}
-	}
-	if info == nil {
-		if _, err := achievementusercrud.CreateSet(
-			tx.AchievementUser.Create(),
-			&achievementusercrud.Req{
-				AppID:                h.AppID,
-				UserID:               h.UserID,
-				TotalCommission:      h.CommissionAmountUSD,
-				SelfCommission:       &h.selfCommissionAmountUSD,
-				InviteeConsumeAmount: &h.inviteeConsumeAmount,
-				DirectConsumeAmount:  &h.selfAmountUSD,
-			}).Save(ctx); err != nil {
-			return wlog.WrapError(err)
-		}
+	err := h.execSQL(ctx, tx, h.sqlCreateAchievementUser)
+	if err == nil {
 		return nil
 	}
-
-	if _, err := achievementusercrud.UpdateSet(
-		tx.AchievementUser.UpdateOneID(info.ID),
-		&achievementusercrud.Req{
-			TotalCommission: func() *decimal.Decimal {
-				d := info.TotalCommission.Add(*h.CommissionAmountUSD)
-				return &d
-			}(),
-			SelfCommission: func() *decimal.Decimal {
-				d := info.SelfCommission.Add(h.selfCommissionAmountUSD)
-				return &d
-			}(),
-			DirectConsumeAmount: func() *decimal.Decimal {
-				d := info.DirectConsumeAmount.Add(h.selfAmountUSD)
-				return &d
-			}(),
-			InviteeConsumeAmount: func() *decimal.Decimal {
-				d := info.InviteeConsumeAmount.Add(h.inviteeConsumeAmount)
-				return &d
-			}(),
-		}).Save(ctx); err != nil {
+	if !wlog.Equal(err, cruder.ErrCreateNothing) {
 		return wlog.WrapError(err)
 	}
-	return nil
+	return h.updateAchievementUser(ctx, tx)
 }
 
-func (h *Handler) verifyAppConfigID(ctx context.Context, tx *ent.Tx) error {
-	if *h.AppConfigID != uuid.Nil {
-		if _, err := tx.
-			AppConfig.
-			Query().
-			Where(
-				entappconfig.AppID(*h.AppID),
-				entappconfig.EntID(*h.AppConfigID),
-				entappconfig.DeletedAt(0),
-			).
-			Only(ctx); err != nil {
-			return wlog.WrapError(err)
+func (h *Handler) validateCommissionAmount() error {
+	if h.CommissionConfigID == nil {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+			return wlog.Errorf("commission config id mismatch commission amount usd")
 		}
 	}
-	return nil
-}
-
-func (h *Handler) verifyCommissionAmount() error {
 	for _, req := range h.PaymentStatementReqs {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) <= 0 {
 			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) > 0 {
@@ -295,99 +310,8 @@ func (h *Handler) verifyCommissionAmount() error {
 	return nil
 }
 
-func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
-	if h.CommissionConfigID == nil || *h.CommissionConfigID == uuid.Nil {
-		switch *h.CommissionConfigType {
-		case types.CommissionConfigType_AppCommissionConfig:
-			fallthrough //nolint
-		case types.CommissionConfigType_AppGoodCommissionConfig:
-			h.CommissionConfigID = &uuid.Nil
-		case types.CommissionConfigType_LegacyCommissionConfig:
-			h.CommissionConfigID = &uuid.Nil
-			fallthrough
-		case types.CommissionConfigType_WithoutCommissionConfig:
-			if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-				return wlog.Errorf("commission config type mismatch commission amount usd")
-			}
-			h.CommissionConfigID = &uuid.Nil
-		}
-		return nil
-	}
-
-	switch *h.CommissionConfigType {
-	case types.CommissionConfigType_LegacyCommissionConfig:
-		comm, err := tx.
-			Commission.
-			Query().
-			Where(
-				entcommission.AppID(*h.AppID),
-				entcommission.EntID(*h.CommissionConfigID),
-				entcommission.UserID(*h.UserID),
-				entcommission.GoodID(*h.GoodID),
-				entcommission.AppGoodID(*h.AppGoodID),
-				entcommission.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if comm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid commission amount or percent")
-			}
-		}
-	case types.CommissionConfigType_AppCommissionConfig:
-		appcomm, err := tx.
-			AppCommissionConfig.
-			Query().
-			Where(
-				entappcommissionconfig.AppID(*h.AppID),
-				entappcommissionconfig.EntID(*h.CommissionConfigID),
-				entappcommissionconfig.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if appcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid app commission amount or percent")
-			}
-		}
-	case types.CommissionConfigType_AppGoodCommissionConfig:
-		appgoodcomm, err := tx.
-			AppGoodCommissionConfig.
-			Query().
-			Where(
-				entappgoodcommissionconfig.AppID(*h.AppID),
-				entappgoodcommissionconfig.EntID(*h.CommissionConfigID),
-				entappgoodcommissionconfig.GoodID(*h.GoodID),
-				entappgoodcommissionconfig.AppGoodID(*h.AppGoodID),
-				entappgoodcommissionconfig.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if appgoodcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid appgood commission amount or percent")
-			}
-		}
-	case types.CommissionConfigType_WithoutCommissionConfig:
-		return wlog.Errorf("commission config type mismatch commission config id")
-	}
-	return nil
-}
-
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.verifyAppConfigID(ctx, tx); err != nil {
-		return wlog.WrapError(err)
-	}
-	if err := h.verifyCommConfigID(ctx, tx); err != nil {
-		return wlog.WrapError(err)
-	}
-	if err := h.verifyCommissionAmount(); err != nil {
+	if err := h.validateCommissionAmount(); err != nil {
 		return wlog.WrapError(err)
 	}
 
@@ -437,6 +361,9 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if err := handler.constructCreateGoodCoinAchievementSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructCreateAchievementUserSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 

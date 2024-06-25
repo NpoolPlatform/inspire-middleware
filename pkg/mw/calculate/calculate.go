@@ -141,7 +141,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	commissionConfigType := types.CommissionConfigType_WithoutCommissionConfig
 
 	if len(appConfigs) == 0 {
-		return handler.generateStatements(map[string]map[string][]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
+		return handler.generateStatements(map[string]map[uuid.UUID][]*commission2.Commission{}, uuid.Nil.String(), commissionConfigType)
 	}
 	appConfig := appConfigs[0]
 
@@ -160,7 +160,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 			return nil, wlog.WrapError(err)
 		}
 		if len(handler.inviters) == 0 {
-			return handler.generateStatements(map[string]map[string][]*commission2.Commission{}, appConfig.EntID, commissionConfigType)
+			return handler.generateStatements(map[string]map[uuid.UUID][]*commission2.Commission{}, appConfig.EntID, commissionConfigType)
 		}
 	case types.CommissionType_WithoutCommission:
 	default:
@@ -172,7 +172,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 		return nil, wlog.WrapError(err)
 	}
 
-	commMap := map[string]map[string][]*commission2.Commission{} // userid->cointypeid->commissions
+	commMap := map[string]map[uuid.UUID][]*commission2.Commission{} // userid->cointypeid->commissions
 	if h.HasCommission {
 		for _, payment := range h.Payments {
 			_comms := []*commission2.Commission{}
@@ -317,14 +317,14 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 			for _, _com := range _comms {
 				coinCommMap, ok := commMap[_com.UserID]
 				if !ok {
-					coinCommMap = map[string][]*commission2.Commission{}
+					coinCommMap = map[uuid.UUID][]*commission2.Commission{}
 				}
-				commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
+				commissions, ok := coinCommMap[*payment.PaymentCoinTypeID]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
+				coinCommMap[*payment.PaymentCoinTypeID] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
 
@@ -341,14 +341,14 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 				}
 				coinCommMap, ok := commMap[_com.UserID]
 				if !ok {
-					coinCommMap = map[string][]*commission2.Commission{}
+					coinCommMap = map[uuid.UUID][]*commission2.Commission{}
 				}
-				commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
+				commissions, ok := coinCommMap[*payment.PaymentCoinTypeID]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
+				coinCommMap[*payment.PaymentCoinTypeID] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
 		}
@@ -359,7 +359,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 
 //nolint:funlen
 func (h *calculateHandler) generateStatements(
-	userCoinCommMap map[string]map[string][]*commission2.Commission,
+	userCoinCommMap map[string]map[uuid.UUID][]*commission2.Commission,
 	appConfigID string,
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
@@ -377,14 +377,14 @@ func (h *calculateHandler) generateStatements(
 			}
 			coinCommMap, ok := userCoinCommMap[_com.UserID]
 			if !ok {
-				coinCommMap = map[string][]*commission2.Commission{}
+				coinCommMap = map[uuid.UUID][]*commission2.Commission{}
 			}
-			commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
+			commissions, ok := coinCommMap[*payment.PaymentCoinTypeID]
 			if !ok {
 				commissions = []*commission2.Commission{}
 			}
 			commissions = append(commissions, _com)
-			coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
+			coinCommMap[*payment.PaymentCoinTypeID] = commissions
 			userCoinCommMap[h.UserID.String()] = coinCommMap
 		}
 	}
@@ -403,7 +403,7 @@ func (h *calculateHandler) generateStatements(
 		userCommMap, ok := userCoinCommMap[inviter.InviterID]
 		if ok {
 			for key, commissions := range userCommMap {
-				_key := key
+				_key := key.String()
 				for _, commission := range commissions {
 					payments = append(payments, &paymentmwpb.StatementReq{
 						PaymentCoinTypeID: &_key,
@@ -467,7 +467,7 @@ func (h *calculateHandler) generateStatements(
 	userCommMap, ok := userCoinCommMap[h.UserID.String()]
 	if ok {
 		for key, commissions := range userCommMap {
-			_key := key
+			_key := key.String()
 			for _, commission := range commissions {
 				payments = append(payments, &paymentmwpb.StatementReq{
 					PaymentCoinTypeID: &_key,
