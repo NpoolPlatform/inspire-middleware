@@ -14,7 +14,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
-	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
+	"github.com/google/uuid"
 
 	"github.com/shopspring/decimal"
 )
@@ -143,32 +143,8 @@ func (h *deleteHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) e
 	return nil
 }
 
-func (h *Handler) getStatement(ctx context.Context, tx *ent.Tx) (*ent.OrderStatement, error) {
-	stm := tx.OrderStatement.Query().Where(entorderstatement.DeletedAt(0))
-	if h.ID == nil && h.EntID == nil {
-		return nil, wlog.Errorf("id and ent id is empty")
-	}
-	if h.ID != nil {
-		stm.Where(entorderstatement.ID(*h.ID))
-	}
-	if h.EntID != nil {
-		stm.Where(entorderstatement.EntID(*h.EntID))
-	}
-	rows, err := stm.All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if len(rows) == 0 {
-		return nil, nil
-	}
-	if len(rows) > 1 {
-		return nil, wlog.Errorf("too many records")
-	}
-	return rows[0], nil
-}
-
 func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	info, err := h.getStatement(ctx, tx)
+	info, err := h.GetStatementWithTx(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -177,11 +153,11 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	h.ID = &info.ID
-	h.EntID = &info.EntID
-	h.AppID = &info.AppID
-	h.UserID = &info.UserID
-	h.AppGoodID = &info.AppGoodID
-	h.GoodCoinTypeID = &info.GoodCoinTypeID
+	h.EntID = func() *uuid.UUID { uid, _ := uuid.Parse(info.EntID); return &uid }()
+	h.AppID = func() *uuid.UUID { uid, _ := uuid.Parse(info.AppID); return &uid }()
+	h.UserID = func() *uuid.UUID { uid, _ := uuid.Parse(info.UserID); return &uid }()
+	h.AppGoodID = func() *uuid.UUID { uid, _ := uuid.Parse(info.AppGoodID); return &uid }()
+	h.GoodCoinTypeID = func() *uuid.UUID { uid, _ := uuid.Parse(info.GoodCoinTypeID); return &uid }()
 
 	handler := &deleteHandler{
 		achievementQueryHandler: &achievementQueryHandler{
@@ -194,10 +170,10 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 
-	handler.paymentAmountUSD = info.GoodValueUsd
-	handler.inviteeConsumeAmount = info.GoodValueUsd
-	handler.units = info.Units
-	handler.commissionAmountUSD = info.CommissionAmountUsd
+	handler.paymentAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount }()
+	handler.inviteeConsumeAmount = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.GoodValueUSD); return amount }()
+	handler.units = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.Units); return amount }()
+	handler.commissionAmountUSD = func() decimal.Decimal { amount, _ := decimal.NewFromString(info.CommissionAmountUSD); return amount }()
 	if info.UserID == info.OrderUserID {
 		handler.selfPaymentAmountUSD = handler.paymentAmountUSD
 		handler.selfUnits = handler.units
