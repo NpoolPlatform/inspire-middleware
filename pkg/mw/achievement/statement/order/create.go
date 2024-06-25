@@ -11,10 +11,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
-	entappcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
-	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
-	entappgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
-	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 
 	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
@@ -102,6 +98,52 @@ func (h *createHandler) constructSQL() {
 		*h.OrderID,
 	)
 	_sql += "limit 1)"
+
+	if h.AppConfigID != nil {
+		_sql += " and exists ("
+		_sql += "select 1 from app_configs "
+		_sql += fmt.Sprintf(
+			"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+			*h.AppID,
+			*h.AppConfigID,
+		)
+		_sql += "limit 1)"
+	}
+
+	if h.CommissionConfigID != nil && *h.CommissionConfigID != uuid.Nil {
+		switch *h.CommissionConfigType {
+		case types.CommissionConfigType_LegacyCommissionConfig:
+			_sql += " and exists ("
+			_sql += "select 1 from commissions "
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and user_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+				*h.UserID,
+				*h.GoodID,
+				*h.AppGoodID,
+			)
+		case types.CommissionConfigType_AppCommissionConfig:
+			_sql += " and exists ("
+			_sql += "select 1 from app_commission_configs "
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+			)
+		case types.CommissionConfigType_AppGoodCommissionConfig:
+			_sql += " and exists ("
+			_sql += "select 1 from app_good_commission_configs "
+			_sql += fmt.Sprintf(
+				"where app_id = '%v' and ent_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",
+				*h.AppID,
+				*h.CommissionConfigID,
+				*h.GoodID,
+				*h.AppGoodID,
+			)
+		}
+		_sql += "limit 1)"
+	}
 
 	h.sql = _sql
 }
@@ -267,23 +309,6 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 	return nil
 }
 
-func (h *Handler) verifyAppConfigID(ctx context.Context, tx *ent.Tx) error {
-	if *h.AppConfigID != uuid.Nil {
-		if _, err := tx.
-			AppConfig.
-			Query().
-			Where(
-				entappconfig.AppID(*h.AppID),
-				entappconfig.EntID(*h.AppConfigID),
-				entappconfig.DeletedAt(0),
-			).
-			Only(ctx); err != nil {
-			return wlog.WrapError(err)
-		}
-	}
-	return nil
-}
-
 func (h *Handler) verifyCommissionAmount() error {
 	for _, req := range h.PaymentStatementReqs {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) <= 0 {
@@ -295,96 +320,17 @@ func (h *Handler) verifyCommissionAmount() error {
 	return nil
 }
 
-func (h *Handler) verifyCommConfigID(ctx context.Context, tx *ent.Tx) error {
+func (h *Handler) checkCommAmountUSD() error {
 	if h.CommissionConfigID == nil || *h.CommissionConfigID == uuid.Nil {
-		switch *h.CommissionConfigType {
-		case types.CommissionConfigType_AppCommissionConfig:
-			fallthrough //nolint
-		case types.CommissionConfigType_AppGoodCommissionConfig:
-			h.CommissionConfigID = &uuid.Nil
-		case types.CommissionConfigType_LegacyCommissionConfig:
-			h.CommissionConfigID = &uuid.Nil
-			fallthrough
-		case types.CommissionConfigType_WithoutCommissionConfig:
-			if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-				return wlog.Errorf("commission config type mismatch commission amount usd")
-			}
-			h.CommissionConfigID = &uuid.Nil
-		}
-		return nil
-	}
-
-	switch *h.CommissionConfigType {
-	case types.CommissionConfigType_LegacyCommissionConfig:
-		comm, err := tx.
-			Commission.
-			Query().
-			Where(
-				entcommission.AppID(*h.AppID),
-				entcommission.EntID(*h.CommissionConfigID),
-				entcommission.UserID(*h.UserID),
-				entcommission.GoodID(*h.GoodID),
-				entcommission.AppGoodID(*h.AppGoodID),
-				entcommission.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if comm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid commission amount or percent")
-			}
+			return wlog.Errorf("commission config id mismatch commission amount usd")
 		}
-	case types.CommissionConfigType_AppCommissionConfig:
-		appcomm, err := tx.
-			AppCommissionConfig.
-			Query().
-			Where(
-				entappcommissionconfig.AppID(*h.AppID),
-				entappcommissionconfig.EntID(*h.CommissionConfigID),
-				entappcommissionconfig.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if appcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid app commission amount or percent")
-			}
-		}
-	case types.CommissionConfigType_AppGoodCommissionConfig:
-		appgoodcomm, err := tx.
-			AppGoodCommissionConfig.
-			Query().
-			Where(
-				entappgoodcommissionconfig.AppID(*h.AppID),
-				entappgoodcommissionconfig.EntID(*h.CommissionConfigID),
-				entappgoodcommissionconfig.GoodID(*h.GoodID),
-				entappgoodcommissionconfig.AppGoodID(*h.AppGoodID),
-				entappgoodcommissionconfig.EndAt(0),
-			).
-			Only(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-			if appgoodcomm.AmountOrPercent.Cmp(decimal.NewFromInt(0)) <= 0 {
-				return wlog.Errorf("invalid appgood commission amount or percent")
-			}
-		}
-	case types.CommissionConfigType_WithoutCommissionConfig:
-		return wlog.Errorf("commission config type mismatch commission config id")
 	}
 	return nil
 }
 
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.verifyAppConfigID(ctx, tx); err != nil {
-		return wlog.WrapError(err)
-	}
-	if err := h.verifyCommConfigID(ctx, tx); err != nil {
+	if err := h.checkCommAmountUSD(); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := h.verifyCommissionAmount(); err != nil {
