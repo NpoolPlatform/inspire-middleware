@@ -428,7 +428,7 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		}(),
 	}
 
-	if err := handler.getAchievement(ctx, tx); err != nil {
+	if err := handler.getAchievementWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 

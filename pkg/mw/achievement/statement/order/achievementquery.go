@@ -45,7 +45,7 @@ func (h *achievementQueryHandler) getGoodCoinAchievement(ctx context.Context, cl
 	return err
 }
 
-func (h *achievementQueryHandler) _getAchievement(ctx context.Context, tx *ent.Tx, must bool) error {
+func (h *achievementQueryHandler) _getAchievementWithTx(ctx context.Context, tx *ent.Tx, must bool) error {
 	if h.AppGoodID == nil || h.UserID == nil || h.GoodCoinTypeID == nil {
 		return wlog.Errorf("invalid goodid")
 	}
@@ -55,10 +55,10 @@ func (h *achievementQueryHandler) _getAchievement(ctx context.Context, tx *ent.T
 	return h.getGoodCoinAchievement(ctx, tx.Client(), must)
 }
 
-func (h *achievementQueryHandler) getAchievement(ctx context.Context, tx *ent.Tx) error {
-	return h._getAchievement(ctx, tx, false)
+func (h *achievementQueryHandler) getAchievementWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getAchievementWithTx(ctx, tx, false)
 }
 
-func (h *achievementQueryHandler) requireAchievement(ctx context.Context, tx *ent.Tx) error {
-	return h._getAchievement(ctx, tx, true)
+func (h *achievementQueryHandler) requireAchievementWithTx(ctx context.Context, tx *ent.Tx) error {
+	return h._getAchievementWithTx(ctx, tx, true)
 }

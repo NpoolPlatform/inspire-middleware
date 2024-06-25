@@ -190,7 +190,7 @@ func (h *Handler) DeleteStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		now: uint32(time.Now().Unix()),
 	}
 
-	if err := handler.requireAchievement(ctx, tx); err != nil {
+	if err := handler.requireAchievementWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 
