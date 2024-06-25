@@ -208,7 +208,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 					commission2.WithInviters(handler.inviters),
 					commission2.WithAppConfig(appConfig),
 					commission2.WithCommissions(comms),
-					commission2.WithPaymentAmount(payment.Amount),
+					commission2.WithPaymentAmount(payment.Amount.String()),
 					commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
 					commission2.WithAchievementUsers(achievementUsers),
 					commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
@@ -253,7 +253,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						commission2.WithInviters(handler.inviters),
 						commission2.WithAppConfig(appConfig),
 						commission2.WithAppGoodCommissionConfigs(goodcomms),
-						commission2.WithPaymentAmount(payment.Amount),
+						commission2.WithPaymentAmount(payment.Amount.String()),
 						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
 						commission2.WithAchievementUsers(achievementUsers),
 						commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
@@ -296,7 +296,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						commission2.WithInviters(handler.inviters),
 						commission2.WithAppConfig(appConfig),
 						commission2.WithAppCommissionConfigs(appcomms),
-						commission2.WithPaymentAmount(payment.Amount),
+						commission2.WithPaymentAmount(payment.Amount.String()),
 						commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
 						commission2.WithAchievementUsers(achievementUsers),
 						commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
@@ -319,12 +319,12 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 				if !ok {
 					coinCommMap = map[string][]*commission2.Commission{}
 				}
-				commissions, ok := coinCommMap[payment.CoinTypeID]
+				commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap[payment.CoinTypeID] = commissions
+				coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
 
@@ -332,7 +332,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 				_com := &commission2.Commission{
 					AppID:                h.AppID.String(),
 					UserID:               h.UserID.String(),
-					PaymentAmount:        payment.Amount,
+					PaymentAmount:        payment.Amount.String(),
 					Amount:               "0",
 					CommissionAmountUSD:  "0",
 					AppConfigID:          appConfig.EntID,
@@ -343,12 +343,12 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 				if !ok {
 					coinCommMap = map[string][]*commission2.Commission{}
 				}
-				commissions, ok := coinCommMap[payment.CoinTypeID]
+				commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
 				if !ok {
 					commissions = []*commission2.Commission{}
 				}
 				commissions = append(commissions, _com)
-				coinCommMap[payment.CoinTypeID] = commissions
+				coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
 		}
@@ -364,12 +364,11 @@ func (h *calculateHandler) generateStatements(
 	commissionConfigType types.CommissionConfigType,
 ) ([]*statementmwpb.StatementReq, error) {
 	if len(userCoinCommMap) == 0 {
-		for i := range h.Payments {
-			payment := &h.Payments[i]
+		for _, payment := range h.Payments {
 			_com := &commission2.Commission{
 				AppID:                h.AppID.String(),
 				UserID:               h.UserID.String(),
-				PaymentAmount:        payment.Amount,
+				PaymentAmount:        payment.Amount.String(),
 				Amount:               "0",
 				CommissionAmountUSD:  "0",
 				AppConfigID:          appConfigID,
@@ -380,12 +379,12 @@ func (h *calculateHandler) generateStatements(
 			if !ok {
 				coinCommMap = map[string][]*commission2.Commission{}
 			}
-			commissions, ok := coinCommMap[payment.CoinTypeID]
+			commissions, ok := coinCommMap[payment.PaymentCoinTypeID.String()]
 			if !ok {
 				commissions = []*commission2.Commission{}
 			}
 			commissions = append(commissions, _com)
-			coinCommMap[payment.CoinTypeID] = commissions
+			coinCommMap[payment.PaymentCoinTypeID.String()] = commissions
 			userCoinCommMap[h.UserID.String()] = coinCommMap
 		}
 	}

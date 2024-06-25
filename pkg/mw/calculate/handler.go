@@ -4,6 +4,7 @@ import (
 	"context"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	orderpaymentstatementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/statement/order/payment"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	calculatemwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
@@ -25,7 +26,7 @@ type Handler struct {
 	SettleAmountType types.SettleAmountType
 	HasCommission    bool
 	OrderCreatedAt   uint32
-	Payments         []calculatemwpb.Payment
+	Payments         []*orderpaymentstatementcrud.Req
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -177,23 +178,26 @@ func WithOrderCreatedAt(value uint32) func(context.Context, *Handler) error {
 	}
 }
 
-func WithPayments(payments []*calculatemwpb.Payment) func(context.Context, *Handler) error {
+func WithPayments(reqs []*calculatemwpb.Payment) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		for _, payment := range payments {
-			if _, err := uuid.Parse(payment.CoinTypeID); err != nil {
+		for _, req := range reqs {
+			_req := &orderpaymentstatementcrud.Req{}
+			id, err := uuid.Parse(req.CoinTypeID)
+			if err != nil {
 				return err
 			}
-			amount, err := decimal.NewFromString(payment.Amount)
+			_req.PaymentCoinTypeID = &id
+
+			amount, err := decimal.NewFromString(req.Amount)
 			if err != nil {
 				return err
 			}
 			if amount.Cmp(decimal.NewFromInt(0)) <= 0 {
 				return wlog.Errorf("invalid amount")
 			}
-			h.Payments = append(h.Payments, calculatemwpb.Payment{
-				CoinTypeID: payment.CoinTypeID,
-				Amount:     payment.Amount,
-			})
+			_req.Amount = &amount
+
+			h.Payments = append(h.Payments, _req)
 		}
 		return nil
 	}
