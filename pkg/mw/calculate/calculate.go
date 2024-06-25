@@ -420,12 +420,9 @@ func (h *calculateHandler) generateStatements(
 		}
 
 		statements = append(statements, &statementmwpb.StatementReq{
-			AppID: func() *string {
-				id := h.AppID.String()
-				return &id
-			}(),
+			AppID:       func() *string { id := h.AppID.String(); return &id }(),
 			UserID:      &inviter.InviterID,
-			OrderUserID: &inviter.InviteeID,
+			OrderUserID: func() *string { s := h.UserID.String(); return &s }(),
 			GoodID: func() *string {
 				id := h.GoodID.String()
 				return &id
