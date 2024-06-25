@@ -21,6 +21,7 @@ func (h *achievementQueryHandler) getGoodAchievement(ctx context.Context, cli *e
 		GoodAchievement.
 		Query().
 		Where(
+			entgoodachievement.AppID(*h.AppID),
 			entgoodachievement.UserID(*h.UserID),
 			entgoodachievement.AppGoodID(*h.AppGoodID),
 		).
@@ -36,6 +37,7 @@ func (h *achievementQueryHandler) getGoodCoinAchievement(ctx context.Context, cl
 		GoodCoinAchievement.
 		Query().
 		Where(
+			entgoodcoinachievement.AppID(*h.AppID),
 			entgoodcoinachievement.UserID(*h.UserID),
 			entgoodcoinachievement.GoodCoinTypeID(*h.GoodCoinTypeID),
 		).
