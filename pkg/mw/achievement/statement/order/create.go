@@ -39,6 +39,8 @@ type createHandler struct {
 	selfAmountUSD                decimal.Decimal
 	selfCommissionAmountUSD      decimal.Decimal
 	inviteeConsumeAmount         decimal.Decimal
+	updated                      bool
+	updatable                    bool
 }
 
 //nolint:goconst,funlen
@@ -219,6 +221,7 @@ func (h *createHandler) constructCreateAchievementUserSQL(ctx context.Context) e
 }
 
 func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
+	h.updatable = true
 	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -227,8 +230,8 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	if err != nil || n > 1 {
 		return wlog.Errorf("fail create orderstatement: %v", err)
 	}
-	if n == 0 {
-		return wlog.WrapError(cruder.ErrCreateNothing)
+	if n == 1 {
+		h.updated = true
 	}
 	return nil
 }
@@ -379,7 +382,13 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := handler.createOrUpdateGoodCoinAchievement(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	return handler.createOrUpdateAchievementUser(ctx, tx)
+	if err := handler.createOrUpdateAchievementUser(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if handler.updatable && !handler.updated {
+		return wlog.WrapError(cruder.ErrUpdateNothing)
+	}
+	return nil
 }
 
 func (h *Handler) CreateStatement(ctx context.Context) error {
