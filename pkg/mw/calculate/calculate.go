@@ -235,7 +235,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 						Disabled:   &basetypes.BoolVal{Op: cruder.EQ, Value: false},
 					}),
 					appgoodcommissionconfig1.WithOffset(0),
-					appgoodcommissionconfig1.WithLimit(1),
+					appgoodcommissionconfig1.WithLimit(0),
 				)
 				if err != nil {
 					return nil, wlog.WrapError(err)
@@ -327,7 +327,6 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 				coinCommMap[*payment.PaymentCoinTypeID] = commissions
 				commMap[_com.UserID] = coinCommMap
 			}
-
 			if len(_comms) == 0 {
 				_com := &commission2.Commission{
 					AppID:                h.AppID.String(),
