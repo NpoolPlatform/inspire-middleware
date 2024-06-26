@@ -399,14 +399,14 @@ func (h *calculateHandler) generateStatements(
 		inviterCommissionConfigID := uuid.Nil.String()
 		inviterCommissionConfigType := commissionConfigType
 
-		payments := []*paymentmwpb.StatementReq{}
+		inviterPayments := []*paymentmwpb.StatementReq{}
 
 		userCommMap, ok := userCoinCommMap[inviter.InviterID]
 		if ok {
 			for key, commissions := range userCommMap {
 				_key := key.String()
 				for _, commission := range commissions {
-					payments = append(payments, &paymentmwpb.StatementReq{
+					inviterPayments = append(inviterPayments, &paymentmwpb.StatementReq{
 						PaymentCoinTypeID: &_key,
 						Amount:            &commission.PaymentAmount,
 						CommissionAmount:  &commission.Amount,
@@ -457,7 +457,7 @@ func (h *calculateHandler) generateStatements(
 			AppConfigID:          &appConfigID,
 			CommissionConfigID:   &inviterCommissionConfigID,
 			CommissionConfigType: &inviterCommissionConfigType,
-			PaymentStatements:    payments,
+			PaymentStatements:    inviterPayments,
 		})
 	}
 
@@ -481,6 +481,17 @@ func (h *calculateHandler) generateStatements(
 					commissionAmountUSD = commission.CommissionAmountUSD
 				}
 			}
+		}
+	} else {
+		for _, payment := range h.Payments {
+			coinTypeID := payment.PaymentCoinTypeID.String()
+			amount := payment.Amount.String()
+			commissionAmount := "0"
+			payments = append(payments, &paymentmwpb.StatementReq{
+				PaymentCoinTypeID: &coinTypeID,
+				Amount:            &amount,
+				CommissionAmount:  &commissionAmount,
+			})
 		}
 	}
 
