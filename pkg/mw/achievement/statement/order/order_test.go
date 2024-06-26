@@ -13,6 +13,7 @@ import (
 
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	orderstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
+	orderpaymentstatementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/testinit"
 
@@ -96,6 +97,12 @@ func setup(t *testing.T) func(*testing.T) {
 }
 
 func createStatement(t *testing.T) {
+	payments := []*orderpaymentstatementmwpb.StatementReq{}
+	payments = append(payments, &orderpaymentstatementmwpb.StatementReq{
+		PaymentCoinTypeID: &ret.GoodCoinTypeID,
+		Amount:            &ret.PaymentAmountUSD,
+		CommissionAmount:  &ret.CommissionAmountUSD,
+	})
 	handler, err := NewHandler(
 		context.Background(),
 		WithEntID(&ret.EntID, true),
@@ -113,12 +120,20 @@ func createStatement(t *testing.T) {
 		WithAppConfigID(&ret.AppConfigID, true),
 		WithCommissionConfigID(&ret.CommissionConfigID, true),
 		WithCommissionConfigType(&ret.CommissionConfigType, true),
-		// WithPaymentStatements(&ret.PaymentStatements, true),
+		WithPaymentStatements(payments, true),
 	)
 	assert.Nil(t, err)
 
 	err = handler.CreateStatement(context.Background())
 	assert.Nil(t, err)
+
+	info, err := handler.GetStatement(context.Background())
+	if assert.Nil(t, err) {
+		ret.ID = info.ID
+		ret.CreatedAt = info.CreatedAt
+		ret.UpdatedAt = info.UpdatedAt
+		assert.Equal(t, ret, info)
+	}
 }
 
 func deleteStatement(t *testing.T) {

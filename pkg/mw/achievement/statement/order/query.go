@@ -9,6 +9,7 @@ import (
 	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
+	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
@@ -25,11 +26,36 @@ func (h *queryHandler) scan(ctx context.Context) error {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.CommissionConfigType = types.CommissionConfigType(types.CommissionConfigType_value[info.CommissionConfigTypeStr])
+		info.GoodValueUSD = func() string {
+			amount := decimal.RequireFromString(info.GoodValueUSD)
+			return amount.String()
+		}()
+		info.PaymentAmountUSD = func() string {
+			amount := decimal.RequireFromString(info.PaymentAmountUSD)
+			return amount.String()
+		}()
+		info.CommissionAmountUSD = func() string {
+			amount := decimal.RequireFromString(info.CommissionAmountUSD)
+			return amount.String()
+		}()
+		info.Units = func() string {
+			units := decimal.RequireFromString(info.Units)
+			return units.String()
+		}()
 	}
 }
 
 func (h *Handler) GetStatement(ctx context.Context) (*npool.Statement, error) {
-	return h._getStatement(ctx, nil)
+	info := &npool.Statement{}
+	err := db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		_info, err := h._getStatement(ctx, cli)
+		if err != nil {
+			return err
+		}
+		info = _info
+		return nil
+	})
+	return info, err
 }
 
 func (h *Handler) GetStatementWithTx(ctx context.Context, tx *ent.Tx) (*npool.Statement, error) {
