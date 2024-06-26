@@ -6,6 +6,7 @@ import (
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
+	common1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user/common"
 	appcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/commission/config"
 	appConfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
 	appgoodcommissionconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/good/commission/config"
@@ -84,12 +85,12 @@ func (h *calculateHandler) getAchievementUsers(ctx context.Context) (map[string]
 	achievementUserMap := map[string]*achievementusermwpb.AchievementUser{}
 	handler, err := achievementuser1.NewHandler(
 		ctx,
-		achievementuser1.WithConds(&achievementusermwpb.Conds{
+		common1.WithConds(&achievementusermwpb.Conds{
 			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
 			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
 		}),
-		achievementuser1.WithOffset(0),
-		achievementuser1.WithLimit(int32(len(h.inviterIDs))),
+		common1.WithOffset(0),
+		common1.WithLimit(int32(len(h.inviterIDs))),
 	)
 	if err != nil {
 		return nil, wlog.WrapError(err)

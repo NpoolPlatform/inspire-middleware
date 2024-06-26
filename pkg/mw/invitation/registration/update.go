@@ -12,6 +12,7 @@ import (
 	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
 	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
+	common1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user/common"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
@@ -84,11 +85,11 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 func (h *updateHandler) getTotalInvites(ctx context.Context) error {
 	handler, err := achievementuser1.NewHandler(
 		ctx,
-		achievementuser1.WithConds(&achievementusermwpb.Conds{
+		common1.WithConds(&achievementusermwpb.Conds{
 			AppID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.registration.AppID},
 			UserID: &basetypes.StringVal{Op: cruder.EQ, Value: h.registration.InviteeID},
 		}),
-		achievementuser1.WithLimit(int32(1)),
+		common1.WithLimit(int32(1)),
 	)
 	if err != nil {
 		return nil
