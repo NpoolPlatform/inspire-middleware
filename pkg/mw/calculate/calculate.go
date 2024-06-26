@@ -357,7 +357,7 @@ func (h *Handler) Calculate(ctx context.Context) ([]*statementmwpb.StatementReq,
 	return handler.generateStatements(commMap, appConfigs[0].EntID, commissionConfigType)
 }
 
-//nolint:funlen
+//nolint:funlen,dupl
 func (h *calculateHandler) generateStatements(
 	userCoinCommMap map[string]map[uuid.UUID][]*commission2.Commission,
 	appConfigID string,
@@ -417,6 +417,17 @@ func (h *calculateHandler) generateStatements(
 						commissionAmountUSD = commission.CommissionAmountUSD
 					}
 				}
+			}
+		} else {
+			for _, payment := range h.Payments {
+				coinTypeID := payment.PaymentCoinTypeID.String()
+				amount := payment.Amount.String()
+				commissionAmount := "0"
+				inviterPayments = append(inviterPayments, &paymentmwpb.StatementReq{
+					PaymentCoinTypeID: &coinTypeID,
+					Amount:            &amount,
+					CommissionAmount:  &commissionAmount,
+				})
 			}
 		}
 
