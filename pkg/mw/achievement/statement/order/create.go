@@ -107,7 +107,7 @@ func (h *createHandler) constructSQL() {
 	)
 	_sql += "limit 1)"
 
-	if h.AppConfigID != nil {
+	if h.AppConfigID != nil && *h.AppConfigID != uuid.Nil {
 		_sql += " and exists ("
 		_sql += fmt.Sprintf("select 1 from %v ", entappconfig.Table)
 		_sql += fmt.Sprintf(
@@ -232,6 +232,10 @@ func (h *createHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) err
 	}
 	if n == 1 {
 		h.updated = true
+		return nil
+	}
+	if n == 0 {
+		return wlog.WrapError(cruder.ErrCreateNothing)
 	}
 	return nil
 }
