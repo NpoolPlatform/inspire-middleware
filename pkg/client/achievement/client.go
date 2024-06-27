@@ -39,4 +39,3 @@ func ExpropriateAchievement(ctx context.Context, orderID string) error {
 	}
 	return nil
 }
-
