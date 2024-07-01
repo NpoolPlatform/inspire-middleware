@@ -96,3 +96,12 @@ func DeleteStatements(ctx context.Context, in []*npool.StatementReq) error {
 	})
 	return err
 }
+
+func UpdateStatements(ctx context.Context, in []*npool.StatementReq) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.UpdateStatements(ctx, &npool.UpdateStatementsRequest{
+			Infos: in,
+		})
+	})
+	return err
+}
