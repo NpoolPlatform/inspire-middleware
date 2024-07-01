@@ -134,6 +134,13 @@ func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) 
 		if h.payment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
 			return wlog.Errorf("permission denied")
 		}
+		if _, err := tx.
+			OrderStatement.
+			UpdateOneID(h.statement.ID).
+			SetCommissionAmountUsd(*h.CommissionAmountUSD).
+			Save(ctx); err != nil {
+			return wlog.WrapError(err)
+		}
 
 		if _, err := tx.
 			OrderPaymentStatement.
