@@ -138,6 +138,9 @@ func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) 
 			OrderStatement.
 			UpdateOneID(h.statement.ID).
 			SetCommissionAmountUsd(*h.CommissionAmountUSD).
+			SetAppConfigID(*h.AppConfigID).
+			SetCommissionConfigID(*h.CommissionConfigID).
+			SetCommissionConfigType(h.CommissionConfigType.String()).
 			Save(ctx); err != nil {
 			return wlog.WrapError(err)
 		}
