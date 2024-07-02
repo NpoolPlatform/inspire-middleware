@@ -6,7 +6,7 @@ import (
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
 
-	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement"
+	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/calculate"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -25,7 +25,7 @@ func withClient(ctx context.Context, handler func(context.Context, npool.Middlew
 	)
 }
 
-func Calculate(ctx context.Context, in *npool.CalculateRequest) ([]*statementmwpb.Statement, error) {
+func Calculate(ctx context.Context, in *npool.CalculateRequest) ([]*statementmwpb.StatementReq, error) {
 	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.Calculate(ctx, in)
 		if err != nil {
@@ -36,5 +36,5 @@ func Calculate(ctx context.Context, in *npool.CalculateRequest) ([]*statementmwp
 	if err != nil {
 		return nil, err
 	}
-	return infos.([]*statementmwpb.Statement), nil
+	return infos.([]*statementmwpb.StatementReq), nil
 }

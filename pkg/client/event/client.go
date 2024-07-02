@@ -2,10 +2,10 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 
@@ -119,7 +119,7 @@ func GetEventOnly(ctx context.Context, conds *npool.Conds) (*npool.Event, error)
 		return nil, nil
 	}
 	if len(infos.([]*npool.Event)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.Event)[0], nil
 }

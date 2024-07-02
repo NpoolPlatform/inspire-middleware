@@ -1,9 +1,9 @@
 package allocated
 
 import (
-	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcouponallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -94,109 +94,109 @@ func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAlloca
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid ids")
+			return nil, wlog.Errorf("invalid ids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entcouponallocated.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid allocated ids")
+			return nil, wlog.Errorf("invalid allocated ids")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userid")
+			return nil, wlog.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	if conds.CouponID != nil {
 		id, ok := conds.CouponID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponid")
+			return nil, wlog.Errorf("invalid couponid")
 		}
 		switch conds.CouponID.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.CouponID(id))
 		default:
-			return nil, fmt.Errorf("invalid couponid field")
+			return nil, wlog.Errorf("invalid couponid field")
 		}
 	}
 	if conds.CouponIDs != nil {
 		ids, ok := conds.CouponIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid couponids")
+			return nil, wlog.Errorf("invalid couponids")
 		}
 		switch conds.CouponIDs.Op {
 		case cruder.IN:
 			q.Where(entcouponallocated.CouponIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid couponids field")
+			return nil, wlog.Errorf("invalid couponids field")
 		}
 	}
 	if conds.Used != nil {
 		used, ok := conds.Used.Val.(bool)
 		if !ok {
-			return nil, fmt.Errorf("invalid used")
+			return nil, wlog.Errorf("invalid used")
 		}
 		switch conds.Used.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.Used(used))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	if conds.UsedByOrderID != nil {
 		id, ok := conds.UsedByOrderID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid usedbyorderid")
+			return nil, wlog.Errorf("invalid usedbyorderid")
 		}
 		switch conds.UsedByOrderID.Op {
 		case cruder.EQ:
 			q.Where(entcouponallocated.UsedByOrderID(id))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	if conds.UsedByOrderIDs != nil {
 		ids, ok := conds.UsedByOrderIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid usedbyorderid")
+			return nil, wlog.Errorf("invalid usedbyorderid")
 		}
 		switch conds.UsedByOrderIDs.Op {
 		case cruder.IN:
 			q.Where(entcouponallocated.UsedByOrderIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid allocated field")
+			return nil, wlog.Errorf("invalid allocated field")
 		}
 	}
 	return q, nil

@@ -1,8 +1,7 @@
 package registration
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entregistration "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -66,73 +65,73 @@ func SetQueryConds(q *ent.RegistrationQuery, conds *Conds) (*ent.RegistrationQue
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entregistration.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entregistration.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	if conds.InviterID != nil {
 		id, ok := conds.InviterID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid inviterid")
+			return nil, wlog.Errorf("invalid inviterid")
 		}
 		switch conds.InviterID.Op {
 		case cruder.EQ:
 			q.Where(entregistration.InviterID(id))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	if conds.InviteeID != nil {
 		id, ok := conds.InviteeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid inviteeid")
+			return nil, wlog.Errorf("invalid inviteeid")
 		}
 		switch conds.InviteeID.Op {
 		case cruder.EQ:
 			q.Where(entregistration.InviteeID(id))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	if conds.InviterIDs != nil {
 		ids, ok := conds.InviterIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid inviterids")
+			return nil, wlog.Errorf("invalid inviterids")
 		}
 		switch conds.InviterIDs.Op {
 		case cruder.IN:
 			q.Where(entregistration.InviterIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	if conds.InviteeIDs != nil {
 		ids, ok := conds.InviteeIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid inviteeids")
+			return nil, wlog.Errorf("invalid inviteeids")
 		}
 		switch conds.InviteeIDs.Op {
 		case cruder.IN:
 			q.Where(entregistration.InviteeIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid registration field")
+			return nil, wlog.Errorf("invalid registration field")
 		}
 	}
 	return q, nil

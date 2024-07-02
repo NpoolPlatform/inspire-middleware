@@ -1,8 +1,7 @@
 package user
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -92,49 +91,49 @@ func SetQueryConds(q *ent.AchievementUserQuery, conds *Conds) (*ent.AchievementU
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entachievementuser.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid general field")
+			return nil, wlog.Errorf("invalid general field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entachievementuser.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid general field")
+			return nil, wlog.Errorf("invalid general field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entachievementuser.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid general field")
+			return nil, wlog.Errorf("invalid general field")
 		}
 	}
 	if conds.UserIDs != nil {
 		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userids")
+			return nil, wlog.Errorf("invalid userids")
 		}
 		switch conds.UserIDs.Op {
 		case cruder.IN:
 			q.Where(entachievementuser.UserIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid general field")
+			return nil, wlog.Errorf("invalid general field")
 		}
 	}
 	return q, nil

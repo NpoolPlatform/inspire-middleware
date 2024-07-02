@@ -5,9 +5,15 @@ import (
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1"
 
-	"github.com/NpoolPlatform/inspire-middleware/api/achievement"
-	"github.com/NpoolPlatform/inspire-middleware/api/achievement/statement"
+	achievement "github.com/NpoolPlatform/inspire-middleware/api/achievement"
+	goodachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good"
+	goodcoinachievement "github.com/NpoolPlatform/inspire-middleware/api/achievement/good/coin"
+	orderstatement "github.com/NpoolPlatform/inspire-middleware/api/achievement/statement/order"
+	orderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/api/achievement/statement/order/payment"
 	"github.com/NpoolPlatform/inspire-middleware/api/achievement/user"
+	appcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/commission/config"
+	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
+	appgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/good/commission/config"
 	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
@@ -18,10 +24,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
-
-	appcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/commission/config"
-	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
-	appgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/good/commission/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -40,10 +42,13 @@ func Register(server grpc.ServiceRegistrar) {
 	scope.Register(server)
 	scope1.Register(server)
 	commission.Register(server)
+	goodachievement.Register(server)
 	achievement.Register(server)
+	goodcoinachievement.Register(server)
 	calculate.Register(server)
 	event.Register(server)
-	statement.Register(server)
+	orderstatement.Register(server)
+	orderpaymentstatement.Register(server)
 	cashcontrol.Register(server)
 	appconfig.Register(server)
 	appcommissionconfig.Register(server)
@@ -58,7 +63,16 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := achievement.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
-	if err := statement.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := goodachievement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := goodcoinachievement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := orderstatement.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := orderpaymentstatement.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := calculate.RegisterGateway(mux, endpoint, opts); err != nil {

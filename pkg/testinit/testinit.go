@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/app"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
@@ -18,7 +19,7 @@ import (
 func Init() error {
 	_, myPath, _, ok := runtime.Caller(0)
 	if !ok {
-		return fmt.Errorf("cannot get source file path")
+		return wlog.Errorf("cannot get source file path")
 	}
 
 	appName := path.Base(path.Dir(path.Dir(path.Dir(myPath))))
@@ -37,11 +38,11 @@ func Init() error {
 		redisconst.RedisServiceName,
 	)
 	if err != nil {
-		return fmt.Errorf("cannot init app stub: %v", err)
+		return wlog.Errorf("cannot init app stub: %v", err)
 	}
 	err = db.Init()
 	if err != nil {
-		return fmt.Errorf("cannot init database: %v", err)
+		return wlog.Errorf("cannot init database: %v", err)
 	}
 
 	return nil

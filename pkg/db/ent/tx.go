@@ -38,8 +38,16 @@ type Tx struct {
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// GoodAchievement is the client for interacting with the GoodAchievement builders.
+	GoodAchievement *GoodAchievementClient
+	// GoodCoinAchievement is the client for interacting with the GoodCoinAchievement builders.
+	GoodCoinAchievement *GoodCoinAchievementClient
 	// InvitationCode is the client for interacting with the InvitationCode builders.
 	InvitationCode *InvitationCodeClient
+	// OrderPaymentStatement is the client for interacting with the OrderPaymentStatement builders.
+	OrderPaymentStatement *OrderPaymentStatementClient
+	// OrderStatement is the client for interacting with the OrderStatement builders.
+	OrderStatement *OrderStatementClient
 	// PubsubMessage is the client for interacting with the PubsubMessage builders.
 	PubsubMessage *PubsubMessageClient
 	// Registration is the client for interacting with the Registration builders.
@@ -193,7 +201,11 @@ func (tx *Tx) init() {
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
 	tx.CouponScope = NewCouponScopeClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
+	tx.GoodAchievement = NewGoodAchievementClient(tx.config)
+	tx.GoodCoinAchievement = NewGoodCoinAchievementClient(tx.config)
 	tx.InvitationCode = NewInvitationCodeClient(tx.config)
+	tx.OrderPaymentStatement = NewOrderPaymentStatementClient(tx.config)
+	tx.OrderStatement = NewOrderStatementClient(tx.config)
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)
 	tx.Registration = NewRegistrationClient(tx.config)
 	tx.Statement = NewStatementClient(tx.config)

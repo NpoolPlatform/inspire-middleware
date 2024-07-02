@@ -438,6 +438,54 @@ func (f EventMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventMutation", m)
 }
 
+// The GoodAchievementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type GoodAchievementQueryRuleFunc func(context.Context, *ent.GoodAchievementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f GoodAchievementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.GoodAchievementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GoodAchievementQuery", q)
+}
+
+// The GoodAchievementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type GoodAchievementMutationRuleFunc func(context.Context, *ent.GoodAchievementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f GoodAchievementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.GoodAchievementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GoodAchievementMutation", m)
+}
+
+// The GoodCoinAchievementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type GoodCoinAchievementQueryRuleFunc func(context.Context, *ent.GoodCoinAchievementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f GoodCoinAchievementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.GoodCoinAchievementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GoodCoinAchievementQuery", q)
+}
+
+// The GoodCoinAchievementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type GoodCoinAchievementMutationRuleFunc func(context.Context, *ent.GoodCoinAchievementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f GoodCoinAchievementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.GoodCoinAchievementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GoodCoinAchievementMutation", m)
+}
+
 // The InvitationCodeQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type InvitationCodeQueryRuleFunc func(context.Context, *ent.InvitationCodeQuery) error
@@ -460,6 +508,54 @@ func (f InvitationCodeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvitationCodeMutation", m)
+}
+
+// The OrderPaymentStatementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderPaymentStatementQueryRuleFunc func(context.Context, *ent.OrderPaymentStatementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderPaymentStatementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderPaymentStatementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderPaymentStatementQuery", q)
+}
+
+// The OrderPaymentStatementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderPaymentStatementMutationRuleFunc func(context.Context, *ent.OrderPaymentStatementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderPaymentStatementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderPaymentStatementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderPaymentStatementMutation", m)
+}
+
+// The OrderStatementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderStatementQueryRuleFunc func(context.Context, *ent.OrderStatementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderStatementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderStatementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderStatementQuery", q)
+}
+
+// The OrderStatementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderStatementMutationRuleFunc func(context.Context, *ent.OrderStatementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderStatementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderStatementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderStatementMutation", m)
 }
 
 // The PubsubMessageQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -593,7 +689,15 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.EventQuery:
 		return q.Filter(), nil
+	case *ent.GoodAchievementQuery:
+		return q.Filter(), nil
+	case *ent.GoodCoinAchievementQuery:
+		return q.Filter(), nil
 	case *ent.InvitationCodeQuery:
+		return q.Filter(), nil
+	case *ent.OrderPaymentStatementQuery:
+		return q.Filter(), nil
+	case *ent.OrderStatementQuery:
 		return q.Filter(), nil
 	case *ent.PubsubMessageQuery:
 		return q.Filter(), nil
@@ -632,7 +736,15 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.EventMutation:
 		return m.Filter(), nil
+	case *ent.GoodAchievementMutation:
+		return m.Filter(), nil
+	case *ent.GoodCoinAchievementMutation:
+		return m.Filter(), nil
 	case *ent.InvitationCodeMutation:
+		return m.Filter(), nil
+	case *ent.OrderPaymentStatementMutation:
+		return m.Filter(), nil
+	case *ent.OrderStatementMutation:
 		return m.Filter(), nil
 	case *ent.PubsubMessageMutation:
 		return m.Filter(), nil

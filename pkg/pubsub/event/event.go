@@ -7,6 +7,7 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event"
 	eventmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 )
@@ -14,7 +15,7 @@ import (
 func Prepare(body string) (interface{}, error) {
 	req := eventmwpb.RewardEventRequest{}
 	if err := json.Unmarshal([]byte(body), &req); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return &req, nil
 }
@@ -33,11 +34,11 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		event1.WithAmount(_req.Amount, false),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	credits, err := handler.RewardEvent(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(credits) == 0 {
 		return nil
@@ -49,10 +50,10 @@ func Apply(ctx context.Context, req interface{}, publisher *pubsub.Publisher) er
 		nil,
 		credits,
 	); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if err := publisher.Publish(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil

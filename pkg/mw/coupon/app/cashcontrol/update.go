@@ -2,8 +2,8 @@ package cashcontrol
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cashcontrolcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -13,10 +13,10 @@ import (
 func (h *Handler) UpdateCashControl(ctx context.Context) (*npool.CashControl, error) {
 	info, err := h.GetCashControl(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if info == nil {
-		return nil, fmt.Errorf("invalid cashcontrol")
+		return nil, wlog.Errorf("invalid cashcontrol")
 	}
 
 	err = db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
@@ -26,7 +26,7 @@ func (h *Handler) UpdateCashControl(ctx context.Context) (*npool.CashControl, er
 				Value: h.Value,
 			},
 		).Save(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})

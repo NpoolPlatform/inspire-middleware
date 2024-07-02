@@ -2,8 +2,8 @@ package registration
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	invitationcode1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/invitationcode"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
@@ -21,14 +21,14 @@ func (h *Handler) validateInvitationCode(ctx context.Context) error {
 		invitationcode1.WithLimit(0),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	exist, err := h1.ExistInvitationCodeConds(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if !exist {
-		return fmt.Errorf("invatationcode not exist")
+		return wlog.Errorf("invatationcode not exist")
 	}
 
 	return nil

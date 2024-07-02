@@ -6,6 +6,7 @@ import (
 	"time"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -19,7 +20,7 @@ import (
 func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, error) {
 	key := fmt.Sprintf("%v:%v:%v:%v", basetypes.Prefix_PrefixCreateCommission, *h.AppID, *h.UserID, *h.AppGoodID)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -44,7 +45,7 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 			).
 			SetEndAt(uint32(time.Now().Unix())).
 			Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		if _, err := commissioncrud.CreateSet(
@@ -64,12 +65,12 @@ func (h *Handler) CreateCommission(ctx context.Context) (*npool.Commission, erro
 				Threshold:        h.Threshold,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetCommission(ctx)

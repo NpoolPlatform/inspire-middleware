@@ -2,8 +2,8 @@ package scope
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	scopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/scope"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
@@ -35,7 +35,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -48,13 +48,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -65,13 +65,13 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.GoodID = &_id
 		return nil
@@ -82,7 +82,7 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid couponid")
+				return wlog.Errorf("invalid couponid")
 			}
 			return nil
 		}
@@ -91,14 +91,14 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 			coupon1.WithEntID(id, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err := handler.ExistCoupon(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if !exist {
-			return fmt.Errorf("invalid couponid")
+			return wlog.Errorf("invalid couponid")
 		}
 		_id := uuid.MustParse(*id)
 		h.CouponID = &_id
@@ -110,7 +110,7 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if couponScope == nil {
 			if must {
-				return fmt.Errorf("invalid couponscope")
+				return wlog.Errorf("invalid couponscope")
 			}
 			return nil
 		}
@@ -118,7 +118,7 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 		case types.CouponScope_Blacklist:
 		case types.CouponScope_Whitelist:
 		default:
-			return fmt.Errorf("invalid couponscope")
+			return wlog.Errorf("invalid couponscope")
 		}
 		h.CouponScope = couponScope
 		return nil
@@ -134,21 +134,21 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{Op: conds.GetEntID().GetOp(), Val: id}
 		}
 		if conds.GoodID != nil {
 			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.GoodID = &cruder.Cond{Op: conds.GetGoodID().GetOp(), Val: id}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
 		}
@@ -160,7 +160,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetCouponIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

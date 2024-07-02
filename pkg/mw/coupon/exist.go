@@ -2,8 +2,8 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -12,7 +12,7 @@ import (
 
 func (h *Handler) ExistCoupon(ctx context.Context) (bool, error) {
 	if h.EntID == nil {
-		return false, fmt.Errorf("invaild entid")
+		return false, wlog.Errorf("invaild entid")
 	}
 	exist := false
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -25,13 +25,13 @@ func (h *Handler) ExistCoupon(ctx context.Context) (bool, error) {
 			).
 			Exist(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist = _exist
 		return nil
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 
 	return exist, nil
@@ -45,16 +45,16 @@ func (h *Handler) ExistCouponConds(ctx context.Context) (bool, error) {
 			h.Conds,
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err = stm.Exist(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 
 	return exist, nil

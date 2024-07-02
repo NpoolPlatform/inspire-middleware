@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/mysql"
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -19,7 +20,7 @@ import (
 func CreateSuperiorProcedure(ctx context.Context) error {
 	conn, err := mysql.GetConn()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	const procedure = `
@@ -44,7 +45,7 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 	`
 	_, err = conn.ExecContext(ctx, procedure)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil
@@ -52,12 +53,12 @@ func CreateSuperiorProcedure(ctx context.Context) error {
 
 func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 	if h.Conds.InviteeIDs == nil {
-		return fmt.Errorf("invalid inviteeids")
+		return wlog.Errorf("invalid inviteeids")
 	}
 
 	inviteeIDs, ok := h.Conds.InviteeIDs.Val.([]uuid.UUID)
 	if !ok {
-		return fmt.Errorf("invalid inviteeids")
+		return wlog.Errorf("invalid inviteeids")
 	}
 	_inviteeIDs := ""
 	for _, id := range inviteeIDs {
@@ -73,14 +74,14 @@ func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 			fmt.Sprintf("CALL get_superiores(\"%v\")", _inviteeIDs),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		defer rows.Close()
 
 		subordinates := ""
 		for rows.Next() {
 			if err := rows.Scan(&subordinates); err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 		}
 
@@ -88,14 +89,14 @@ func (h *queryHandler) getInviteeIDs(ctx context.Context) error {
 		for _, id := range __inviteeIDs {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			inviteeIDs = append(inviteeIDs, _id)
 		}
 		return nil
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	h.Conds.InviteeIDs.Val = inviteeIDs
@@ -109,11 +110,11 @@ func (h *Handler) GetSuperiores(ctx context.Context) ([]*npool.Registration, uin
 	}
 
 	if err := handler.getInviteeIDs(ctx); err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 	infos, total, err := h.GetRegistrations(ctx)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 	return infos, total, nil
 }

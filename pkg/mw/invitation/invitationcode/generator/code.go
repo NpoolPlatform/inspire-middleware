@@ -1,9 +1,8 @@
 package codegenerator
 
 import (
-	"fmt"
-
 	"github.com/AmirSoleimani/VoucherCodeGenerator/vcgen"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 )
 
 const InvitationCodeLen = 12
@@ -15,11 +14,11 @@ func Generate() (string, error) {
 		vcgen.SetCharset("1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"),
 	)
 	if err != nil {
-		return "", fmt.Errorf("fail construct invitation code generator: %v", err)
+		return "", wlog.Errorf("fail construct invitation code generator: %v", err)
 	}
 	codes, err := vc.Run()
 	if err != nil {
-		return "", fmt.Errorf("fail run invitation code generator: %v", err)
+		return "", wlog.Errorf("fail run invitation code generator: %v", err)
 	}
 	return codes[0], nil
 }

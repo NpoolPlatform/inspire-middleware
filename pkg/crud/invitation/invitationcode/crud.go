@@ -1,8 +1,7 @@
 package invitationcode
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entinvitationcode "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -67,55 +66,55 @@ func SetQueryConds(q *ent.InvitationCodeQuery, conds *Conds) (*ent.InvitationCod
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entinvitationcode.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entinvitationcode.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userid")
+			return nil, wlog.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entinvitationcode.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	if conds.InvitationCode != nil {
 		code, ok := conds.InvitationCode.Val.(string)
 		if !ok {
-			return nil, fmt.Errorf("invalid invitationcode")
+			return nil, wlog.Errorf("invalid invitationcode")
 		}
 		switch conds.InvitationCode.Op {
 		case cruder.EQ:
 			q.Where(entinvitationcode.InvitationCodeEQ(code))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	if conds.Disabled != nil {
 		disabled, ok := conds.Disabled.Val.(bool)
 		if !ok {
-			return nil, fmt.Errorf("invalid disabled")
+			return nil, wlog.Errorf("invalid disabled")
 		}
 		switch conds.Disabled.Op {
 		case cruder.EQ:
@@ -123,19 +122,19 @@ func SetQueryConds(q *ent.InvitationCodeQuery, conds *Conds) (*ent.InvitationCod
 		case cruder.NEQ:
 			q.Where(entinvitationcode.DisabledNEQ(disabled))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	if conds.UserIDs != nil {
 		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userids")
+			return nil, wlog.Errorf("invalid userids")
 		}
 		switch conds.UserIDs.Op {
 		case cruder.IN:
 			q.Where(entinvitationcode.UserIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid invitationcode field")
+			return nil, wlog.Errorf("invalid invitationcode field")
 		}
 	}
 	return q, nil

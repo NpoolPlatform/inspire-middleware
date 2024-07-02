@@ -2,8 +2,8 @@ package scope
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	scopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/scope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -27,7 +27,7 @@ func (h *createHandler) createScope(ctx context.Context, cli *ent.Client) error 
 			CouponScope: h.CouponScope,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -44,10 +44,10 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 	}
 	exist, err := h.ExistScopeConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("coupon scope %v already exist", *h.CouponScope)
+		return nil, wlog.Errorf("coupon scope %v already exist", *h.CouponScope)
 	}
 
 	id := uuid.New()
@@ -57,12 +57,12 @@ func (h *Handler) CreateScope(ctx context.Context) (*npool.Scope, error) {
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.createScope(ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.GetScope(ctx)
 }

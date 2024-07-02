@@ -3,6 +3,7 @@ package scope
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	scopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/scope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -13,11 +14,11 @@ func (h *Handler) ExistScopeConds(ctx context.Context) (bool, error) {
 	err := db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
 		stm, err := scopecrud.SetQueryConds(cli.CouponScope.Query(), h.Conds)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err = stm.Exist(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})

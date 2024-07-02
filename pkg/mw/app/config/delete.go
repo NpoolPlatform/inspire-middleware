@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -12,7 +13,7 @@ import (
 func (h *Handler) DeleteAppConfig(ctx context.Context) error {
 	info, err := h.GetAppConfig(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil
@@ -28,7 +29,7 @@ func (h *Handler) DeleteAppConfig(ctx context.Context) error {
 				DeletedAt: &now,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})

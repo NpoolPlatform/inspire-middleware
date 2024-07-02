@@ -2,10 +2,10 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 
@@ -130,7 +130,7 @@ func GetCouponOnly(ctx context.Context, conds *npool.Conds) (*npool.Coupon, erro
 		return nil, nil
 	}
 	if len(infos.([]*npool.Coupon)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.Coupon)[0], nil
 }

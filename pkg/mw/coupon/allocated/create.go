@@ -2,10 +2,10 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
@@ -35,11 +35,11 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 			ForUpdate().
 			Only(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		now := time.Now().Unix()
 		if now < int64(coupon.StartAt) || now > int64(coupon.EndAt) {
-			return fmt.Errorf("coupon can not be issued in current time")
+			return wlog.Errorf("coupon can not be issued in current time")
 		}
 		h.coupon = coupon
 		return nil
@@ -77,7 +77,7 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 			Cashable:     &_cashable,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -90,10 +90,10 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	case inspiretypes.CouponType_Discount.String():
 		allocated = allocated.Add(decimal.NewFromInt(1))
 	default:
-		return fmt.Errorf("invalid coupontype")
+		return wlog.Errorf("invalid coupontype")
 	}
 	if allocated.Cmp(h.coupon.Circulation) > 0 {
-		return fmt.Errorf("insufficient circulation")
+		return wlog.Errorf("insufficient circulation")
 	}
 
 	if _, err := tx.
@@ -101,7 +101,7 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 		UpdateOne(h.coupon).
 		SetAllocated(allocated).
 		Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -116,20 +116,20 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		Handler: h,
 	}
 	if err := handler.getCoupon(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createAllocatedCoupon(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.updateCoupon(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetCoupon(ctx)

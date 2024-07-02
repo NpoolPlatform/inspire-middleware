@@ -2,8 +2,8 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -15,7 +15,7 @@ import (
 
 func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if h.Used != nil && *h.Used && h.UsedByOrderID == nil {
-		return nil, fmt.Errorf("invalid usedbyorderid")
+		return nil, wlog.Errorf("invalid usedbyorderid")
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -26,12 +26,12 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				UsedByOrderID: h.UsedByOrderID,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetCoupon(ctx)
@@ -49,14 +49,14 @@ func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {
 				},
 			).Save(_ctx)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			ids = append(ids, info.EntID)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	h.Conds = &allocatedcrud.Conds{
@@ -66,7 +66,7 @@ func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {
 	h.Limit = int32(len(ids))
 	infos, _, err := h.GetCoupons(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return infos, nil
 }

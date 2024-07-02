@@ -2,10 +2,10 @@ package invitationcode
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/invitationcode"
 
@@ -60,7 +60,7 @@ func GetInvitationCodeOnly(ctx context.Context, conds *npool.Conds) (*npool.Invi
 		return nil, nil
 	}
 	if len(infos.([]*npool.InvitationCode)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.InvitationCode)[0], nil
 }

@@ -2,8 +2,8 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -25,29 +25,29 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			ForUpdate().
 			Only(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
-		err1 := fmt.Errorf("endat less than startat")
+		err1 := wlog.Errorf("endat less than startat")
 		if h.StartAt != nil && h.EndAt != nil {
 			if *h.EndAt <= *h.StartAt {
-				return err1
+				return wlog.WrapError(err1)
 			}
 		}
 		if h.StartAt != nil {
 			if info.EndAt <= *h.StartAt {
-				return err1
+				return wlog.WrapError(err1)
 			}
 		}
 		if h.EndAt != nil {
 			if *h.EndAt <= info.StartAt {
-				return err1
+				return wlog.WrapError(err1)
 			}
 		}
 
 		if info.CouponType == inspiretypes.CouponType_Discount.String() {
 			if h.CashableProbability != nil && h.CashableProbability.Cmp(decimal.NewFromInt(0)) > 0 {
-				return fmt.Errorf("discount can not set probability")
+				return wlog.Errorf("discount can not set probability")
 			}
 		}
 
@@ -68,12 +68,12 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetCoupon(ctx)

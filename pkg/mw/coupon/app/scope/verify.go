@@ -2,8 +2,8 @@ package scope
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
@@ -37,7 +37,7 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context, cli *ent.Client, re
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	_, err = cli.
@@ -52,7 +52,7 @@ func (h *verifyHandler) verifyWhitelist(ctx context.Context, cli *ent.Client, re
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -73,11 +73,11 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, cli *ent.Client, re
 		Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	if info != nil {
-		return fmt.Errorf("couponid in blacklist(good)")
+		return wlog.Errorf("couponid in blacklist(good)")
 	}
 
 	info1, err := cli.
@@ -93,11 +93,11 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, cli *ent.Client, re
 		Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	if info1 != nil {
-		return fmt.Errorf("couponid in blacklist(appgood)")
+		return wlog.Errorf("couponid in blacklist(appgood)")
 	}
 
 	return nil
@@ -106,7 +106,7 @@ func (h *verifyHandler) verifyBlacklist(ctx context.Context, cli *ent.Client, re
 func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	handler, err := coupon1.NewHandler(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	ids := []uuid.UUID{}
 	for _, req := range h.Reqs {
@@ -122,32 +122,32 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 
 	coupons, _, err := handler.GetCoupons(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(coupons) != len(h.Reqs) {
-		return fmt.Errorf("invalid couponid")
+		return wlog.Errorf("invalid couponid")
 	}
 	return nil
 }
 
 func (h *Handler) VerifyCouponScopes(ctx context.Context) error {
 	if len(h.Reqs) == 0 {
-		return fmt.Errorf("invalid infos")
+		return wlog.Errorf("invalid infos")
 	}
 	handler := &verifyHandler{
 		Handler: h,
 	}
 	if err := handler.checkCoupons(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		for _, req := range h.Reqs {
 			if err := handler.verifyWhitelist(ctx, cli, req); err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			if err := handler.verifyBlacklist(ctx, cli, req); err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			if *req.CouponScope == types.CouponScope_AllGood {
 				continue
@@ -155,5 +155,5 @@ func (h *Handler) VerifyCouponScopes(ctx context.Context) error {
 		}
 		return nil
 	})
-	return err
+	return wlog.WrapError(err)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
@@ -29,7 +30,7 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		*req.InviterID,
 	)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -43,13 +44,13 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		},
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	info, err := stm.Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -70,7 +71,7 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 			tx.AchievementUser.Create(),
 			_req,
 		).Save(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	}
@@ -89,7 +90,7 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		tx.AchievementUser.UpdateOneID(info.ID),
 		_req,
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil
@@ -98,7 +99,7 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 	handler, err := NewHandler(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	handler.AppID = h.AppID
@@ -106,7 +107,7 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 
 	inviters, _, err := handler.GetSortedInviters(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	for _, inviter := range inviters {
@@ -119,7 +120,7 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 			InviterID: &inviterID,
 		}
 		if err := h.createOrAddInvites(ctx, tx, req); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	req := &registrationcrud.Req{
@@ -127,7 +128,7 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 		InviterID: h.InviterID,
 	}
 	if err := h.createOrAddInvites(ctx, tx, req); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return nil
@@ -135,12 +136,12 @@ func (h *createHandler) addInvites(ctx context.Context, tx *ent.Tx) error {
 
 func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, error) {
 	if err := h.validateInvitationCode(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateRegistration, *h.AppID, *h.InviteeID)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -152,10 +153,10 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 	}
 	exist, err := h.ExistRegistrationConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("already exists")
+		return nil, wlog.Errorf("already exists")
 	}
 
 	handler := &createHandler{
@@ -177,16 +178,16 @@ func (h *Handler) CreateRegistration(ctx context.Context) (*npool.Registration, 
 				InviteeID: h.InviteeID,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		if err := handler.addInvites(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetRegistration(ctx)

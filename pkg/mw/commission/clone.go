@@ -6,6 +6,7 @@ import (
 	"time"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
@@ -21,14 +22,14 @@ func (h *Handler) CloneCommissions(ctx context.Context) error { //nolint
 
 	key1 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.FromAppGoodID)
 	if err := redis2.TryLock(key1, 0); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key1)
 	}()
 	key2 := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCloneCommission, *h.AppID, *h.ToAppGoodID)
 	if err := redis2.TryLock(key2, 0); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key2)
@@ -48,10 +49,10 @@ func (h *Handler) CloneCommissions(ctx context.Context) error { //nolint
 			).
 			All(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if len(infos) == 0 {
-			return fmt.Errorf("commission not found")
+			return wlog.Errorf("commission not found")
 		}
 
 		percent := decimal.NewFromInt(1)
@@ -76,7 +77,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error { //nolint
 				Only(_ctx)
 			if err != nil {
 				if !ent.IsNotFound(err) {
-					return err
+					return wlog.WrapError(err)
 				}
 			}
 			if info1 != nil {
@@ -90,7 +91,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error { //nolint
 					SetSettleInterval(info.SettleInterval).
 					SetThreshold(info.Threshold).
 					Save(_ctx); err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				continue
 			}
@@ -115,7 +116,7 @@ func (h *Handler) CloneCommissions(ctx context.Context) error { //nolint
 			Commission.
 			CreateBulk(cs...).
 			Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})

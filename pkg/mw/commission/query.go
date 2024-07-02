@@ -2,9 +2,9 @@ package commission
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -31,7 +31,7 @@ func (h *queryHandler) selectCommission(stm *ent.CommissionQuery) *ent.Commissio
 
 func (h *queryHandler) queryCommission(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 
 	stm := cli.Commission.Query().Where(entcommission.DeletedAt(0))
@@ -75,7 +75,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 func (h *queryHandler) queryCommissions(cli *ent.Client) (*ent.CommissionSelect, error) {
 	stm, err := commissioncrud.SetQueryConds(cli.Commission.Query(), h.Conds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectCommission(stm), nil
 }
@@ -86,13 +86,13 @@ func (h *queryHandler) queryJoin() error {
 		h.queryJoinMyself(s)
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if h.stmCount == nil {
 		return nil
 	}
 	h.stmCount.Modify(func(s *sql.Selector) {})
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -128,21 +128,21 @@ func (h *Handler) GetCommission(ctx context.Context) (*npool.Commission, error) 
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryCommission(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.scan(ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -160,18 +160,18 @@ func (h *Handler) GetCommissions(ctx context.Context) ([]*npool.Commission, uint
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryCommissions(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryCommissions(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
@@ -180,7 +180,7 @@ func (h *Handler) GetCommissions(ctx context.Context) ([]*npool.Commission, uint
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

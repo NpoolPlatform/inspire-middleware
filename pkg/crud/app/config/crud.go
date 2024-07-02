@@ -2,8 +2,7 @@
 package config
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -95,31 +94,31 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.EndAt != nil {
 		at, ok := conds.EndAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid endat")
+			return nil, wlog.Errorf("invalid endat")
 		}
 		switch conds.EndAt.Op {
 		case cruder.LT:
@@ -135,13 +134,13 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.EndAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.StartAt != nil {
 		at, ok := conds.StartAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid startat")
+			return nil, wlog.Errorf("invalid startat")
 		}
 		switch conds.StartAt.Op {
 		case cruder.LT:
@@ -157,85 +156,85 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.StartAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleMode != nil {
 		settleType, ok := conds.SettleMode.Val.(types.SettleMode)
 		if !ok {
-			return nil, fmt.Errorf("invalid settlemode")
+			return nil, wlog.Errorf("invalid settlemode")
 		}
 		switch conds.SettleMode.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.SettleMode(settleType.String()))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleAmountType != nil {
 		settleAmountType, ok := conds.SettleAmountType.Val.(types.SettleAmountType)
 		if !ok {
-			return nil, fmt.Errorf("invalid settleamounttype")
+			return nil, wlog.Errorf("invalid settleamounttype")
 		}
 		switch conds.SettleAmountType.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.SettleAmountType(settleAmountType.String()))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleInterval != nil {
 		settleInterval, ok := conds.SettleInterval.Val.(types.SettleInterval)
 		if !ok {
-			return nil, fmt.Errorf("invalid settleinterval")
+			return nil, wlog.Errorf("invalid settleinterval")
 		}
 		switch conds.SettleInterval.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.SettleInterval(settleInterval.String()))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.CommissionType != nil {
 		commissionType, ok := conds.CommissionType.Val.(types.CommissionType)
 		if !ok {
-			return nil, fmt.Errorf("invalid commissiontype")
+			return nil, wlog.Errorf("invalid commissiontype")
 		}
 		switch conds.CommissionType.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.CommissionType(commissionType.String()))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.SettleBenefit != nil {
 		settleBenefit, ok := conds.SettleBenefit.Val.(bool)
 		if !ok {
-			return nil, fmt.Errorf("invalid settletype")
+			return nil, wlog.Errorf("invalid settletype")
 		}
 		switch conds.SettleBenefit.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.SettleBenefit(settleBenefit))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entappconfig.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -243,19 +242,19 @@ func SetQueryConds(q *ent.AppConfigQuery, conds *Conds) (*ent.AppConfigQuery, er
 		case cruder.NEQ:
 			q.Where(entappconfig.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	if conds.MaxLevel != nil {
 		value, ok := conds.MaxLevel.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid maxlevel")
+			return nil, wlog.Errorf("invalid maxlevel")
 		}
 		switch conds.MaxLevel.Op {
 		case cruder.EQ:
 			q.Where(entappconfig.MaxLevel(value))
 		default:
-			return nil, fmt.Errorf("invalid appconfig field")
+			return nil, wlog.Errorf("invalid appconfig field")
 		}
 	}
 	return q, nil

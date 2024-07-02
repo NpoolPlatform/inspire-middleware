@@ -2,10 +2,10 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
 	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon/allocated"
@@ -28,10 +28,10 @@ func (h *rewardHandler) condGood() error {
 		fallthrough //nolint
 	case basetypes.UsedFor_AffiliatePurchase:
 		if h.GoodID == nil {
-			return fmt.Errorf("need goodid")
+			return wlog.Errorf("need goodid")
 		}
 		if h.AppGoodID == nil {
-			return fmt.Errorf("need appgoodid")
+			return wlog.Errorf("need appgoodid")
 		}
 		h.Conds.GoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.GoodID}
 		h.Conds.AppGoodID = &cruder.Cond{Op: cruder.EQ, Val: *h.AppGoodID}
@@ -45,11 +45,11 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 		EventType: &cruder.Cond{Op: cruder.EQ, Val: *h.EventType},
 	}
 	if err := h.condGood(); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	info, err := h.GetEventOnly(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return info, nil
 }
@@ -57,12 +57,12 @@ func (h *rewardHandler) getEvent(ctx context.Context) (*npool.Event, error) {
 func (h *rewardHandler) calculateCredits(ev *npool.Event) (decimal.Decimal, error) {
 	credits, err := decimal.NewFromString(ev.Credits)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	_credits, err := decimal.NewFromString(ev.CreditsPerUSD)
 	if err != nil {
-		return decimal.NewFromInt(0), err
+		return decimal.NewFromInt(0), wlog.WrapError(err)
 	}
 
 	credits = credits.Add(_credits.Mul(*h.Amount))
@@ -78,14 +78,14 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			coupon1.WithEntID(&_id, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_coupon, err := handler.GetCoupon(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if _coupon == nil {
-			return fmt.Errorf("invalid coupon")
+			return wlog.Errorf("invalid coupon")
 		}
 
 		now := time.Now().Unix()
@@ -106,11 +106,11 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			allocated1.WithCouponID(&coup.EntID, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		if _, err := handler.CreateCoupon(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 
@@ -120,7 +120,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error) {
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -132,7 +132,7 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 
 	credits, err := h.calculateCredits(ev)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	// We don't care about result of allocate coupon
@@ -159,14 +159,14 @@ func (h *rewardHandler) rewardSelf(ctx context.Context) ([]*npool.Credit, error)
 func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, error) {
 	handler, err := registration1.NewHandler(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	handler.AppID = h.AppID
 	handler.InviteeID = h.UserID
 
 	_, inviterIDs, err := handler.GetSortedInviters(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(inviterIDs) == 0 {
 		return nil, nil
@@ -174,7 +174,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 
 	ev, err := h.getEvent(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if ev == nil {
 		return nil, nil
@@ -206,7 +206,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 			WithAmount(&amount, true),
 		)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		_handler := &rewardHandler{
@@ -215,7 +215,7 @@ func (h *rewardHandler) rewardAffiliate(ctx context.Context) ([]*npool.Credit, e
 
 		credit, err := _handler.rewardSelf(ctx)
 		if err != nil {
-			return nil, err
+			return nil, wlog.WrapError(err)
 		}
 
 		j--
@@ -246,6 +246,6 @@ func (h *Handler) RewardEvent(ctx context.Context) ([]*npool.Credit, error) {
 	case basetypes.UsedFor_AffiliatePurchase:
 		return handler.rewardAffiliate(ctx)
 	default:
-		return nil, fmt.Errorf("not implemented")
+		return nil, wlog.Errorf("not implemented")
 	}
 }

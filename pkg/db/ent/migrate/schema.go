@@ -81,7 +81,7 @@ var (
 		{Name: "level", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
@@ -114,7 +114,7 @@ var (
 		{Name: "commission_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionType"},
 		{Name: "settle_benefit", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "max_level", Type: field.TypeUint32, Nullable: true, Default: 1},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
@@ -143,7 +143,7 @@ var (
 		{Name: "level", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
@@ -224,7 +224,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -258,7 +258,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
@@ -297,7 +297,7 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1713175925},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1715675263},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 		{Name: "cashable", Type: field.TypeBool, Nullable: true, Default: false},
 	}
@@ -368,6 +368,67 @@ var (
 			},
 		},
 	}
+	// GoodAchievementsColumns holds the columns for the "good_achievements" table.
+	GoodAchievementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "total_units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "total_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "total_commission_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_commission_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+	}
+	// GoodAchievementsTable holds the schema information for the "good_achievements" table.
+	GoodAchievementsTable = &schema.Table{
+		Name:       "good_achievements",
+		Columns:    GoodAchievementsColumns,
+		PrimaryKey: []*schema.Column{GoodAchievementsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "goodachievement_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{GoodAchievementsColumns[4]},
+			},
+		},
+	}
+	// GoodCoinAchievementsColumns holds the columns for the "good_coin_achievements" table.
+	GoodCoinAchievementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "total_units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "total_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "total_commission_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "self_commission_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+	}
+	// GoodCoinAchievementsTable holds the schema information for the "good_coin_achievements" table.
+	GoodCoinAchievementsTable = &schema.Table{
+		Name:       "good_coin_achievements",
+		Columns:    GoodCoinAchievementsColumns,
+		PrimaryKey: []*schema.Column{GoodCoinAchievementsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "goodcoinachievement_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{GoodCoinAchievementsColumns[4]},
+			},
+		},
+	}
 	// InvitationCodesColumns holds the columns for the "invitation_codes" table.
 	InvitationCodesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -390,6 +451,66 @@ var (
 				Name:    "invitationcode_ent_id",
 				Unique:  true,
 				Columns: []*schema.Column{InvitationCodesColumns[4]},
+			},
+		},
+	}
+	// OrderPaymentStatementsColumns holds the columns for the "order_payment_statements" table.
+	OrderPaymentStatementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "statement_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "payment_coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "commission_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+	}
+	// OrderPaymentStatementsTable holds the schema information for the "order_payment_statements" table.
+	OrderPaymentStatementsTable = &schema.Table{
+		Name:       "order_payment_statements",
+		Columns:    OrderPaymentStatementsColumns,
+		PrimaryKey: []*schema.Column{OrderPaymentStatementsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderpaymentstatement_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderPaymentStatementsColumns[4]},
+			},
+		},
+	}
+	// OrderStatementsColumns holds the columns for the "order_statements" table.
+	OrderStatementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "good_coin_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "good_value_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "payment_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "commission_amount_usd", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "app_config_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "commission_config_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "commission_config_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionConfigType"},
+	}
+	// OrderStatementsTable holds the schema information for the "order_statements" table.
+	OrderStatementsTable = &schema.Table{
+		Name:       "order_statements",
+		Columns:    OrderStatementsColumns,
+		PrimaryKey: []*schema.Column{OrderStatementsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderstatement_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderStatementsColumns[4]},
 			},
 		},
 	}
@@ -507,7 +628,11 @@ var (
 		CouponAllocatedsTable,
 		CouponScopesTable,
 		EventsTable,
+		GoodAchievementsTable,
+		GoodCoinAchievementsTable,
 		InvitationCodesTable,
+		OrderPaymentStatementsTable,
+		OrderStatementsTable,
 		PubsubMessagesTable,
 		RegistrationsTable,
 		ArchivementDetailsTable,

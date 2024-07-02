@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
@@ -100,11 +101,11 @@ func (h *createHandler) constructSQL() {
 func (h *createHandler) createAppConfig(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create appconfig: %v", err)
+		return wlog.Errorf("fail create appconfig: %v", err)
 	}
 	return nil
 }
@@ -123,7 +124,7 @@ func (h *Handler) CreateAppConfig(ctx context.Context) error {
 		h.StartAt = &handler.now
 	}
 	if h.MaxLevel != nil && *h.MaxLevel <= 0 {
-		return fmt.Errorf("invalid MaxLevel")
+		return wlog.Errorf("invalid MaxLevel")
 	}
 
 	handler.constructSQL()
@@ -139,11 +140,11 @@ func (h *Handler) CreateAppConfig(ctx context.Context) error {
 			).
 			SetEndAt(uint32(time.Now().Unix())).
 			Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 
 		if err := handler.createAppConfig(_ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})

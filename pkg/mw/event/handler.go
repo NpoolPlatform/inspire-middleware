@@ -2,8 +2,8 @@ package event
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -38,7 +38,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -51,13 +51,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -68,13 +68,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -87,7 +87,7 @@ func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) erro
 		for _, id := range ids {
 			_id, err := uuid.Parse(id)
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			_ids = append(_ids, _id)
 		}
@@ -100,13 +100,13 @@ func WithCredits(amount *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid credits")
+				return wlog.Errorf("invalid credits")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Credits = &_amount
 		return nil
@@ -117,13 +117,13 @@ func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid creditsperusd")
+				return wlog.Errorf("invalid creditsperusd")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.CreditsPerUSD = &_amount
 		return nil
@@ -148,13 +148,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UserID = &_id
 		return nil
@@ -165,7 +165,7 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 	return func(ctx context.Context, h *Handler) error {
 		if eventType == nil {
 			if must {
-				return fmt.Errorf("invalid eventtype")
+				return wlog.Errorf("invalid eventtype")
 			}
 			return nil
 		}
@@ -207,9 +207,9 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_KYCApproved:
 			fallthrough //nolint
 		case basetypes.UsedFor_KYCRejected:
-			return fmt.Errorf("not implemented")
+			return wlog.Errorf("not implemented")
 		default:
-			return fmt.Errorf("invalid eventtype")
+			return wlog.Errorf("invalid eventtype")
 		}
 
 		h.EventType = eventType
@@ -221,13 +221,13 @@ func WithGoodID(goodID *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if goodID == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*goodID)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.GoodID = &_id
 		return nil
@@ -238,13 +238,13 @@ func WithAppGoodID(goodID *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if goodID == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*goodID)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppGoodID = &_id
 		return nil
@@ -262,7 +262,7 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid amount")
+				return wlog.Errorf("invalid amount")
 			}
 			_amount := decimal.NewFromInt(0)
 			h.Amount = &_amount
@@ -270,7 +270,7 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Amount = &_amount
 		return nil
@@ -286,7 +286,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{
 				Op:  conds.GetEntID().GetOp(),
@@ -296,7 +296,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op:  conds.GetAppID().GetOp(),
@@ -312,7 +312,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.GoodID != nil {
 			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
@@ -322,7 +322,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppGoodID = &cruder.Cond{
 				Op:  conds.GetAppGoodID().GetOp(),
@@ -334,7 +334,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

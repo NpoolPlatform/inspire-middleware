@@ -2,8 +2,8 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -35,7 +35,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -48,13 +48,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -65,7 +65,7 @@ func WithCouponType(couponType *types.CouponType, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if couponType == nil {
 			if must {
-				return fmt.Errorf("invalid coupontype")
+				return wlog.Errorf("invalid coupontype")
 			}
 			return nil
 		}
@@ -73,7 +73,7 @@ func WithCouponType(couponType *types.CouponType, must bool) func(context.Contex
 		case types.CouponType_FixAmount:
 		case types.CouponType_Discount:
 		default:
-			return fmt.Errorf("invalid coupontype")
+			return wlog.Errorf("invalid coupontype")
 		}
 		h.CouponType = couponType
 		return nil
@@ -84,13 +84,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -101,13 +101,13 @@ func WithDenomination(amount *string, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid denomination")
+				return wlog.Errorf("invalid denomination")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Denomination = &_amount
 		return nil
@@ -118,13 +118,13 @@ func WithCirculation(amount *string, must bool) func(context.Context, *Handler) 
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid circulation")
+				return wlog.Errorf("invalid circulation")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Circulation = &_amount
 		return nil
@@ -135,13 +135,13 @@ func WithIssuedBy(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid issuedby")
+				return wlog.Errorf("invalid issuedby")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.IssuedBy = &_id
 		return nil
@@ -152,12 +152,12 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid startat")
+				return wlog.Errorf("invalid startat")
 			}
 			return nil
 		}
 		if *startAt == 0 {
-			return fmt.Errorf("invalid startat")
+			return wlog.Errorf("invalid startat")
 		}
 		h.StartAt = startAt
 		return nil
@@ -168,12 +168,12 @@ func WithEndAt(endAt *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if endAt == nil {
 			if must {
-				return fmt.Errorf("invalid endat")
+				return wlog.Errorf("invalid endat")
 			}
 			return nil
 		}
 		if *endAt == 0 {
-			return fmt.Errorf("invalid endat")
+			return wlog.Errorf("invalid endat")
 		}
 		h.EndAt = endAt
 		return nil
@@ -184,7 +184,7 @@ func WithDurationDays(days *uint32, must bool) func(context.Context, *Handler) e
 	return func(ctx context.Context, h *Handler) error {
 		if days == nil {
 			if must {
-				return fmt.Errorf("invalid durationdays")
+				return wlog.Errorf("invalid durationdays")
 			}
 			return nil
 		}
@@ -197,12 +197,12 @@ func WithMessage(value *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid message")
+				return wlog.Errorf("invalid message")
 			}
 			return nil
 		}
 		if *value == "" {
-			return fmt.Errorf("invalid message")
+			return wlog.Errorf("invalid message")
 		}
 		h.Message = value
 		return nil
@@ -213,12 +213,12 @@ func WithName(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid name")
+				return wlog.Errorf("invalid name")
 			}
 			return nil
 		}
 		if *value == "" {
-			return fmt.Errorf("invalid name")
+			return wlog.Errorf("invalid name")
 		}
 		h.Name = value
 		return nil
@@ -229,13 +229,13 @@ func WithThreshold(amount *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid threshold")
+				return wlog.Errorf("invalid threshold")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Threshold = &_amount
 		return nil
@@ -246,13 +246,13 @@ func WithAllocated(amount *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return fmt.Errorf("invalid allocated")
+				return wlog.Errorf("invalid allocated")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Allocated = &_amount
 		return nil
@@ -263,7 +263,7 @@ func WithCouponConstraint(constraint *types.CouponConstraint, must bool) func(co
 	return func(ctx context.Context, h *Handler) error {
 		if constraint == nil {
 			if must {
-				return fmt.Errorf("invalid constraint")
+				return wlog.Errorf("invalid constraint")
 			}
 			return nil
 		}
@@ -271,7 +271,7 @@ func WithCouponConstraint(constraint *types.CouponConstraint, must bool) func(co
 		case types.CouponConstraint_Normal:
 		case types.CouponConstraint_PaymentThreshold:
 		default:
-			return fmt.Errorf("invalid constraint")
+			return wlog.Errorf("invalid constraint")
 		}
 		h.CouponConstraint = constraint
 		return nil
@@ -282,7 +282,7 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 	return func(ctx context.Context, h *Handler) error {
 		if couponScope == nil {
 			if must {
-				return fmt.Errorf("invalid couponscope")
+				return wlog.Errorf("invalid couponscope")
 			}
 			return nil
 		}
@@ -291,7 +291,7 @@ func WithCouponScope(couponScope *types.CouponScope, must bool) func(context.Con
 		case types.CouponScope_Blacklist:
 		case types.CouponScope_Whitelist:
 		default:
-			return fmt.Errorf("invalid couponscope")
+			return wlog.Errorf("invalid couponscope")
 		}
 		h.CouponScope = couponScope
 		return nil
@@ -302,7 +302,7 @@ func WithRandom(random *bool, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if random == nil {
 			if must {
-				return fmt.Errorf("invalid random")
+				return wlog.Errorf("invalid random")
 			}
 			return nil
 		}
@@ -315,16 +315,16 @@ func WithCashableProbability(probability *string, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if probability == nil {
 			if must {
-				return fmt.Errorf("invalid probability")
+				return wlog.Errorf("invalid probability")
 			}
 			return nil
 		}
 		_probability, err := decimal.NewFromString(*probability)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if _probability.Cmp(decimal.NewFromInt(0)) < 0 || _probability.Cmp(decimal.NewFromInt(1)) > 0 {
-			return fmt.Errorf("invalid probability")
+			return wlog.Errorf("invalid probability")
 		}
 		h.CashableProbability = &_probability
 		return nil
@@ -340,7 +340,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{
 				Op: conds.GetEntID().GetOp(), Val: id,
@@ -354,7 +354,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op: conds.GetAppID().GetOp(), Val: id,
@@ -365,7 +365,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}
