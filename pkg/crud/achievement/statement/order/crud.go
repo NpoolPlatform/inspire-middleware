@@ -97,6 +97,7 @@ type Conds struct {
 	GoodID               *cruder.Cond
 	AppGoodID            *cruder.Cond
 	OrderID              *cruder.Cond
+	OrderIDs             *cruder.Cond
 	OrderUserID          *cruder.Cond
 	GoodCoinTypeID       *cruder.Cond
 	AppConfigID          *cruder.Cond
@@ -226,6 +227,18 @@ func SetQueryConds(q *ent.OrderStatementQuery, conds *Conds) (*ent.OrderStatemen
 		switch conds.OrderID.Op {
 		case cruder.EQ:
 			q.Where(entorderstatement.OrderID(id))
+		default:
+			return nil, wlog.Errorf("invalid statement field")
+		}
+	}
+	if conds.OrderIDs != nil {
+		ids, ok := conds.OrderIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid order ids")
+		}
+		switch conds.OrderIDs.Op {
+		case cruder.IN:
+			q.Where(entorderstatement.OrderIDIn(ids...))
 		default:
 			return nil, wlog.Errorf("invalid statement field")
 		}
