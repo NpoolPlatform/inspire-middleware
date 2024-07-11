@@ -2,13 +2,12 @@ package user
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
-
-	achievementusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement/user"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 
 	"github.com/shopspring/decimal"
@@ -40,7 +39,7 @@ func (h *queryHandler) selectAchievementUser(stm *ent.AchievementUserQuery) {
 
 func (h *queryHandler) queryAchievementUser(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.AchievementUser.Query().Where(entachievementuser.DeletedAt(0))
 	if h.ID != nil {
@@ -56,11 +55,11 @@ func (h *queryHandler) queryAchievementUser(cli *ent.Client) error {
 func (h *queryHandler) queryAchievementUsers(ctx context.Context, cli *ent.Client) error {
 	stm, err := achievementusercrud.SetQueryConds(cli.AchievementUser.Query(), h.Conds)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	total, err := stm.Count(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.total = uint32(total)
 	h.selectAchievementUser(stm)
@@ -112,13 +111,13 @@ func (h *Handler) GetAchievementUser(ctx context.Context) (*npool.AchievementUse
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -134,7 +133,7 @@ func (h *Handler) GetAchievementUsers(ctx context.Context) ([]*npool.Achievement
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryAchievementUsers(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmSelect.
 			Offset(int(h.Offset)).
@@ -142,7 +141,7 @@ func (h *Handler) GetAchievementUsers(ctx context.Context) ([]*npool.Achievement
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()

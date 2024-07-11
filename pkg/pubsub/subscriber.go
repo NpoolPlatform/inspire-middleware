@@ -2,7 +2,6 @@ package pubsub
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -15,6 +14,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/google/uuid"
 )
 
@@ -43,7 +43,7 @@ func finish(ctx context.Context, msg *pubsub.Msg, err error) error {
 			c.SetUndoID(*msg.UnID)
 		}
 		_, err = c.Save(ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 }
 
@@ -84,7 +84,7 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 				entpubsubmsg.EntID(uid),
 			).
 			Only(_ctx)
-		return err
+		return wlog.WrapError(err)
 	})
 
 	switch err {
@@ -99,7 +99,7 @@ func statReq(ctx context.Context, mid string, uid uuid.UUID) (bool, error) {
 			"UID", uid,
 			"Error", err,
 		)
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 
 	return false, nil
@@ -116,7 +116,7 @@ func statMsg(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bo
 	case basetypes.MsgID_UpdateCouponsUsedReq.String():
 		return statReq(ctx, mid, uid)
 	default:
-		return false, fmt.Errorf("invalid message")
+		return false, wlog.Errorf("invalid message")
 	}
 }
 
@@ -140,7 +140,7 @@ func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (e
 	default:
 		return nil
 	}
-	return err
+	return wlog.WrapError(err)
 }
 
 // No matter what handler return, the message will be acked, unless handler halt
@@ -158,7 +158,7 @@ func handler(ctx context.Context, msg *pubsub.Msg) (err error) {
 
 	req, err = prepare(msg.MID, msg.Body)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if req == nil {
 		return nil
@@ -166,25 +166,25 @@ func handler(ctx context.Context, msg *pubsub.Msg) (err error) {
 
 	appliable, err = stat(ctx, msg.MID, msg.UID, msg.RID)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if !appliable {
 		return nil
 	}
 
 	err = process(ctx, msg.MID, msg.UID, req)
-	return err
+	return wlog.WrapError(err)
 }
 
 func Subscribe(ctx context.Context) (err error) {
 	subscriber, err = pubsub.NewSubscriber()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	publisher, err = pubsub.NewPublisher()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return subscriber.Subscribe(ctx, handler)

@@ -2,10 +2,10 @@ package cashcontrol
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cashcontrolcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -33,7 +33,7 @@ func (h *queryHandler) selectCashControl(stm *ent.CashControlQuery) *ent.CashCon
 
 func (h *queryHandler) queryCashControl(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.CashControl.Query().Where(entcashcontrol.DeletedAt(0))
 	if h.ID != nil {
@@ -49,7 +49,7 @@ func (h *queryHandler) queryCashControl(cli *ent.Client) error {
 func (h *queryHandler) queryCashControls(cli *ent.Client) (*ent.CashControlSelect, error) {
 	stm, err := cashcontrolcrud.SetQueryConds(cli.CashControl.Query(), h.Conds)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.selectCashControl(stm), nil
 }
@@ -93,7 +93,7 @@ func (h *queryHandler) queryJoin() error {
 		h.queryJoinCoupon(s)
 	})
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if h.stmCount == nil {
 		return nil
@@ -101,7 +101,7 @@ func (h *queryHandler) queryJoin() error {
 	h.stmCount.Modify(func(s *sql.Selector) {
 		h.queryJoinCoupon(s)
 	})
-	return err
+	return wlog.WrapError(err)
 }
 
 func (h *queryHandler) scan(ctx context.Context) error {
@@ -133,21 +133,21 @@ func (h *Handler) GetCashControl(ctx context.Context) (*npool.CashControl, error
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryCashControl(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 
 	handler.formalize()
@@ -164,18 +164,18 @@ func (h *Handler) GetCashControls(ctx context.Context) ([]*npool.CashControl, ui
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		handler.stmSelect, err = handler.queryCashControls(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.stmCount, err = handler.queryCashControls(cli)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.queryJoin(); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		_total, err := handler.stmCount.Count(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.total = uint32(_total)
 		handler.stmSelect.
@@ -184,7 +184,7 @@ func (h *Handler) GetCashControls(ctx context.Context) ([]*npool.CashControl, ui
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 
 	handler.formalize()
@@ -195,13 +195,13 @@ func (h *Handler) GetCashControlOnly(ctx context.Context) (*npool.CashControl, e
 	h.Limit = 1
 	infos, _, err := h.GetCashControls(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(infos) == 0 {
 		return nil, nil
 	}
 	if len(infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos[0], nil
 }

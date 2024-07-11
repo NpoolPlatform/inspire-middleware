@@ -2,7 +2,8 @@ package registration
 
 import (
 	"context"
-	"fmt"
+
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	registrationcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/registration"
@@ -24,7 +25,7 @@ func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration,
 	for {
 		_inviters, _, err := h.GetSuperiores(ctx)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, wlog.WrapError(err)
 		}
 		if len(_inviters) == 0 {
 			break
@@ -59,7 +60,7 @@ func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration,
 	}
 
 	if len(_inviters) == 0 {
-		return nil, nil, fmt.Errorf("invalid top inviter")
+		return nil, nil, wlog.Errorf("invalid top inviter")
 	}
 
 	for {
@@ -69,7 +70,7 @@ func (h *Handler) GetSortedInviters(ctx context.Context) ([]*npool.Registration,
 
 		if len(inviters) == 1 {
 			if _inviters[len(_inviters)-1].InviteeID != inviters[0].InviterID {
-				return nil, nil, fmt.Errorf("mismatch registration")
+				return nil, nil, wlog.Errorf("mismatch registration")
 			}
 			_inviters = append(_inviters, inviters[0])
 			break

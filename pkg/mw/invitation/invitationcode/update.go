@@ -3,6 +3,8 @@ package invitationcode
 import (
 	"context"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+
 	invitationcodecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -17,12 +19,12 @@ func (h *Handler) UpdateInvitationCode(ctx context.Context) (*npool.InvitationCo
 				Disabled: h.Disabled,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetInvitationCode(ctx)

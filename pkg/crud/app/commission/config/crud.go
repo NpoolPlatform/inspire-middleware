@@ -2,8 +2,7 @@
 package config
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappcommissionconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appcommissionconfig"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -110,7 +109,7 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
@@ -118,37 +117,37 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		case cruder.NEQ:
 			q.Where(entappcommissionconfig.EntIDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.SettleType != nil {
 		settleType, ok := conds.SettleType.Val.(types.SettleType)
 		if !ok {
-			return nil, fmt.Errorf("invalid settletype")
+			return nil, wlog.Errorf("invalid settletype")
 		}
 		switch conds.SettleType.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.SettleType(settleType.String()))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.EndAt != nil {
 		at, ok := conds.EndAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid endat")
+			return nil, wlog.Errorf("invalid endat")
 		}
 		switch conds.EndAt.Op {
 		case cruder.LT:
@@ -164,13 +163,13 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		case cruder.NEQ:
 			q.Where(entappcommissionconfig.EndAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.StartAt != nil {
 		at, ok := conds.StartAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid startat")
+			return nil, wlog.Errorf("invalid startat")
 		}
 		switch conds.StartAt.Op {
 		case cruder.LT:
@@ -186,73 +185,73 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		case cruder.NEQ:
 			q.Where(entappcommissionconfig.StartAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entappcommissionconfig.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.ThresholdAmount != nil {
 		id, ok := conds.ThresholdAmount.Val.(decimal.Decimal)
 		if !ok {
-			return nil, fmt.Errorf("invalid thresholdamount")
+			return nil, wlog.Errorf("invalid thresholdamount")
 		}
 		switch conds.ThresholdAmount.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.ThresholdAmount(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.Invites != nil {
 		id, ok := conds.Invites.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid invites")
+			return nil, wlog.Errorf("invalid invites")
 		}
 		switch conds.Invites.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.Invites(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.Disabled != nil {
 		value, ok := conds.Disabled.Val.(bool)
 		if !ok {
-			return nil, fmt.Errorf("invalid disabled")
+			return nil, wlog.Errorf("invalid disabled")
 		}
 		switch conds.Disabled.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.Disabled(value))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.Level != nil {
 		id, ok := conds.Level.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid level")
+			return nil, wlog.Errorf("invalid level")
 		}
 		switch conds.Level.Op {
 		case cruder.EQ:
 			q.Where(entappcommissionconfig.Level(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -260,7 +259,7 @@ func SetQueryConds(q *ent.AppCommissionConfigQuery, conds *Conds) (*ent.AppCommi
 		case cruder.NEQ:
 			q.Where(entappcommissionconfig.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid commission field")
+			return nil, wlog.Errorf("invalid commission field")
 		}
 	}
 	return q, nil

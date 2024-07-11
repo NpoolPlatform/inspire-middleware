@@ -7,9 +7,9 @@ require (
 	entgo.io/ent v0.11.3
 	github.com/AmirSoleimani/VoucherCodeGenerator/vcgen v0.0.0-20220706103434-bcb25b5bff9c
 	github.com/NpoolPlatform/basal-middleware v0.0.0-20231010024452-78e081db856d
-	github.com/NpoolPlatform/go-service-framework v0.0.0-20240406043308-5bc31e227d8e
-	github.com/NpoolPlatform/libent-cruder v0.0.0-20240323085036-7679b4818ce7
-	github.com/NpoolPlatform/message v0.0.0-20240423081421-ad76772e7ac0
+	github.com/NpoolPlatform/go-service-framework v0.0.0-20240510075442-89278cb5cf47
+	github.com/NpoolPlatform/libent-cruder v0.0.0-20240514082633-598d5fc7b1e3
+	github.com/NpoolPlatform/message v0.0.0-20240711072021-f19e78dccbfb
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/shopspring/decimal v1.3.1
@@ -91,7 +91,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.11.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.31.0 // indirect
 	go.opentelemetry.io/otel v1.8.0 // indirect

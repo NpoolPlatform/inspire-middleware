@@ -350,35 +350,35 @@ func calculate(t *testing.T) {
 	assert.Nil(t, err)
 
 	orderID := uuid.NewString()
-	paymentID := uuid.NewString()
 	coinTypeID := uuid.NewString()
 	paymentCoinTypeID := uuid.NewString()
-	paymentCoinUSDCurrency := decimal.RequireFromString("12.345")
 	units := decimal.NewFromInt(10).String()
 	paymentAmount := decimal.NewFromInt(2000)
-	goodValue := decimal.NewFromInt(3000)
+	paymentAmountUSD := decimal.NewFromInt(2000)
 	goodValueUSD := decimal.NewFromInt(30000)
 	settleType := types.SettleType_GoodOrderPayment
 
 	comms, err := Calculate(
 		context.Background(),
 		&npool.CalculateRequest{
-			AppID:                  comm6.AppID,
-			UserID:                 comm6.UserID,
-			GoodID:                 comm6.GetGoodID(),
-			AppGoodID:              comm6.GetAppGoodID(),
-			OrderID:                orderID,
-			PaymentID:              paymentID,
-			CoinTypeID:             coinTypeID,
-			PaymentCoinTypeID:      paymentCoinTypeID,
-			PaymentCoinUSDCurrency: paymentCoinUSDCurrency.String(),
-			Units:                  units,
-			SettleType:             settleType,
-			PaymentAmount:          paymentAmount.String(),
-			GoodValue:              goodValue.String(),
-			GoodValueUSD:           goodValueUSD.String(),
-			HasCommission:          true,
-			OrderCreatedAt:         uint32(time.Now().Unix()),
+			AppID:            comm6.AppID,
+			UserID:           comm6.UserID,
+			GoodID:           comm6.GetGoodID(),
+			AppGoodID:        comm6.GetAppGoodID(),
+			OrderID:          orderID,
+			GoodCoinTypeID:   coinTypeID,
+			SettleType:       settleType,
+			Units:            units,
+			PaymentAmountUSD: paymentAmountUSD.String(),
+			GoodValueUSD:     goodValueUSD.String(),
+			HasCommission:    true,
+			OrderCreatedAt:   uint32(time.Now().Unix()),
+			Payments: []*npool.Payment{
+				{
+					CoinTypeID: paymentCoinTypeID,
+					Amount:     paymentAmount.String(),
+				},
+			},
 		},
 	)
 	if assert.Nil(t, err) {
@@ -386,8 +386,8 @@ func calculate(t *testing.T) {
 
 		found := false
 		for _, comm := range comms {
-			if comm.UserID == comm1.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm1.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -396,8 +396,8 @@ func calculate(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == comm2.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm2.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -406,8 +406,8 @@ func calculate(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == comm3.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm3.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.NewFromInt(5).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -416,8 +416,8 @@ func calculate(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == comm4.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm4.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.RequireFromString("2.6").Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -426,8 +426,8 @@ func calculate(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == comm5.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm5.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.RequireFromString("5.4").Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}
@@ -436,8 +436,8 @@ func calculate(t *testing.T) {
 
 		found = false
 		for _, comm := range comms {
-			if comm.UserID == comm6.UserID {
-				assert.Equal(t, comm.Commission, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
+			if *comm.UserID == comm6.UserID {
+				assert.Equal(t, *comm.PaymentStatements[0].CommissionAmount, paymentAmount.Mul(decimal.NewFromInt(7).Div(decimal.NewFromInt(100))).String())
 				found = true
 				break
 			}

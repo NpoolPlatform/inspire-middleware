@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 
@@ -14,7 +15,7 @@ import (
 func (h *Handler) DeleteScope(ctx context.Context) (*npool.Scope, error) {
 	info, err := h.GetScope(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil, nil
@@ -28,12 +29,12 @@ func (h *Handler) DeleteScope(ctx context.Context) (*npool.Scope, error) {
 				DeletedAt: &now,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return info, nil

@@ -1,3 +1,4 @@
+//nolint:dupl
 package cashcontrol
 
 import (
@@ -22,7 +23,8 @@ func (s *Server) DeleteCashControl(ctx context.Context, in *npool.DeleteCashCont
 
 	handler, err := cashcontrol1.NewHandler(
 		ctx,
-		cashcontrol1.WithID(req.ID, true),
+		cashcontrol1.WithID(req.ID, false),
+		cashcontrol1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

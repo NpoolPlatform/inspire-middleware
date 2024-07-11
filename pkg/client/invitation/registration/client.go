@@ -3,10 +3,10 @@ package registration
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
@@ -116,7 +116,7 @@ func GetRegistrationOnly(ctx context.Context, conds *npool.Conds) (*npool.Regist
 		return nil, nil
 	}
 	if len(infos.([]*npool.Registration)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.Registration)[0], nil
 }

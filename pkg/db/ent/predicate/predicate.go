@@ -42,8 +42,20 @@ type CouponScope func(*sql.Selector)
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)
 
+// GoodAchievement is the predicate function for goodachievement builders.
+type GoodAchievement func(*sql.Selector)
+
+// GoodCoinAchievement is the predicate function for goodcoinachievement builders.
+type GoodCoinAchievement func(*sql.Selector)
+
 // InvitationCode is the predicate function for invitationcode builders.
 type InvitationCode func(*sql.Selector)
+
+// OrderPaymentStatement is the predicate function for orderpaymentstatement builders.
+type OrderPaymentStatement func(*sql.Selector)
+
+// OrderStatement is the predicate function for orderstatement builders.
+type OrderStatement func(*sql.Selector)
 
 // PubsubMessage is the predicate function for pubsubmessage builders.
 type PubsubMessage func(*sql.Selector)

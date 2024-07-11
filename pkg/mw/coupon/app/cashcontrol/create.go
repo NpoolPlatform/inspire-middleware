@@ -2,8 +2,8 @@ package cashcontrol
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	cashcontrolcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/cashcontrol"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -26,20 +26,20 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 		coupon1.WithEntID(&couponID, true),
 	)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	coupon, err := handler.GetCoupon(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if coupon == nil {
-		return fmt.Errorf("invalid coupon")
+		return wlog.Errorf("invalid coupon")
 	}
 	if coupon.AppID != h.AppID.String() {
-		return fmt.Errorf("invalid coupon")
+		return wlog.Errorf("invalid coupon")
 	}
 	if coupon.CouponType != inspiretypes.CouponType_FixAmount {
-		return fmt.Errorf("invalid coupon type")
+		return wlog.Errorf("invalid coupon type")
 	}
 	return nil
 }
@@ -55,7 +55,7 @@ func (h *createHandler) createCashControl(ctx context.Context, cli *ent.Client) 
 			Value:       h.Value,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -65,7 +65,7 @@ func (h *Handler) CreateCashControl(ctx context.Context) (*npool.CashControl, er
 		Handler: h,
 	}
 	if err := handler.getCoupon(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	h.Conds = &cashcontrolcrud.Conds{
@@ -75,10 +75,10 @@ func (h *Handler) CreateCashControl(ctx context.Context) (*npool.CashControl, er
 	}
 	exist, err := h.ExistCashControlConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("control type %v already exist", *h.ControlType)
+		return nil, wlog.Errorf("control type %v already exist", *h.ControlType)
 	}
 
 	id := uuid.New()
@@ -88,12 +88,12 @@ func (h *Handler) CreateCashControl(ctx context.Context) (*npool.CashControl, er
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.createCashControl(ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.GetCashControl(ctx)
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	redis2 "github.com/NpoolPlatform/go-service-framework/pkg/redis"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -17,12 +18,12 @@ import (
 
 func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	if err := h.validateCoupons(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	key := fmt.Sprintf("%v:%v:%v", basetypes.Prefix_PrefixCreateAppEvent, *h.AppID, *h.EventType)
 	if err := redis2.TryLock(key, 0); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	defer func() {
 		_ = redis2.Unlock(key)
@@ -34,10 +35,10 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 	}
 	exist, err := h.ExistEventConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("already exist")
+		return nil, wlog.Errorf("already exist")
 	}
 
 	id := uuid.New()
@@ -61,12 +62,12 @@ func (h *Handler) CreateEvent(ctx context.Context) (*npool.Event, error) {
 				InviterLayers:  h.InviterLayers,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetEvent(ctx)

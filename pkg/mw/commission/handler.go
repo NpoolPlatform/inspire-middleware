@@ -2,8 +2,8 @@ package commission
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	commissioncrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/commission"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -52,7 +52,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -65,13 +65,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -82,13 +82,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -99,13 +99,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UserID = &_id
 		return nil
@@ -116,13 +116,13 @@ func WithGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid goodid")
+				return wlog.Errorf("invalid goodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.GoodID = &_id
 		return nil
@@ -133,13 +133,13 @@ func WithAppGoodID(id *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appgoodid")
+				return wlog.Errorf("invalid appgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppGoodID = &_id
 		return nil
@@ -150,13 +150,13 @@ func WithFromGoodID(id *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid fromgoodid")
+				return wlog.Errorf("invalid fromgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.FromGoodID = &_id
 		return nil
@@ -167,13 +167,13 @@ func WithToGoodID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid togoodid")
+				return wlog.Errorf("invalid togoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.ToGoodID = &_id
 		return nil
@@ -184,13 +184,13 @@ func WithFromAppGoodID(id *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid fromappgoodid")
+				return wlog.Errorf("invalid fromappgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.FromAppGoodID = &_id
 		return nil
@@ -201,13 +201,13 @@ func WithToAppGoodID(id *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid toappgoodid")
+				return wlog.Errorf("invalid toappgoodid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.ToAppGoodID = &_id
 		return nil
@@ -218,7 +218,7 @@ func WithSettleType(settleType *types.SettleType, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if settleType == nil {
 			if must {
-				return fmt.Errorf("invalid settletype")
+				return wlog.Errorf("invalid settletype")
 			}
 			return nil
 		}
@@ -226,7 +226,7 @@ func WithSettleType(settleType *types.SettleType, must bool) func(context.Contex
 		case types.SettleType_GoodOrderPayment:
 		case types.SettleType_TechniqueServiceFee:
 		default:
-			return fmt.Errorf("invalid settletype")
+			return wlog.Errorf("invalid settletype")
 		}
 		h.SettleType = settleType
 		return nil
@@ -237,7 +237,7 @@ func WithSettleMode(settleMode *types.SettleMode, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if settleMode == nil {
 			if must {
-				return fmt.Errorf("invalid settlemode")
+				return wlog.Errorf("invalid settlemode")
 			}
 			return nil
 		}
@@ -245,7 +245,7 @@ func WithSettleMode(settleMode *types.SettleMode, must bool) func(context.Contex
 		case types.SettleMode_SettleWithGoodValue:
 		case types.SettleMode_SettleWithPaymentAmount:
 		default:
-			return fmt.Errorf("invalid settlemode")
+			return wlog.Errorf("invalid settlemode")
 		}
 		h.SettleMode = settleMode
 		return nil
@@ -256,7 +256,7 @@ func WithSettleAmountType(settleAmount *types.SettleAmountType, must bool) func(
 	return func(ctx context.Context, h *Handler) error {
 		if settleAmount == nil {
 			if must {
-				return fmt.Errorf("invalid settleamounttype")
+				return wlog.Errorf("invalid settleamounttype")
 			}
 			return nil
 		}
@@ -264,7 +264,7 @@ func WithSettleAmountType(settleAmount *types.SettleAmountType, must bool) func(
 		case types.SettleAmountType_SettleByPercent:
 		case types.SettleAmountType_SettleByAmount:
 		default:
-			return fmt.Errorf("invalid settleamount")
+			return wlog.Errorf("invalid settleamount")
 		}
 		h.SettleAmountType = settleAmount
 		return nil
@@ -275,7 +275,7 @@ func WithSettleInterval(settleInterval *types.SettleInterval, must bool) func(co
 	return func(ctx context.Context, h *Handler) error {
 		if settleInterval == nil {
 			if must {
-				return fmt.Errorf("invalid settleinterval")
+				return wlog.Errorf("invalid settleinterval")
 			}
 			return nil
 		}
@@ -285,7 +285,7 @@ func WithSettleInterval(settleInterval *types.SettleInterval, must bool) func(co
 		case types.SettleInterval_SettleYearly:
 		case types.SettleInterval_SettleEveryOrder:
 		default:
-			return fmt.Errorf("invalid settlemode")
+			return wlog.Errorf("invalid settlemode")
 		}
 		h.SettleInterval = settleInterval
 		return nil
@@ -296,13 +296,13 @@ func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handle
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid amountorpercent")
+				return wlog.Errorf("invalid amountorpercent")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AmountOrPercent = &_amount
 		return nil
@@ -313,7 +313,7 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid startat")
+				return wlog.Errorf("invalid startat")
 			}
 		}
 		h.StartAt = startAt
@@ -325,13 +325,13 @@ func WithThreshold(value *string, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid threshold")
+				return wlog.Errorf("invalid threshold")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.Threshold = &_amount
 		return nil
@@ -342,16 +342,16 @@ func WithScalePercent(value *string, must bool) func(context.Context, *Handler) 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid scalepercent")
+				return wlog.Errorf("invalid scalepercent")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*value)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if _amount.Cmp(decimal.NewFromInt(0)) <= 0 {
-			return fmt.Errorf("invalid scalepercent")
+			return wlog.Errorf("invalid scalepercent")
 		}
 		h.ScalePercent = &_amount
 		return nil
@@ -365,10 +365,16 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds == nil {
 			return nil
 		}
+		if conds.ID != nil {
+			h.Conds.ID = &cruder.Cond{
+				Op:  conds.GetID().GetOp(),
+				Val: conds.GetID().GetValue(),
+			}
+		}
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{
 				Op:  conds.GetEntID().GetOp(),
@@ -378,7 +384,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op:  conds.GetAppID().GetOp(),
@@ -388,7 +394,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.UserID = &cruder.Cond{
 				Op:  conds.GetUserID().GetOp(),
@@ -398,7 +404,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.GoodID != nil {
 			id, err := uuid.Parse(conds.GetGoodID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.GoodID = &cruder.Cond{
 				Op:  conds.GetGoodID().GetOp(),
@@ -408,7 +414,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppGoodID != nil {
 			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppGoodID = &cruder.Cond{
 				Op:  conds.GetAppGoodID().GetOp(),
@@ -432,7 +438,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetUserIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}
@@ -446,7 +452,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetGoodIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

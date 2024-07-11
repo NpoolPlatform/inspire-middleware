@@ -2,12 +2,10 @@ package achievement
 
 import (
 	"context"
-	"fmt"
 
+	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	achievementcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/achievement"
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement"
 	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
@@ -37,7 +35,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -50,7 +48,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -67,7 +65,7 @@ func WithOrderID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid orderid")
+				return wlog.Errorf("invalid orderid")
 			}
 			return nil
 		}
@@ -84,7 +82,7 @@ func WithPaymentAmount(value *string, must bool) func(context.Context, *Handler)
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid paymentamount")
+				return wlog.Errorf("invalid paymentamount")
 			}
 			return nil
 		}
@@ -93,90 +91,6 @@ func WithPaymentAmount(value *string, must bool) func(context.Context, *Handler)
 			return err
 		}
 		h.PaymentAmount = &_amount
-		return nil
-	}
-}
-
-func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &achievementcrud.Conds{}
-		if conds == nil {
-			return nil
-		}
-		if conds.EntID != nil {
-			id, err := uuid.Parse(conds.GetEntID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.EntID = &cruder.Cond{
-				Op:  conds.GetEntID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.AppID != nil {
-			id, err := uuid.Parse(conds.GetAppID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AppID = &cruder.Cond{
-				Op:  conds.GetAppID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.UserID != nil {
-			id, err := uuid.Parse(conds.GetUserID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.UserID = &cruder.Cond{
-				Op:  conds.GetUserID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.GoodID != nil {
-			id, err := uuid.Parse(conds.GetGoodID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.GoodID = &cruder.Cond{
-				Op:  conds.GetGoodID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.AppGoodID != nil {
-			id, err := uuid.Parse(conds.GetAppGoodID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AppGoodID = &cruder.Cond{
-				Op:  conds.GetAppGoodID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.CoinTypeID != nil {
-			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.CoinTypeID = &cruder.Cond{
-				Op:  conds.GetCoinTypeID().GetOp(),
-				Val: id,
-			}
-		}
-		if conds.UserIDs != nil {
-			ids := []uuid.UUID{}
-			for _, id := range conds.GetUserIDs().GetValue() {
-				_id, err := uuid.Parse(id)
-				if err != nil {
-					return err
-				}
-				ids = append(ids, _id)
-			}
-			h.Conds.UserIDs = &cruder.Cond{
-				Op:  conds.GetUserIDs().GetOp(),
-				Val: ids,
-			}
-		}
 		return nil
 	}
 }

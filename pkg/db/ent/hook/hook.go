@@ -165,6 +165,32 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The GoodAchievementFunc type is an adapter to allow the use of ordinary
+// function as GoodAchievement mutator.
+type GoodAchievementFunc func(context.Context, *ent.GoodAchievementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GoodAchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.GoodAchievementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GoodAchievementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The GoodCoinAchievementFunc type is an adapter to allow the use of ordinary
+// function as GoodCoinAchievement mutator.
+type GoodCoinAchievementFunc func(context.Context, *ent.GoodCoinAchievementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GoodCoinAchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.GoodCoinAchievementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GoodCoinAchievementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The InvitationCodeFunc type is an adapter to allow the use of ordinary
 // function as InvitationCode mutator.
 type InvitationCodeFunc func(context.Context, *ent.InvitationCodeMutation) (ent.Value, error)
@@ -174,6 +200,32 @@ func (f InvitationCodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	mv, ok := m.(*ent.InvitationCodeMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvitationCodeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrderPaymentStatementFunc type is an adapter to allow the use of ordinary
+// function as OrderPaymentStatement mutator.
+type OrderPaymentStatementFunc func(context.Context, *ent.OrderPaymentStatementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderPaymentStatementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderPaymentStatementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPaymentStatementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrderStatementFunc type is an adapter to allow the use of ordinary
+// function as OrderStatement mutator.
+type OrderStatementFunc func(context.Context, *ent.OrderStatementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderStatementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderStatementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderStatementMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -2,8 +2,8 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
@@ -36,7 +36,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -49,13 +49,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -66,13 +66,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -83,7 +83,7 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid couponid")
+				return wlog.Errorf("invalid couponid")
 			}
 			return nil
 		}
@@ -92,14 +92,14 @@ func WithCouponID(id *string, must bool) func(context.Context, *Handler) error {
 			coupon1.WithEntID(id, true),
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err := handler.ExistCoupon(ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if !exist {
-			return fmt.Errorf("invalid couponid")
+			return wlog.Errorf("invalid couponid")
 		}
 		_id := uuid.MustParse(*id)
 		h.CouponID = &_id
@@ -111,13 +111,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UserID = &_id
 		return nil
@@ -135,13 +135,13 @@ func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) er
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid usedbyorderid")
+				return wlog.Errorf("invalid usedbyorderid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UsedByOrderID = &_id
 		return nil
@@ -155,14 +155,14 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 			_req := &allocatedcrud.Req{}
 			if must {
 				if req.ID == nil {
-					return fmt.Errorf("invalid id")
+					return wlog.Errorf("invalid id")
 				}
 			}
 			if req.ID != nil {
 				_req.ID = req.ID
 			}
 			if req.Used != nil && *req.Used && req.UsedByOrderID == nil {
-				return fmt.Errorf("invalid usedbyorderid")
+				return wlog.Errorf("invalid usedbyorderid")
 			}
 			if req.Used != nil {
 				_req.Used = req.Used
@@ -170,7 +170,7 @@ func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler
 			if req.UsedByOrderID != nil {
 				id, err := uuid.Parse(*req.UsedByOrderID)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				_req.UsedByOrderID = &id
 			}
@@ -190,7 +190,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{Op: conds.GetEntID().GetOp(), Val: id}
 		}
@@ -200,21 +200,21 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{Op: conds.GetAppID().GetOp(), Val: id}
 		}
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.UserID = &cruder.Cond{Op: conds.GetUserID().GetOp(), Val: id}
 		}
 		if conds.CouponID != nil {
 			id, err := uuid.Parse(conds.GetCouponID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.CouponID = &cruder.Cond{Op: conds.GetCouponID().GetOp(), Val: id}
 		}
@@ -223,7 +223,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetCouponIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}
@@ -235,7 +235,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.UsedByOrderID != nil {
 			id, err := uuid.Parse(conds.GetUsedByOrderID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.UsedByOrderID = &cruder.Cond{Op: conds.GetUsedByOrderID().GetOp(), Val: id}
 		}
@@ -244,7 +244,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}
@@ -255,7 +255,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetUsedByOrderIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

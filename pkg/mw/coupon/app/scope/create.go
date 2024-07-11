@@ -2,8 +2,8 @@ package scope
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	appgoodscopecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/app/scope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -28,7 +28,7 @@ func (h *createHandler) createAppGoodScope(ctx context.Context, cli *ent.Client)
 			CouponScope: h.CouponScope,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -45,10 +45,10 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 	}
 	exist, err := h.ExistAppGoodScopeConds(ctx)
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if exist {
-		return nil, fmt.Errorf("coupon scope %v already exist", *h.CouponScope)
+		return nil, wlog.Errorf("coupon scope %v already exist", *h.CouponScope)
 	}
 
 	id := uuid.New()
@@ -58,12 +58,12 @@ func (h *Handler) CreateAppGoodScope(ctx context.Context) (*npool.Scope, error) 
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.createAppGoodScope(ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.GetAppGoodScope(ctx)
 }

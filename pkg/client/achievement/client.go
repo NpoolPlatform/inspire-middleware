@@ -39,23 +39,3 @@ func ExpropriateAchievement(ctx context.Context, orderID string) error {
 	}
 	return nil
 }
-
-func GetAchievements(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Achievement, uint32, error) {
-	total := uint32(0)
-	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.GetAchievements(ctx, &npool.GetAchievementsRequest{
-			Conds:  conds,
-			Offset: offset,
-			Limit:  limit,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.Total
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Achievement), total, nil
-}

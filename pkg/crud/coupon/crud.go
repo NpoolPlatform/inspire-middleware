@@ -1,8 +1,7 @@
 package coupon
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -152,49 +151,49 @@ func SetQueryConds(q *ent.CouponQuery, conds *Conds) (*ent.CouponQuery, error) {
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entcoupon.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid id field")
+			return nil, wlog.Errorf("invalid id field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entcoupon.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid entids field")
+			return nil, wlog.Errorf("invalid entids field")
 		}
 	}
 	if conds.CouponType != nil {
 		_type, ok := conds.CouponType.Val.(types.CouponType)
 		if !ok {
-			return nil, fmt.Errorf("invalid coupontype")
+			return nil, wlog.Errorf("invalid coupontype")
 		}
 		switch conds.CouponType.Op {
 		case cruder.EQ:
 			q.Where(entcoupon.CouponType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid coupontype field")
+			return nil, wlog.Errorf("invalid coupontype field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entcoupon.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid appid field")
+			return nil, wlog.Errorf("invalid appid field")
 		}
 	}
 	return q, nil

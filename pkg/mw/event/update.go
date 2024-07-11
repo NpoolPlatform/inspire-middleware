@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -11,7 +12,7 @@ import (
 
 func (h *Handler) UpdateEvent(ctx context.Context) (*npool.Event, error) {
 	if err := h.validateCoupons(ctx); err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
@@ -27,12 +28,12 @@ func (h *Handler) UpdateEvent(ctx context.Context) (*npool.Event, error) {
 				InviterLayers:  h.InviterLayers,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 
 	return h.GetEvent(ctx)

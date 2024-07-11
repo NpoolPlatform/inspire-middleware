@@ -2,8 +2,8 @@ package config
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	commissionconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/commission/config"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -44,7 +44,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -57,7 +57,7 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
@@ -74,7 +74,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
@@ -92,7 +92,7 @@ func WithThresholdAmount(value *string, must bool) func(context.Context, *Handle
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid thresholdamount")
+				return wlog.Errorf("invalid thresholdamount")
 			}
 			return nil
 		}
@@ -101,7 +101,7 @@ func WithThresholdAmount(value *string, must bool) func(context.Context, *Handle
 			return err
 		}
 		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid thresholdamount")
+			return wlog.Errorf("invalid thresholdamount")
 		}
 		h.ThresholdAmount = &_amount
 		return nil
@@ -112,7 +112,7 @@ func WithSettleType(settleType *types.SettleType, must bool) func(context.Contex
 	return func(ctx context.Context, h *Handler) error {
 		if settleType == nil {
 			if must {
-				return fmt.Errorf("invalid settletype")
+				return wlog.Errorf("invalid settletype")
 			}
 			return nil
 		}
@@ -120,7 +120,7 @@ func WithSettleType(settleType *types.SettleType, must bool) func(context.Contex
 		case types.SettleType_GoodOrderPayment:
 		case types.SettleType_TechniqueServiceFee:
 		default:
-			return fmt.Errorf("invalid settletype")
+			return wlog.Errorf("invalid settletype")
 		}
 		h.SettleType = settleType
 		return nil
@@ -132,7 +132,7 @@ func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handle
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid amountorpercent")
+				return wlog.Errorf("invalid amountorpercent")
 			}
 			return nil
 		}
@@ -141,7 +141,7 @@ func WithAmountOrPercent(value *string, must bool) func(context.Context, *Handle
 			return err
 		}
 		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid amountorpercent")
+			return wlog.Errorf("invalid amountorpercent")
 		}
 		h.AmountOrPercent = &_amount
 		return nil
@@ -152,7 +152,7 @@ func WithStartAt(startAt *uint32, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if startAt == nil {
 			if must {
-				return fmt.Errorf("invalid startat")
+				return wlog.Errorf("invalid startat")
 			}
 		}
 		h.StartAt = startAt
@@ -164,7 +164,7 @@ func WithInvites(value *uint32, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid invites")
+				return wlog.Errorf("invalid invites")
 			}
 		}
 		h.Invites = value
@@ -176,7 +176,7 @@ func WithDisabled(value *bool, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid disabled")
+				return wlog.Errorf("invalid disabled")
 			}
 		}
 		h.Disabled = value
@@ -188,7 +188,7 @@ func WithLevel(value *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid level")
+				return wlog.Errorf("invalid level")
 			}
 		}
 		h.Level = value

@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
 	achievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
+	common1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user/common"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 
 	"google.golang.org/grpc/codes"
@@ -23,8 +24,8 @@ func (s *Server) DeleteAchievementUser(ctx context.Context, in *npool.DeleteAchi
 	}
 	handler, err := achievement1.NewHandler(
 		ctx,
-		achievement1.WithID(req.ID, false),
-		achievement1.WithEntID(req.EntID, false),
+		common1.WithID(req.ID, false),
+		common1.WithEntID(req.EntID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

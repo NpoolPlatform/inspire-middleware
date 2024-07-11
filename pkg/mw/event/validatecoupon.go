@@ -2,10 +2,10 @@ package event
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
@@ -28,19 +28,19 @@ func (h *Handler) validateCoupons(ctx context.Context) error {
 			).
 			All(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		infoMap := map[uuid.UUID]*ent.Coupon{}
 		now := uint32(time.Now().Unix())
 		for _, info := range infos {
 			if info.StartAt+info.DurationDays*timedef.SecondsPerDay <= now {
-				return fmt.Errorf("coupon expired")
+				return wlog.Errorf("coupon expired")
 			}
 			infoMap[info.EntID] = info
 		}
 		for _, id := range h.CouponIDs {
 			if _, ok := infoMap[id]; !ok {
-				return fmt.Errorf("invalid couponid")
+				return wlog.Errorf("invalid couponid")
 			}
 		}
 		return nil

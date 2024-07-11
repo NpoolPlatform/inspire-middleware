@@ -2,8 +2,8 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	couponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -16,7 +16,7 @@ import (
 
 func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if *h.EndAt <= *h.StartAt {
-		return nil, fmt.Errorf("endat less than startat")
+		return nil, wlog.Errorf("endat less than startat")
 	}
 
 	id := uuid.New()
@@ -27,14 +27,14 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 	switch *h.CouponType {
 	case types.CouponType_FixAmount:
 		if h.Denomination.Cmp(*h.Circulation) > 0 {
-			return nil, fmt.Errorf("denomination > circulation")
+			return nil, wlog.Errorf("denomination > circulation")
 		}
 	case types.CouponType_Discount:
 		if h.Denomination.Cmp(decimal.NewFromInt(100)) > 0 { //nolint
-			return nil, fmt.Errorf("100 discounat not allowed")
+			return nil, wlog.Errorf("100 discounat not allowed")
 		}
 		if h.CashableProbability != nil {
-			return nil, fmt.Errorf("probability must set with fix amount")
+			return nil, wlog.Errorf("probability must set with fix amount")
 		}
 	}
 
@@ -45,7 +45,7 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 			h.Threshold = &threshold
 		case types.CouponConstraint_PaymentThreshold:
 			if h.Threshold == nil {
-				return nil, fmt.Errorf("threshold is must")
+				return nil, wlog.Errorf("threshold is must")
 			}
 		}
 	}
@@ -72,12 +72,12 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 				CashableProbability: h.CashableProbability,
 			},
 		).Save(_ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	return h.GetCoupon(ctx)
 }
