@@ -17,11 +17,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -30,6 +34,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -54,6 +63,10 @@ type Client struct {
 	AppGoodScope *AppGoodScopeClient
 	// CashControl is the client for interacting with the CashControl builders.
 	CashControl *CashControlClient
+	// CoinAllocated is the client for interacting with the CoinAllocated builders.
+	CoinAllocated *CoinAllocatedClient
+	// CoinConfig is the client for interacting with the CoinConfig builders.
+	CoinConfig *CoinConfigClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -64,6 +77,10 @@ type Client struct {
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// EventCoin is the client for interacting with the EventCoin builders.
+	EventCoin *EventCoinClient
+	// EventCoupon is the client for interacting with the EventCoupon builders.
+	EventCoupon *EventCouponClient
 	// GoodAchievement is the client for interacting with the GoodAchievement builders.
 	GoodAchievement *GoodAchievementClient
 	// GoodCoinAchievement is the client for interacting with the GoodCoinAchievement builders.
@@ -80,6 +97,16 @@ type Client struct {
 	Registration *RegistrationClient
 	// Statement is the client for interacting with the Statement builders.
 	Statement *StatementClient
+	// TaskConfig is the client for interacting with the TaskConfig builders.
+	TaskConfig *TaskConfigClient
+	// TaskUser is the client for interacting with the TaskUser builders.
+	TaskUser *TaskUserClient
+	// UserCoinReward is the client for interacting with the UserCoinReward builders.
+	UserCoinReward *UserCoinRewardClient
+	// UserCreditHistory is the client for interacting with the UserCreditHistory builders.
+	UserCreditHistory *UserCreditHistoryClient
+	// UserReward is the client for interacting with the UserReward builders.
+	UserReward *UserRewardClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -100,11 +127,15 @@ func (c *Client) init() {
 	c.AppGoodCommissionConfig = NewAppGoodCommissionConfigClient(c.config)
 	c.AppGoodScope = NewAppGoodScopeClient(c.config)
 	c.CashControl = NewCashControlClient(c.config)
+	c.CoinAllocated = NewCoinAllocatedClient(c.config)
+	c.CoinConfig = NewCoinConfigClient(c.config)
 	c.Commission = NewCommissionClient(c.config)
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
 	c.CouponScope = NewCouponScopeClient(c.config)
 	c.Event = NewEventClient(c.config)
+	c.EventCoin = NewEventCoinClient(c.config)
+	c.EventCoupon = NewEventCouponClient(c.config)
 	c.GoodAchievement = NewGoodAchievementClient(c.config)
 	c.GoodCoinAchievement = NewGoodCoinAchievementClient(c.config)
 	c.InvitationCode = NewInvitationCodeClient(c.config)
@@ -113,6 +144,11 @@ func (c *Client) init() {
 	c.PubsubMessage = NewPubsubMessageClient(c.config)
 	c.Registration = NewRegistrationClient(c.config)
 	c.Statement = NewStatementClient(c.config)
+	c.TaskConfig = NewTaskConfigClient(c.config)
+	c.TaskUser = NewTaskUserClient(c.config)
+	c.UserCoinReward = NewUserCoinRewardClient(c.config)
+	c.UserCreditHistory = NewUserCreditHistoryClient(c.config)
+	c.UserReward = NewUserRewardClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -153,11 +189,15 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AppGoodCommissionConfig: NewAppGoodCommissionConfigClient(cfg),
 		AppGoodScope:            NewAppGoodScopeClient(cfg),
 		CashControl:             NewCashControlClient(cfg),
+		CoinAllocated:           NewCoinAllocatedClient(cfg),
+		CoinConfig:              NewCoinConfigClient(cfg),
 		Commission:              NewCommissionClient(cfg),
 		Coupon:                  NewCouponClient(cfg),
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
 		Event:                   NewEventClient(cfg),
+		EventCoin:               NewEventCoinClient(cfg),
+		EventCoupon:             NewEventCouponClient(cfg),
 		GoodAchievement:         NewGoodAchievementClient(cfg),
 		GoodCoinAchievement:     NewGoodCoinAchievementClient(cfg),
 		InvitationCode:          NewInvitationCodeClient(cfg),
@@ -166,6 +206,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PubsubMessage:           NewPubsubMessageClient(cfg),
 		Registration:            NewRegistrationClient(cfg),
 		Statement:               NewStatementClient(cfg),
+		TaskConfig:              NewTaskConfigClient(cfg),
+		TaskUser:                NewTaskUserClient(cfg),
+		UserCoinReward:          NewUserCoinRewardClient(cfg),
+		UserCreditHistory:       NewUserCreditHistoryClient(cfg),
+		UserReward:              NewUserRewardClient(cfg),
 	}, nil
 }
 
@@ -192,11 +237,15 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AppGoodCommissionConfig: NewAppGoodCommissionConfigClient(cfg),
 		AppGoodScope:            NewAppGoodScopeClient(cfg),
 		CashControl:             NewCashControlClient(cfg),
+		CoinAllocated:           NewCoinAllocatedClient(cfg),
+		CoinConfig:              NewCoinConfigClient(cfg),
 		Commission:              NewCommissionClient(cfg),
 		Coupon:                  NewCouponClient(cfg),
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
 		Event:                   NewEventClient(cfg),
+		EventCoin:               NewEventCoinClient(cfg),
+		EventCoupon:             NewEventCouponClient(cfg),
 		GoodAchievement:         NewGoodAchievementClient(cfg),
 		GoodCoinAchievement:     NewGoodCoinAchievementClient(cfg),
 		InvitationCode:          NewInvitationCodeClient(cfg),
@@ -205,6 +254,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PubsubMessage:           NewPubsubMessageClient(cfg),
 		Registration:            NewRegistrationClient(cfg),
 		Statement:               NewStatementClient(cfg),
+		TaskConfig:              NewTaskConfigClient(cfg),
+		TaskUser:                NewTaskUserClient(cfg),
+		UserCoinReward:          NewUserCoinRewardClient(cfg),
+		UserCreditHistory:       NewUserCreditHistoryClient(cfg),
+		UserReward:              NewUserRewardClient(cfg),
 	}, nil
 }
 
@@ -241,11 +295,15 @@ func (c *Client) Use(hooks ...Hook) {
 	c.AppGoodCommissionConfig.Use(hooks...)
 	c.AppGoodScope.Use(hooks...)
 	c.CashControl.Use(hooks...)
+	c.CoinAllocated.Use(hooks...)
+	c.CoinConfig.Use(hooks...)
 	c.Commission.Use(hooks...)
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
 	c.CouponScope.Use(hooks...)
 	c.Event.Use(hooks...)
+	c.EventCoin.Use(hooks...)
+	c.EventCoupon.Use(hooks...)
 	c.GoodAchievement.Use(hooks...)
 	c.GoodCoinAchievement.Use(hooks...)
 	c.InvitationCode.Use(hooks...)
@@ -254,6 +312,11 @@ func (c *Client) Use(hooks ...Hook) {
 	c.PubsubMessage.Use(hooks...)
 	c.Registration.Use(hooks...)
 	c.Statement.Use(hooks...)
+	c.TaskConfig.Use(hooks...)
+	c.TaskUser.Use(hooks...)
+	c.UserCoinReward.Use(hooks...)
+	c.UserCreditHistory.Use(hooks...)
+	c.UserReward.Use(hooks...)
 }
 
 // AchievementClient is a client for the Achievement schema.
@@ -893,6 +956,188 @@ func (c *CashControlClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], cashcontrol.Hooks[:]...)
 }
 
+// CoinAllocatedClient is a client for the CoinAllocated schema.
+type CoinAllocatedClient struct {
+	config
+}
+
+// NewCoinAllocatedClient returns a client for the CoinAllocated from the given config.
+func NewCoinAllocatedClient(c config) *CoinAllocatedClient {
+	return &CoinAllocatedClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coinallocated.Hooks(f(g(h())))`.
+func (c *CoinAllocatedClient) Use(hooks ...Hook) {
+	c.hooks.CoinAllocated = append(c.hooks.CoinAllocated, hooks...)
+}
+
+// Create returns a builder for creating a CoinAllocated entity.
+func (c *CoinAllocatedClient) Create() *CoinAllocatedCreate {
+	mutation := newCoinAllocatedMutation(c.config, OpCreate)
+	return &CoinAllocatedCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CoinAllocated entities.
+func (c *CoinAllocatedClient) CreateBulk(builders ...*CoinAllocatedCreate) *CoinAllocatedCreateBulk {
+	return &CoinAllocatedCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CoinAllocated.
+func (c *CoinAllocatedClient) Update() *CoinAllocatedUpdate {
+	mutation := newCoinAllocatedMutation(c.config, OpUpdate)
+	return &CoinAllocatedUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CoinAllocatedClient) UpdateOne(ca *CoinAllocated) *CoinAllocatedUpdateOne {
+	mutation := newCoinAllocatedMutation(c.config, OpUpdateOne, withCoinAllocated(ca))
+	return &CoinAllocatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CoinAllocatedClient) UpdateOneID(id uint32) *CoinAllocatedUpdateOne {
+	mutation := newCoinAllocatedMutation(c.config, OpUpdateOne, withCoinAllocatedID(id))
+	return &CoinAllocatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CoinAllocated.
+func (c *CoinAllocatedClient) Delete() *CoinAllocatedDelete {
+	mutation := newCoinAllocatedMutation(c.config, OpDelete)
+	return &CoinAllocatedDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CoinAllocatedClient) DeleteOne(ca *CoinAllocated) *CoinAllocatedDeleteOne {
+	return c.DeleteOneID(ca.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CoinAllocatedClient) DeleteOneID(id uint32) *CoinAllocatedDeleteOne {
+	builder := c.Delete().Where(coinallocated.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CoinAllocatedDeleteOne{builder}
+}
+
+// Query returns a query builder for CoinAllocated.
+func (c *CoinAllocatedClient) Query() *CoinAllocatedQuery {
+	return &CoinAllocatedQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CoinAllocated entity by its id.
+func (c *CoinAllocatedClient) Get(ctx context.Context, id uint32) (*CoinAllocated, error) {
+	return c.Query().Where(coinallocated.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CoinAllocatedClient) GetX(ctx context.Context, id uint32) *CoinAllocated {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CoinAllocatedClient) Hooks() []Hook {
+	hooks := c.hooks.CoinAllocated
+	return append(hooks[:len(hooks):len(hooks)], coinallocated.Hooks[:]...)
+}
+
+// CoinConfigClient is a client for the CoinConfig schema.
+type CoinConfigClient struct {
+	config
+}
+
+// NewCoinConfigClient returns a client for the CoinConfig from the given config.
+func NewCoinConfigClient(c config) *CoinConfigClient {
+	return &CoinConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coinconfig.Hooks(f(g(h())))`.
+func (c *CoinConfigClient) Use(hooks ...Hook) {
+	c.hooks.CoinConfig = append(c.hooks.CoinConfig, hooks...)
+}
+
+// Create returns a builder for creating a CoinConfig entity.
+func (c *CoinConfigClient) Create() *CoinConfigCreate {
+	mutation := newCoinConfigMutation(c.config, OpCreate)
+	return &CoinConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CoinConfig entities.
+func (c *CoinConfigClient) CreateBulk(builders ...*CoinConfigCreate) *CoinConfigCreateBulk {
+	return &CoinConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CoinConfig.
+func (c *CoinConfigClient) Update() *CoinConfigUpdate {
+	mutation := newCoinConfigMutation(c.config, OpUpdate)
+	return &CoinConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CoinConfigClient) UpdateOne(cc *CoinConfig) *CoinConfigUpdateOne {
+	mutation := newCoinConfigMutation(c.config, OpUpdateOne, withCoinConfig(cc))
+	return &CoinConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CoinConfigClient) UpdateOneID(id uint32) *CoinConfigUpdateOne {
+	mutation := newCoinConfigMutation(c.config, OpUpdateOne, withCoinConfigID(id))
+	return &CoinConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CoinConfig.
+func (c *CoinConfigClient) Delete() *CoinConfigDelete {
+	mutation := newCoinConfigMutation(c.config, OpDelete)
+	return &CoinConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CoinConfigClient) DeleteOne(cc *CoinConfig) *CoinConfigDeleteOne {
+	return c.DeleteOneID(cc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CoinConfigClient) DeleteOneID(id uint32) *CoinConfigDeleteOne {
+	builder := c.Delete().Where(coinconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CoinConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for CoinConfig.
+func (c *CoinConfigClient) Query() *CoinConfigQuery {
+	return &CoinConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CoinConfig entity by its id.
+func (c *CoinConfigClient) Get(ctx context.Context, id uint32) (*CoinConfig, error) {
+	return c.Query().Where(coinconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CoinConfigClient) GetX(ctx context.Context, id uint32) *CoinConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CoinConfigClient) Hooks() []Hook {
+	hooks := c.hooks.CoinConfig
+	return append(hooks[:len(hooks):len(hooks)], coinconfig.Hooks[:]...)
+}
+
 // CommissionClient is a client for the Commission schema.
 type CommissionClient struct {
 	config
@@ -1346,6 +1591,188 @@ func (c *EventClient) GetX(ctx context.Context, id uint32) *Event {
 func (c *EventClient) Hooks() []Hook {
 	hooks := c.hooks.Event
 	return append(hooks[:len(hooks):len(hooks)], event.Hooks[:]...)
+}
+
+// EventCoinClient is a client for the EventCoin schema.
+type EventCoinClient struct {
+	config
+}
+
+// NewEventCoinClient returns a client for the EventCoin from the given config.
+func NewEventCoinClient(c config) *EventCoinClient {
+	return &EventCoinClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `eventcoin.Hooks(f(g(h())))`.
+func (c *EventCoinClient) Use(hooks ...Hook) {
+	c.hooks.EventCoin = append(c.hooks.EventCoin, hooks...)
+}
+
+// Create returns a builder for creating a EventCoin entity.
+func (c *EventCoinClient) Create() *EventCoinCreate {
+	mutation := newEventCoinMutation(c.config, OpCreate)
+	return &EventCoinCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EventCoin entities.
+func (c *EventCoinClient) CreateBulk(builders ...*EventCoinCreate) *EventCoinCreateBulk {
+	return &EventCoinCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EventCoin.
+func (c *EventCoinClient) Update() *EventCoinUpdate {
+	mutation := newEventCoinMutation(c.config, OpUpdate)
+	return &EventCoinUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventCoinClient) UpdateOne(ec *EventCoin) *EventCoinUpdateOne {
+	mutation := newEventCoinMutation(c.config, OpUpdateOne, withEventCoin(ec))
+	return &EventCoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventCoinClient) UpdateOneID(id uint32) *EventCoinUpdateOne {
+	mutation := newEventCoinMutation(c.config, OpUpdateOne, withEventCoinID(id))
+	return &EventCoinUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EventCoin.
+func (c *EventCoinClient) Delete() *EventCoinDelete {
+	mutation := newEventCoinMutation(c.config, OpDelete)
+	return &EventCoinDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EventCoinClient) DeleteOne(ec *EventCoin) *EventCoinDeleteOne {
+	return c.DeleteOneID(ec.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *EventCoinClient) DeleteOneID(id uint32) *EventCoinDeleteOne {
+	builder := c.Delete().Where(eventcoin.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventCoinDeleteOne{builder}
+}
+
+// Query returns a query builder for EventCoin.
+func (c *EventCoinClient) Query() *EventCoinQuery {
+	return &EventCoinQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a EventCoin entity by its id.
+func (c *EventCoinClient) Get(ctx context.Context, id uint32) (*EventCoin, error) {
+	return c.Query().Where(eventcoin.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventCoinClient) GetX(ctx context.Context, id uint32) *EventCoin {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EventCoinClient) Hooks() []Hook {
+	hooks := c.hooks.EventCoin
+	return append(hooks[:len(hooks):len(hooks)], eventcoin.Hooks[:]...)
+}
+
+// EventCouponClient is a client for the EventCoupon schema.
+type EventCouponClient struct {
+	config
+}
+
+// NewEventCouponClient returns a client for the EventCoupon from the given config.
+func NewEventCouponClient(c config) *EventCouponClient {
+	return &EventCouponClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `eventcoupon.Hooks(f(g(h())))`.
+func (c *EventCouponClient) Use(hooks ...Hook) {
+	c.hooks.EventCoupon = append(c.hooks.EventCoupon, hooks...)
+}
+
+// Create returns a builder for creating a EventCoupon entity.
+func (c *EventCouponClient) Create() *EventCouponCreate {
+	mutation := newEventCouponMutation(c.config, OpCreate)
+	return &EventCouponCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EventCoupon entities.
+func (c *EventCouponClient) CreateBulk(builders ...*EventCouponCreate) *EventCouponCreateBulk {
+	return &EventCouponCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EventCoupon.
+func (c *EventCouponClient) Update() *EventCouponUpdate {
+	mutation := newEventCouponMutation(c.config, OpUpdate)
+	return &EventCouponUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventCouponClient) UpdateOne(ec *EventCoupon) *EventCouponUpdateOne {
+	mutation := newEventCouponMutation(c.config, OpUpdateOne, withEventCoupon(ec))
+	return &EventCouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventCouponClient) UpdateOneID(id uint32) *EventCouponUpdateOne {
+	mutation := newEventCouponMutation(c.config, OpUpdateOne, withEventCouponID(id))
+	return &EventCouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EventCoupon.
+func (c *EventCouponClient) Delete() *EventCouponDelete {
+	mutation := newEventCouponMutation(c.config, OpDelete)
+	return &EventCouponDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EventCouponClient) DeleteOne(ec *EventCoupon) *EventCouponDeleteOne {
+	return c.DeleteOneID(ec.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *EventCouponClient) DeleteOneID(id uint32) *EventCouponDeleteOne {
+	builder := c.Delete().Where(eventcoupon.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventCouponDeleteOne{builder}
+}
+
+// Query returns a query builder for EventCoupon.
+func (c *EventCouponClient) Query() *EventCouponQuery {
+	return &EventCouponQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a EventCoupon entity by its id.
+func (c *EventCouponClient) Get(ctx context.Context, id uint32) (*EventCoupon, error) {
+	return c.Query().Where(eventcoupon.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventCouponClient) GetX(ctx context.Context, id uint32) *EventCoupon {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EventCouponClient) Hooks() []Hook {
+	hooks := c.hooks.EventCoupon
+	return append(hooks[:len(hooks):len(hooks)], eventcoupon.Hooks[:]...)
 }
 
 // GoodAchievementClient is a client for the GoodAchievement schema.
@@ -2074,4 +2501,459 @@ func (c *StatementClient) GetX(ctx context.Context, id uint32) *Statement {
 func (c *StatementClient) Hooks() []Hook {
 	hooks := c.hooks.Statement
 	return append(hooks[:len(hooks):len(hooks)], statement.Hooks[:]...)
+}
+
+// TaskConfigClient is a client for the TaskConfig schema.
+type TaskConfigClient struct {
+	config
+}
+
+// NewTaskConfigClient returns a client for the TaskConfig from the given config.
+func NewTaskConfigClient(c config) *TaskConfigClient {
+	return &TaskConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `taskconfig.Hooks(f(g(h())))`.
+func (c *TaskConfigClient) Use(hooks ...Hook) {
+	c.hooks.TaskConfig = append(c.hooks.TaskConfig, hooks...)
+}
+
+// Create returns a builder for creating a TaskConfig entity.
+func (c *TaskConfigClient) Create() *TaskConfigCreate {
+	mutation := newTaskConfigMutation(c.config, OpCreate)
+	return &TaskConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TaskConfig entities.
+func (c *TaskConfigClient) CreateBulk(builders ...*TaskConfigCreate) *TaskConfigCreateBulk {
+	return &TaskConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TaskConfig.
+func (c *TaskConfigClient) Update() *TaskConfigUpdate {
+	mutation := newTaskConfigMutation(c.config, OpUpdate)
+	return &TaskConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TaskConfigClient) UpdateOne(tc *TaskConfig) *TaskConfigUpdateOne {
+	mutation := newTaskConfigMutation(c.config, OpUpdateOne, withTaskConfig(tc))
+	return &TaskConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TaskConfigClient) UpdateOneID(id uint32) *TaskConfigUpdateOne {
+	mutation := newTaskConfigMutation(c.config, OpUpdateOne, withTaskConfigID(id))
+	return &TaskConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TaskConfig.
+func (c *TaskConfigClient) Delete() *TaskConfigDelete {
+	mutation := newTaskConfigMutation(c.config, OpDelete)
+	return &TaskConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TaskConfigClient) DeleteOne(tc *TaskConfig) *TaskConfigDeleteOne {
+	return c.DeleteOneID(tc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *TaskConfigClient) DeleteOneID(id uint32) *TaskConfigDeleteOne {
+	builder := c.Delete().Where(taskconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TaskConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for TaskConfig.
+func (c *TaskConfigClient) Query() *TaskConfigQuery {
+	return &TaskConfigQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a TaskConfig entity by its id.
+func (c *TaskConfigClient) Get(ctx context.Context, id uint32) (*TaskConfig, error) {
+	return c.Query().Where(taskconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TaskConfigClient) GetX(ctx context.Context, id uint32) *TaskConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TaskConfigClient) Hooks() []Hook {
+	hooks := c.hooks.TaskConfig
+	return append(hooks[:len(hooks):len(hooks)], taskconfig.Hooks[:]...)
+}
+
+// TaskUserClient is a client for the TaskUser schema.
+type TaskUserClient struct {
+	config
+}
+
+// NewTaskUserClient returns a client for the TaskUser from the given config.
+func NewTaskUserClient(c config) *TaskUserClient {
+	return &TaskUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `taskuser.Hooks(f(g(h())))`.
+func (c *TaskUserClient) Use(hooks ...Hook) {
+	c.hooks.TaskUser = append(c.hooks.TaskUser, hooks...)
+}
+
+// Create returns a builder for creating a TaskUser entity.
+func (c *TaskUserClient) Create() *TaskUserCreate {
+	mutation := newTaskUserMutation(c.config, OpCreate)
+	return &TaskUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TaskUser entities.
+func (c *TaskUserClient) CreateBulk(builders ...*TaskUserCreate) *TaskUserCreateBulk {
+	return &TaskUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TaskUser.
+func (c *TaskUserClient) Update() *TaskUserUpdate {
+	mutation := newTaskUserMutation(c.config, OpUpdate)
+	return &TaskUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TaskUserClient) UpdateOne(tu *TaskUser) *TaskUserUpdateOne {
+	mutation := newTaskUserMutation(c.config, OpUpdateOne, withTaskUser(tu))
+	return &TaskUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TaskUserClient) UpdateOneID(id uint32) *TaskUserUpdateOne {
+	mutation := newTaskUserMutation(c.config, OpUpdateOne, withTaskUserID(id))
+	return &TaskUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TaskUser.
+func (c *TaskUserClient) Delete() *TaskUserDelete {
+	mutation := newTaskUserMutation(c.config, OpDelete)
+	return &TaskUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TaskUserClient) DeleteOne(tu *TaskUser) *TaskUserDeleteOne {
+	return c.DeleteOneID(tu.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *TaskUserClient) DeleteOneID(id uint32) *TaskUserDeleteOne {
+	builder := c.Delete().Where(taskuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TaskUserDeleteOne{builder}
+}
+
+// Query returns a query builder for TaskUser.
+func (c *TaskUserClient) Query() *TaskUserQuery {
+	return &TaskUserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a TaskUser entity by its id.
+func (c *TaskUserClient) Get(ctx context.Context, id uint32) (*TaskUser, error) {
+	return c.Query().Where(taskuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TaskUserClient) GetX(ctx context.Context, id uint32) *TaskUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TaskUserClient) Hooks() []Hook {
+	hooks := c.hooks.TaskUser
+	return append(hooks[:len(hooks):len(hooks)], taskuser.Hooks[:]...)
+}
+
+// UserCoinRewardClient is a client for the UserCoinReward schema.
+type UserCoinRewardClient struct {
+	config
+}
+
+// NewUserCoinRewardClient returns a client for the UserCoinReward from the given config.
+func NewUserCoinRewardClient(c config) *UserCoinRewardClient {
+	return &UserCoinRewardClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usercoinreward.Hooks(f(g(h())))`.
+func (c *UserCoinRewardClient) Use(hooks ...Hook) {
+	c.hooks.UserCoinReward = append(c.hooks.UserCoinReward, hooks...)
+}
+
+// Create returns a builder for creating a UserCoinReward entity.
+func (c *UserCoinRewardClient) Create() *UserCoinRewardCreate {
+	mutation := newUserCoinRewardMutation(c.config, OpCreate)
+	return &UserCoinRewardCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserCoinReward entities.
+func (c *UserCoinRewardClient) CreateBulk(builders ...*UserCoinRewardCreate) *UserCoinRewardCreateBulk {
+	return &UserCoinRewardCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserCoinReward.
+func (c *UserCoinRewardClient) Update() *UserCoinRewardUpdate {
+	mutation := newUserCoinRewardMutation(c.config, OpUpdate)
+	return &UserCoinRewardUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserCoinRewardClient) UpdateOne(ucr *UserCoinReward) *UserCoinRewardUpdateOne {
+	mutation := newUserCoinRewardMutation(c.config, OpUpdateOne, withUserCoinReward(ucr))
+	return &UserCoinRewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserCoinRewardClient) UpdateOneID(id uint32) *UserCoinRewardUpdateOne {
+	mutation := newUserCoinRewardMutation(c.config, OpUpdateOne, withUserCoinRewardID(id))
+	return &UserCoinRewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserCoinReward.
+func (c *UserCoinRewardClient) Delete() *UserCoinRewardDelete {
+	mutation := newUserCoinRewardMutation(c.config, OpDelete)
+	return &UserCoinRewardDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserCoinRewardClient) DeleteOne(ucr *UserCoinReward) *UserCoinRewardDeleteOne {
+	return c.DeleteOneID(ucr.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserCoinRewardClient) DeleteOneID(id uint32) *UserCoinRewardDeleteOne {
+	builder := c.Delete().Where(usercoinreward.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserCoinRewardDeleteOne{builder}
+}
+
+// Query returns a query builder for UserCoinReward.
+func (c *UserCoinRewardClient) Query() *UserCoinRewardQuery {
+	return &UserCoinRewardQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserCoinReward entity by its id.
+func (c *UserCoinRewardClient) Get(ctx context.Context, id uint32) (*UserCoinReward, error) {
+	return c.Query().Where(usercoinreward.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserCoinRewardClient) GetX(ctx context.Context, id uint32) *UserCoinReward {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserCoinRewardClient) Hooks() []Hook {
+	hooks := c.hooks.UserCoinReward
+	return append(hooks[:len(hooks):len(hooks)], usercoinreward.Hooks[:]...)
+}
+
+// UserCreditHistoryClient is a client for the UserCreditHistory schema.
+type UserCreditHistoryClient struct {
+	config
+}
+
+// NewUserCreditHistoryClient returns a client for the UserCreditHistory from the given config.
+func NewUserCreditHistoryClient(c config) *UserCreditHistoryClient {
+	return &UserCreditHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usercredithistory.Hooks(f(g(h())))`.
+func (c *UserCreditHistoryClient) Use(hooks ...Hook) {
+	c.hooks.UserCreditHistory = append(c.hooks.UserCreditHistory, hooks...)
+}
+
+// Create returns a builder for creating a UserCreditHistory entity.
+func (c *UserCreditHistoryClient) Create() *UserCreditHistoryCreate {
+	mutation := newUserCreditHistoryMutation(c.config, OpCreate)
+	return &UserCreditHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserCreditHistory entities.
+func (c *UserCreditHistoryClient) CreateBulk(builders ...*UserCreditHistoryCreate) *UserCreditHistoryCreateBulk {
+	return &UserCreditHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserCreditHistory.
+func (c *UserCreditHistoryClient) Update() *UserCreditHistoryUpdate {
+	mutation := newUserCreditHistoryMutation(c.config, OpUpdate)
+	return &UserCreditHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserCreditHistoryClient) UpdateOne(uch *UserCreditHistory) *UserCreditHistoryUpdateOne {
+	mutation := newUserCreditHistoryMutation(c.config, OpUpdateOne, withUserCreditHistory(uch))
+	return &UserCreditHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserCreditHistoryClient) UpdateOneID(id uint32) *UserCreditHistoryUpdateOne {
+	mutation := newUserCreditHistoryMutation(c.config, OpUpdateOne, withUserCreditHistoryID(id))
+	return &UserCreditHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserCreditHistory.
+func (c *UserCreditHistoryClient) Delete() *UserCreditHistoryDelete {
+	mutation := newUserCreditHistoryMutation(c.config, OpDelete)
+	return &UserCreditHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserCreditHistoryClient) DeleteOne(uch *UserCreditHistory) *UserCreditHistoryDeleteOne {
+	return c.DeleteOneID(uch.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserCreditHistoryClient) DeleteOneID(id uint32) *UserCreditHistoryDeleteOne {
+	builder := c.Delete().Where(usercredithistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserCreditHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for UserCreditHistory.
+func (c *UserCreditHistoryClient) Query() *UserCreditHistoryQuery {
+	return &UserCreditHistoryQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserCreditHistory entity by its id.
+func (c *UserCreditHistoryClient) Get(ctx context.Context, id uint32) (*UserCreditHistory, error) {
+	return c.Query().Where(usercredithistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserCreditHistoryClient) GetX(ctx context.Context, id uint32) *UserCreditHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserCreditHistoryClient) Hooks() []Hook {
+	hooks := c.hooks.UserCreditHistory
+	return append(hooks[:len(hooks):len(hooks)], usercredithistory.Hooks[:]...)
+}
+
+// UserRewardClient is a client for the UserReward schema.
+type UserRewardClient struct {
+	config
+}
+
+// NewUserRewardClient returns a client for the UserReward from the given config.
+func NewUserRewardClient(c config) *UserRewardClient {
+	return &UserRewardClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userreward.Hooks(f(g(h())))`.
+func (c *UserRewardClient) Use(hooks ...Hook) {
+	c.hooks.UserReward = append(c.hooks.UserReward, hooks...)
+}
+
+// Create returns a builder for creating a UserReward entity.
+func (c *UserRewardClient) Create() *UserRewardCreate {
+	mutation := newUserRewardMutation(c.config, OpCreate)
+	return &UserRewardCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserReward entities.
+func (c *UserRewardClient) CreateBulk(builders ...*UserRewardCreate) *UserRewardCreateBulk {
+	return &UserRewardCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserReward.
+func (c *UserRewardClient) Update() *UserRewardUpdate {
+	mutation := newUserRewardMutation(c.config, OpUpdate)
+	return &UserRewardUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserRewardClient) UpdateOne(ur *UserReward) *UserRewardUpdateOne {
+	mutation := newUserRewardMutation(c.config, OpUpdateOne, withUserReward(ur))
+	return &UserRewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserRewardClient) UpdateOneID(id uint32) *UserRewardUpdateOne {
+	mutation := newUserRewardMutation(c.config, OpUpdateOne, withUserRewardID(id))
+	return &UserRewardUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserReward.
+func (c *UserRewardClient) Delete() *UserRewardDelete {
+	mutation := newUserRewardMutation(c.config, OpDelete)
+	return &UserRewardDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserRewardClient) DeleteOne(ur *UserReward) *UserRewardDeleteOne {
+	return c.DeleteOneID(ur.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *UserRewardClient) DeleteOneID(id uint32) *UserRewardDeleteOne {
+	builder := c.Delete().Where(userreward.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserRewardDeleteOne{builder}
+}
+
+// Query returns a query builder for UserReward.
+func (c *UserRewardClient) Query() *UserRewardQuery {
+	return &UserRewardQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a UserReward entity by its id.
+func (c *UserRewardClient) Get(ctx context.Context, id uint32) (*UserReward, error) {
+	return c.Query().Where(userreward.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserRewardClient) GetX(ctx context.Context, id uint32) *UserReward {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserRewardClient) Hooks() []Hook {
+	hooks := c.hooks.UserReward
+	return append(hooks[:len(hooks):len(hooks)], userreward.Hooks[:]...)
 }

@@ -12,11 +12,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -26,6 +30,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/schema"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 
@@ -499,6 +508,110 @@ func init() {
 	cashcontrolDescValue := cashcontrolFields[3].Descriptor()
 	// cashcontrol.DefaultValue holds the default value on creation for the value field.
 	cashcontrol.DefaultValue = cashcontrolDescValue.Default.(decimal.Decimal)
+	coinallocatedMixin := schema.CoinAllocated{}.Mixin()
+	coinallocated.Policy = privacy.NewPolicies(coinallocatedMixin[0], schema.CoinAllocated{})
+	coinallocated.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := coinallocated.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	coinallocatedMixinFields0 := coinallocatedMixin[0].Fields()
+	_ = coinallocatedMixinFields0
+	coinallocatedMixinFields1 := coinallocatedMixin[1].Fields()
+	_ = coinallocatedMixinFields1
+	coinallocatedFields := schema.CoinAllocated{}.Fields()
+	_ = coinallocatedFields
+	// coinallocatedDescCreatedAt is the schema descriptor for created_at field.
+	coinallocatedDescCreatedAt := coinallocatedMixinFields0[0].Descriptor()
+	// coinallocated.DefaultCreatedAt holds the default value on creation for the created_at field.
+	coinallocated.DefaultCreatedAt = coinallocatedDescCreatedAt.Default.(func() uint32)
+	// coinallocatedDescUpdatedAt is the schema descriptor for updated_at field.
+	coinallocatedDescUpdatedAt := coinallocatedMixinFields0[1].Descriptor()
+	// coinallocated.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	coinallocated.DefaultUpdatedAt = coinallocatedDescUpdatedAt.Default.(func() uint32)
+	// coinallocated.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	coinallocated.UpdateDefaultUpdatedAt = coinallocatedDescUpdatedAt.UpdateDefault.(func() uint32)
+	// coinallocatedDescDeletedAt is the schema descriptor for deleted_at field.
+	coinallocatedDescDeletedAt := coinallocatedMixinFields0[2].Descriptor()
+	// coinallocated.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	coinallocated.DefaultDeletedAt = coinallocatedDescDeletedAt.Default.(func() uint32)
+	// coinallocatedDescEntID is the schema descriptor for ent_id field.
+	coinallocatedDescEntID := coinallocatedMixinFields1[1].Descriptor()
+	// coinallocated.DefaultEntID holds the default value on creation for the ent_id field.
+	coinallocated.DefaultEntID = coinallocatedDescEntID.Default.(func() uuid.UUID)
+	// coinallocatedDescAppID is the schema descriptor for app_id field.
+	coinallocatedDescAppID := coinallocatedFields[0].Descriptor()
+	// coinallocated.DefaultAppID holds the default value on creation for the app_id field.
+	coinallocated.DefaultAppID = coinallocatedDescAppID.Default.(func() uuid.UUID)
+	// coinallocatedDescCoinConfigID is the schema descriptor for coin_config_id field.
+	coinallocatedDescCoinConfigID := coinallocatedFields[1].Descriptor()
+	// coinallocated.DefaultCoinConfigID holds the default value on creation for the coin_config_id field.
+	coinallocated.DefaultCoinConfigID = coinallocatedDescCoinConfigID.Default.(func() uuid.UUID)
+	// coinallocatedDescCoinTypeID is the schema descriptor for coin_type_id field.
+	coinallocatedDescCoinTypeID := coinallocatedFields[2].Descriptor()
+	// coinallocated.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	coinallocated.DefaultCoinTypeID = coinallocatedDescCoinTypeID.Default.(func() uuid.UUID)
+	// coinallocatedDescUserID is the schema descriptor for user_id field.
+	coinallocatedDescUserID := coinallocatedFields[3].Descriptor()
+	// coinallocated.DefaultUserID holds the default value on creation for the user_id field.
+	coinallocated.DefaultUserID = coinallocatedDescUserID.Default.(func() uuid.UUID)
+	// coinallocatedDescValue is the schema descriptor for value field.
+	coinallocatedDescValue := coinallocatedFields[4].Descriptor()
+	// coinallocated.DefaultValue holds the default value on creation for the value field.
+	coinallocated.DefaultValue = coinallocatedDescValue.Default.(decimal.Decimal)
+	coinconfigMixin := schema.CoinConfig{}.Mixin()
+	coinconfig.Policy = privacy.NewPolicies(coinconfigMixin[0], schema.CoinConfig{})
+	coinconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := coinconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	coinconfigMixinFields0 := coinconfigMixin[0].Fields()
+	_ = coinconfigMixinFields0
+	coinconfigMixinFields1 := coinconfigMixin[1].Fields()
+	_ = coinconfigMixinFields1
+	coinconfigFields := schema.CoinConfig{}.Fields()
+	_ = coinconfigFields
+	// coinconfigDescCreatedAt is the schema descriptor for created_at field.
+	coinconfigDescCreatedAt := coinconfigMixinFields0[0].Descriptor()
+	// coinconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	coinconfig.DefaultCreatedAt = coinconfigDescCreatedAt.Default.(func() uint32)
+	// coinconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	coinconfigDescUpdatedAt := coinconfigMixinFields0[1].Descriptor()
+	// coinconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	coinconfig.DefaultUpdatedAt = coinconfigDescUpdatedAt.Default.(func() uint32)
+	// coinconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	coinconfig.UpdateDefaultUpdatedAt = coinconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// coinconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	coinconfigDescDeletedAt := coinconfigMixinFields0[2].Descriptor()
+	// coinconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	coinconfig.DefaultDeletedAt = coinconfigDescDeletedAt.Default.(func() uint32)
+	// coinconfigDescEntID is the schema descriptor for ent_id field.
+	coinconfigDescEntID := coinconfigMixinFields1[1].Descriptor()
+	// coinconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	coinconfig.DefaultEntID = coinconfigDescEntID.Default.(func() uuid.UUID)
+	// coinconfigDescAppID is the schema descriptor for app_id field.
+	coinconfigDescAppID := coinconfigFields[0].Descriptor()
+	// coinconfig.DefaultAppID holds the default value on creation for the app_id field.
+	coinconfig.DefaultAppID = coinconfigDescAppID.Default.(func() uuid.UUID)
+	// coinconfigDescCoinTypeID is the schema descriptor for coin_type_id field.
+	coinconfigDescCoinTypeID := coinconfigFields[1].Descriptor()
+	// coinconfig.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	coinconfig.DefaultCoinTypeID = coinconfigDescCoinTypeID.Default.(func() uuid.UUID)
+	// coinconfigDescMaxValue is the schema descriptor for max_value field.
+	coinconfigDescMaxValue := coinconfigFields[2].Descriptor()
+	// coinconfig.DefaultMaxValue holds the default value on creation for the max_value field.
+	coinconfig.DefaultMaxValue = coinconfigDescMaxValue.Default.(decimal.Decimal)
+	// coinconfigDescAllocated is the schema descriptor for allocated field.
+	coinconfigDescAllocated := coinconfigFields[3].Descriptor()
+	// coinconfig.DefaultAllocated holds the default value on creation for the allocated field.
+	coinconfig.DefaultAllocated = coinconfigDescAllocated.Default.(decimal.Decimal)
 	commissionMixin := schema.Commission{}.Mixin()
 	commission.Policy = privacy.NewPolicies(commissionMixin[0], schema.Commission{})
 	commission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -873,6 +986,106 @@ func init() {
 	eventDescInviterLayers := eventFields[8].Descriptor()
 	// event.DefaultInviterLayers holds the default value on creation for the inviter_layers field.
 	event.DefaultInviterLayers = eventDescInviterLayers.Default.(uint32)
+	eventcoinMixin := schema.EventCoin{}.Mixin()
+	eventcoin.Policy = privacy.NewPolicies(eventcoinMixin[0], schema.EventCoin{})
+	eventcoin.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := eventcoin.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	eventcoinMixinFields0 := eventcoinMixin[0].Fields()
+	_ = eventcoinMixinFields0
+	eventcoinMixinFields1 := eventcoinMixin[1].Fields()
+	_ = eventcoinMixinFields1
+	eventcoinFields := schema.EventCoin{}.Fields()
+	_ = eventcoinFields
+	// eventcoinDescCreatedAt is the schema descriptor for created_at field.
+	eventcoinDescCreatedAt := eventcoinMixinFields0[0].Descriptor()
+	// eventcoin.DefaultCreatedAt holds the default value on creation for the created_at field.
+	eventcoin.DefaultCreatedAt = eventcoinDescCreatedAt.Default.(func() uint32)
+	// eventcoinDescUpdatedAt is the schema descriptor for updated_at field.
+	eventcoinDescUpdatedAt := eventcoinMixinFields0[1].Descriptor()
+	// eventcoin.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	eventcoin.DefaultUpdatedAt = eventcoinDescUpdatedAt.Default.(func() uint32)
+	// eventcoin.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	eventcoin.UpdateDefaultUpdatedAt = eventcoinDescUpdatedAt.UpdateDefault.(func() uint32)
+	// eventcoinDescDeletedAt is the schema descriptor for deleted_at field.
+	eventcoinDescDeletedAt := eventcoinMixinFields0[2].Descriptor()
+	// eventcoin.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	eventcoin.DefaultDeletedAt = eventcoinDescDeletedAt.Default.(func() uint32)
+	// eventcoinDescEntID is the schema descriptor for ent_id field.
+	eventcoinDescEntID := eventcoinMixinFields1[1].Descriptor()
+	// eventcoin.DefaultEntID holds the default value on creation for the ent_id field.
+	eventcoin.DefaultEntID = eventcoinDescEntID.Default.(func() uuid.UUID)
+	// eventcoinDescAppID is the schema descriptor for app_id field.
+	eventcoinDescAppID := eventcoinFields[0].Descriptor()
+	// eventcoin.DefaultAppID holds the default value on creation for the app_id field.
+	eventcoin.DefaultAppID = eventcoinDescAppID.Default.(func() uuid.UUID)
+	// eventcoinDescEventID is the schema descriptor for event_id field.
+	eventcoinDescEventID := eventcoinFields[1].Descriptor()
+	// eventcoin.DefaultEventID holds the default value on creation for the event_id field.
+	eventcoin.DefaultEventID = eventcoinDescEventID.Default.(func() uuid.UUID)
+	// eventcoinDescCoinConfigID is the schema descriptor for coin_config_id field.
+	eventcoinDescCoinConfigID := eventcoinFields[2].Descriptor()
+	// eventcoin.DefaultCoinConfigID holds the default value on creation for the coin_config_id field.
+	eventcoin.DefaultCoinConfigID = eventcoinDescCoinConfigID.Default.(func() uuid.UUID)
+	// eventcoinDescCoinValue is the schema descriptor for coin_value field.
+	eventcoinDescCoinValue := eventcoinFields[3].Descriptor()
+	// eventcoin.DefaultCoinValue holds the default value on creation for the coin_value field.
+	eventcoin.DefaultCoinValue = eventcoinDescCoinValue.Default.(decimal.Decimal)
+	// eventcoinDescCoinPreUsd is the schema descriptor for coin_pre_usd field.
+	eventcoinDescCoinPreUsd := eventcoinFields[4].Descriptor()
+	// eventcoin.DefaultCoinPreUsd holds the default value on creation for the coin_pre_usd field.
+	eventcoin.DefaultCoinPreUsd = eventcoinDescCoinPreUsd.Default.(decimal.Decimal)
+	eventcouponMixin := schema.EventCoupon{}.Mixin()
+	eventcoupon.Policy = privacy.NewPolicies(eventcouponMixin[0], schema.EventCoupon{})
+	eventcoupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := eventcoupon.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	eventcouponMixinFields0 := eventcouponMixin[0].Fields()
+	_ = eventcouponMixinFields0
+	eventcouponMixinFields1 := eventcouponMixin[1].Fields()
+	_ = eventcouponMixinFields1
+	eventcouponFields := schema.EventCoupon{}.Fields()
+	_ = eventcouponFields
+	// eventcouponDescCreatedAt is the schema descriptor for created_at field.
+	eventcouponDescCreatedAt := eventcouponMixinFields0[0].Descriptor()
+	// eventcoupon.DefaultCreatedAt holds the default value on creation for the created_at field.
+	eventcoupon.DefaultCreatedAt = eventcouponDescCreatedAt.Default.(func() uint32)
+	// eventcouponDescUpdatedAt is the schema descriptor for updated_at field.
+	eventcouponDescUpdatedAt := eventcouponMixinFields0[1].Descriptor()
+	// eventcoupon.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	eventcoupon.DefaultUpdatedAt = eventcouponDescUpdatedAt.Default.(func() uint32)
+	// eventcoupon.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	eventcoupon.UpdateDefaultUpdatedAt = eventcouponDescUpdatedAt.UpdateDefault.(func() uint32)
+	// eventcouponDescDeletedAt is the schema descriptor for deleted_at field.
+	eventcouponDescDeletedAt := eventcouponMixinFields0[2].Descriptor()
+	// eventcoupon.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	eventcoupon.DefaultDeletedAt = eventcouponDescDeletedAt.Default.(func() uint32)
+	// eventcouponDescEntID is the schema descriptor for ent_id field.
+	eventcouponDescEntID := eventcouponMixinFields1[1].Descriptor()
+	// eventcoupon.DefaultEntID holds the default value on creation for the ent_id field.
+	eventcoupon.DefaultEntID = eventcouponDescEntID.Default.(func() uuid.UUID)
+	// eventcouponDescAppID is the schema descriptor for app_id field.
+	eventcouponDescAppID := eventcouponFields[0].Descriptor()
+	// eventcoupon.DefaultAppID holds the default value on creation for the app_id field.
+	eventcoupon.DefaultAppID = eventcouponDescAppID.Default.(func() uuid.UUID)
+	// eventcouponDescEventID is the schema descriptor for event_id field.
+	eventcouponDescEventID := eventcouponFields[1].Descriptor()
+	// eventcoupon.DefaultEventID holds the default value on creation for the event_id field.
+	eventcoupon.DefaultEventID = eventcouponDescEventID.Default.(func() uuid.UUID)
+	// eventcouponDescCouponID is the schema descriptor for coupon_id field.
+	eventcouponDescCouponID := eventcouponFields[2].Descriptor()
+	// eventcoupon.DefaultCouponID holds the default value on creation for the coupon_id field.
+	eventcoupon.DefaultCouponID = eventcouponDescCouponID.Default.(func() uuid.UUID)
 	goodachievementMixin := schema.GoodAchievement{}.Mixin()
 	goodachievement.Policy = privacy.NewPolicies(goodachievementMixin[0], schema.GoodAchievement{})
 	goodachievement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1417,6 +1630,304 @@ func init() {
 	statementDescCommissionConfigType := statementFields[18].Descriptor()
 	// statement.DefaultCommissionConfigType holds the default value on creation for the commission_config_type field.
 	statement.DefaultCommissionConfigType = statementDescCommissionConfigType.Default.(string)
+	taskconfigMixin := schema.TaskConfig{}.Mixin()
+	taskconfig.Policy = privacy.NewPolicies(taskconfigMixin[0], schema.TaskConfig{})
+	taskconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := taskconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	taskconfigMixinFields0 := taskconfigMixin[0].Fields()
+	_ = taskconfigMixinFields0
+	taskconfigMixinFields1 := taskconfigMixin[1].Fields()
+	_ = taskconfigMixinFields1
+	taskconfigFields := schema.TaskConfig{}.Fields()
+	_ = taskconfigFields
+	// taskconfigDescCreatedAt is the schema descriptor for created_at field.
+	taskconfigDescCreatedAt := taskconfigMixinFields0[0].Descriptor()
+	// taskconfig.DefaultCreatedAt holds the default value on creation for the created_at field.
+	taskconfig.DefaultCreatedAt = taskconfigDescCreatedAt.Default.(func() uint32)
+	// taskconfigDescUpdatedAt is the schema descriptor for updated_at field.
+	taskconfigDescUpdatedAt := taskconfigMixinFields0[1].Descriptor()
+	// taskconfig.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	taskconfig.DefaultUpdatedAt = taskconfigDescUpdatedAt.Default.(func() uint32)
+	// taskconfig.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	taskconfig.UpdateDefaultUpdatedAt = taskconfigDescUpdatedAt.UpdateDefault.(func() uint32)
+	// taskconfigDescDeletedAt is the schema descriptor for deleted_at field.
+	taskconfigDescDeletedAt := taskconfigMixinFields0[2].Descriptor()
+	// taskconfig.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	taskconfig.DefaultDeletedAt = taskconfigDescDeletedAt.Default.(func() uint32)
+	// taskconfigDescEntID is the schema descriptor for ent_id field.
+	taskconfigDescEntID := taskconfigMixinFields1[1].Descriptor()
+	// taskconfig.DefaultEntID holds the default value on creation for the ent_id field.
+	taskconfig.DefaultEntID = taskconfigDescEntID.Default.(func() uuid.UUID)
+	// taskconfigDescAppID is the schema descriptor for app_id field.
+	taskconfigDescAppID := taskconfigFields[0].Descriptor()
+	// taskconfig.DefaultAppID holds the default value on creation for the app_id field.
+	taskconfig.DefaultAppID = taskconfigDescAppID.Default.(func() uuid.UUID)
+	// taskconfigDescEventID is the schema descriptor for event_id field.
+	taskconfigDescEventID := taskconfigFields[1].Descriptor()
+	// taskconfig.DefaultEventID holds the default value on creation for the event_id field.
+	taskconfig.DefaultEventID = taskconfigDescEventID.Default.(func() uuid.UUID)
+	// taskconfigDescTaskType is the schema descriptor for task_type field.
+	taskconfigDescTaskType := taskconfigFields[2].Descriptor()
+	// taskconfig.DefaultTaskType holds the default value on creation for the task_type field.
+	taskconfig.DefaultTaskType = taskconfigDescTaskType.Default.(string)
+	// taskconfigDescName is the schema descriptor for name field.
+	taskconfigDescName := taskconfigFields[3].Descriptor()
+	// taskconfig.DefaultName holds the default value on creation for the name field.
+	taskconfig.DefaultName = taskconfigDescName.Default.(string)
+	// taskconfigDescTaskDesc is the schema descriptor for task_desc field.
+	taskconfigDescTaskDesc := taskconfigFields[4].Descriptor()
+	// taskconfig.DefaultTaskDesc holds the default value on creation for the task_desc field.
+	taskconfig.DefaultTaskDesc = taskconfigDescTaskDesc.Default.(string)
+	// taskconfigDescStepGuide is the schema descriptor for step_guide field.
+	taskconfigDescStepGuide := taskconfigFields[5].Descriptor()
+	// taskconfig.DefaultStepGuide holds the default value on creation for the step_guide field.
+	taskconfig.DefaultStepGuide = taskconfigDescStepGuide.Default.(string)
+	// taskconfigDescRecommendMessage is the schema descriptor for recommend_message field.
+	taskconfigDescRecommendMessage := taskconfigFields[6].Descriptor()
+	// taskconfig.DefaultRecommendMessage holds the default value on creation for the recommend_message field.
+	taskconfig.DefaultRecommendMessage = taskconfigDescRecommendMessage.Default.(string)
+	// taskconfigDescIndex is the schema descriptor for index field.
+	taskconfigDescIndex := taskconfigFields[7].Descriptor()
+	// taskconfig.DefaultIndex holds the default value on creation for the index field.
+	taskconfig.DefaultIndex = taskconfigDescIndex.Default.(uint32)
+	// taskconfigDescLastTaskID is the schema descriptor for last_task_id field.
+	taskconfigDescLastTaskID := taskconfigFields[8].Descriptor()
+	// taskconfig.DefaultLastTaskID holds the default value on creation for the last_task_id field.
+	taskconfig.DefaultLastTaskID = taskconfigDescLastTaskID.Default.(func() uuid.UUID)
+	// taskconfigDescMaxRewardCount is the schema descriptor for max_reward_count field.
+	taskconfigDescMaxRewardCount := taskconfigFields[9].Descriptor()
+	// taskconfig.DefaultMaxRewardCount holds the default value on creation for the max_reward_count field.
+	taskconfig.DefaultMaxRewardCount = taskconfigDescMaxRewardCount.Default.(uint32)
+	// taskconfigDescCooldownSecord is the schema descriptor for cooldown_secord field.
+	taskconfigDescCooldownSecord := taskconfigFields[10].Descriptor()
+	// taskconfig.DefaultCooldownSecord holds the default value on creation for the cooldown_secord field.
+	taskconfig.DefaultCooldownSecord = taskconfigDescCooldownSecord.Default.(uint32)
+	taskuserMixin := schema.TaskUser{}.Mixin()
+	taskuser.Policy = privacy.NewPolicies(taskuserMixin[0], schema.TaskUser{})
+	taskuser.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := taskuser.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	taskuserMixinFields0 := taskuserMixin[0].Fields()
+	_ = taskuserMixinFields0
+	taskuserMixinFields1 := taskuserMixin[1].Fields()
+	_ = taskuserMixinFields1
+	taskuserFields := schema.TaskUser{}.Fields()
+	_ = taskuserFields
+	// taskuserDescCreatedAt is the schema descriptor for created_at field.
+	taskuserDescCreatedAt := taskuserMixinFields0[0].Descriptor()
+	// taskuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	taskuser.DefaultCreatedAt = taskuserDescCreatedAt.Default.(func() uint32)
+	// taskuserDescUpdatedAt is the schema descriptor for updated_at field.
+	taskuserDescUpdatedAt := taskuserMixinFields0[1].Descriptor()
+	// taskuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	taskuser.DefaultUpdatedAt = taskuserDescUpdatedAt.Default.(func() uint32)
+	// taskuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	taskuser.UpdateDefaultUpdatedAt = taskuserDescUpdatedAt.UpdateDefault.(func() uint32)
+	// taskuserDescDeletedAt is the schema descriptor for deleted_at field.
+	taskuserDescDeletedAt := taskuserMixinFields0[2].Descriptor()
+	// taskuser.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	taskuser.DefaultDeletedAt = taskuserDescDeletedAt.Default.(func() uint32)
+	// taskuserDescEntID is the schema descriptor for ent_id field.
+	taskuserDescEntID := taskuserMixinFields1[1].Descriptor()
+	// taskuser.DefaultEntID holds the default value on creation for the ent_id field.
+	taskuser.DefaultEntID = taskuserDescEntID.Default.(func() uuid.UUID)
+	// taskuserDescAppID is the schema descriptor for app_id field.
+	taskuserDescAppID := taskuserFields[0].Descriptor()
+	// taskuser.DefaultAppID holds the default value on creation for the app_id field.
+	taskuser.DefaultAppID = taskuserDescAppID.Default.(func() uuid.UUID)
+	// taskuserDescUserID is the schema descriptor for user_id field.
+	taskuserDescUserID := taskuserFields[1].Descriptor()
+	// taskuser.DefaultUserID holds the default value on creation for the user_id field.
+	taskuser.DefaultUserID = taskuserDescUserID.Default.(func() uuid.UUID)
+	// taskuserDescTaskID is the schema descriptor for task_id field.
+	taskuserDescTaskID := taskuserFields[2].Descriptor()
+	// taskuser.DefaultTaskID holds the default value on creation for the task_id field.
+	taskuser.DefaultTaskID = taskuserDescTaskID.Default.(func() uuid.UUID)
+	// taskuserDescEventID is the schema descriptor for event_id field.
+	taskuserDescEventID := taskuserFields[3].Descriptor()
+	// taskuser.DefaultEventID holds the default value on creation for the event_id field.
+	taskuser.DefaultEventID = taskuserDescEventID.Default.(func() uuid.UUID)
+	// taskuserDescTaskState is the schema descriptor for task_state field.
+	taskuserDescTaskState := taskuserFields[4].Descriptor()
+	// taskuser.DefaultTaskState holds the default value on creation for the task_state field.
+	taskuser.DefaultTaskState = taskuserDescTaskState.Default.(string)
+	// taskuserDescRewardInfo is the schema descriptor for reward_info field.
+	taskuserDescRewardInfo := taskuserFields[5].Descriptor()
+	// taskuser.DefaultRewardInfo holds the default value on creation for the reward_info field.
+	taskuser.DefaultRewardInfo = taskuserDescRewardInfo.Default.(string)
+	// taskuserDescRewardState is the schema descriptor for reward_state field.
+	taskuserDescRewardState := taskuserFields[6].Descriptor()
+	// taskuser.DefaultRewardState holds the default value on creation for the reward_state field.
+	taskuser.DefaultRewardState = taskuserDescRewardState.Default.(string)
+	usercoinrewardMixin := schema.UserCoinReward{}.Mixin()
+	usercoinreward.Policy = privacy.NewPolicies(usercoinrewardMixin[0], schema.UserCoinReward{})
+	usercoinreward.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := usercoinreward.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	usercoinrewardMixinFields0 := usercoinrewardMixin[0].Fields()
+	_ = usercoinrewardMixinFields0
+	usercoinrewardMixinFields1 := usercoinrewardMixin[1].Fields()
+	_ = usercoinrewardMixinFields1
+	usercoinrewardFields := schema.UserCoinReward{}.Fields()
+	_ = usercoinrewardFields
+	// usercoinrewardDescCreatedAt is the schema descriptor for created_at field.
+	usercoinrewardDescCreatedAt := usercoinrewardMixinFields0[0].Descriptor()
+	// usercoinreward.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usercoinreward.DefaultCreatedAt = usercoinrewardDescCreatedAt.Default.(func() uint32)
+	// usercoinrewardDescUpdatedAt is the schema descriptor for updated_at field.
+	usercoinrewardDescUpdatedAt := usercoinrewardMixinFields0[1].Descriptor()
+	// usercoinreward.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usercoinreward.DefaultUpdatedAt = usercoinrewardDescUpdatedAt.Default.(func() uint32)
+	// usercoinreward.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usercoinreward.UpdateDefaultUpdatedAt = usercoinrewardDescUpdatedAt.UpdateDefault.(func() uint32)
+	// usercoinrewardDescDeletedAt is the schema descriptor for deleted_at field.
+	usercoinrewardDescDeletedAt := usercoinrewardMixinFields0[2].Descriptor()
+	// usercoinreward.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	usercoinreward.DefaultDeletedAt = usercoinrewardDescDeletedAt.Default.(func() uint32)
+	// usercoinrewardDescEntID is the schema descriptor for ent_id field.
+	usercoinrewardDescEntID := usercoinrewardMixinFields1[1].Descriptor()
+	// usercoinreward.DefaultEntID holds the default value on creation for the ent_id field.
+	usercoinreward.DefaultEntID = usercoinrewardDescEntID.Default.(func() uuid.UUID)
+	// usercoinrewardDescAppID is the schema descriptor for app_id field.
+	usercoinrewardDescAppID := usercoinrewardFields[0].Descriptor()
+	// usercoinreward.DefaultAppID holds the default value on creation for the app_id field.
+	usercoinreward.DefaultAppID = usercoinrewardDescAppID.Default.(func() uuid.UUID)
+	// usercoinrewardDescUserID is the schema descriptor for user_id field.
+	usercoinrewardDescUserID := usercoinrewardFields[1].Descriptor()
+	// usercoinreward.DefaultUserID holds the default value on creation for the user_id field.
+	usercoinreward.DefaultUserID = usercoinrewardDescUserID.Default.(func() uuid.UUID)
+	// usercoinrewardDescCoinTypeID is the schema descriptor for coin_type_id field.
+	usercoinrewardDescCoinTypeID := usercoinrewardFields[2].Descriptor()
+	// usercoinreward.DefaultCoinTypeID holds the default value on creation for the coin_type_id field.
+	usercoinreward.DefaultCoinTypeID = usercoinrewardDescCoinTypeID.Default.(func() uuid.UUID)
+	// usercoinrewardDescCoinRewards is the schema descriptor for coin_rewards field.
+	usercoinrewardDescCoinRewards := usercoinrewardFields[3].Descriptor()
+	// usercoinreward.DefaultCoinRewards holds the default value on creation for the coin_rewards field.
+	usercoinreward.DefaultCoinRewards = usercoinrewardDescCoinRewards.Default.(decimal.Decimal)
+	usercredithistoryMixin := schema.UserCreditHistory{}.Mixin()
+	usercredithistory.Policy = privacy.NewPolicies(usercredithistoryMixin[0], schema.UserCreditHistory{})
+	usercredithistory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := usercredithistory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	usercredithistoryMixinFields0 := usercredithistoryMixin[0].Fields()
+	_ = usercredithistoryMixinFields0
+	usercredithistoryMixinFields1 := usercredithistoryMixin[1].Fields()
+	_ = usercredithistoryMixinFields1
+	usercredithistoryFields := schema.UserCreditHistory{}.Fields()
+	_ = usercredithistoryFields
+	// usercredithistoryDescCreatedAt is the schema descriptor for created_at field.
+	usercredithistoryDescCreatedAt := usercredithistoryMixinFields0[0].Descriptor()
+	// usercredithistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usercredithistory.DefaultCreatedAt = usercredithistoryDescCreatedAt.Default.(func() uint32)
+	// usercredithistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	usercredithistoryDescUpdatedAt := usercredithistoryMixinFields0[1].Descriptor()
+	// usercredithistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usercredithistory.DefaultUpdatedAt = usercredithistoryDescUpdatedAt.Default.(func() uint32)
+	// usercredithistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usercredithistory.UpdateDefaultUpdatedAt = usercredithistoryDescUpdatedAt.UpdateDefault.(func() uint32)
+	// usercredithistoryDescDeletedAt is the schema descriptor for deleted_at field.
+	usercredithistoryDescDeletedAt := usercredithistoryMixinFields0[2].Descriptor()
+	// usercredithistory.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	usercredithistory.DefaultDeletedAt = usercredithistoryDescDeletedAt.Default.(func() uint32)
+	// usercredithistoryDescEntID is the schema descriptor for ent_id field.
+	usercredithistoryDescEntID := usercredithistoryMixinFields1[1].Descriptor()
+	// usercredithistory.DefaultEntID holds the default value on creation for the ent_id field.
+	usercredithistory.DefaultEntID = usercredithistoryDescEntID.Default.(func() uuid.UUID)
+	// usercredithistoryDescAppID is the schema descriptor for app_id field.
+	usercredithistoryDescAppID := usercredithistoryFields[0].Descriptor()
+	// usercredithistory.DefaultAppID holds the default value on creation for the app_id field.
+	usercredithistory.DefaultAppID = usercredithistoryDescAppID.Default.(func() uuid.UUID)
+	// usercredithistoryDescUserID is the schema descriptor for user_id field.
+	usercredithistoryDescUserID := usercredithistoryFields[1].Descriptor()
+	// usercredithistory.DefaultUserID holds the default value on creation for the user_id field.
+	usercredithistory.DefaultUserID = usercredithistoryDescUserID.Default.(func() uuid.UUID)
+	// usercredithistoryDescTaskID is the schema descriptor for task_id field.
+	usercredithistoryDescTaskID := usercredithistoryFields[2].Descriptor()
+	// usercredithistory.DefaultTaskID holds the default value on creation for the task_id field.
+	usercredithistory.DefaultTaskID = usercredithistoryDescTaskID.Default.(func() uuid.UUID)
+	// usercredithistoryDescEventID is the schema descriptor for event_id field.
+	usercredithistoryDescEventID := usercredithistoryFields[3].Descriptor()
+	// usercredithistory.DefaultEventID holds the default value on creation for the event_id field.
+	usercredithistory.DefaultEventID = usercredithistoryDescEventID.Default.(func() uuid.UUID)
+	// usercredithistoryDescCredits is the schema descriptor for credits field.
+	usercredithistoryDescCredits := usercredithistoryFields[4].Descriptor()
+	// usercredithistory.DefaultCredits holds the default value on creation for the credits field.
+	usercredithistory.DefaultCredits = usercredithistoryDescCredits.Default.(decimal.Decimal)
+	userrewardMixin := schema.UserReward{}.Mixin()
+	userreward.Policy = privacy.NewPolicies(userrewardMixin[0], schema.UserReward{})
+	userreward.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := userreward.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	userrewardMixinFields0 := userrewardMixin[0].Fields()
+	_ = userrewardMixinFields0
+	userrewardMixinFields1 := userrewardMixin[1].Fields()
+	_ = userrewardMixinFields1
+	userrewardFields := schema.UserReward{}.Fields()
+	_ = userrewardFields
+	// userrewardDescCreatedAt is the schema descriptor for created_at field.
+	userrewardDescCreatedAt := userrewardMixinFields0[0].Descriptor()
+	// userreward.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userreward.DefaultCreatedAt = userrewardDescCreatedAt.Default.(func() uint32)
+	// userrewardDescUpdatedAt is the schema descriptor for updated_at field.
+	userrewardDescUpdatedAt := userrewardMixinFields0[1].Descriptor()
+	// userreward.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userreward.DefaultUpdatedAt = userrewardDescUpdatedAt.Default.(func() uint32)
+	// userreward.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userreward.UpdateDefaultUpdatedAt = userrewardDescUpdatedAt.UpdateDefault.(func() uint32)
+	// userrewardDescDeletedAt is the schema descriptor for deleted_at field.
+	userrewardDescDeletedAt := userrewardMixinFields0[2].Descriptor()
+	// userreward.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	userreward.DefaultDeletedAt = userrewardDescDeletedAt.Default.(func() uint32)
+	// userrewardDescEntID is the schema descriptor for ent_id field.
+	userrewardDescEntID := userrewardMixinFields1[1].Descriptor()
+	// userreward.DefaultEntID holds the default value on creation for the ent_id field.
+	userreward.DefaultEntID = userrewardDescEntID.Default.(func() uuid.UUID)
+	// userrewardDescAppID is the schema descriptor for app_id field.
+	userrewardDescAppID := userrewardFields[0].Descriptor()
+	// userreward.DefaultAppID holds the default value on creation for the app_id field.
+	userreward.DefaultAppID = userrewardDescAppID.Default.(func() uuid.UUID)
+	// userrewardDescUserID is the schema descriptor for user_id field.
+	userrewardDescUserID := userrewardFields[1].Descriptor()
+	// userreward.DefaultUserID holds the default value on creation for the user_id field.
+	userreward.DefaultUserID = userrewardDescUserID.Default.(func() uuid.UUID)
+	// userrewardDescActionCredits is the schema descriptor for action_credits field.
+	userrewardDescActionCredits := userrewardFields[2].Descriptor()
+	// userreward.DefaultActionCredits holds the default value on creation for the action_credits field.
+	userreward.DefaultActionCredits = userrewardDescActionCredits.Default.(decimal.Decimal)
+	// userrewardDescCouponAmount is the schema descriptor for coupon_amount field.
+	userrewardDescCouponAmount := userrewardFields[3].Descriptor()
+	// userreward.DefaultCouponAmount holds the default value on creation for the coupon_amount field.
+	userreward.DefaultCouponAmount = userrewardDescCouponAmount.Default.(decimal.Decimal)
+	// userrewardDescCouponCashableAmount is the schema descriptor for coupon_cashable_amount field.
+	userrewardDescCouponCashableAmount := userrewardFields[4].Descriptor()
+	// userreward.DefaultCouponCashableAmount holds the default value on creation for the coupon_cashable_amount field.
+	userreward.DefaultCouponCashableAmount = userrewardDescCouponCashableAmount.Default.(decimal.Decimal)
 }
 
 const (

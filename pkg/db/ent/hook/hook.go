@@ -100,6 +100,32 @@ func (f CashControlFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
+// The CoinAllocatedFunc type is an adapter to allow the use of ordinary
+// function as CoinAllocated mutator.
+type CoinAllocatedFunc func(context.Context, *ent.CoinAllocatedMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CoinAllocatedFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CoinAllocatedMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CoinAllocatedMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The CoinConfigFunc type is an adapter to allow the use of ordinary
+// function as CoinConfig mutator.
+type CoinConfigFunc func(context.Context, *ent.CoinConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CoinConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CoinConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CoinConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CommissionFunc type is an adapter to allow the use of ordinary
 // function as Commission mutator.
 type CommissionFunc func(context.Context, *ent.CommissionMutation) (ent.Value, error)
@@ -161,6 +187,32 @@ func (f EventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	mv, ok := m.(*ent.EventMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EventCoinFunc type is an adapter to allow the use of ordinary
+// function as EventCoin mutator.
+type EventCoinFunc func(context.Context, *ent.EventCoinMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventCoinFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EventCoinMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventCoinMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EventCouponFunc type is an adapter to allow the use of ordinary
+// function as EventCoupon mutator.
+type EventCouponFunc func(context.Context, *ent.EventCouponMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventCouponFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EventCouponMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EventCouponMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -265,6 +317,71 @@ func (f StatementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.StatementMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StatementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TaskConfigFunc type is an adapter to allow the use of ordinary
+// function as TaskConfig mutator.
+type TaskConfigFunc func(context.Context, *ent.TaskConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TaskConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TaskConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TaskUserFunc type is an adapter to allow the use of ordinary
+// function as TaskUser mutator.
+type TaskUserFunc func(context.Context, *ent.TaskUserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TaskUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TaskUserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskUserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserCoinRewardFunc type is an adapter to allow the use of ordinary
+// function as UserCoinReward mutator.
+type UserCoinRewardFunc func(context.Context, *ent.UserCoinRewardMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserCoinRewardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserCoinRewardMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCoinRewardMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserCreditHistoryFunc type is an adapter to allow the use of ordinary
+// function as UserCreditHistory mutator.
+type UserCreditHistoryFunc func(context.Context, *ent.UserCreditHistoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserCreditHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserCreditHistoryMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCreditHistoryMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The UserRewardFunc type is an adapter to allow the use of ordinary
+// function as UserReward mutator.
+type UserRewardFunc func(context.Context, *ent.UserRewardMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserRewardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.UserRewardMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserRewardMutation", m)
 	}
 	return f(ctx, mv)
 }

@@ -28,6 +28,10 @@ type Tx struct {
 	AppGoodScope *AppGoodScopeClient
 	// CashControl is the client for interacting with the CashControl builders.
 	CashControl *CashControlClient
+	// CoinAllocated is the client for interacting with the CoinAllocated builders.
+	CoinAllocated *CoinAllocatedClient
+	// CoinConfig is the client for interacting with the CoinConfig builders.
+	CoinConfig *CoinConfigClient
 	// Commission is the client for interacting with the Commission builders.
 	Commission *CommissionClient
 	// Coupon is the client for interacting with the Coupon builders.
@@ -38,6 +42,10 @@ type Tx struct {
 	CouponScope *CouponScopeClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
+	// EventCoin is the client for interacting with the EventCoin builders.
+	EventCoin *EventCoinClient
+	// EventCoupon is the client for interacting with the EventCoupon builders.
+	EventCoupon *EventCouponClient
 	// GoodAchievement is the client for interacting with the GoodAchievement builders.
 	GoodAchievement *GoodAchievementClient
 	// GoodCoinAchievement is the client for interacting with the GoodCoinAchievement builders.
@@ -54,6 +62,16 @@ type Tx struct {
 	Registration *RegistrationClient
 	// Statement is the client for interacting with the Statement builders.
 	Statement *StatementClient
+	// TaskConfig is the client for interacting with the TaskConfig builders.
+	TaskConfig *TaskConfigClient
+	// TaskUser is the client for interacting with the TaskUser builders.
+	TaskUser *TaskUserClient
+	// UserCoinReward is the client for interacting with the UserCoinReward builders.
+	UserCoinReward *UserCoinRewardClient
+	// UserCreditHistory is the client for interacting with the UserCreditHistory builders.
+	UserCreditHistory *UserCreditHistoryClient
+	// UserReward is the client for interacting with the UserReward builders.
+	UserReward *UserRewardClient
 
 	// lazily loaded.
 	client     *Client
@@ -196,11 +214,15 @@ func (tx *Tx) init() {
 	tx.AppGoodCommissionConfig = NewAppGoodCommissionConfigClient(tx.config)
 	tx.AppGoodScope = NewAppGoodScopeClient(tx.config)
 	tx.CashControl = NewCashControlClient(tx.config)
+	tx.CoinAllocated = NewCoinAllocatedClient(tx.config)
+	tx.CoinConfig = NewCoinConfigClient(tx.config)
 	tx.Commission = NewCommissionClient(tx.config)
 	tx.Coupon = NewCouponClient(tx.config)
 	tx.CouponAllocated = NewCouponAllocatedClient(tx.config)
 	tx.CouponScope = NewCouponScopeClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
+	tx.EventCoin = NewEventCoinClient(tx.config)
+	tx.EventCoupon = NewEventCouponClient(tx.config)
 	tx.GoodAchievement = NewGoodAchievementClient(tx.config)
 	tx.GoodCoinAchievement = NewGoodCoinAchievementClient(tx.config)
 	tx.InvitationCode = NewInvitationCodeClient(tx.config)
@@ -209,6 +231,11 @@ func (tx *Tx) init() {
 	tx.PubsubMessage = NewPubsubMessageClient(tx.config)
 	tx.Registration = NewRegistrationClient(tx.config)
 	tx.Statement = NewStatementClient(tx.config)
+	tx.TaskConfig = NewTaskConfigClient(tx.config)
+	tx.TaskUser = NewTaskUserClient(tx.config)
+	tx.UserCoinReward = NewUserCoinRewardClient(tx.config)
+	tx.UserCreditHistory = NewUserCreditHistoryClient(tx.config)
+	tx.UserReward = NewUserRewardClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

@@ -17,11 +17,15 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -30,6 +34,11 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -57,11 +66,15 @@ func columnChecker(table string) func(string) error {
 		appgoodcommissionconfig.Table: appgoodcommissionconfig.ValidColumn,
 		appgoodscope.Table:            appgoodscope.ValidColumn,
 		cashcontrol.Table:             cashcontrol.ValidColumn,
+		coinallocated.Table:           coinallocated.ValidColumn,
+		coinconfig.Table:              coinconfig.ValidColumn,
 		commission.Table:              commission.ValidColumn,
 		coupon.Table:                  coupon.ValidColumn,
 		couponallocated.Table:         couponallocated.ValidColumn,
 		couponscope.Table:             couponscope.ValidColumn,
 		event.Table:                   event.ValidColumn,
+		eventcoin.Table:               eventcoin.ValidColumn,
+		eventcoupon.Table:             eventcoupon.ValidColumn,
 		goodachievement.Table:         goodachievement.ValidColumn,
 		goodcoinachievement.Table:     goodcoinachievement.ValidColumn,
 		invitationcode.Table:          invitationcode.ValidColumn,
@@ -70,6 +83,11 @@ func columnChecker(table string) func(string) error {
 		pubsubmessage.Table:           pubsubmessage.ValidColumn,
 		registration.Table:            registration.ValidColumn,
 		statement.Table:               statement.ValidColumn,
+		taskconfig.Table:              taskconfig.ValidColumn,
+		taskuser.Table:                taskuser.ValidColumn,
+		usercoinreward.Table:          usercoinreward.ValidColumn,
+		usercredithistory.Table:       usercredithistory.ValidColumn,
+		userreward.Table:              userreward.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

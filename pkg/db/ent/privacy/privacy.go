@@ -318,6 +318,54 @@ func (f CashControlMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CashControlMutation", m)
 }
 
+// The CoinAllocatedQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CoinAllocatedQueryRuleFunc func(context.Context, *ent.CoinAllocatedQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CoinAllocatedQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CoinAllocatedQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CoinAllocatedQuery", q)
+}
+
+// The CoinAllocatedMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CoinAllocatedMutationRuleFunc func(context.Context, *ent.CoinAllocatedMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CoinAllocatedMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CoinAllocatedMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CoinAllocatedMutation", m)
+}
+
+// The CoinConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CoinConfigQueryRuleFunc func(context.Context, *ent.CoinConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CoinConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CoinConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CoinConfigQuery", q)
+}
+
+// The CoinConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CoinConfigMutationRuleFunc func(context.Context, *ent.CoinConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CoinConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CoinConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CoinConfigMutation", m)
+}
+
 // The CommissionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommissionQueryRuleFunc func(context.Context, *ent.CommissionQuery) error
@@ -436,6 +484,54 @@ func (f EventMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventMutation", m)
+}
+
+// The EventCoinQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EventCoinQueryRuleFunc func(context.Context, *ent.EventCoinQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EventCoinQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EventCoinQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EventCoinQuery", q)
+}
+
+// The EventCoinMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EventCoinMutationRuleFunc func(context.Context, *ent.EventCoinMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EventCoinMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EventCoinMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventCoinMutation", m)
+}
+
+// The EventCouponQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EventCouponQueryRuleFunc func(context.Context, *ent.EventCouponQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EventCouponQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EventCouponQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EventCouponQuery", q)
+}
+
+// The EventCouponMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EventCouponMutationRuleFunc func(context.Context, *ent.EventCouponMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EventCouponMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EventCouponMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EventCouponMutation", m)
 }
 
 // The GoodAchievementQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -630,6 +726,126 @@ func (f StatementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StatementMutation", m)
 }
 
+// The TaskConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TaskConfigQueryRuleFunc func(context.Context, *ent.TaskConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TaskConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TaskConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.TaskConfigQuery", q)
+}
+
+// The TaskConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TaskConfigMutationRuleFunc func(context.Context, *ent.TaskConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TaskConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.TaskConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TaskConfigMutation", m)
+}
+
+// The TaskUserQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TaskUserQueryRuleFunc func(context.Context, *ent.TaskUserQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TaskUserQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TaskUserQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.TaskUserQuery", q)
+}
+
+// The TaskUserMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TaskUserMutationRuleFunc func(context.Context, *ent.TaskUserMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TaskUserMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.TaskUserMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TaskUserMutation", m)
+}
+
+// The UserCoinRewardQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserCoinRewardQueryRuleFunc func(context.Context, *ent.UserCoinRewardQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserCoinRewardQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserCoinRewardQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserCoinRewardQuery", q)
+}
+
+// The UserCoinRewardMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserCoinRewardMutationRuleFunc func(context.Context, *ent.UserCoinRewardMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserCoinRewardMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserCoinRewardMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCoinRewardMutation", m)
+}
+
+// The UserCreditHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserCreditHistoryQueryRuleFunc func(context.Context, *ent.UserCreditHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserCreditHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserCreditHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserCreditHistoryQuery", q)
+}
+
+// The UserCreditHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserCreditHistoryMutationRuleFunc func(context.Context, *ent.UserCreditHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserCreditHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserCreditHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCreditHistoryMutation", m)
+}
+
+// The UserRewardQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserRewardQueryRuleFunc func(context.Context, *ent.UserRewardQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserRewardQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserRewardQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserRewardQuery", q)
+}
+
+// The UserRewardMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserRewardMutationRuleFunc func(context.Context, *ent.UserRewardMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserRewardMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserRewardMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserRewardMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -679,6 +895,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CashControlQuery:
 		return q.Filter(), nil
+	case *ent.CoinAllocatedQuery:
+		return q.Filter(), nil
+	case *ent.CoinConfigQuery:
+		return q.Filter(), nil
 	case *ent.CommissionQuery:
 		return q.Filter(), nil
 	case *ent.CouponQuery:
@@ -688,6 +908,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.CouponScopeQuery:
 		return q.Filter(), nil
 	case *ent.EventQuery:
+		return q.Filter(), nil
+	case *ent.EventCoinQuery:
+		return q.Filter(), nil
+	case *ent.EventCouponQuery:
 		return q.Filter(), nil
 	case *ent.GoodAchievementQuery:
 		return q.Filter(), nil
@@ -704,6 +928,16 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.RegistrationQuery:
 		return q.Filter(), nil
 	case *ent.StatementQuery:
+		return q.Filter(), nil
+	case *ent.TaskConfigQuery:
+		return q.Filter(), nil
+	case *ent.TaskUserQuery:
+		return q.Filter(), nil
+	case *ent.UserCoinRewardQuery:
+		return q.Filter(), nil
+	case *ent.UserCreditHistoryQuery:
+		return q.Filter(), nil
+	case *ent.UserRewardQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
@@ -726,6 +960,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.CashControlMutation:
 		return m.Filter(), nil
+	case *ent.CoinAllocatedMutation:
+		return m.Filter(), nil
+	case *ent.CoinConfigMutation:
+		return m.Filter(), nil
 	case *ent.CommissionMutation:
 		return m.Filter(), nil
 	case *ent.CouponMutation:
@@ -735,6 +973,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CouponScopeMutation:
 		return m.Filter(), nil
 	case *ent.EventMutation:
+		return m.Filter(), nil
+	case *ent.EventCoinMutation:
+		return m.Filter(), nil
+	case *ent.EventCouponMutation:
 		return m.Filter(), nil
 	case *ent.GoodAchievementMutation:
 		return m.Filter(), nil
@@ -751,6 +993,16 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RegistrationMutation:
 		return m.Filter(), nil
 	case *ent.StatementMutation:
+		return m.Filter(), nil
+	case *ent.TaskConfigMutation:
+		return m.Filter(), nil
+	case *ent.TaskUserMutation:
+		return m.Filter(), nil
+	case *ent.UserCoinRewardMutation:
+		return m.Filter(), nil
+	case *ent.UserCreditHistoryMutation:
+		return m.Filter(), nil
+	case *ent.UserRewardMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)
