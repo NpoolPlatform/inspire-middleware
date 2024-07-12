@@ -9,6 +9,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	eventcoinmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -16,12 +17,15 @@ import (
 
 type Handler struct {
 	eventcrud.Req
-	Consecutive *uint32
-	Amount      *decimal.Decimal
-	UserID      *uuid.UUID
-	Conds       *eventcrud.Conds
-	Offset      int32
-	Limit       int32
+	Coins           []*eventcoinmw.EventCoinReq
+	RemoveCouponIDs *bool
+	RemoveCoins     *bool
+	Consecutive     *uint32
+	Amount          *decimal.Decimal
+	UserID          *uuid.UUID
+	Conds           *eventcrud.Conds
+	Offset          int32
+	Limit           int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -181,14 +185,54 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_AffiliatePurchase:
 			fallthrough //nolint
 		case basetypes.UsedFor_SimulateOrderProfit:
-		// Not implemented
+			fallthrough //nolint
+		case basetypes.UsedFor_SetWithdrawAddress:
+			fallthrough //nolint
+		case basetypes.UsedFor_ConsecutiveLogin:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodSocialSharing:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstOrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetAddress:
+			fallthrough //nolint
+		case basetypes.UsedFor_Set2FA:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstBenefit:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteComment:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteRecommend:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodScoring:
+			fallthrough //nolint
+		case basetypes.UsedFor_SubmitTicket:
+			fallthrough //nolint
+		case basetypes.UsedFor_IntallApp:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetNFTAvatar:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetPersonalImage:
+			fallthrough //nolint
 		case basetypes.UsedFor_Signin:
 			fallthrough //nolint
+		case basetypes.UsedFor_KYCApproved:
+			fallthrough //nolint
+		case basetypes.UsedFor_OrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_WithdrawalCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_DepositReceived:
+			fallthrough //nolint
+		case basetypes.UsedFor_UpdatePassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_ResetPassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_InternalTransfer:
+		// Not implemented
 		case basetypes.UsedFor_Update:
 			fallthrough //nolint
 		case basetypes.UsedFor_Contact:
-			fallthrough //nolint
-		case basetypes.UsedFor_SetWithdrawAddress:
 			fallthrough //nolint
 		case basetypes.UsedFor_Withdraw:
 			fallthrough //nolint
@@ -199,12 +243,6 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_SetTransferTargetUser:
 			fallthrough //nolint
 		case basetypes.UsedFor_WithdrawalRequest:
-			fallthrough //nolint
-		case basetypes.UsedFor_WithdrawalCompleted:
-			fallthrough //nolint
-		case basetypes.UsedFor_DepositReceived:
-			fallthrough //nolint
-		case basetypes.UsedFor_KYCApproved:
 			fallthrough //nolint
 		case basetypes.UsedFor_KYCRejected:
 			return wlog.Errorf("not implemented")
@@ -273,6 +311,41 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 			return wlog.WrapError(err)
 		}
 		h.Amount = &_amount
+		return nil
+	}
+}
+
+func WithCoins(coins []*eventcoinmw.EventCoinReq) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		for _, coin := range coins {
+			_, err := uuid.Parse(*coin.CoinConfigID)
+			if err != nil {
+				return err
+			}
+			_, err = decimal.NewFromString(*coin.CoinValue)
+			if err != nil {
+				return err
+			}
+			_, err = decimal.NewFromString(*coin.CoinPreUSD)
+			if err != nil {
+				return err
+			}
+		}
+		h.Coins = coins
+		return nil
+	}
+}
+
+func WithRemoveCouponIDs(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RemoveCouponIDs = value
+		return nil
+	}
+}
+
+func WithRemoveCoins(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.RemoveCoins = value
 		return nil
 	}
 }

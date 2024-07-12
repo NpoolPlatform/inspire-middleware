@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) (*npool.RewardEventResponse, error) {
+func (s *Server) CalcluateEventRewards(ctx context.Context, in *npool.CalcluateEventRewardsRequest) (*npool.CalcluateEventRewardsResponse, error) {
 	handler, err := event1.NewHandler(
 		ctx,
 		event1.WithAppID(&in.AppID, true),
@@ -25,24 +25,24 @@ func (s *Server) RewardEvent(ctx context.Context, in *npool.RewardEventRequest) 
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"RewardEvent",
+			"CalcluateEventRewards",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.RewardEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CalcluateEventRewardsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, err := handler.RewardEvent(ctx)
+	info, err := handler.CalcluateEventRewards(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
-			"RewardEvent",
+			"CalcluateEventRewards",
 			"In", in,
 			"Error", err,
 		)
-		return &npool.RewardEventResponse{}, status.Error(codes.Internal, err.Error())
+		return &npool.CalcluateEventRewardsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.RewardEventResponse{
-		Infos: infos,
+	return &npool.CalcluateEventRewardsResponse{
+		Info: info,
 	}, nil
 }
