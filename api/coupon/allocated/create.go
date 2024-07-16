@@ -28,6 +28,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		allocated1.WithAppID(req.AppID, true),
 		allocated1.WithCouponID(req.CouponID, true),
 		allocated1.WithUserID(req.UserID, true),
+		allocated1.WithExtra(req.Extra, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -70,6 +71,7 @@ func (s *Server) CreateDirectCoupon(ctx context.Context, in *npool.CreateDirectC
 		allocated1.WithCouponID(req.CouponID, true),
 		allocated1.WithUserID(req.UserID, true),
 		allocated1.WithCashable(req.Cashable, true),
+		allocated1.WithExtra(req.Extra, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

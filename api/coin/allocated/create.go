@@ -29,6 +29,7 @@ func (s *Server) CreateCoinAllocated(ctx context.Context, in *npool.CreateCoinAl
 		allocated1.WithCoinTypeID(req.CoinTypeID, true),
 		allocated1.WithUserID(req.UserID, true),
 		allocated1.WithValue(req.Value, true),
+		allocated1.WithExtra(req.Extra, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

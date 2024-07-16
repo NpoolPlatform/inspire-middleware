@@ -4,19 +4,18 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
-	coinallocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coin/allocated"
+	creditallocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/credit/allocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/credit/allocated"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
 type Handler struct {
-	coinallocatedcrud.Req
-	Conds  *coinallocatedcrud.Conds
+	creditallocatedcrud.Req
+	Conds  *creditallocatedcrud.Conds
 	Offset int32
 	Limit  int32
 }
@@ -78,40 +77,6 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCoinConfigID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid coinconfigid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.CoinConfigID = &_id
-		return nil
-	}
-}
-
-func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
-			if must {
-				return fmt.Errorf("invalid cointypeid")
-			}
-			return nil
-		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.CoinTypeID = &_id
-		return nil
-	}
-}
-
 func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
@@ -150,7 +115,7 @@ func WithExtra(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return wlog.Errorf("invalid extra")
+				return fmt.Errorf("invalid extra")
 			}
 			return nil
 		}
@@ -161,7 +126,7 @@ func WithExtra(value *string, must bool) func(context.Context, *Handler) error {
 
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &coinallocatedcrud.Conds{}
+		h.Conds = &creditallocatedcrud.Conds{}
 		if conds == nil {
 			return nil
 		}
@@ -181,15 +146,6 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op: conds.GetAppID().GetOp(), Val: id,
-			}
-		}
-		if conds.CoinTypeID != nil {
-			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.CoinTypeID = &cruder.Cond{
-				Op: conds.GetCoinTypeID().GetOp(), Val: id,
 			}
 		}
 		if conds.EntIDs != nil {

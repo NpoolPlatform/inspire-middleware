@@ -76,6 +76,7 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 			Denomination: &h.coupon.Denomination,
 			CouponScope:  &couponScope,
 			Cashable:     &_cashable,
+			Extra:        h.Extra,
 		},
 	).Save(ctx); err != nil {
 		return wlog.WrapError(err)
@@ -97,6 +98,7 @@ func (h *createHandler) createDirectAllocatedCoupon(ctx context.Context, tx *ent
 			Denomination: &h.coupon.Denomination,
 			CouponScope:  &couponScope,
 			Cashable:     h.Cashable,
+			Extra:        h.Extra,
 		},
 	).Save(ctx); err != nil {
 		return wlog.WrapError(err)

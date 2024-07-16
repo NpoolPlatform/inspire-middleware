@@ -6,43 +6,43 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 
-	devicecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coin/allocated"
+	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/credit/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entcoinallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
+	entcreditallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/credit/allocated"
 	"github.com/shopspring/decimal"
 )
 
 type queryHandler struct {
 	*Handler
-	stmSelect *ent.CoinAllocatedSelect
-	stmCount  *ent.CoinAllocatedSelect
-	infos     []*npool.CoinAllocated
+	stmSelect *ent.CreditAllocatedSelect
+	stmCount  *ent.CreditAllocatedSelect
+	infos     []*npool.CreditAllocated
 	total     uint32
 }
 
-func (h *queryHandler) selectCoinAllocated(stm *ent.CoinAllocatedQuery) {
-	h.stmSelect = stm.Select(entcoinallocated.FieldID)
+func (h *queryHandler) selectCreditAllocated(stm *ent.CreditAllocatedQuery) {
+	h.stmSelect = stm.Select(entcreditallocated.FieldID)
 }
 
-func (h *queryHandler) queryCoinAllocated(cli *ent.Client) error {
+func (h *queryHandler) queryCreditAllocated(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
 		return fmt.Errorf("invalid id")
 	}
-	stm := cli.CoinAllocated.Query().Where(entcoinallocated.DeletedAt(0))
+	stm := cli.CreditAllocated.Query().Where(entcreditallocated.DeletedAt(0))
 	if h.ID != nil {
-		stm.Where(entcoinallocated.ID(*h.ID))
+		stm.Where(entcreditallocated.ID(*h.ID))
 	}
 	if h.EntID != nil {
-		stm.Where(entcoinallocated.EntID(*h.EntID))
+		stm.Where(entcreditallocated.EntID(*h.EntID))
 	}
-	h.selectCoinAllocated(stm)
+	h.selectCreditAllocated(stm)
 	return nil
 }
 
-func (h *queryHandler) queryCoinAllocateds(ctx context.Context, cli *ent.Client) error {
-	stm, err := devicecrud.SetQueryConds(cli.CoinAllocated.Query(), h.Conds)
+func (h *queryHandler) queryCreditAllocateds(ctx context.Context, cli *ent.Client) error {
+	stm, err := allocatedcrud.SetQueryConds(cli.CreditAllocated.Query(), h.Conds)
 	if err != nil {
 		return err
 	}
@@ -51,27 +51,25 @@ func (h *queryHandler) queryCoinAllocateds(ctx context.Context, cli *ent.Client)
 		return err
 	}
 	h.total = uint32(total)
-	h.selectCoinAllocated(stm)
+	h.selectCreditAllocated(stm)
 	return nil
 }
 
 func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
-	t1 := sql.Table(entcoinallocated.Table)
+	t1 := sql.Table(entcreditallocated.Table)
 	s.LeftJoin(t1).
 		On(
-			s.C(entcoinallocated.FieldEntID),
-			t1.C(entcoinallocated.FieldEntID),
+			s.C(entcreditallocated.FieldEntID),
+			t1.C(entcreditallocated.FieldEntID),
 		).
 		AppendSelect(
-			t1.C(entcoinallocated.FieldEntID),
-			t1.C(entcoinallocated.FieldAppID),
-			t1.C(entcoinallocated.FieldUserID),
-			t1.C(entcoinallocated.FieldCoinConfigID),
-			t1.C(entcoinallocated.FieldCoinTypeID),
-			t1.C(entcoinallocated.FieldValue),
-			t1.C(entcoinallocated.FieldExtra),
-			t1.C(entcoinallocated.FieldCreatedAt),
-			t1.C(entcoinallocated.FieldUpdatedAt),
+			t1.C(entcreditallocated.FieldEntID),
+			t1.C(entcreditallocated.FieldAppID),
+			t1.C(entcreditallocated.FieldUserID),
+			t1.C(entcreditallocated.FieldValue),
+			t1.C(entcreditallocated.FieldExtra),
+			t1.C(entcreditallocated.FieldCreatedAt),
+			t1.C(entcreditallocated.FieldUpdatedAt),
 		)
 }
 
@@ -100,13 +98,13 @@ func (h *queryHandler) formalize() {
 	}
 }
 
-func (h *Handler) GetCoinAllocated(ctx context.Context) (*npool.CoinAllocated, error) {
+func (h *Handler) GetCreditAllocated(ctx context.Context) (*npool.CreditAllocated, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryCoinAllocated(cli); err != nil {
+		if err := handler.queryCreditAllocated(cli); err != nil {
 			return err
 		}
 		handler.queryJoin()
@@ -128,12 +126,12 @@ func (h *Handler) GetCoinAllocated(ctx context.Context) (*npool.CoinAllocated, e
 	return handler.infos[0], nil
 }
 
-func (h *Handler) GetCoinAllocateds(ctx context.Context) ([]*npool.CoinAllocated, uint32, error) {
+func (h *Handler) GetCreditAllocateds(ctx context.Context) ([]*npool.CreditAllocated, uint32, error) {
 	handler := &queryHandler{
 		Handler: h,
 	}
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if err := handler.queryCoinAllocateds(_ctx, cli); err != nil {
+		if err := handler.queryCreditAllocateds(_ctx, cli); err != nil {
 			return err
 		}
 		handler.queryJoin()

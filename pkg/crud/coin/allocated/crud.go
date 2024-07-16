@@ -3,6 +3,7 @@ package allocated
 import (
 	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoinallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -18,6 +19,7 @@ type Req struct {
 	CoinTypeID   *uuid.UUID
 	UserID       *uuid.UUID
 	Value        *decimal.Decimal
+	Extra        *string
 	DeletedAt    *uint32
 }
 
@@ -40,6 +42,9 @@ func CreateSet(c *ent.CoinAllocatedCreate, req *Req) *ent.CoinAllocatedCreate {
 	if req.Value != nil {
 		c.SetValue(*req.Value)
 	}
+	if req.Extra != nil {
+		c.SetExtra(*req.Extra)
+	}
 	return c
 }
 
@@ -61,6 +66,7 @@ type Conds struct {
 	CoinConfigID *cruder.Cond
 	CoinTypeID   *cruder.Cond
 	ID           *cruder.Cond
+	Extra        *cruder.Cond
 }
 
 //nolint:funlen
@@ -153,6 +159,18 @@ func SetQueryConds(q *ent.CoinAllocatedQuery, conds *Conds) (*ent.CoinAllocatedQ
 			q.Where(entcoinallocated.IDNEQ(id))
 		default:
 			return nil, fmt.Errorf("invalid coinallocated field")
+		}
+	}
+	if conds.Extra != nil {
+		id, ok := conds.Extra.Val.(string)
+		if !ok {
+			return nil, wlog.Errorf("invalid extra")
+		}
+		switch conds.Extra.Op {
+		case cruder.EQ:
+			q.Where(entcoinallocated.ExtraContains(id))
+		default:
+			return nil, wlog.Errorf("invalid coinallocated field")
 		}
 	}
 	return q, nil
