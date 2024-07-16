@@ -10,35 +10,35 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/predicate"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
-// CoinAllocatedUpdate is the builder for updating CoinAllocated entities.
-type CoinAllocatedUpdate struct {
+// CreditAllocatedUpdate is the builder for updating CreditAllocated entities.
+type CreditAllocatedUpdate struct {
 	config
 	hooks     []Hook
-	mutation  *CoinAllocatedMutation
+	mutation  *CreditAllocatedMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// Where appends a list predicates to the CoinAllocatedUpdate builder.
-func (cau *CoinAllocatedUpdate) Where(ps ...predicate.CoinAllocated) *CoinAllocatedUpdate {
+// Where appends a list predicates to the CreditAllocatedUpdate builder.
+func (cau *CreditAllocatedUpdate) Where(ps ...predicate.CreditAllocated) *CreditAllocatedUpdate {
 	cau.mutation.Where(ps...)
 	return cau
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (cau *CoinAllocatedUpdate) SetCreatedAt(u uint32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetCreatedAt(u uint32) *CreditAllocatedUpdate {
 	cau.mutation.ResetCreatedAt()
 	cau.mutation.SetCreatedAt(u)
 	return cau
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableCreatedAt(u *uint32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableCreatedAt(u *uint32) *CreditAllocatedUpdate {
 	if u != nil {
 		cau.SetCreatedAt(*u)
 	}
@@ -46,33 +46,33 @@ func (cau *CoinAllocatedUpdate) SetNillableCreatedAt(u *uint32) *CoinAllocatedUp
 }
 
 // AddCreatedAt adds u to the "created_at" field.
-func (cau *CoinAllocatedUpdate) AddCreatedAt(u int32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) AddCreatedAt(u int32) *CreditAllocatedUpdate {
 	cau.mutation.AddCreatedAt(u)
 	return cau
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (cau *CoinAllocatedUpdate) SetUpdatedAt(u uint32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetUpdatedAt(u uint32) *CreditAllocatedUpdate {
 	cau.mutation.ResetUpdatedAt()
 	cau.mutation.SetUpdatedAt(u)
 	return cau
 }
 
 // AddUpdatedAt adds u to the "updated_at" field.
-func (cau *CoinAllocatedUpdate) AddUpdatedAt(u int32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) AddUpdatedAt(u int32) *CreditAllocatedUpdate {
 	cau.mutation.AddUpdatedAt(u)
 	return cau
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (cau *CoinAllocatedUpdate) SetDeletedAt(u uint32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetDeletedAt(u uint32) *CreditAllocatedUpdate {
 	cau.mutation.ResetDeletedAt()
 	cau.mutation.SetDeletedAt(u)
 	return cau
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableDeletedAt(u *uint32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableDeletedAt(u *uint32) *CreditAllocatedUpdate {
 	if u != nil {
 		cau.SetDeletedAt(*u)
 	}
@@ -80,19 +80,19 @@ func (cau *CoinAllocatedUpdate) SetNillableDeletedAt(u *uint32) *CoinAllocatedUp
 }
 
 // AddDeletedAt adds u to the "deleted_at" field.
-func (cau *CoinAllocatedUpdate) AddDeletedAt(u int32) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) AddDeletedAt(u int32) *CreditAllocatedUpdate {
 	cau.mutation.AddDeletedAt(u)
 	return cau
 }
 
 // SetEntID sets the "ent_id" field.
-func (cau *CoinAllocatedUpdate) SetEntID(u uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetEntID(u uuid.UUID) *CreditAllocatedUpdate {
 	cau.mutation.SetEntID(u)
 	return cau
 }
 
 // SetNillableEntID sets the "ent_id" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableEntID(u *uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableEntID(u *uuid.UUID) *CreditAllocatedUpdate {
 	if u != nil {
 		cau.SetEntID(*u)
 	}
@@ -100,13 +100,13 @@ func (cau *CoinAllocatedUpdate) SetNillableEntID(u *uuid.UUID) *CoinAllocatedUpd
 }
 
 // SetAppID sets the "app_id" field.
-func (cau *CoinAllocatedUpdate) SetAppID(u uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetAppID(u uuid.UUID) *CreditAllocatedUpdate {
 	cau.mutation.SetAppID(u)
 	return cau
 }
 
 // SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableAppID(u *uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableAppID(u *uuid.UUID) *CreditAllocatedUpdate {
 	if u != nil {
 		cau.SetAppID(*u)
 	}
@@ -114,59 +114,19 @@ func (cau *CoinAllocatedUpdate) SetNillableAppID(u *uuid.UUID) *CoinAllocatedUpd
 }
 
 // ClearAppID clears the value of the "app_id" field.
-func (cau *CoinAllocatedUpdate) ClearAppID() *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) ClearAppID() *CreditAllocatedUpdate {
 	cau.mutation.ClearAppID()
 	return cau
 }
 
-// SetCoinConfigID sets the "coin_config_id" field.
-func (cau *CoinAllocatedUpdate) SetCoinConfigID(u uuid.UUID) *CoinAllocatedUpdate {
-	cau.mutation.SetCoinConfigID(u)
-	return cau
-}
-
-// SetNillableCoinConfigID sets the "coin_config_id" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableCoinConfigID(u *uuid.UUID) *CoinAllocatedUpdate {
-	if u != nil {
-		cau.SetCoinConfigID(*u)
-	}
-	return cau
-}
-
-// ClearCoinConfigID clears the value of the "coin_config_id" field.
-func (cau *CoinAllocatedUpdate) ClearCoinConfigID() *CoinAllocatedUpdate {
-	cau.mutation.ClearCoinConfigID()
-	return cau
-}
-
-// SetCoinTypeID sets the "coin_type_id" field.
-func (cau *CoinAllocatedUpdate) SetCoinTypeID(u uuid.UUID) *CoinAllocatedUpdate {
-	cau.mutation.SetCoinTypeID(u)
-	return cau
-}
-
-// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableCoinTypeID(u *uuid.UUID) *CoinAllocatedUpdate {
-	if u != nil {
-		cau.SetCoinTypeID(*u)
-	}
-	return cau
-}
-
-// ClearCoinTypeID clears the value of the "coin_type_id" field.
-func (cau *CoinAllocatedUpdate) ClearCoinTypeID() *CoinAllocatedUpdate {
-	cau.mutation.ClearCoinTypeID()
-	return cau
-}
-
 // SetUserID sets the "user_id" field.
-func (cau *CoinAllocatedUpdate) SetUserID(u uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetUserID(u uuid.UUID) *CreditAllocatedUpdate {
 	cau.mutation.SetUserID(u)
 	return cau
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableUserID(u *uuid.UUID) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableUserID(u *uuid.UUID) *CreditAllocatedUpdate {
 	if u != nil {
 		cau.SetUserID(*u)
 	}
@@ -174,19 +134,19 @@ func (cau *CoinAllocatedUpdate) SetNillableUserID(u *uuid.UUID) *CoinAllocatedUp
 }
 
 // ClearUserID clears the value of the "user_id" field.
-func (cau *CoinAllocatedUpdate) ClearUserID() *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) ClearUserID() *CreditAllocatedUpdate {
 	cau.mutation.ClearUserID()
 	return cau
 }
 
 // SetValue sets the "value" field.
-func (cau *CoinAllocatedUpdate) SetValue(d decimal.Decimal) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetValue(d decimal.Decimal) *CreditAllocatedUpdate {
 	cau.mutation.SetValue(d)
 	return cau
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableValue(d *decimal.Decimal) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableValue(d *decimal.Decimal) *CreditAllocatedUpdate {
 	if d != nil {
 		cau.SetValue(*d)
 	}
@@ -194,19 +154,19 @@ func (cau *CoinAllocatedUpdate) SetNillableValue(d *decimal.Decimal) *CoinAlloca
 }
 
 // ClearValue clears the value of the "value" field.
-func (cau *CoinAllocatedUpdate) ClearValue() *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) ClearValue() *CreditAllocatedUpdate {
 	cau.mutation.ClearValue()
 	return cau
 }
 
 // SetExtra sets the "extra" field.
-func (cau *CoinAllocatedUpdate) SetExtra(s string) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetExtra(s string) *CreditAllocatedUpdate {
 	cau.mutation.SetExtra(s)
 	return cau
 }
 
 // SetNillableExtra sets the "extra" field if the given value is not nil.
-func (cau *CoinAllocatedUpdate) SetNillableExtra(s *string) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) SetNillableExtra(s *string) *CreditAllocatedUpdate {
 	if s != nil {
 		cau.SetExtra(*s)
 	}
@@ -214,18 +174,18 @@ func (cau *CoinAllocatedUpdate) SetNillableExtra(s *string) *CoinAllocatedUpdate
 }
 
 // ClearExtra clears the value of the "extra" field.
-func (cau *CoinAllocatedUpdate) ClearExtra() *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) ClearExtra() *CreditAllocatedUpdate {
 	cau.mutation.ClearExtra()
 	return cau
 }
 
-// Mutation returns the CoinAllocatedMutation object of the builder.
-func (cau *CoinAllocatedUpdate) Mutation() *CoinAllocatedMutation {
+// Mutation returns the CreditAllocatedMutation object of the builder.
+func (cau *CreditAllocatedUpdate) Mutation() *CreditAllocatedMutation {
 	return cau.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (cau *CoinAllocatedUpdate) Save(ctx context.Context) (int, error) {
+func (cau *CreditAllocatedUpdate) Save(ctx context.Context) (int, error) {
 	var (
 		err      error
 		affected int
@@ -240,7 +200,7 @@ func (cau *CoinAllocatedUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = cau.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinAllocatedMutation)
+			mutation, ok := m.(*CreditAllocatedMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -266,7 +226,7 @@ func (cau *CoinAllocatedUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cau *CoinAllocatedUpdate) SaveX(ctx context.Context) int {
+func (cau *CreditAllocatedUpdate) SaveX(ctx context.Context) int {
 	affected, err := cau.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -275,54 +235,54 @@ func (cau *CoinAllocatedUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (cau *CoinAllocatedUpdate) Exec(ctx context.Context) error {
+func (cau *CreditAllocatedUpdate) Exec(ctx context.Context) error {
 	_, err := cau.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cau *CoinAllocatedUpdate) ExecX(ctx context.Context) {
+func (cau *CreditAllocatedUpdate) ExecX(ctx context.Context) {
 	if err := cau.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (cau *CoinAllocatedUpdate) defaults() error {
+func (cau *CreditAllocatedUpdate) defaults() error {
 	if _, ok := cau.mutation.UpdatedAt(); !ok {
-		if coinallocated.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized coinallocated.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if creditallocated.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized creditallocated.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := coinallocated.UpdateDefaultUpdatedAt()
+		v := creditallocated.UpdateDefaultUpdatedAt()
 		cau.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cau *CoinAllocatedUpdate) check() error {
+func (cau *CreditAllocatedUpdate) check() error {
 	if v, ok := cau.mutation.Extra(); ok {
-		if err := coinallocated.ExtraValidator(v); err != nil {
-			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CoinAllocated.extra": %w`, err)}
+		if err := creditallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CreditAllocated.extra": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cau *CoinAllocatedUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CoinAllocatedUpdate {
+func (cau *CreditAllocatedUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CreditAllocatedUpdate {
 	cau.modifiers = append(cau.modifiers, modifiers...)
 	return cau
 }
 
-func (cau *CoinAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (cau *CreditAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   coinallocated.Table,
-			Columns: coinallocated.Columns,
+			Table:   creditallocated.Table,
+			Columns: creditallocated.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: coinallocated.FieldID,
+				Column: creditallocated.FieldID,
 			},
 		},
 	}
@@ -337,133 +297,107 @@ func (cau *CoinAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldCreatedAt,
+			Column: creditallocated.FieldCreatedAt,
 		})
 	}
 	if value, ok := cau.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldCreatedAt,
+			Column: creditallocated.FieldCreatedAt,
 		})
 	}
 	if value, ok := cau.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldUpdatedAt,
+			Column: creditallocated.FieldUpdatedAt,
 		})
 	}
 	if value, ok := cau.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldUpdatedAt,
+			Column: creditallocated.FieldUpdatedAt,
 		})
 	}
 	if value, ok := cau.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldDeletedAt,
+			Column: creditallocated.FieldDeletedAt,
 		})
 	}
 	if value, ok := cau.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldDeletedAt,
+			Column: creditallocated.FieldDeletedAt,
 		})
 	}
 	if value, ok := cau.mutation.EntID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldEntID,
+			Column: creditallocated.FieldEntID,
 		})
 	}
 	if value, ok := cau.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldAppID,
+			Column: creditallocated.FieldAppID,
 		})
 	}
 	if cau.mutation.AppIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: coinallocated.FieldAppID,
-		})
-	}
-	if value, ok := cau.mutation.CoinConfigID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coinallocated.FieldCoinConfigID,
-		})
-	}
-	if cau.mutation.CoinConfigIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coinallocated.FieldCoinConfigID,
-		})
-	}
-	if value, ok := cau.mutation.CoinTypeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coinallocated.FieldCoinTypeID,
-		})
-	}
-	if cau.mutation.CoinTypeIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coinallocated.FieldCoinTypeID,
+			Column: creditallocated.FieldAppID,
 		})
 	}
 	if value, ok := cau.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldUserID,
+			Column: creditallocated.FieldUserID,
 		})
 	}
 	if cau.mutation.UserIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: coinallocated.FieldUserID,
+			Column: creditallocated.FieldUserID,
 		})
 	}
 	if value, ok := cau.mutation.Value(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: coinallocated.FieldValue,
+			Column: creditallocated.FieldValue,
 		})
 	}
 	if cau.mutation.ValueCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: coinallocated.FieldValue,
+			Column: creditallocated.FieldValue,
 		})
 	}
 	if value, ok := cau.mutation.Extra(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coinallocated.FieldExtra,
+			Column: creditallocated.FieldExtra,
 		})
 	}
 	if cau.mutation.ExtraCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: coinallocated.FieldExtra,
+			Column: creditallocated.FieldExtra,
 		})
 	}
 	_spec.Modifiers = cau.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cau.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{coinallocated.Label}
+			err = &NotFoundError{creditallocated.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -472,24 +406,24 @@ func (cau *CoinAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	return n, nil
 }
 
-// CoinAllocatedUpdateOne is the builder for updating a single CoinAllocated entity.
-type CoinAllocatedUpdateOne struct {
+// CreditAllocatedUpdateOne is the builder for updating a single CreditAllocated entity.
+type CreditAllocatedUpdateOne struct {
 	config
 	fields    []string
 	hooks     []Hook
-	mutation  *CoinAllocatedMutation
+	mutation  *CreditAllocatedMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (cauo *CoinAllocatedUpdateOne) SetCreatedAt(u uint32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetCreatedAt(u uint32) *CreditAllocatedUpdateOne {
 	cauo.mutation.ResetCreatedAt()
 	cauo.mutation.SetCreatedAt(u)
 	return cauo
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableCreatedAt(u *uint32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableCreatedAt(u *uint32) *CreditAllocatedUpdateOne {
 	if u != nil {
 		cauo.SetCreatedAt(*u)
 	}
@@ -497,33 +431,33 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableCreatedAt(u *uint32) *CoinAllocat
 }
 
 // AddCreatedAt adds u to the "created_at" field.
-func (cauo *CoinAllocatedUpdateOne) AddCreatedAt(u int32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) AddCreatedAt(u int32) *CreditAllocatedUpdateOne {
 	cauo.mutation.AddCreatedAt(u)
 	return cauo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (cauo *CoinAllocatedUpdateOne) SetUpdatedAt(u uint32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetUpdatedAt(u uint32) *CreditAllocatedUpdateOne {
 	cauo.mutation.ResetUpdatedAt()
 	cauo.mutation.SetUpdatedAt(u)
 	return cauo
 }
 
 // AddUpdatedAt adds u to the "updated_at" field.
-func (cauo *CoinAllocatedUpdateOne) AddUpdatedAt(u int32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) AddUpdatedAt(u int32) *CreditAllocatedUpdateOne {
 	cauo.mutation.AddUpdatedAt(u)
 	return cauo
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (cauo *CoinAllocatedUpdateOne) SetDeletedAt(u uint32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetDeletedAt(u uint32) *CreditAllocatedUpdateOne {
 	cauo.mutation.ResetDeletedAt()
 	cauo.mutation.SetDeletedAt(u)
 	return cauo
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableDeletedAt(u *uint32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableDeletedAt(u *uint32) *CreditAllocatedUpdateOne {
 	if u != nil {
 		cauo.SetDeletedAt(*u)
 	}
@@ -531,19 +465,19 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableDeletedAt(u *uint32) *CoinAllocat
 }
 
 // AddDeletedAt adds u to the "deleted_at" field.
-func (cauo *CoinAllocatedUpdateOne) AddDeletedAt(u int32) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) AddDeletedAt(u int32) *CreditAllocatedUpdateOne {
 	cauo.mutation.AddDeletedAt(u)
 	return cauo
 }
 
 // SetEntID sets the "ent_id" field.
-func (cauo *CoinAllocatedUpdateOne) SetEntID(u uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetEntID(u uuid.UUID) *CreditAllocatedUpdateOne {
 	cauo.mutation.SetEntID(u)
 	return cauo
 }
 
 // SetNillableEntID sets the "ent_id" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableEntID(u *uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableEntID(u *uuid.UUID) *CreditAllocatedUpdateOne {
 	if u != nil {
 		cauo.SetEntID(*u)
 	}
@@ -551,13 +485,13 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableEntID(u *uuid.UUID) *CoinAllocate
 }
 
 // SetAppID sets the "app_id" field.
-func (cauo *CoinAllocatedUpdateOne) SetAppID(u uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetAppID(u uuid.UUID) *CreditAllocatedUpdateOne {
 	cauo.mutation.SetAppID(u)
 	return cauo
 }
 
 // SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableAppID(u *uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableAppID(u *uuid.UUID) *CreditAllocatedUpdateOne {
 	if u != nil {
 		cauo.SetAppID(*u)
 	}
@@ -565,59 +499,19 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableAppID(u *uuid.UUID) *CoinAllocate
 }
 
 // ClearAppID clears the value of the "app_id" field.
-func (cauo *CoinAllocatedUpdateOne) ClearAppID() *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) ClearAppID() *CreditAllocatedUpdateOne {
 	cauo.mutation.ClearAppID()
 	return cauo
 }
 
-// SetCoinConfigID sets the "coin_config_id" field.
-func (cauo *CoinAllocatedUpdateOne) SetCoinConfigID(u uuid.UUID) *CoinAllocatedUpdateOne {
-	cauo.mutation.SetCoinConfigID(u)
-	return cauo
-}
-
-// SetNillableCoinConfigID sets the "coin_config_id" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableCoinConfigID(u *uuid.UUID) *CoinAllocatedUpdateOne {
-	if u != nil {
-		cauo.SetCoinConfigID(*u)
-	}
-	return cauo
-}
-
-// ClearCoinConfigID clears the value of the "coin_config_id" field.
-func (cauo *CoinAllocatedUpdateOne) ClearCoinConfigID() *CoinAllocatedUpdateOne {
-	cauo.mutation.ClearCoinConfigID()
-	return cauo
-}
-
-// SetCoinTypeID sets the "coin_type_id" field.
-func (cauo *CoinAllocatedUpdateOne) SetCoinTypeID(u uuid.UUID) *CoinAllocatedUpdateOne {
-	cauo.mutation.SetCoinTypeID(u)
-	return cauo
-}
-
-// SetNillableCoinTypeID sets the "coin_type_id" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableCoinTypeID(u *uuid.UUID) *CoinAllocatedUpdateOne {
-	if u != nil {
-		cauo.SetCoinTypeID(*u)
-	}
-	return cauo
-}
-
-// ClearCoinTypeID clears the value of the "coin_type_id" field.
-func (cauo *CoinAllocatedUpdateOne) ClearCoinTypeID() *CoinAllocatedUpdateOne {
-	cauo.mutation.ClearCoinTypeID()
-	return cauo
-}
-
 // SetUserID sets the "user_id" field.
-func (cauo *CoinAllocatedUpdateOne) SetUserID(u uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetUserID(u uuid.UUID) *CreditAllocatedUpdateOne {
 	cauo.mutation.SetUserID(u)
 	return cauo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableUserID(u *uuid.UUID) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableUserID(u *uuid.UUID) *CreditAllocatedUpdateOne {
 	if u != nil {
 		cauo.SetUserID(*u)
 	}
@@ -625,19 +519,19 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableUserID(u *uuid.UUID) *CoinAllocat
 }
 
 // ClearUserID clears the value of the "user_id" field.
-func (cauo *CoinAllocatedUpdateOne) ClearUserID() *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) ClearUserID() *CreditAllocatedUpdateOne {
 	cauo.mutation.ClearUserID()
 	return cauo
 }
 
 // SetValue sets the "value" field.
-func (cauo *CoinAllocatedUpdateOne) SetValue(d decimal.Decimal) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetValue(d decimal.Decimal) *CreditAllocatedUpdateOne {
 	cauo.mutation.SetValue(d)
 	return cauo
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableValue(d *decimal.Decimal) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableValue(d *decimal.Decimal) *CreditAllocatedUpdateOne {
 	if d != nil {
 		cauo.SetValue(*d)
 	}
@@ -645,19 +539,19 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableValue(d *decimal.Decimal) *CoinAl
 }
 
 // ClearValue clears the value of the "value" field.
-func (cauo *CoinAllocatedUpdateOne) ClearValue() *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) ClearValue() *CreditAllocatedUpdateOne {
 	cauo.mutation.ClearValue()
 	return cauo
 }
 
 // SetExtra sets the "extra" field.
-func (cauo *CoinAllocatedUpdateOne) SetExtra(s string) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetExtra(s string) *CreditAllocatedUpdateOne {
 	cauo.mutation.SetExtra(s)
 	return cauo
 }
 
 // SetNillableExtra sets the "extra" field if the given value is not nil.
-func (cauo *CoinAllocatedUpdateOne) SetNillableExtra(s *string) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) SetNillableExtra(s *string) *CreditAllocatedUpdateOne {
 	if s != nil {
 		cauo.SetExtra(*s)
 	}
@@ -665,28 +559,28 @@ func (cauo *CoinAllocatedUpdateOne) SetNillableExtra(s *string) *CoinAllocatedUp
 }
 
 // ClearExtra clears the value of the "extra" field.
-func (cauo *CoinAllocatedUpdateOne) ClearExtra() *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) ClearExtra() *CreditAllocatedUpdateOne {
 	cauo.mutation.ClearExtra()
 	return cauo
 }
 
-// Mutation returns the CoinAllocatedMutation object of the builder.
-func (cauo *CoinAllocatedUpdateOne) Mutation() *CoinAllocatedMutation {
+// Mutation returns the CreditAllocatedMutation object of the builder.
+func (cauo *CreditAllocatedUpdateOne) Mutation() *CreditAllocatedMutation {
 	return cauo.mutation
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (cauo *CoinAllocatedUpdateOne) Select(field string, fields ...string) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) Select(field string, fields ...string) *CreditAllocatedUpdateOne {
 	cauo.fields = append([]string{field}, fields...)
 	return cauo
 }
 
-// Save executes the query and returns the updated CoinAllocated entity.
-func (cauo *CoinAllocatedUpdateOne) Save(ctx context.Context) (*CoinAllocated, error) {
+// Save executes the query and returns the updated CreditAllocated entity.
+func (cauo *CreditAllocatedUpdateOne) Save(ctx context.Context) (*CreditAllocated, error) {
 	var (
 		err  error
-		node *CoinAllocated
+		node *CreditAllocated
 	)
 	if err := cauo.defaults(); err != nil {
 		return nil, err
@@ -698,7 +592,7 @@ func (cauo *CoinAllocatedUpdateOne) Save(ctx context.Context) (*CoinAllocated, e
 		node, err = cauo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*CoinAllocatedMutation)
+			mutation, ok := m.(*CreditAllocatedMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -720,9 +614,9 @@ func (cauo *CoinAllocatedUpdateOne) Save(ctx context.Context) (*CoinAllocated, e
 		if err != nil {
 			return nil, err
 		}
-		nv, ok := v.(*CoinAllocated)
+		nv, ok := v.(*CreditAllocated)
 		if !ok {
-			return nil, fmt.Errorf("unexpected node type %T returned from CoinAllocatedMutation", v)
+			return nil, fmt.Errorf("unexpected node type %T returned from CreditAllocatedMutation", v)
 		}
 		node = nv
 	}
@@ -730,7 +624,7 @@ func (cauo *CoinAllocatedUpdateOne) Save(ctx context.Context) (*CoinAllocated, e
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (cauo *CoinAllocatedUpdateOne) SaveX(ctx context.Context) *CoinAllocated {
+func (cauo *CreditAllocatedUpdateOne) SaveX(ctx context.Context) *CreditAllocated {
 	node, err := cauo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -739,70 +633,70 @@ func (cauo *CoinAllocatedUpdateOne) SaveX(ctx context.Context) *CoinAllocated {
 }
 
 // Exec executes the query on the entity.
-func (cauo *CoinAllocatedUpdateOne) Exec(ctx context.Context) error {
+func (cauo *CreditAllocatedUpdateOne) Exec(ctx context.Context) error {
 	_, err := cauo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (cauo *CoinAllocatedUpdateOne) ExecX(ctx context.Context) {
+func (cauo *CreditAllocatedUpdateOne) ExecX(ctx context.Context) {
 	if err := cauo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (cauo *CoinAllocatedUpdateOne) defaults() error {
+func (cauo *CreditAllocatedUpdateOne) defaults() error {
 	if _, ok := cauo.mutation.UpdatedAt(); !ok {
-		if coinallocated.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized coinallocated.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		if creditallocated.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized creditallocated.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
 		}
-		v := coinallocated.UpdateDefaultUpdatedAt()
+		v := creditallocated.UpdateDefaultUpdatedAt()
 		cauo.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (cauo *CoinAllocatedUpdateOne) check() error {
+func (cauo *CreditAllocatedUpdateOne) check() error {
 	if v, ok := cauo.mutation.Extra(); ok {
-		if err := coinallocated.ExtraValidator(v); err != nil {
-			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CoinAllocated.extra": %w`, err)}
+		if err := creditallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CreditAllocated.extra": %w`, err)}
 		}
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (cauo *CoinAllocatedUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CoinAllocatedUpdateOne {
+func (cauo *CreditAllocatedUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CreditAllocatedUpdateOne {
 	cauo.modifiers = append(cauo.modifiers, modifiers...)
 	return cauo
 }
 
-func (cauo *CoinAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *CoinAllocated, err error) {
+func (cauo *CreditAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *CreditAllocated, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   coinallocated.Table,
-			Columns: coinallocated.Columns,
+			Table:   creditallocated.Table,
+			Columns: creditallocated.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeUint32,
-				Column: coinallocated.FieldID,
+				Column: creditallocated.FieldID,
 			},
 		},
 	}
 	id, ok := cauo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CoinAllocated.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CreditAllocated.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := cauo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, coinallocated.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, creditallocated.FieldID)
 		for _, f := range fields {
-			if !coinallocated.ValidColumn(f) {
+			if !creditallocated.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != coinallocated.FieldID {
+			if f != creditallocated.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -818,136 +712,110 @@ func (cauo *CoinAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *CoinAll
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldCreatedAt,
+			Column: creditallocated.FieldCreatedAt,
 		})
 	}
 	if value, ok := cauo.mutation.AddedCreatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldCreatedAt,
+			Column: creditallocated.FieldCreatedAt,
 		})
 	}
 	if value, ok := cauo.mutation.UpdatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldUpdatedAt,
+			Column: creditallocated.FieldUpdatedAt,
 		})
 	}
 	if value, ok := cauo.mutation.AddedUpdatedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldUpdatedAt,
+			Column: creditallocated.FieldUpdatedAt,
 		})
 	}
 	if value, ok := cauo.mutation.DeletedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldDeletedAt,
+			Column: creditallocated.FieldDeletedAt,
 		})
 	}
 	if value, ok := cauo.mutation.AddedDeletedAt(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: coinallocated.FieldDeletedAt,
+			Column: creditallocated.FieldDeletedAt,
 		})
 	}
 	if value, ok := cauo.mutation.EntID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldEntID,
+			Column: creditallocated.FieldEntID,
 		})
 	}
 	if value, ok := cauo.mutation.AppID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldAppID,
+			Column: creditallocated.FieldAppID,
 		})
 	}
 	if cauo.mutation.AppIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: coinallocated.FieldAppID,
-		})
-	}
-	if value, ok := cauo.mutation.CoinConfigID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coinallocated.FieldCoinConfigID,
-		})
-	}
-	if cauo.mutation.CoinConfigIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coinallocated.FieldCoinConfigID,
-		})
-	}
-	if value, ok := cauo.mutation.CoinTypeID(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Value:  value,
-			Column: coinallocated.FieldCoinTypeID,
-		})
-	}
-	if cauo.mutation.CoinTypeIDCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUUID,
-			Column: coinallocated.FieldCoinTypeID,
+			Column: creditallocated.FieldAppID,
 		})
 	}
 	if value, ok := cauo.mutation.UserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Value:  value,
-			Column: coinallocated.FieldUserID,
+			Column: creditallocated.FieldUserID,
 		})
 	}
 	if cauo.mutation.UserIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
-			Column: coinallocated.FieldUserID,
+			Column: creditallocated.FieldUserID,
 		})
 	}
 	if value, ok := cauo.mutation.Value(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: coinallocated.FieldValue,
+			Column: creditallocated.FieldValue,
 		})
 	}
 	if cauo.mutation.ValueCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: coinallocated.FieldValue,
+			Column: creditallocated.FieldValue,
 		})
 	}
 	if value, ok := cauo.mutation.Extra(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: coinallocated.FieldExtra,
+			Column: creditallocated.FieldExtra,
 		})
 	}
 	if cauo.mutation.ExtraCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: coinallocated.FieldExtra,
+			Column: creditallocated.FieldExtra,
 		})
 	}
 	_spec.Modifiers = cauo.modifiers
-	_node = &CoinAllocated{config: cauo.config}
+	_node = &CreditAllocated{config: cauo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, cauo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{coinallocated.Label}
+			err = &NotFoundError{creditallocated.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

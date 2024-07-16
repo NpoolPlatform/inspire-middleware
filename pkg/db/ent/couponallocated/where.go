@@ -178,6 +178,13 @@ func Cashable(v bool) predicate.CouponAllocated {
 	})
 }
 
+// Extra applies equality check predicate on the "extra" field. It's identical to ExtraEQ.
+func Extra(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExtra), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
@@ -1146,6 +1153,119 @@ func CashableIsNil() predicate.CouponAllocated {
 func CashableNotNil() predicate.CouponAllocated {
 	return predicate.CouponAllocated(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCashable)))
+	})
+}
+
+// ExtraEQ applies the EQ predicate on the "extra" field.
+func ExtraEQ(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraNEQ applies the NEQ predicate on the "extra" field.
+func ExtraNEQ(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraIn applies the In predicate on the "extra" field.
+func ExtraIn(vs ...string) predicate.CouponAllocated {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldExtra), v...))
+	})
+}
+
+// ExtraNotIn applies the NotIn predicate on the "extra" field.
+func ExtraNotIn(vs ...string) predicate.CouponAllocated {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldExtra), v...))
+	})
+}
+
+// ExtraGT applies the GT predicate on the "extra" field.
+func ExtraGT(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraGTE applies the GTE predicate on the "extra" field.
+func ExtraGTE(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraLT applies the LT predicate on the "extra" field.
+func ExtraLT(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraLTE applies the LTE predicate on the "extra" field.
+func ExtraLTE(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraContains applies the Contains predicate on the "extra" field.
+func ExtraContains(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraHasPrefix applies the HasPrefix predicate on the "extra" field.
+func ExtraHasPrefix(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraHasSuffix applies the HasSuffix predicate on the "extra" field.
+func ExtraHasSuffix(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraIsNil applies the IsNil predicate on the "extra" field.
+func ExtraIsNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldExtra)))
+	})
+}
+
+// ExtraNotNil applies the NotNil predicate on the "extra" field.
+func ExtraNotNil() predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldExtra)))
+	})
+}
+
+// ExtraEqualFold applies the EqualFold predicate on the "extra" field.
+func ExtraEqualFold(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldExtra), v))
+	})
+}
+
+// ExtraContainsFold applies the ContainsFold predicate on the "extra" field.
+func ExtraContainsFold(v string) predicate.CouponAllocated {
+	return predicate.CouponAllocated(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldExtra), v))
 	})
 }
 

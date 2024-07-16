@@ -219,6 +219,20 @@ func (cac *CouponAllocatedCreate) SetNillableCashable(b *bool) *CouponAllocatedC
 	return cac
 }
 
+// SetExtra sets the "extra" field.
+func (cac *CouponAllocatedCreate) SetExtra(s string) *CouponAllocatedCreate {
+	cac.mutation.SetExtra(s)
+	return cac
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (cac *CouponAllocatedCreate) SetNillableExtra(s *string) *CouponAllocatedCreate {
+	if s != nil {
+		cac.SetExtra(*s)
+	}
+	return cac
+}
+
 // SetID sets the "id" field.
 func (cac *CouponAllocatedCreate) SetID(u uint32) *CouponAllocatedCreate {
 	cac.mutation.SetID(u)
@@ -384,6 +398,10 @@ func (cac *CouponAllocatedCreate) defaults() error {
 		v := couponallocated.DefaultCashable
 		cac.mutation.SetCashable(v)
 	}
+	if _, ok := cac.mutation.Extra(); !ok {
+		v := couponallocated.DefaultExtra
+		cac.mutation.SetExtra(v)
+	}
 	return nil
 }
 
@@ -400,6 +418,11 @@ func (cac *CouponAllocatedCreate) check() error {
 	}
 	if _, ok := cac.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "CouponAllocated.ent_id"`)}
+	}
+	if v, ok := cac.mutation.Extra(); ok {
+		if err := couponallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CouponAllocated.extra": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -546,6 +569,14 @@ func (cac *CouponAllocatedCreate) createSpec() (*CouponAllocated, *sqlgraph.Crea
 			Column: couponallocated.FieldCashable,
 		})
 		_node.Cashable = value
+	}
+	if value, ok := cac.mutation.Extra(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldExtra,
+		})
+		_node.Extra = value
 	}
 	return _node, _spec
 }
@@ -856,6 +887,24 @@ func (u *CouponAllocatedUpsert) UpdateCashable() *CouponAllocatedUpsert {
 // ClearCashable clears the value of the "cashable" field.
 func (u *CouponAllocatedUpsert) ClearCashable() *CouponAllocatedUpsert {
 	u.SetNull(couponallocated.FieldCashable)
+	return u
+}
+
+// SetExtra sets the "extra" field.
+func (u *CouponAllocatedUpsert) SetExtra(v string) *CouponAllocatedUpsert {
+	u.Set(couponallocated.FieldExtra, v)
+	return u
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CouponAllocatedUpsert) UpdateExtra() *CouponAllocatedUpsert {
+	u.SetExcluded(couponallocated.FieldExtra)
+	return u
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CouponAllocatedUpsert) ClearExtra() *CouponAllocatedUpsert {
+	u.SetNull(couponallocated.FieldExtra)
 	return u
 }
 
@@ -1207,6 +1256,27 @@ func (u *CouponAllocatedUpsertOne) UpdateCashable() *CouponAllocatedUpsertOne {
 func (u *CouponAllocatedUpsertOne) ClearCashable() *CouponAllocatedUpsertOne {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearCashable()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *CouponAllocatedUpsertOne) SetExtra(v string) *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertOne) UpdateExtra() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CouponAllocatedUpsertOne) ClearExtra() *CouponAllocatedUpsertOne {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearExtra()
 	})
 }
 
@@ -1723,6 +1793,27 @@ func (u *CouponAllocatedUpsertBulk) UpdateCashable() *CouponAllocatedUpsertBulk 
 func (u *CouponAllocatedUpsertBulk) ClearCashable() *CouponAllocatedUpsertBulk {
 	return u.Update(func(s *CouponAllocatedUpsert) {
 		s.ClearCashable()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *CouponAllocatedUpsertBulk) SetExtra(v string) *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CouponAllocatedUpsertBulk) UpdateExtra() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CouponAllocatedUpsertBulk) ClearExtra() *CouponAllocatedUpsertBulk {
+	return u.Update(func(s *CouponAllocatedUpsert) {
+		s.ClearExtra()
 	})
 }
 

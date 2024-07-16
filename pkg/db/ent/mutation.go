@@ -21,6 +21,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
@@ -66,6 +67,7 @@ const (
 	TypeCoupon                  = "Coupon"
 	TypeCouponAllocated         = "CouponAllocated"
 	TypeCouponScope             = "CouponScope"
+	TypeCreditAllocated         = "CreditAllocated"
 	TypeEvent                   = "Event"
 	TypeEventCoin               = "EventCoin"
 	TypeEventCoupon             = "EventCoupon"
@@ -8720,6 +8722,7 @@ type CoinAllocatedMutation struct {
 	coin_type_id   *uuid.UUID
 	user_id        *uuid.UUID
 	value          *decimal.Decimal
+	extra          *string
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*CoinAllocated, error)
@@ -9279,6 +9282,55 @@ func (m *CoinAllocatedMutation) ResetValue() {
 	delete(m.clearedFields, coinallocated.FieldValue)
 }
 
+// SetExtra sets the "extra" field.
+func (m *CoinAllocatedMutation) SetExtra(s string) {
+	m.extra = &s
+}
+
+// Extra returns the value of the "extra" field in the mutation.
+func (m *CoinAllocatedMutation) Extra() (r string, exists bool) {
+	v := m.extra
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtra returns the old "extra" field's value of the CoinAllocated entity.
+// If the CoinAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CoinAllocatedMutation) OldExtra(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtra is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtra requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtra: %w", err)
+	}
+	return oldValue.Extra, nil
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (m *CoinAllocatedMutation) ClearExtra() {
+	m.extra = nil
+	m.clearedFields[coinallocated.FieldExtra] = struct{}{}
+}
+
+// ExtraCleared returns if the "extra" field was cleared in this mutation.
+func (m *CoinAllocatedMutation) ExtraCleared() bool {
+	_, ok := m.clearedFields[coinallocated.FieldExtra]
+	return ok
+}
+
+// ResetExtra resets all changes to the "extra" field.
+func (m *CoinAllocatedMutation) ResetExtra() {
+	m.extra = nil
+	delete(m.clearedFields, coinallocated.FieldExtra)
+}
+
 // Where appends a list predicates to the CoinAllocatedMutation builder.
 func (m *CoinAllocatedMutation) Where(ps ...predicate.CoinAllocated) {
 	m.predicates = append(m.predicates, ps...)
@@ -9298,7 +9350,7 @@ func (m *CoinAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CoinAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, coinallocated.FieldCreatedAt)
 	}
@@ -9326,6 +9378,9 @@ func (m *CoinAllocatedMutation) Fields() []string {
 	if m.value != nil {
 		fields = append(fields, coinallocated.FieldValue)
 	}
+	if m.extra != nil {
+		fields = append(fields, coinallocated.FieldExtra)
+	}
 	return fields
 }
 
@@ -9352,6 +9407,8 @@ func (m *CoinAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case coinallocated.FieldValue:
 		return m.Value()
+	case coinallocated.FieldExtra:
+		return m.Extra()
 	}
 	return nil, false
 }
@@ -9379,6 +9436,8 @@ func (m *CoinAllocatedMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldUserID(ctx)
 	case coinallocated.FieldValue:
 		return m.OldValue(ctx)
+	case coinallocated.FieldExtra:
+		return m.OldExtra(ctx)
 	}
 	return nil, fmt.Errorf("unknown CoinAllocated field %s", name)
 }
@@ -9450,6 +9509,13 @@ func (m *CoinAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetValue(v)
+		return nil
+	case coinallocated.FieldExtra:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtra(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CoinAllocated field %s", name)
@@ -9535,6 +9601,9 @@ func (m *CoinAllocatedMutation) ClearedFields() []string {
 	if m.FieldCleared(coinallocated.FieldValue) {
 		fields = append(fields, coinallocated.FieldValue)
 	}
+	if m.FieldCleared(coinallocated.FieldExtra) {
+		fields = append(fields, coinallocated.FieldExtra)
+	}
 	return fields
 }
 
@@ -9563,6 +9632,9 @@ func (m *CoinAllocatedMutation) ClearField(name string) error {
 		return nil
 	case coinallocated.FieldValue:
 		m.ClearValue()
+		return nil
+	case coinallocated.FieldExtra:
+		m.ClearExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown CoinAllocated nullable field %s", name)
@@ -9598,6 +9670,9 @@ func (m *CoinAllocatedMutation) ResetField(name string) error {
 		return nil
 	case coinallocated.FieldValue:
 		m.ResetValue()
+		return nil
+	case coinallocated.FieldExtra:
+		m.ResetExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown CoinAllocated field %s", name)
@@ -14041,6 +14116,7 @@ type CouponAllocatedMutation struct {
 	addstart_at      *int32
 	coupon_scope     *string
 	cashable         *bool
+	extra            *string
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*CouponAllocated, error)
@@ -14887,6 +14963,55 @@ func (m *CouponAllocatedMutation) ResetCashable() {
 	delete(m.clearedFields, couponallocated.FieldCashable)
 }
 
+// SetExtra sets the "extra" field.
+func (m *CouponAllocatedMutation) SetExtra(s string) {
+	m.extra = &s
+}
+
+// Extra returns the value of the "extra" field in the mutation.
+func (m *CouponAllocatedMutation) Extra() (r string, exists bool) {
+	v := m.extra
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtra returns the old "extra" field's value of the CouponAllocated entity.
+// If the CouponAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponAllocatedMutation) OldExtra(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtra is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtra requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtra: %w", err)
+	}
+	return oldValue.Extra, nil
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (m *CouponAllocatedMutation) ClearExtra() {
+	m.extra = nil
+	m.clearedFields[couponallocated.FieldExtra] = struct{}{}
+}
+
+// ExtraCleared returns if the "extra" field was cleared in this mutation.
+func (m *CouponAllocatedMutation) ExtraCleared() bool {
+	_, ok := m.clearedFields[couponallocated.FieldExtra]
+	return ok
+}
+
+// ResetExtra resets all changes to the "extra" field.
+func (m *CouponAllocatedMutation) ResetExtra() {
+	m.extra = nil
+	delete(m.clearedFields, couponallocated.FieldExtra)
+}
+
 // Where appends a list predicates to the CouponAllocatedMutation builder.
 func (m *CouponAllocatedMutation) Where(ps ...predicate.CouponAllocated) {
 	m.predicates = append(m.predicates, ps...)
@@ -14906,7 +15031,7 @@ func (m *CouponAllocatedMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponAllocatedMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, couponallocated.FieldCreatedAt)
 	}
@@ -14949,6 +15074,9 @@ func (m *CouponAllocatedMutation) Fields() []string {
 	if m.cashable != nil {
 		fields = append(fields, couponallocated.FieldCashable)
 	}
+	if m.extra != nil {
+		fields = append(fields, couponallocated.FieldExtra)
+	}
 	return fields
 }
 
@@ -14985,6 +15113,8 @@ func (m *CouponAllocatedMutation) Field(name string) (ent.Value, bool) {
 		return m.CouponScope()
 	case couponallocated.FieldCashable:
 		return m.Cashable()
+	case couponallocated.FieldExtra:
+		return m.Extra()
 	}
 	return nil, false
 }
@@ -15022,6 +15152,8 @@ func (m *CouponAllocatedMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCouponScope(ctx)
 	case couponallocated.FieldCashable:
 		return m.OldCashable(ctx)
+	case couponallocated.FieldExtra:
+		return m.OldExtra(ctx)
 	}
 	return nil, fmt.Errorf("unknown CouponAllocated field %s", name)
 }
@@ -15128,6 +15260,13 @@ func (m *CouponAllocatedMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCashable(v)
+		return nil
+	case couponallocated.FieldExtra:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtra(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -15252,6 +15391,9 @@ func (m *CouponAllocatedMutation) ClearedFields() []string {
 	if m.FieldCleared(couponallocated.FieldCashable) {
 		fields = append(fields, couponallocated.FieldCashable)
 	}
+	if m.FieldCleared(couponallocated.FieldExtra) {
+		fields = append(fields, couponallocated.FieldExtra)
+	}
 	return fields
 }
 
@@ -15295,6 +15437,9 @@ func (m *CouponAllocatedMutation) ClearField(name string) error {
 		return nil
 	case couponallocated.FieldCashable:
 		m.ClearCashable()
+		return nil
+	case couponallocated.FieldExtra:
+		m.ClearExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated nullable field %s", name)
@@ -15345,6 +15490,9 @@ func (m *CouponAllocatedMutation) ResetField(name string) error {
 		return nil
 	case couponallocated.FieldCashable:
 		m.ResetCashable()
+		return nil
+	case couponallocated.FieldExtra:
+		m.ResetExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown CouponAllocated field %s", name)
@@ -16199,6 +16347,882 @@ func (m *CouponScopeMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CouponScopeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CouponScope edge %s", name)
+}
+
+// CreditAllocatedMutation represents an operation that mutates the CreditAllocated nodes in the graph.
+type CreditAllocatedMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	ent_id        *uuid.UUID
+	app_id        *uuid.UUID
+	user_id       *uuid.UUID
+	value         *decimal.Decimal
+	extra         *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CreditAllocated, error)
+	predicates    []predicate.CreditAllocated
+}
+
+var _ ent.Mutation = (*CreditAllocatedMutation)(nil)
+
+// creditallocatedOption allows management of the mutation configuration using functional options.
+type creditallocatedOption func(*CreditAllocatedMutation)
+
+// newCreditAllocatedMutation creates new mutation for the CreditAllocated entity.
+func newCreditAllocatedMutation(c config, op Op, opts ...creditallocatedOption) *CreditAllocatedMutation {
+	m := &CreditAllocatedMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCreditAllocated,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCreditAllocatedID sets the ID field of the mutation.
+func withCreditAllocatedID(id uint32) creditallocatedOption {
+	return func(m *CreditAllocatedMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CreditAllocated
+		)
+		m.oldValue = func(ctx context.Context) (*CreditAllocated, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CreditAllocated.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCreditAllocated sets the old CreditAllocated of the mutation.
+func withCreditAllocated(node *CreditAllocated) creditallocatedOption {
+	return func(m *CreditAllocatedMutation) {
+		m.oldValue = func(context.Context) (*CreditAllocated, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CreditAllocatedMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CreditAllocatedMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CreditAllocated entities.
+func (m *CreditAllocatedMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CreditAllocatedMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CreditAllocatedMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CreditAllocated.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CreditAllocatedMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CreditAllocatedMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *CreditAllocatedMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *CreditAllocatedMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CreditAllocatedMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CreditAllocatedMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CreditAllocatedMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *CreditAllocatedMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *CreditAllocatedMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CreditAllocatedMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CreditAllocatedMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CreditAllocatedMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *CreditAllocatedMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *CreditAllocatedMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CreditAllocatedMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetEntID sets the "ent_id" field.
+func (m *CreditAllocatedMutation) SetEntID(u uuid.UUID) {
+	m.ent_id = &u
+}
+
+// EntID returns the value of the "ent_id" field in the mutation.
+func (m *CreditAllocatedMutation) EntID() (r uuid.UUID, exists bool) {
+	v := m.ent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntID returns the old "ent_id" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldEntID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntID: %w", err)
+	}
+	return oldValue.EntID, nil
+}
+
+// ResetEntID resets all changes to the "ent_id" field.
+func (m *CreditAllocatedMutation) ResetEntID() {
+	m.ent_id = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *CreditAllocatedMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *CreditAllocatedMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *CreditAllocatedMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[creditallocated.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *CreditAllocatedMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[creditallocated.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *CreditAllocatedMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, creditallocated.FieldAppID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *CreditAllocatedMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CreditAllocatedMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *CreditAllocatedMutation) ClearUserID() {
+	m.user_id = nil
+	m.clearedFields[creditallocated.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CreditAllocatedMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[creditallocated.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CreditAllocatedMutation) ResetUserID() {
+	m.user_id = nil
+	delete(m.clearedFields, creditallocated.FieldUserID)
+}
+
+// SetValue sets the "value" field.
+func (m *CreditAllocatedMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *CreditAllocatedMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// ClearValue clears the value of the "value" field.
+func (m *CreditAllocatedMutation) ClearValue() {
+	m.value = nil
+	m.clearedFields[creditallocated.FieldValue] = struct{}{}
+}
+
+// ValueCleared returns if the "value" field was cleared in this mutation.
+func (m *CreditAllocatedMutation) ValueCleared() bool {
+	_, ok := m.clearedFields[creditallocated.FieldValue]
+	return ok
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *CreditAllocatedMutation) ResetValue() {
+	m.value = nil
+	delete(m.clearedFields, creditallocated.FieldValue)
+}
+
+// SetExtra sets the "extra" field.
+func (m *CreditAllocatedMutation) SetExtra(s string) {
+	m.extra = &s
+}
+
+// Extra returns the value of the "extra" field in the mutation.
+func (m *CreditAllocatedMutation) Extra() (r string, exists bool) {
+	v := m.extra
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtra returns the old "extra" field's value of the CreditAllocated entity.
+// If the CreditAllocated object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CreditAllocatedMutation) OldExtra(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtra is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtra requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtra: %w", err)
+	}
+	return oldValue.Extra, nil
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (m *CreditAllocatedMutation) ClearExtra() {
+	m.extra = nil
+	m.clearedFields[creditallocated.FieldExtra] = struct{}{}
+}
+
+// ExtraCleared returns if the "extra" field was cleared in this mutation.
+func (m *CreditAllocatedMutation) ExtraCleared() bool {
+	_, ok := m.clearedFields[creditallocated.FieldExtra]
+	return ok
+}
+
+// ResetExtra resets all changes to the "extra" field.
+func (m *CreditAllocatedMutation) ResetExtra() {
+	m.extra = nil
+	delete(m.clearedFields, creditallocated.FieldExtra)
+}
+
+// Where appends a list predicates to the CreditAllocatedMutation builder.
+func (m *CreditAllocatedMutation) Where(ps ...predicate.CreditAllocated) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *CreditAllocatedMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (CreditAllocated).
+func (m *CreditAllocatedMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CreditAllocatedMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, creditallocated.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, creditallocated.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, creditallocated.FieldDeletedAt)
+	}
+	if m.ent_id != nil {
+		fields = append(fields, creditallocated.FieldEntID)
+	}
+	if m.app_id != nil {
+		fields = append(fields, creditallocated.FieldAppID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, creditallocated.FieldUserID)
+	}
+	if m.value != nil {
+		fields = append(fields, creditallocated.FieldValue)
+	}
+	if m.extra != nil {
+		fields = append(fields, creditallocated.FieldExtra)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CreditAllocatedMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		return m.CreatedAt()
+	case creditallocated.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case creditallocated.FieldDeletedAt:
+		return m.DeletedAt()
+	case creditallocated.FieldEntID:
+		return m.EntID()
+	case creditallocated.FieldAppID:
+		return m.AppID()
+	case creditallocated.FieldUserID:
+		return m.UserID()
+	case creditallocated.FieldValue:
+		return m.Value()
+	case creditallocated.FieldExtra:
+		return m.Extra()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CreditAllocatedMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case creditallocated.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case creditallocated.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case creditallocated.FieldEntID:
+		return m.OldEntID(ctx)
+	case creditallocated.FieldAppID:
+		return m.OldAppID(ctx)
+	case creditallocated.FieldUserID:
+		return m.OldUserID(ctx)
+	case creditallocated.FieldValue:
+		return m.OldValue(ctx)
+	case creditallocated.FieldExtra:
+		return m.OldExtra(ctx)
+	}
+	return nil, fmt.Errorf("unknown CreditAllocated field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CreditAllocatedMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case creditallocated.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case creditallocated.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case creditallocated.FieldEntID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntID(v)
+		return nil
+	case creditallocated.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case creditallocated.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case creditallocated.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	case creditallocated.FieldExtra:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtra(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CreditAllocated field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CreditAllocatedMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, creditallocated.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, creditallocated.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, creditallocated.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CreditAllocatedMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case creditallocated.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case creditallocated.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CreditAllocatedMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case creditallocated.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case creditallocated.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CreditAllocated numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CreditAllocatedMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(creditallocated.FieldAppID) {
+		fields = append(fields, creditallocated.FieldAppID)
+	}
+	if m.FieldCleared(creditallocated.FieldUserID) {
+		fields = append(fields, creditallocated.FieldUserID)
+	}
+	if m.FieldCleared(creditallocated.FieldValue) {
+		fields = append(fields, creditallocated.FieldValue)
+	}
+	if m.FieldCleared(creditallocated.FieldExtra) {
+		fields = append(fields, creditallocated.FieldExtra)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CreditAllocatedMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CreditAllocatedMutation) ClearField(name string) error {
+	switch name {
+	case creditallocated.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case creditallocated.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case creditallocated.FieldValue:
+		m.ClearValue()
+		return nil
+	case creditallocated.FieldExtra:
+		m.ClearExtra()
+		return nil
+	}
+	return fmt.Errorf("unknown CreditAllocated nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CreditAllocatedMutation) ResetField(name string) error {
+	switch name {
+	case creditallocated.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case creditallocated.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case creditallocated.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case creditallocated.FieldEntID:
+		m.ResetEntID()
+		return nil
+	case creditallocated.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case creditallocated.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case creditallocated.FieldValue:
+		m.ResetValue()
+		return nil
+	case creditallocated.FieldExtra:
+		m.ResetExtra()
+		return nil
+	}
+	return fmt.Errorf("unknown CreditAllocated field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CreditAllocatedMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CreditAllocatedMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CreditAllocatedMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CreditAllocatedMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CreditAllocatedMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CreditAllocatedMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CreditAllocatedMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CreditAllocated unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CreditAllocatedMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CreditAllocated edge %s", name)
 }
 
 // EventMutation represents an operation that mutates the Event nodes in the graph.

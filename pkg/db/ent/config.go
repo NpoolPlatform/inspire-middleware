@@ -41,6 +41,7 @@ type hooks struct {
 	Coupon                  []ent.Hook
 	CouponAllocated         []ent.Hook
 	CouponScope             []ent.Hook
+	CreditAllocated         []ent.Hook
 	Event                   []ent.Hook
 	EventCoin               []ent.Hook
 	EventCoupon             []ent.Hook

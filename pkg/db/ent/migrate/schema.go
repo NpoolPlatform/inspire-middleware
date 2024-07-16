@@ -81,7 +81,7 @@ var (
 		{Name: "level", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
@@ -114,7 +114,7 @@ var (
 		{Name: "commission_type", Type: field.TypeString, Nullable: true, Default: "DefaultCommissionType"},
 		{Name: "settle_benefit", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "max_level", Type: field.TypeUint32, Nullable: true, Default: 1},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// AppConfigsTable holds the schema information for the "app_configs" table.
@@ -143,7 +143,7 @@ var (
 		{Name: "level", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "threshold_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "invites", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
@@ -224,6 +224,7 @@ var (
 		{Name: "coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "extra", Type: field.TypeString, Nullable: true, Size: 512, Default: ""},
 	}
 	// CoinAllocatedsTable holds the schema information for the "coin_allocateds" table.
 	CoinAllocatedsTable = &schema.Table{
@@ -275,7 +276,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "amount_or_percent", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "settle_type", Type: field.TypeString, Nullable: true, Default: "DefaultSettleType"},
 		{Name: "settle_mode", Type: field.TypeString, Nullable: true, Default: "DefaultSettleMode"},
@@ -309,7 +310,7 @@ var (
 		{Name: "circulation", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "random", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "issued_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "duration_days", Type: field.TypeUint32, Nullable: true, Default: 365},
 		{Name: "message", Type: field.TypeString, Nullable: true, Default: ""},
@@ -348,9 +349,10 @@ var (
 		{Name: "used", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "used_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 		{Name: "used_by_order_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1720755834},
+		{Name: "start_at", Type: field.TypeUint32, Nullable: true, Default: 1721118736},
 		{Name: "coupon_scope", Type: field.TypeString, Nullable: true, Default: "Whitelist"},
 		{Name: "cashable", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "extra", Type: field.TypeString, Nullable: true, Size: 512, Default: ""},
 	}
 	// CouponAllocatedsTable holds the schema information for the "coupon_allocateds" table.
 	CouponAllocatedsTable = &schema.Table{
@@ -386,6 +388,31 @@ var (
 				Name:    "couponscope_ent_id",
 				Unique:  true,
 				Columns: []*schema.Column{CouponScopesColumns[4]},
+			},
+		},
+	}
+	// CreditAllocatedsColumns holds the columns for the "credit_allocateds" table.
+	CreditAllocatedsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
+		{Name: "extra", Type: field.TypeString, Nullable: true, Size: 512, Default: ""},
+	}
+	// CreditAllocatedsTable holds the schema information for the "credit_allocateds" table.
+	CreditAllocatedsTable = &schema.Table{
+		Name:       "credit_allocateds",
+		Columns:    CreditAllocatedsColumns,
+		PrimaryKey: []*schema.Column{CreditAllocatedsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "creditallocated_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{CreditAllocatedsColumns[4]},
 			},
 		},
 	}
@@ -867,6 +894,7 @@ var (
 		CouponsTable,
 		CouponAllocatedsTable,
 		CouponScopesTable,
+		CreditAllocatedsTable,
 		EventsTable,
 		EventCoinsTable,
 		EventCouponsTable,

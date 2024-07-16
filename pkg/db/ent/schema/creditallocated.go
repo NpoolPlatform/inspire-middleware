@@ -11,35 +11,23 @@ import (
 	"github.com/google/uuid"
 )
 
-// CoinAllocated holds the schema definition for the CoinAllocated entity.
-type CoinAllocated struct {
+// CreditAllocated holds the schema definition for the CreditAllocated entity.
+type CreditAllocated struct {
 	ent.Schema
 }
 
-func (CoinAllocated) Mixin() []ent.Mixin {
+func (CreditAllocated) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 		crudermixin.AutoIDMixin{},
 	}
 }
 
-// Fields of the CoinAllocated.
-func (CoinAllocated) Fields() []ent.Field {
+// Fields of the CreditAllocated.
+func (CreditAllocated) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("app_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
-			UUID("coin_config_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.Nil
-			}),
-		field.
-			UUID("coin_type_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {
 				return uuid.Nil
@@ -65,7 +53,7 @@ func (CoinAllocated) Fields() []ent.Field {
 	}
 }
 
-// Edges of the CoinAllocated.
-func (CoinAllocated) Edges() []ent.Edge {
+// Edges of the CreditAllocated.
+func (CreditAllocated) Edges() []ent.Edge {
 	return nil
 }

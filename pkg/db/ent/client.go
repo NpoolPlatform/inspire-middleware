@@ -23,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
@@ -75,6 +76,8 @@ type Client struct {
 	CouponAllocated *CouponAllocatedClient
 	// CouponScope is the client for interacting with the CouponScope builders.
 	CouponScope *CouponScopeClient
+	// CreditAllocated is the client for interacting with the CreditAllocated builders.
+	CreditAllocated *CreditAllocatedClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// EventCoin is the client for interacting with the EventCoin builders.
@@ -133,6 +136,7 @@ func (c *Client) init() {
 	c.Coupon = NewCouponClient(c.config)
 	c.CouponAllocated = NewCouponAllocatedClient(c.config)
 	c.CouponScope = NewCouponScopeClient(c.config)
+	c.CreditAllocated = NewCreditAllocatedClient(c.config)
 	c.Event = NewEventClient(c.config)
 	c.EventCoin = NewEventCoinClient(c.config)
 	c.EventCoupon = NewEventCouponClient(c.config)
@@ -195,6 +199,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Coupon:                  NewCouponClient(cfg),
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
+		CreditAllocated:         NewCreditAllocatedClient(cfg),
 		Event:                   NewEventClient(cfg),
 		EventCoin:               NewEventCoinClient(cfg),
 		EventCoupon:             NewEventCouponClient(cfg),
@@ -243,6 +248,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Coupon:                  NewCouponClient(cfg),
 		CouponAllocated:         NewCouponAllocatedClient(cfg),
 		CouponScope:             NewCouponScopeClient(cfg),
+		CreditAllocated:         NewCreditAllocatedClient(cfg),
 		Event:                   NewEventClient(cfg),
 		EventCoin:               NewEventCoinClient(cfg),
 		EventCoupon:             NewEventCouponClient(cfg),
@@ -301,6 +307,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Coupon.Use(hooks...)
 	c.CouponAllocated.Use(hooks...)
 	c.CouponScope.Use(hooks...)
+	c.CreditAllocated.Use(hooks...)
 	c.Event.Use(hooks...)
 	c.EventCoin.Use(hooks...)
 	c.EventCoupon.Use(hooks...)
@@ -1500,6 +1507,97 @@ func (c *CouponScopeClient) GetX(ctx context.Context, id uint32) *CouponScope {
 func (c *CouponScopeClient) Hooks() []Hook {
 	hooks := c.hooks.CouponScope
 	return append(hooks[:len(hooks):len(hooks)], couponscope.Hooks[:]...)
+}
+
+// CreditAllocatedClient is a client for the CreditAllocated schema.
+type CreditAllocatedClient struct {
+	config
+}
+
+// NewCreditAllocatedClient returns a client for the CreditAllocated from the given config.
+func NewCreditAllocatedClient(c config) *CreditAllocatedClient {
+	return &CreditAllocatedClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `creditallocated.Hooks(f(g(h())))`.
+func (c *CreditAllocatedClient) Use(hooks ...Hook) {
+	c.hooks.CreditAllocated = append(c.hooks.CreditAllocated, hooks...)
+}
+
+// Create returns a builder for creating a CreditAllocated entity.
+func (c *CreditAllocatedClient) Create() *CreditAllocatedCreate {
+	mutation := newCreditAllocatedMutation(c.config, OpCreate)
+	return &CreditAllocatedCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CreditAllocated entities.
+func (c *CreditAllocatedClient) CreateBulk(builders ...*CreditAllocatedCreate) *CreditAllocatedCreateBulk {
+	return &CreditAllocatedCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CreditAllocated.
+func (c *CreditAllocatedClient) Update() *CreditAllocatedUpdate {
+	mutation := newCreditAllocatedMutation(c.config, OpUpdate)
+	return &CreditAllocatedUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CreditAllocatedClient) UpdateOne(ca *CreditAllocated) *CreditAllocatedUpdateOne {
+	mutation := newCreditAllocatedMutation(c.config, OpUpdateOne, withCreditAllocated(ca))
+	return &CreditAllocatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CreditAllocatedClient) UpdateOneID(id uint32) *CreditAllocatedUpdateOne {
+	mutation := newCreditAllocatedMutation(c.config, OpUpdateOne, withCreditAllocatedID(id))
+	return &CreditAllocatedUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CreditAllocated.
+func (c *CreditAllocatedClient) Delete() *CreditAllocatedDelete {
+	mutation := newCreditAllocatedMutation(c.config, OpDelete)
+	return &CreditAllocatedDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CreditAllocatedClient) DeleteOne(ca *CreditAllocated) *CreditAllocatedDeleteOne {
+	return c.DeleteOneID(ca.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *CreditAllocatedClient) DeleteOneID(id uint32) *CreditAllocatedDeleteOne {
+	builder := c.Delete().Where(creditallocated.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CreditAllocatedDeleteOne{builder}
+}
+
+// Query returns a query builder for CreditAllocated.
+func (c *CreditAllocatedClient) Query() *CreditAllocatedQuery {
+	return &CreditAllocatedQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a CreditAllocated entity by its id.
+func (c *CreditAllocatedClient) Get(ctx context.Context, id uint32) (*CreditAllocated, error) {
+	return c.Query().Where(creditallocated.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CreditAllocatedClient) GetX(ctx context.Context, id uint32) *CreditAllocated {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CreditAllocatedClient) Hooks() []Hook {
+	hooks := c.hooks.CreditAllocated
+	return append(hooks[:len(hooks):len(hooks)], creditallocated.Hooks[:]...)
 }
 
 // EventClient is a client for the Event schema.

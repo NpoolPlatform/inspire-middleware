@@ -23,6 +23,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
@@ -72,6 +73,7 @@ func columnChecker(table string) func(string) error {
 		coupon.Table:                  coupon.ValidColumn,
 		couponallocated.Table:         couponallocated.ValidColumn,
 		couponscope.Table:             couponscope.ValidColumn,
+		creditallocated.Table:         creditallocated.ValidColumn,
 		event.Table:                   event.ValidColumn,
 		eventcoin.Table:               eventcoin.ValidColumn,
 		eventcoupon.Table:             eventcoupon.ValidColumn,

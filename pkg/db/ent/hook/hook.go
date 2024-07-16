@@ -178,6 +178,19 @@ func (f CouponScopeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return f(ctx, mv)
 }
 
+// The CreditAllocatedFunc type is an adapter to allow the use of ordinary
+// function as CreditAllocated mutator.
+type CreditAllocatedFunc func(context.Context, *ent.CreditAllocatedMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CreditAllocatedFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.CreditAllocatedMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CreditAllocatedMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The EventFunc type is an adapter to allow the use of ordinary
 // function as Event mutator.
 type EventFunc func(context.Context, *ent.EventMutation) (ent.Value, error)

@@ -149,6 +149,20 @@ func (cac *CoinAllocatedCreate) SetNillableValue(d *decimal.Decimal) *CoinAlloca
 	return cac
 }
 
+// SetExtra sets the "extra" field.
+func (cac *CoinAllocatedCreate) SetExtra(s string) *CoinAllocatedCreate {
+	cac.mutation.SetExtra(s)
+	return cac
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (cac *CoinAllocatedCreate) SetNillableExtra(s *string) *CoinAllocatedCreate {
+	if s != nil {
+		cac.SetExtra(*s)
+	}
+	return cac
+}
+
 // SetID sets the "id" field.
 func (cac *CoinAllocatedCreate) SetID(u uint32) *CoinAllocatedCreate {
 	cac.mutation.SetID(u)
@@ -294,6 +308,10 @@ func (cac *CoinAllocatedCreate) defaults() error {
 		v := coinallocated.DefaultValue
 		cac.mutation.SetValue(v)
 	}
+	if _, ok := cac.mutation.Extra(); !ok {
+		v := coinallocated.DefaultExtra
+		cac.mutation.SetExtra(v)
+	}
 	return nil
 }
 
@@ -310,6 +328,11 @@ func (cac *CoinAllocatedCreate) check() error {
 	}
 	if _, ok := cac.mutation.EntID(); !ok {
 		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "CoinAllocated.ent_id"`)}
+	}
+	if v, ok := cac.mutation.Extra(); ok {
+		if err := coinallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CoinAllocated.extra": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -416,6 +439,14 @@ func (cac *CoinAllocatedCreate) createSpec() (*CoinAllocated, *sqlgraph.CreateSp
 			Column: coinallocated.FieldValue,
 		})
 		_node.Value = value
+	}
+	if value, ok := cac.mutation.Extra(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: coinallocated.FieldExtra,
+		})
+		_node.Extra = value
 	}
 	return _node, _spec
 }
@@ -624,6 +655,24 @@ func (u *CoinAllocatedUpsert) UpdateValue() *CoinAllocatedUpsert {
 // ClearValue clears the value of the "value" field.
 func (u *CoinAllocatedUpsert) ClearValue() *CoinAllocatedUpsert {
 	u.SetNull(coinallocated.FieldValue)
+	return u
+}
+
+// SetExtra sets the "extra" field.
+func (u *CoinAllocatedUpsert) SetExtra(v string) *CoinAllocatedUpsert {
+	u.Set(coinallocated.FieldExtra, v)
+	return u
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CoinAllocatedUpsert) UpdateExtra() *CoinAllocatedUpsert {
+	u.SetExcluded(coinallocated.FieldExtra)
+	return u
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CoinAllocatedUpsert) ClearExtra() *CoinAllocatedUpsert {
+	u.SetNull(coinallocated.FieldExtra)
 	return u
 }
 
@@ -856,6 +905,27 @@ func (u *CoinAllocatedUpsertOne) UpdateValue() *CoinAllocatedUpsertOne {
 func (u *CoinAllocatedUpsertOne) ClearValue() *CoinAllocatedUpsertOne {
 	return u.Update(func(s *CoinAllocatedUpsert) {
 		s.ClearValue()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *CoinAllocatedUpsertOne) SetExtra(v string) *CoinAllocatedUpsertOne {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CoinAllocatedUpsertOne) UpdateExtra() *CoinAllocatedUpsertOne {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CoinAllocatedUpsertOne) ClearExtra() *CoinAllocatedUpsertOne {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.ClearExtra()
 	})
 }
 
@@ -1253,6 +1323,27 @@ func (u *CoinAllocatedUpsertBulk) UpdateValue() *CoinAllocatedUpsertBulk {
 func (u *CoinAllocatedUpsertBulk) ClearValue() *CoinAllocatedUpsertBulk {
 	return u.Update(func(s *CoinAllocatedUpsert) {
 		s.ClearValue()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *CoinAllocatedUpsertBulk) SetExtra(v string) *CoinAllocatedUpsertBulk {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *CoinAllocatedUpsertBulk) UpdateExtra() *CoinAllocatedUpsertBulk {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *CoinAllocatedUpsertBulk) ClearExtra() *CoinAllocatedUpsertBulk {
+	return u.Update(func(s *CoinAllocatedUpsert) {
+		s.ClearExtra()
 	})
 }
 

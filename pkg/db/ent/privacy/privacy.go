@@ -462,6 +462,30 @@ func (f CouponScopeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponScopeMutation", m)
 }
 
+// The CreditAllocatedQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CreditAllocatedQueryRuleFunc func(context.Context, *ent.CreditAllocatedQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CreditAllocatedQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CreditAllocatedQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CreditAllocatedQuery", q)
+}
+
+// The CreditAllocatedMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CreditAllocatedMutationRuleFunc func(context.Context, *ent.CreditAllocatedMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CreditAllocatedMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CreditAllocatedMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CreditAllocatedMutation", m)
+}
+
 // The EventQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EventQueryRuleFunc func(context.Context, *ent.EventQuery) error
@@ -907,6 +931,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CouponScopeQuery:
 		return q.Filter(), nil
+	case *ent.CreditAllocatedQuery:
+		return q.Filter(), nil
 	case *ent.EventQuery:
 		return q.Filter(), nil
 	case *ent.EventCoinQuery:
@@ -971,6 +997,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CouponAllocatedMutation:
 		return m.Filter(), nil
 	case *ent.CouponScopeMutation:
+		return m.Filter(), nil
+	case *ent.CreditAllocatedMutation:
 		return m.Filter(), nil
 	case *ent.EventMutation:
 		return m.Filter(), nil

@@ -18,6 +18,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
@@ -562,6 +563,12 @@ func init() {
 	coinallocatedDescValue := coinallocatedFields[4].Descriptor()
 	// coinallocated.DefaultValue holds the default value on creation for the value field.
 	coinallocated.DefaultValue = coinallocatedDescValue.Default.(decimal.Decimal)
+	// coinallocatedDescExtra is the schema descriptor for extra field.
+	coinallocatedDescExtra := coinallocatedFields[5].Descriptor()
+	// coinallocated.DefaultExtra holds the default value on creation for the extra field.
+	coinallocated.DefaultExtra = coinallocatedDescExtra.Default.(string)
+	// coinallocated.ExtraValidator is a validator for the "extra" field. It is called by the builders before save.
+	coinallocated.ExtraValidator = coinallocatedDescExtra.Validators[0].(func(string) error)
 	coinconfigMixin := schema.CoinConfig{}.Mixin()
 	coinconfig.Policy = privacy.NewPolicies(coinconfigMixin[0], schema.CoinConfig{})
 	coinconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -870,6 +877,12 @@ func init() {
 	couponallocatedDescCashable := couponallocatedFields[9].Descriptor()
 	// couponallocated.DefaultCashable holds the default value on creation for the cashable field.
 	couponallocated.DefaultCashable = couponallocatedDescCashable.Default.(bool)
+	// couponallocatedDescExtra is the schema descriptor for extra field.
+	couponallocatedDescExtra := couponallocatedFields[10].Descriptor()
+	// couponallocated.DefaultExtra holds the default value on creation for the extra field.
+	couponallocated.DefaultExtra = couponallocatedDescExtra.Default.(string)
+	// couponallocated.ExtraValidator is a validator for the "extra" field. It is called by the builders before save.
+	couponallocated.ExtraValidator = couponallocatedDescExtra.Validators[0].(func(string) error)
 	couponscopeMixin := schema.CouponScope{}.Mixin()
 	couponscope.Policy = privacy.NewPolicies(couponscopeMixin[0], schema.CouponScope{})
 	couponscope.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -916,6 +929,58 @@ func init() {
 	couponscopeDescCouponScope := couponscopeFields[2].Descriptor()
 	// couponscope.DefaultCouponScope holds the default value on creation for the coupon_scope field.
 	couponscope.DefaultCouponScope = couponscopeDescCouponScope.Default.(string)
+	creditallocatedMixin := schema.CreditAllocated{}.Mixin()
+	creditallocated.Policy = privacy.NewPolicies(creditallocatedMixin[0], schema.CreditAllocated{})
+	creditallocated.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := creditallocated.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	creditallocatedMixinFields0 := creditallocatedMixin[0].Fields()
+	_ = creditallocatedMixinFields0
+	creditallocatedMixinFields1 := creditallocatedMixin[1].Fields()
+	_ = creditallocatedMixinFields1
+	creditallocatedFields := schema.CreditAllocated{}.Fields()
+	_ = creditallocatedFields
+	// creditallocatedDescCreatedAt is the schema descriptor for created_at field.
+	creditallocatedDescCreatedAt := creditallocatedMixinFields0[0].Descriptor()
+	// creditallocated.DefaultCreatedAt holds the default value on creation for the created_at field.
+	creditallocated.DefaultCreatedAt = creditallocatedDescCreatedAt.Default.(func() uint32)
+	// creditallocatedDescUpdatedAt is the schema descriptor for updated_at field.
+	creditallocatedDescUpdatedAt := creditallocatedMixinFields0[1].Descriptor()
+	// creditallocated.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	creditallocated.DefaultUpdatedAt = creditallocatedDescUpdatedAt.Default.(func() uint32)
+	// creditallocated.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	creditallocated.UpdateDefaultUpdatedAt = creditallocatedDescUpdatedAt.UpdateDefault.(func() uint32)
+	// creditallocatedDescDeletedAt is the schema descriptor for deleted_at field.
+	creditallocatedDescDeletedAt := creditallocatedMixinFields0[2].Descriptor()
+	// creditallocated.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	creditallocated.DefaultDeletedAt = creditallocatedDescDeletedAt.Default.(func() uint32)
+	// creditallocatedDescEntID is the schema descriptor for ent_id field.
+	creditallocatedDescEntID := creditallocatedMixinFields1[1].Descriptor()
+	// creditallocated.DefaultEntID holds the default value on creation for the ent_id field.
+	creditallocated.DefaultEntID = creditallocatedDescEntID.Default.(func() uuid.UUID)
+	// creditallocatedDescAppID is the schema descriptor for app_id field.
+	creditallocatedDescAppID := creditallocatedFields[0].Descriptor()
+	// creditallocated.DefaultAppID holds the default value on creation for the app_id field.
+	creditallocated.DefaultAppID = creditallocatedDescAppID.Default.(func() uuid.UUID)
+	// creditallocatedDescUserID is the schema descriptor for user_id field.
+	creditallocatedDescUserID := creditallocatedFields[1].Descriptor()
+	// creditallocated.DefaultUserID holds the default value on creation for the user_id field.
+	creditallocated.DefaultUserID = creditallocatedDescUserID.Default.(func() uuid.UUID)
+	// creditallocatedDescValue is the schema descriptor for value field.
+	creditallocatedDescValue := creditallocatedFields[2].Descriptor()
+	// creditallocated.DefaultValue holds the default value on creation for the value field.
+	creditallocated.DefaultValue = creditallocatedDescValue.Default.(decimal.Decimal)
+	// creditallocatedDescExtra is the schema descriptor for extra field.
+	creditallocatedDescExtra := creditallocatedFields[3].Descriptor()
+	// creditallocated.DefaultExtra holds the default value on creation for the extra field.
+	creditallocated.DefaultExtra = creditallocatedDescExtra.Default.(string)
+	// creditallocated.ExtraValidator is a validator for the "extra" field. It is called by the builders before save.
+	creditallocated.ExtraValidator = creditallocatedDescExtra.Validators[0].(func(string) error)
 	eventMixin := schema.Event{}.Mixin()
 	event.Policy = privacy.NewPolicies(eventMixin[0], schema.Event{})
 	event.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -31,6 +31,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
+	// FieldExtra holds the string denoting the extra field in the database.
+	FieldExtra = "extra"
 	// Table holds the table name of the coinallocated in the database.
 	Table = "coin_allocateds"
 )
@@ -47,6 +49,7 @@ var Columns = []string{
 	FieldCoinTypeID,
 	FieldUserID,
 	FieldValue,
+	FieldExtra,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -88,4 +91,8 @@ var (
 	DefaultUserID func() uuid.UUID
 	// DefaultValue holds the default value on creation for the "value" field.
 	DefaultValue decimal.Decimal
+	// DefaultExtra holds the default value on creation for the "extra" field.
+	DefaultExtra string
+	// ExtraValidator is a validator for the "extra" field. It is called by the builders before save.
+	ExtraValidator func(string) error
 )
