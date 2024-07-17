@@ -427,14 +427,6 @@ func (h *calculateHandler) calcluateEventRewards(ctx context.Context) ([]*npool.
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}
-	_credits := []*npool.Credit{}
-	if credits.Cmp(decimal.NewFromInt(0)) > 0 {
-		_credits = append(_credits, &npool.Credit{
-			AppID:   h.AppID.String(),
-			UserID:  userID,
-			Credits: credits.String(),
-		})
-	}
 	h.addCredits = credits
 
 	allocateCoinRewards, err := h.calculateCoinRewards(ctx, ev)
@@ -479,7 +471,7 @@ func (h *calculateHandler) calcluateEventRewards(ctx context.Context) ([]*npool.
 	_rewards := &npool.Reward{
 		TaskID:        h.taskConfig.EntID,
 		UserID:        userID,
-		Credits:       _credits,
+		Credits:       h.addCredits.String(),
 		CoinRewards:   coinRewards,
 		CouponRewards: couponRewards,
 	}
