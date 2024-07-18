@@ -28,10 +28,6 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vreward_state = '%v', ", set, h.RewardState.String())
 		set = ""
 	}
-	if h.RewardInfo != nil {
-		_sql += fmt.Sprintf("%vreward_info = '%v', ", set, *h.RewardInfo)
-		set = ""
-	}
 	if set != "" {
 		return cruder.ErrUpdateNothing
 	}

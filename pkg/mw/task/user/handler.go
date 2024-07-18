@@ -171,19 +171,6 @@ func WithRewardState(value *basetypes.RewardState, must bool) func(context.Conte
 	}
 }
 
-func WithRewardInfo(value *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if value == nil {
-			if must {
-				return fmt.Errorf("invalid rewardinfo")
-			}
-			return nil
-		}
-		h.RewardInfo = value
-		return nil
-	}
-}
-
 func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &taskusercrud.Conds{}

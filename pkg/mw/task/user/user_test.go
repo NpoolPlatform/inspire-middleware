@@ -34,11 +34,10 @@ var (
 		UserID:         uuid.NewString(),
 		TaskID:         uuid.NewString(),
 		EventID:        uuid.NewString(),
-		TaskState:      types.TaskState_Done,
-		TaskStateStr:   types.TaskState_Done.String(),
-		RewardInfo:     uuid.NewString(),
-		RewardState:    types.RewardState_Issued,
-		RewardStateStr: types.RewardState_Issued.String(),
+		TaskState:      types.TaskState_InProgress,
+		TaskStateStr:   types.TaskState_InProgress.String(),
+		RewardState:    types.RewardState_UnIssued,
+		RewardStateStr: types.RewardState_UnIssued.String(),
 	}
 )
 
@@ -55,7 +54,6 @@ func createTaskUser(t *testing.T) {
 		WithTaskID(&ret.TaskID, true),
 		WithEventID(&ret.EventID, true),
 		WithTaskState(&ret.TaskState, true),
-		WithRewardInfo(&ret.RewardInfo, true),
 		WithRewardState(&ret.RewardState, true),
 	)
 	assert.Nil(t, err)
@@ -73,12 +71,16 @@ func createTaskUser(t *testing.T) {
 }
 
 func updateTaskUser(t *testing.T) {
-	ret.RewardInfo = uuid.NewString()
+	ret.TaskState = types.TaskState_InProgress
+	ret.TaskStateStr = types.TaskState_InProgress.String()
+	ret.RewardState = types.RewardState_UnIssued
+	ret.RewardStateStr = types.RewardState_UnIssued.String()
 
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithRewardInfo(&ret.RewardInfo, true),
+		WithTaskState(&ret.TaskState, true),
+		WithRewardState(&ret.RewardState, true),
 	)
 	assert.Nil(t, err)
 

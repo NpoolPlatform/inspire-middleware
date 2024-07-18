@@ -42,7 +42,6 @@ var ret = &npool.TaskUser{
 	EventID:        uuid.NewString(),
 	TaskState:      types.TaskState_Done,
 	TaskStateStr:   types.TaskState_Done.String(),
-	RewardInfo:     uuid.NewString(),
 	RewardState:    types.RewardState_Issued,
 	RewardStateStr: types.RewardState_Issued.String(),
 }
@@ -59,7 +58,6 @@ func createTaskUser(t *testing.T) {
 		TaskID:      &ret.TaskID,
 		EventID:     &ret.EventID,
 		TaskState:   &ret.TaskState,
-		RewardInfo:  &ret.RewardInfo,
 		RewardState: &ret.RewardState,
 	})
 	if assert.Nil(t, err) {

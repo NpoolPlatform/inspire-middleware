@@ -18,7 +18,6 @@ type Req struct {
 	TaskID      *uuid.UUID
 	EventID     *uuid.UUID
 	TaskState   *types.TaskState
-	RewardInfo  *string
 	RewardState *types.RewardState
 	DeletedAt   *uint32
 }
@@ -42,9 +41,6 @@ func CreateSet(c *ent.TaskUserCreate, req *Req) *ent.TaskUserCreate {
 	if req.TaskState != nil {
 		c.SetTaskState(req.TaskState.String())
 	}
-	if req.RewardInfo != nil {
-		c.SetRewardInfo(*req.RewardInfo)
-	}
 	if req.RewardState != nil {
 		c.SetRewardState(req.RewardState.String())
 	}
@@ -57,9 +53,6 @@ func UpdateSet(u *ent.TaskUserUpdateOne, req *Req) *ent.TaskUserUpdateOne {
 	}
 	if req.RewardState != nil {
 		u.SetRewardState(req.RewardState.String())
-	}
-	if req.RewardInfo != nil {
-		u.SetRewardInfo(*req.RewardInfo)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

@@ -25,7 +25,6 @@ func (s *Server) UpdateTaskUser(ctx context.Context, in *npool.UpdateTaskUserReq
 		ctx,
 		user1.WithID(req.ID, true),
 		user1.WithTaskState(req.TaskState, false),
-		user1.WithRewardInfo(req.RewardInfo, false),
 		user1.WithRewardState(req.RewardState, false),
 	)
 	if err != nil {

@@ -29,7 +29,6 @@ func (s *Server) CreateTaskUser(ctx context.Context, in *npool.CreateTaskUserReq
 		user1.WithTaskID(req.TaskID, true),
 		user1.WithEventID(req.EventID, true),
 		user1.WithTaskState(req.TaskState, true),
-		user1.WithRewardInfo(req.RewardInfo, true),
 		user1.WithRewardState(req.RewardState, true),
 	)
 	if err != nil {

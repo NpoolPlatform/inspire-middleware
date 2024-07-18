@@ -69,7 +69,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(enttaskuser.FieldTaskID),
 			t1.C(enttaskuser.FieldEventID),
 			t1.C(enttaskuser.FieldTaskState),
-			t1.C(enttaskuser.FieldRewardInfo),
 			t1.C(enttaskuser.FieldRewardState),
 			t1.C(enttaskuser.FieldCreatedAt),
 			t1.C(enttaskuser.FieldUpdatedAt),
