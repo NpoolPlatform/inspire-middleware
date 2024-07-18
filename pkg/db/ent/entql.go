@@ -714,7 +714,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			taskuser.FieldTaskID:      {Type: field.TypeUUID, Column: taskuser.FieldTaskID},
 			taskuser.FieldEventID:     {Type: field.TypeUUID, Column: taskuser.FieldEventID},
 			taskuser.FieldTaskState:   {Type: field.TypeString, Column: taskuser.FieldTaskState},
-			taskuser.FieldRewardInfo:  {Type: field.TypeString, Column: taskuser.FieldRewardInfo},
 			taskuser.FieldRewardState: {Type: field.TypeString, Column: taskuser.FieldRewardState},
 		},
 	}
@@ -3480,11 +3479,6 @@ func (f *TaskUserFilter) WhereEventID(p entql.ValueP) {
 // WhereTaskState applies the entql string predicate on the task_state field.
 func (f *TaskUserFilter) WhereTaskState(p entql.StringP) {
 	f.Where(p.Field(taskuser.FieldTaskState))
-}
-
-// WhereRewardInfo applies the entql string predicate on the reward_info field.
-func (f *TaskUserFilter) WhereRewardInfo(p entql.StringP) {
-	f.Where(p.Field(taskuser.FieldRewardInfo))
 }
 
 // WhereRewardState applies the entql string predicate on the reward_state field.

@@ -34,8 +34,6 @@ type TaskUser struct {
 	EventID uuid.UUID `json:"event_id,omitempty"`
 	// TaskState holds the value of the "task_state" field.
 	TaskState string `json:"task_state,omitempty"`
-	// RewardInfo holds the value of the "reward_info" field.
-	RewardInfo string `json:"reward_info,omitempty"`
 	// RewardState holds the value of the "reward_state" field.
 	RewardState string `json:"reward_state,omitempty"`
 }
@@ -47,7 +45,7 @@ func (*TaskUser) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case taskuser.FieldID, taskuser.FieldCreatedAt, taskuser.FieldUpdatedAt, taskuser.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case taskuser.FieldTaskState, taskuser.FieldRewardInfo, taskuser.FieldRewardState:
+		case taskuser.FieldTaskState, taskuser.FieldRewardState:
 			values[i] = new(sql.NullString)
 		case taskuser.FieldEntID, taskuser.FieldAppID, taskuser.FieldUserID, taskuser.FieldTaskID, taskuser.FieldEventID:
 			values[i] = new(uuid.UUID)
@@ -126,12 +124,6 @@ func (tu *TaskUser) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				tu.TaskState = value.String
 			}
-		case taskuser.FieldRewardInfo:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field reward_info", values[i])
-			} else if value.Valid {
-				tu.RewardInfo = value.String
-			}
 		case taskuser.FieldRewardState:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field reward_state", values[i])
@@ -192,9 +184,6 @@ func (tu *TaskUser) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("task_state=")
 	builder.WriteString(tu.TaskState)
-	builder.WriteString(", ")
-	builder.WriteString("reward_info=")
-	builder.WriteString(tu.RewardInfo)
 	builder.WriteString(", ")
 	builder.WriteString("reward_state=")
 	builder.WriteString(tu.RewardState)

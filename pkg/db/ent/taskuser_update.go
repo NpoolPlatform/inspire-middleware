@@ -198,26 +198,6 @@ func (tuu *TaskUserUpdate) ClearTaskState() *TaskUserUpdate {
 	return tuu
 }
 
-// SetRewardInfo sets the "reward_info" field.
-func (tuu *TaskUserUpdate) SetRewardInfo(s string) *TaskUserUpdate {
-	tuu.mutation.SetRewardInfo(s)
-	return tuu
-}
-
-// SetNillableRewardInfo sets the "reward_info" field if the given value is not nil.
-func (tuu *TaskUserUpdate) SetNillableRewardInfo(s *string) *TaskUserUpdate {
-	if s != nil {
-		tuu.SetRewardInfo(*s)
-	}
-	return tuu
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (tuu *TaskUserUpdate) ClearRewardInfo() *TaskUserUpdate {
-	tuu.mutation.ClearRewardInfo()
-	return tuu
-}
-
 // SetRewardState sets the "reward_state" field.
 func (tuu *TaskUserUpdate) SetRewardState(s string) *TaskUserUpdate {
 	tuu.mutation.SetRewardState(s)
@@ -450,19 +430,6 @@ func (tuu *TaskUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: taskuser.FieldTaskState,
 		})
 	}
-	if value, ok := tuu.mutation.RewardInfo(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: taskuser.FieldRewardInfo,
-		})
-	}
-	if tuu.mutation.RewardInfoCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: taskuser.FieldRewardInfo,
-		})
-	}
 	if value, ok := tuu.mutation.RewardState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -663,26 +630,6 @@ func (tuuo *TaskUserUpdateOne) SetNillableTaskState(s *string) *TaskUserUpdateOn
 // ClearTaskState clears the value of the "task_state" field.
 func (tuuo *TaskUserUpdateOne) ClearTaskState() *TaskUserUpdateOne {
 	tuuo.mutation.ClearTaskState()
-	return tuuo
-}
-
-// SetRewardInfo sets the "reward_info" field.
-func (tuuo *TaskUserUpdateOne) SetRewardInfo(s string) *TaskUserUpdateOne {
-	tuuo.mutation.SetRewardInfo(s)
-	return tuuo
-}
-
-// SetNillableRewardInfo sets the "reward_info" field if the given value is not nil.
-func (tuuo *TaskUserUpdateOne) SetNillableRewardInfo(s *string) *TaskUserUpdateOne {
-	if s != nil {
-		tuuo.SetRewardInfo(*s)
-	}
-	return tuuo
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (tuuo *TaskUserUpdateOne) ClearRewardInfo() *TaskUserUpdateOne {
-	tuuo.mutation.ClearRewardInfo()
 	return tuuo
 }
 
@@ -946,19 +893,6 @@ func (tuuo *TaskUserUpdateOne) sqlSave(ctx context.Context) (_node *TaskUser, er
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: taskuser.FieldTaskState,
-		})
-	}
-	if value, ok := tuuo.mutation.RewardInfo(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: taskuser.FieldRewardInfo,
-		})
-	}
-	if tuuo.mutation.RewardInfoCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: taskuser.FieldRewardInfo,
 		})
 	}
 	if value, ok := tuuo.mutation.RewardState(); ok {

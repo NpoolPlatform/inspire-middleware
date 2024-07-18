@@ -55,10 +55,6 @@ func (TaskUser) Fields() []ent.Field {
 			Optional().
 			Default(types.TaskState_DefaultTaskState.String()),
 		field.
-			String("reward_info").
-			Optional().
-			Default(""),
-		field.
 			String("reward_state").
 			Optional().
 			Default(types.RewardState_DefaultRewardState.String()),

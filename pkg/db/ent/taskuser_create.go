@@ -148,20 +148,6 @@ func (tuc *TaskUserCreate) SetNillableTaskState(s *string) *TaskUserCreate {
 	return tuc
 }
 
-// SetRewardInfo sets the "reward_info" field.
-func (tuc *TaskUserCreate) SetRewardInfo(s string) *TaskUserCreate {
-	tuc.mutation.SetRewardInfo(s)
-	return tuc
-}
-
-// SetNillableRewardInfo sets the "reward_info" field if the given value is not nil.
-func (tuc *TaskUserCreate) SetNillableRewardInfo(s *string) *TaskUserCreate {
-	if s != nil {
-		tuc.SetRewardInfo(*s)
-	}
-	return tuc
-}
-
 // SetRewardState sets the "reward_state" field.
 func (tuc *TaskUserCreate) SetRewardState(s string) *TaskUserCreate {
 	tuc.mutation.SetRewardState(s)
@@ -321,10 +307,6 @@ func (tuc *TaskUserCreate) defaults() error {
 		v := taskuser.DefaultTaskState
 		tuc.mutation.SetTaskState(v)
 	}
-	if _, ok := tuc.mutation.RewardInfo(); !ok {
-		v := taskuser.DefaultRewardInfo
-		tuc.mutation.SetRewardInfo(v)
-	}
 	if _, ok := tuc.mutation.RewardState(); !ok {
 		v := taskuser.DefaultRewardState
 		tuc.mutation.SetRewardState(v)
@@ -451,14 +433,6 @@ func (tuc *TaskUserCreate) createSpec() (*TaskUser, *sqlgraph.CreateSpec) {
 			Column: taskuser.FieldTaskState,
 		})
 		_node.TaskState = value
-	}
-	if value, ok := tuc.mutation.RewardInfo(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: taskuser.FieldRewardInfo,
-		})
-		_node.RewardInfo = value
 	}
 	if value, ok := tuc.mutation.RewardState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -675,24 +649,6 @@ func (u *TaskUserUpsert) UpdateTaskState() *TaskUserUpsert {
 // ClearTaskState clears the value of the "task_state" field.
 func (u *TaskUserUpsert) ClearTaskState() *TaskUserUpsert {
 	u.SetNull(taskuser.FieldTaskState)
-	return u
-}
-
-// SetRewardInfo sets the "reward_info" field.
-func (u *TaskUserUpsert) SetRewardInfo(v string) *TaskUserUpsert {
-	u.Set(taskuser.FieldRewardInfo, v)
-	return u
-}
-
-// UpdateRewardInfo sets the "reward_info" field to the value that was provided on create.
-func (u *TaskUserUpsert) UpdateRewardInfo() *TaskUserUpsert {
-	u.SetExcluded(taskuser.FieldRewardInfo)
-	return u
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (u *TaskUserUpsert) ClearRewardInfo() *TaskUserUpsert {
-	u.SetNull(taskuser.FieldRewardInfo)
 	return u
 }
 
@@ -943,27 +899,6 @@ func (u *TaskUserUpsertOne) UpdateTaskState() *TaskUserUpsertOne {
 func (u *TaskUserUpsertOne) ClearTaskState() *TaskUserUpsertOne {
 	return u.Update(func(s *TaskUserUpsert) {
 		s.ClearTaskState()
-	})
-}
-
-// SetRewardInfo sets the "reward_info" field.
-func (u *TaskUserUpsertOne) SetRewardInfo(v string) *TaskUserUpsertOne {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.SetRewardInfo(v)
-	})
-}
-
-// UpdateRewardInfo sets the "reward_info" field to the value that was provided on create.
-func (u *TaskUserUpsertOne) UpdateRewardInfo() *TaskUserUpsertOne {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.UpdateRewardInfo()
-	})
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (u *TaskUserUpsertOne) ClearRewardInfo() *TaskUserUpsertOne {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.ClearRewardInfo()
 	})
 }
 
@@ -1382,27 +1317,6 @@ func (u *TaskUserUpsertBulk) UpdateTaskState() *TaskUserUpsertBulk {
 func (u *TaskUserUpsertBulk) ClearTaskState() *TaskUserUpsertBulk {
 	return u.Update(func(s *TaskUserUpsert) {
 		s.ClearTaskState()
-	})
-}
-
-// SetRewardInfo sets the "reward_info" field.
-func (u *TaskUserUpsertBulk) SetRewardInfo(v string) *TaskUserUpsertBulk {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.SetRewardInfo(v)
-	})
-}
-
-// UpdateRewardInfo sets the "reward_info" field to the value that was provided on create.
-func (u *TaskUserUpsertBulk) UpdateRewardInfo() *TaskUserUpsertBulk {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.UpdateRewardInfo()
-	})
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (u *TaskUserUpsertBulk) ClearRewardInfo() *TaskUserUpsertBulk {
-	return u.Update(func(s *TaskUserUpsert) {
-		s.ClearRewardInfo()
 	})
 }
 

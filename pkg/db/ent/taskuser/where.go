@@ -142,13 +142,6 @@ func TaskState(v string) predicate.TaskUser {
 	})
 }
 
-// RewardInfo applies equality check predicate on the "reward_info" field. It's identical to RewardInfoEQ.
-func RewardInfo(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRewardInfo), v))
-	})
-}
-
 // RewardState applies equality check predicate on the "reward_state" field. It's identical to RewardStateEQ.
 func RewardState(v string) predicate.TaskUser {
 	return predicate.TaskUser(func(s *sql.Selector) {
@@ -834,119 +827,6 @@ func TaskStateEqualFold(v string) predicate.TaskUser {
 func TaskStateContainsFold(v string) predicate.TaskUser {
 	return predicate.TaskUser(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldTaskState), v))
-	})
-}
-
-// RewardInfoEQ applies the EQ predicate on the "reward_info" field.
-func RewardInfoEQ(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoNEQ applies the NEQ predicate on the "reward_info" field.
-func RewardInfoNEQ(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoIn applies the In predicate on the "reward_info" field.
-func RewardInfoIn(vs ...string) predicate.TaskUser {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldRewardInfo), v...))
-	})
-}
-
-// RewardInfoNotIn applies the NotIn predicate on the "reward_info" field.
-func RewardInfoNotIn(vs ...string) predicate.TaskUser {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldRewardInfo), v...))
-	})
-}
-
-// RewardInfoGT applies the GT predicate on the "reward_info" field.
-func RewardInfoGT(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoGTE applies the GTE predicate on the "reward_info" field.
-func RewardInfoGTE(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoLT applies the LT predicate on the "reward_info" field.
-func RewardInfoLT(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoLTE applies the LTE predicate on the "reward_info" field.
-func RewardInfoLTE(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoContains applies the Contains predicate on the "reward_info" field.
-func RewardInfoContains(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoHasPrefix applies the HasPrefix predicate on the "reward_info" field.
-func RewardInfoHasPrefix(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoHasSuffix applies the HasSuffix predicate on the "reward_info" field.
-func RewardInfoHasSuffix(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoIsNil applies the IsNil predicate on the "reward_info" field.
-func RewardInfoIsNil() predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldRewardInfo)))
-	})
-}
-
-// RewardInfoNotNil applies the NotNil predicate on the "reward_info" field.
-func RewardInfoNotNil() predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldRewardInfo)))
-	})
-}
-
-// RewardInfoEqualFold applies the EqualFold predicate on the "reward_info" field.
-func RewardInfoEqualFold(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldRewardInfo), v))
-	})
-}
-
-// RewardInfoContainsFold applies the ContainsFold predicate on the "reward_info" field.
-func RewardInfoContainsFold(v string) predicate.TaskUser {
-	return predicate.TaskUser(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldRewardInfo), v))
 	})
 }
 

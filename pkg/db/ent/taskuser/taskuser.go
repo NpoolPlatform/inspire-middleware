@@ -30,8 +30,6 @@ const (
 	FieldEventID = "event_id"
 	// FieldTaskState holds the string denoting the task_state field in the database.
 	FieldTaskState = "task_state"
-	// FieldRewardInfo holds the string denoting the reward_info field in the database.
-	FieldRewardInfo = "reward_info"
 	// FieldRewardState holds the string denoting the reward_state field in the database.
 	FieldRewardState = "reward_state"
 	// Table holds the table name of the taskuser in the database.
@@ -50,7 +48,6 @@ var Columns = []string{
 	FieldTaskID,
 	FieldEventID,
 	FieldTaskState,
-	FieldRewardInfo,
 	FieldRewardState,
 }
 
@@ -93,8 +90,6 @@ var (
 	DefaultEventID func() uuid.UUID
 	// DefaultTaskState holds the default value on creation for the "task_state" field.
 	DefaultTaskState string
-	// DefaultRewardInfo holds the default value on creation for the "reward_info" field.
-	DefaultRewardInfo string
 	// DefaultRewardState holds the default value on creation for the "reward_state" field.
 	DefaultRewardState string
 )

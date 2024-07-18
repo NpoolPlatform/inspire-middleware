@@ -31463,7 +31463,6 @@ type TaskUserMutation struct {
 	task_id       *uuid.UUID
 	event_id      *uuid.UUID
 	task_state    *string
-	reward_info   *string
 	reward_state  *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -32024,55 +32023,6 @@ func (m *TaskUserMutation) ResetTaskState() {
 	delete(m.clearedFields, taskuser.FieldTaskState)
 }
 
-// SetRewardInfo sets the "reward_info" field.
-func (m *TaskUserMutation) SetRewardInfo(s string) {
-	m.reward_info = &s
-}
-
-// RewardInfo returns the value of the "reward_info" field in the mutation.
-func (m *TaskUserMutation) RewardInfo() (r string, exists bool) {
-	v := m.reward_info
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRewardInfo returns the old "reward_info" field's value of the TaskUser entity.
-// If the TaskUser object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskUserMutation) OldRewardInfo(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRewardInfo is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRewardInfo requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRewardInfo: %w", err)
-	}
-	return oldValue.RewardInfo, nil
-}
-
-// ClearRewardInfo clears the value of the "reward_info" field.
-func (m *TaskUserMutation) ClearRewardInfo() {
-	m.reward_info = nil
-	m.clearedFields[taskuser.FieldRewardInfo] = struct{}{}
-}
-
-// RewardInfoCleared returns if the "reward_info" field was cleared in this mutation.
-func (m *TaskUserMutation) RewardInfoCleared() bool {
-	_, ok := m.clearedFields[taskuser.FieldRewardInfo]
-	return ok
-}
-
-// ResetRewardInfo resets all changes to the "reward_info" field.
-func (m *TaskUserMutation) ResetRewardInfo() {
-	m.reward_info = nil
-	delete(m.clearedFields, taskuser.FieldRewardInfo)
-}
-
 // SetRewardState sets the "reward_state" field.
 func (m *TaskUserMutation) SetRewardState(s string) {
 	m.reward_state = &s
@@ -32141,7 +32091,7 @@ func (m *TaskUserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskUserMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, taskuser.FieldCreatedAt)
 	}
@@ -32168,9 +32118,6 @@ func (m *TaskUserMutation) Fields() []string {
 	}
 	if m.task_state != nil {
 		fields = append(fields, taskuser.FieldTaskState)
-	}
-	if m.reward_info != nil {
-		fields = append(fields, taskuser.FieldRewardInfo)
 	}
 	if m.reward_state != nil {
 		fields = append(fields, taskuser.FieldRewardState)
@@ -32201,8 +32148,6 @@ func (m *TaskUserMutation) Field(name string) (ent.Value, bool) {
 		return m.EventID()
 	case taskuser.FieldTaskState:
 		return m.TaskState()
-	case taskuser.FieldRewardInfo:
-		return m.RewardInfo()
 	case taskuser.FieldRewardState:
 		return m.RewardState()
 	}
@@ -32232,8 +32177,6 @@ func (m *TaskUserMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldEventID(ctx)
 	case taskuser.FieldTaskState:
 		return m.OldTaskState(ctx)
-	case taskuser.FieldRewardInfo:
-		return m.OldRewardInfo(ctx)
 	case taskuser.FieldRewardState:
 		return m.OldRewardState(ctx)
 	}
@@ -32307,13 +32250,6 @@ func (m *TaskUserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTaskState(v)
-		return nil
-	case taskuser.FieldRewardInfo:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRewardInfo(v)
 		return nil
 	case taskuser.FieldRewardState:
 		v, ok := value.(string)
@@ -32406,9 +32342,6 @@ func (m *TaskUserMutation) ClearedFields() []string {
 	if m.FieldCleared(taskuser.FieldTaskState) {
 		fields = append(fields, taskuser.FieldTaskState)
 	}
-	if m.FieldCleared(taskuser.FieldRewardInfo) {
-		fields = append(fields, taskuser.FieldRewardInfo)
-	}
 	if m.FieldCleared(taskuser.FieldRewardState) {
 		fields = append(fields, taskuser.FieldRewardState)
 	}
@@ -32440,9 +32373,6 @@ func (m *TaskUserMutation) ClearField(name string) error {
 		return nil
 	case taskuser.FieldTaskState:
 		m.ClearTaskState()
-		return nil
-	case taskuser.FieldRewardInfo:
-		m.ClearRewardInfo()
 		return nil
 	case taskuser.FieldRewardState:
 		m.ClearRewardState()
@@ -32481,9 +32411,6 @@ func (m *TaskUserMutation) ResetField(name string) error {
 		return nil
 	case taskuser.FieldTaskState:
 		m.ResetTaskState()
-		return nil
-	case taskuser.FieldRewardInfo:
-		m.ResetRewardInfo()
 		return nil
 	case taskuser.FieldRewardState:
 		m.ResetRewardState()

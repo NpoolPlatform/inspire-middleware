@@ -1827,12 +1827,8 @@ func init() {
 	taskuserDescTaskState := taskuserFields[4].Descriptor()
 	// taskuser.DefaultTaskState holds the default value on creation for the task_state field.
 	taskuser.DefaultTaskState = taskuserDescTaskState.Default.(string)
-	// taskuserDescRewardInfo is the schema descriptor for reward_info field.
-	taskuserDescRewardInfo := taskuserFields[5].Descriptor()
-	// taskuser.DefaultRewardInfo holds the default value on creation for the reward_info field.
-	taskuser.DefaultRewardInfo = taskuserDescRewardInfo.Default.(string)
 	// taskuserDescRewardState is the schema descriptor for reward_state field.
-	taskuserDescRewardState := taskuserFields[6].Descriptor()
+	taskuserDescRewardState := taskuserFields[5].Descriptor()
 	// taskuser.DefaultRewardState holds the default value on creation for the reward_state field.
 	taskuser.DefaultRewardState = taskuserDescRewardState.Default.(string)
 	usercoinrewardMixin := schema.UserCoinReward{}.Mixin()
