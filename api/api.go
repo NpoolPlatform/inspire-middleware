@@ -30,7 +30,6 @@ import (
 	taskconfig "github.com/NpoolPlatform/inspire-middleware/api/task/config"
 	taskuser "github.com/NpoolPlatform/inspire-middleware/api/task/user"
 	usercoinreward "github.com/NpoolPlatform/inspire-middleware/api/user/coin/reward"
-	usercredithistory "github.com/NpoolPlatform/inspire-middleware/api/user/credit/history"
 	userreward "github.com/NpoolPlatform/inspire-middleware/api/user/reward"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -68,7 +67,6 @@ func Register(server grpc.ServiceRegistrar) {
 	coinallocated.Register(server)
 	usercoinreward.Register(server)
 	creditallocated.Register(server)
-	usercredithistory.Register(server)
 	userreward.Register(server)
 }
 
@@ -137,9 +135,6 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := creditallocated.RegisterGateway(mux, endpoint, opts); err != nil {
-		return err
-	}
-	if err := usercredithistory.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := userreward.RegisterGateway(mux, endpoint, opts); err != nil {

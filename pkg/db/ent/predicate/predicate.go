@@ -90,8 +90,5 @@ type TaskUser func(*sql.Selector)
 // UserCoinReward is the predicate function for usercoinreward builders.
 type UserCoinReward func(*sql.Selector)
 
-// UserCreditHistory is the predicate function for usercredithistory builders.
-type UserCreditHistory func(*sql.Selector)
-
 // UserReward is the predicate function for userreward builders.
 type UserReward func(*sql.Selector)

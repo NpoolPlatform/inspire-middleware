@@ -31,7 +31,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 
 	"entgo.io/ent/dialect/sql"
@@ -42,7 +41,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 30)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 29)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -739,28 +738,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.Nodes[28] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   usercredithistory.Table,
-			Columns: usercredithistory.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUint32,
-				Column: usercredithistory.FieldID,
-			},
-		},
-		Type: "UserCreditHistory",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			usercredithistory.FieldCreatedAt: {Type: field.TypeUint32, Column: usercredithistory.FieldCreatedAt},
-			usercredithistory.FieldUpdatedAt: {Type: field.TypeUint32, Column: usercredithistory.FieldUpdatedAt},
-			usercredithistory.FieldDeletedAt: {Type: field.TypeUint32, Column: usercredithistory.FieldDeletedAt},
-			usercredithistory.FieldEntID:     {Type: field.TypeUUID, Column: usercredithistory.FieldEntID},
-			usercredithistory.FieldAppID:     {Type: field.TypeUUID, Column: usercredithistory.FieldAppID},
-			usercredithistory.FieldUserID:    {Type: field.TypeUUID, Column: usercredithistory.FieldUserID},
-			usercredithistory.FieldTaskID:    {Type: field.TypeUUID, Column: usercredithistory.FieldTaskID},
-			usercredithistory.FieldEventID:   {Type: field.TypeUUID, Column: usercredithistory.FieldEventID},
-			usercredithistory.FieldCredits:   {Type: field.TypeOther, Column: usercredithistory.FieldCredits},
-		},
-	}
-	graph.Nodes[29] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userreward.Table,
 			Columns: userreward.Columns,
@@ -3567,91 +3544,6 @@ func (f *UserCoinRewardFilter) WhereCoinRewards(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (uchq *UserCreditHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
-	uchq.predicates = append(uchq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the UserCreditHistoryQuery builder.
-func (uchq *UserCreditHistoryQuery) Filter() *UserCreditHistoryFilter {
-	return &UserCreditHistoryFilter{config: uchq.config, predicateAdder: uchq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *UserCreditHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the UserCreditHistoryMutation builder.
-func (m *UserCreditHistoryMutation) Filter() *UserCreditHistoryFilter {
-	return &UserCreditHistoryFilter{config: m.config, predicateAdder: m}
-}
-
-// UserCreditHistoryFilter provides a generic filtering capability at runtime for UserCreditHistoryQuery.
-type UserCreditHistoryFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *UserCreditHistoryFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[28].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql uint32 predicate on the id field.
-func (f *UserCreditHistoryFilter) WhereID(p entql.Uint32P) {
-	f.Where(p.Field(usercredithistory.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *UserCreditHistoryFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(usercredithistory.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *UserCreditHistoryFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(usercredithistory.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *UserCreditHistoryFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(usercredithistory.FieldDeletedAt))
-}
-
-// WhereEntID applies the entql [16]byte predicate on the ent_id field.
-func (f *UserCreditHistoryFilter) WhereEntID(p entql.ValueP) {
-	f.Where(p.Field(usercredithistory.FieldEntID))
-}
-
-// WhereAppID applies the entql [16]byte predicate on the app_id field.
-func (f *UserCreditHistoryFilter) WhereAppID(p entql.ValueP) {
-	f.Where(p.Field(usercredithistory.FieldAppID))
-}
-
-// WhereUserID applies the entql [16]byte predicate on the user_id field.
-func (f *UserCreditHistoryFilter) WhereUserID(p entql.ValueP) {
-	f.Where(p.Field(usercredithistory.FieldUserID))
-}
-
-// WhereTaskID applies the entql [16]byte predicate on the task_id field.
-func (f *UserCreditHistoryFilter) WhereTaskID(p entql.ValueP) {
-	f.Where(p.Field(usercredithistory.FieldTaskID))
-}
-
-// WhereEventID applies the entql [16]byte predicate on the event_id field.
-func (f *UserCreditHistoryFilter) WhereEventID(p entql.ValueP) {
-	f.Where(p.Field(usercredithistory.FieldEventID))
-}
-
-// WhereCredits applies the entql other predicate on the credits field.
-func (f *UserCreditHistoryFilter) WhereCredits(p entql.OtherP) {
-	f.Where(p.Field(usercredithistory.FieldCredits))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (urq *UserRewardQuery) addPredicate(pred func(s *sql.Selector)) {
 	urq.predicates = append(urq.predicates, pred)
 }
@@ -3680,7 +3572,7 @@ type UserRewardFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserRewardFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[29].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[28].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

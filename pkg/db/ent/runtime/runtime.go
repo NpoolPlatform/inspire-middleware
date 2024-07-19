@@ -34,7 +34,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -1881,60 +1880,6 @@ func init() {
 	usercoinrewardDescCoinRewards := usercoinrewardFields[3].Descriptor()
 	// usercoinreward.DefaultCoinRewards holds the default value on creation for the coin_rewards field.
 	usercoinreward.DefaultCoinRewards = usercoinrewardDescCoinRewards.Default.(decimal.Decimal)
-	usercredithistoryMixin := schema.UserCreditHistory{}.Mixin()
-	usercredithistory.Policy = privacy.NewPolicies(usercredithistoryMixin[0], schema.UserCreditHistory{})
-	usercredithistory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := usercredithistory.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	usercredithistoryMixinFields0 := usercredithistoryMixin[0].Fields()
-	_ = usercredithistoryMixinFields0
-	usercredithistoryMixinFields1 := usercredithistoryMixin[1].Fields()
-	_ = usercredithistoryMixinFields1
-	usercredithistoryFields := schema.UserCreditHistory{}.Fields()
-	_ = usercredithistoryFields
-	// usercredithistoryDescCreatedAt is the schema descriptor for created_at field.
-	usercredithistoryDescCreatedAt := usercredithistoryMixinFields0[0].Descriptor()
-	// usercredithistory.DefaultCreatedAt holds the default value on creation for the created_at field.
-	usercredithistory.DefaultCreatedAt = usercredithistoryDescCreatedAt.Default.(func() uint32)
-	// usercredithistoryDescUpdatedAt is the schema descriptor for updated_at field.
-	usercredithistoryDescUpdatedAt := usercredithistoryMixinFields0[1].Descriptor()
-	// usercredithistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	usercredithistory.DefaultUpdatedAt = usercredithistoryDescUpdatedAt.Default.(func() uint32)
-	// usercredithistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	usercredithistory.UpdateDefaultUpdatedAt = usercredithistoryDescUpdatedAt.UpdateDefault.(func() uint32)
-	// usercredithistoryDescDeletedAt is the schema descriptor for deleted_at field.
-	usercredithistoryDescDeletedAt := usercredithistoryMixinFields0[2].Descriptor()
-	// usercredithistory.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	usercredithistory.DefaultDeletedAt = usercredithistoryDescDeletedAt.Default.(func() uint32)
-	// usercredithistoryDescEntID is the schema descriptor for ent_id field.
-	usercredithistoryDescEntID := usercredithistoryMixinFields1[1].Descriptor()
-	// usercredithistory.DefaultEntID holds the default value on creation for the ent_id field.
-	usercredithistory.DefaultEntID = usercredithistoryDescEntID.Default.(func() uuid.UUID)
-	// usercredithistoryDescAppID is the schema descriptor for app_id field.
-	usercredithistoryDescAppID := usercredithistoryFields[0].Descriptor()
-	// usercredithistory.DefaultAppID holds the default value on creation for the app_id field.
-	usercredithistory.DefaultAppID = usercredithistoryDescAppID.Default.(func() uuid.UUID)
-	// usercredithistoryDescUserID is the schema descriptor for user_id field.
-	usercredithistoryDescUserID := usercredithistoryFields[1].Descriptor()
-	// usercredithistory.DefaultUserID holds the default value on creation for the user_id field.
-	usercredithistory.DefaultUserID = usercredithistoryDescUserID.Default.(func() uuid.UUID)
-	// usercredithistoryDescTaskID is the schema descriptor for task_id field.
-	usercredithistoryDescTaskID := usercredithistoryFields[2].Descriptor()
-	// usercredithistory.DefaultTaskID holds the default value on creation for the task_id field.
-	usercredithistory.DefaultTaskID = usercredithistoryDescTaskID.Default.(func() uuid.UUID)
-	// usercredithistoryDescEventID is the schema descriptor for event_id field.
-	usercredithistoryDescEventID := usercredithistoryFields[3].Descriptor()
-	// usercredithistory.DefaultEventID holds the default value on creation for the event_id field.
-	usercredithistory.DefaultEventID = usercredithistoryDescEventID.Default.(func() uuid.UUID)
-	// usercredithistoryDescCredits is the schema descriptor for credits field.
-	usercredithistoryDescCredits := usercredithistoryFields[4].Descriptor()
-	// usercredithistory.DefaultCredits holds the default value on creation for the credits field.
-	usercredithistory.DefaultCredits = usercredithistoryDescCredits.Default.(decimal.Decimal)
 	userrewardMixin := schema.UserReward{}.Mixin()
 	userreward.Policy = privacy.NewPolicies(userrewardMixin[0], schema.UserReward{})
 	userreward.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -38,7 +38,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 )
 
@@ -88,7 +87,6 @@ func columnChecker(table string) func(string) error {
 		taskconfig.Table:              taskconfig.ValidColumn,
 		taskuser.Table:                taskuser.ValidColumn,
 		usercoinreward.Table:          usercoinreward.ValidColumn,
-		usercredithistory.Table:       usercredithistory.ValidColumn,
 		userreward.Table:              userreward.ValidColumn,
 	}
 	check, ok := checks[table]

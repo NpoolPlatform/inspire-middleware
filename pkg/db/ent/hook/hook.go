@@ -373,19 +373,6 @@ func (f UserCoinRewardFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return f(ctx, mv)
 }
 
-// The UserCreditHistoryFunc type is an adapter to allow the use of ordinary
-// function as UserCreditHistory mutator.
-type UserCreditHistoryFunc func(context.Context, *ent.UserCreditHistoryMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f UserCreditHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.UserCreditHistoryMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCreditHistoryMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The UserRewardFunc type is an adapter to allow the use of ordinary
 // function as UserReward mutator.
 type UserRewardFunc func(context.Context, *ent.UserRewardMutation) (ent.Value, error)

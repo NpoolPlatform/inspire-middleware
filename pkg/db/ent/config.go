@@ -56,7 +56,6 @@ type hooks struct {
 	TaskConfig              []ent.Hook
 	TaskUser                []ent.Hook
 	UserCoinReward          []ent.Hook
-	UserCreditHistory       []ent.Hook
 	UserReward              []ent.Hook
 }
 

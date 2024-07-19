@@ -70,8 +70,6 @@ type Tx struct {
 	TaskUser *TaskUserClient
 	// UserCoinReward is the client for interacting with the UserCoinReward builders.
 	UserCoinReward *UserCoinRewardClient
-	// UserCreditHistory is the client for interacting with the UserCreditHistory builders.
-	UserCreditHistory *UserCreditHistoryClient
 	// UserReward is the client for interacting with the UserReward builders.
 	UserReward *UserRewardClient
 
@@ -237,7 +235,6 @@ func (tx *Tx) init() {
 	tx.TaskConfig = NewTaskConfigClient(tx.config)
 	tx.TaskUser = NewTaskUserClient(tx.config)
 	tx.UserCoinReward = NewUserCoinRewardClient(tx.config)
-	tx.UserCreditHistory = NewUserCreditHistoryClient(tx.config)
 	tx.UserReward = NewUserRewardClient(tx.config)
 }
 

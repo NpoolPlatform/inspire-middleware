@@ -38,7 +38,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
-	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercredithistory"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 
 	"entgo.io/ent/dialect"
@@ -106,8 +105,6 @@ type Client struct {
 	TaskUser *TaskUserClient
 	// UserCoinReward is the client for interacting with the UserCoinReward builders.
 	UserCoinReward *UserCoinRewardClient
-	// UserCreditHistory is the client for interacting with the UserCreditHistory builders.
-	UserCreditHistory *UserCreditHistoryClient
 	// UserReward is the client for interacting with the UserReward builders.
 	UserReward *UserRewardClient
 }
@@ -151,7 +148,6 @@ func (c *Client) init() {
 	c.TaskConfig = NewTaskConfigClient(c.config)
 	c.TaskUser = NewTaskUserClient(c.config)
 	c.UserCoinReward = NewUserCoinRewardClient(c.config)
-	c.UserCreditHistory = NewUserCreditHistoryClient(c.config)
 	c.UserReward = NewUserRewardClient(c.config)
 }
 
@@ -214,7 +210,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TaskConfig:              NewTaskConfigClient(cfg),
 		TaskUser:                NewTaskUserClient(cfg),
 		UserCoinReward:          NewUserCoinRewardClient(cfg),
-		UserCreditHistory:       NewUserCreditHistoryClient(cfg),
 		UserReward:              NewUserRewardClient(cfg),
 	}, nil
 }
@@ -263,7 +258,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TaskConfig:              NewTaskConfigClient(cfg),
 		TaskUser:                NewTaskUserClient(cfg),
 		UserCoinReward:          NewUserCoinRewardClient(cfg),
-		UserCreditHistory:       NewUserCreditHistoryClient(cfg),
 		UserReward:              NewUserRewardClient(cfg),
 	}, nil
 }
@@ -322,7 +316,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.TaskConfig.Use(hooks...)
 	c.TaskUser.Use(hooks...)
 	c.UserCoinReward.Use(hooks...)
-	c.UserCreditHistory.Use(hooks...)
 	c.UserReward.Use(hooks...)
 }
 
@@ -2872,97 +2865,6 @@ func (c *UserCoinRewardClient) GetX(ctx context.Context, id uint32) *UserCoinRew
 func (c *UserCoinRewardClient) Hooks() []Hook {
 	hooks := c.hooks.UserCoinReward
 	return append(hooks[:len(hooks):len(hooks)], usercoinreward.Hooks[:]...)
-}
-
-// UserCreditHistoryClient is a client for the UserCreditHistory schema.
-type UserCreditHistoryClient struct {
-	config
-}
-
-// NewUserCreditHistoryClient returns a client for the UserCreditHistory from the given config.
-func NewUserCreditHistoryClient(c config) *UserCreditHistoryClient {
-	return &UserCreditHistoryClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `usercredithistory.Hooks(f(g(h())))`.
-func (c *UserCreditHistoryClient) Use(hooks ...Hook) {
-	c.hooks.UserCreditHistory = append(c.hooks.UserCreditHistory, hooks...)
-}
-
-// Create returns a builder for creating a UserCreditHistory entity.
-func (c *UserCreditHistoryClient) Create() *UserCreditHistoryCreate {
-	mutation := newUserCreditHistoryMutation(c.config, OpCreate)
-	return &UserCreditHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of UserCreditHistory entities.
-func (c *UserCreditHistoryClient) CreateBulk(builders ...*UserCreditHistoryCreate) *UserCreditHistoryCreateBulk {
-	return &UserCreditHistoryCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for UserCreditHistory.
-func (c *UserCreditHistoryClient) Update() *UserCreditHistoryUpdate {
-	mutation := newUserCreditHistoryMutation(c.config, OpUpdate)
-	return &UserCreditHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *UserCreditHistoryClient) UpdateOne(uch *UserCreditHistory) *UserCreditHistoryUpdateOne {
-	mutation := newUserCreditHistoryMutation(c.config, OpUpdateOne, withUserCreditHistory(uch))
-	return &UserCreditHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *UserCreditHistoryClient) UpdateOneID(id uint32) *UserCreditHistoryUpdateOne {
-	mutation := newUserCreditHistoryMutation(c.config, OpUpdateOne, withUserCreditHistoryID(id))
-	return &UserCreditHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for UserCreditHistory.
-func (c *UserCreditHistoryClient) Delete() *UserCreditHistoryDelete {
-	mutation := newUserCreditHistoryMutation(c.config, OpDelete)
-	return &UserCreditHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *UserCreditHistoryClient) DeleteOne(uch *UserCreditHistory) *UserCreditHistoryDeleteOne {
-	return c.DeleteOneID(uch.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *UserCreditHistoryClient) DeleteOneID(id uint32) *UserCreditHistoryDeleteOne {
-	builder := c.Delete().Where(usercredithistory.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &UserCreditHistoryDeleteOne{builder}
-}
-
-// Query returns a query builder for UserCreditHistory.
-func (c *UserCreditHistoryClient) Query() *UserCreditHistoryQuery {
-	return &UserCreditHistoryQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a UserCreditHistory entity by its id.
-func (c *UserCreditHistoryClient) Get(ctx context.Context, id uint32) (*UserCreditHistory, error) {
-	return c.Query().Where(usercredithistory.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *UserCreditHistoryClient) GetX(ctx context.Context, id uint32) *UserCreditHistory {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *UserCreditHistoryClient) Hooks() []Hook {
-	hooks := c.hooks.UserCreditHistory
-	return append(hooks[:len(hooks):len(hooks)], usercredithistory.Hooks[:]...)
 }
 
 // UserRewardClient is a client for the UserReward schema.

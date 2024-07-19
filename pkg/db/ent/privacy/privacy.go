@@ -822,30 +822,6 @@ func (f UserCoinRewardMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCoinRewardMutation", m)
 }
 
-// The UserCreditHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type UserCreditHistoryQueryRuleFunc func(context.Context, *ent.UserCreditHistoryQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f UserCreditHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.UserCreditHistoryQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserCreditHistoryQuery", q)
-}
-
-// The UserCreditHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type UserCreditHistoryMutationRuleFunc func(context.Context, *ent.UserCreditHistoryMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f UserCreditHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.UserCreditHistoryMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCreditHistoryMutation", m)
-}
-
 // The UserRewardQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserRewardQueryRuleFunc func(context.Context, *ent.UserRewardQuery) error
@@ -961,8 +937,6 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.UserCoinRewardQuery:
 		return q.Filter(), nil
-	case *ent.UserCreditHistoryQuery:
-		return q.Filter(), nil
 	case *ent.UserRewardQuery:
 		return q.Filter(), nil
 	default:
@@ -1027,8 +1001,6 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.TaskUserMutation:
 		return m.Filter(), nil
 	case *ent.UserCoinRewardMutation:
-		return m.Filter(), nil
-	case *ent.UserCreditHistoryMutation:
 		return m.Filter(), nil
 	case *ent.UserRewardMutation:
 		return m.Filter(), nil
