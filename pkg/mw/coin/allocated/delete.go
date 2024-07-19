@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coin/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -21,7 +22,7 @@ func (h *deleteHandler) deleteCoinAllocated(ctx context.Context, cli *ent.Client
 			DeletedAt: &h.now,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -34,7 +35,7 @@ func (h *Handler) DeleteCoinAllocated(ctx context.Context) error {
 
 	info, err := h.GetCoinAllocated(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil

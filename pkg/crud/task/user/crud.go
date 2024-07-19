@@ -1,8 +1,7 @@
 package user
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	enttaskuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -82,103 +81,103 @@ func SetQueryConds(q *ent.TaskUserQuery, conds *Conds) (*ent.TaskUserQuery, erro
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(enttaskuser.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.TaskState != nil {
 		_type, ok := conds.TaskState.Val.(types.TaskState)
 		if !ok {
-			return nil, fmt.Errorf("invalid taskstate")
+			return nil, wlog.Errorf("invalid taskstate")
 		}
 		switch conds.TaskState.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.TaskState(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.RewardState != nil {
 		_type, ok := conds.RewardState.Val.(types.RewardState)
 		if !ok {
-			return nil, fmt.Errorf("invalid rewardstate")
+			return nil, wlog.Errorf("invalid rewardstate")
 		}
 		switch conds.RewardState.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.RewardState(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userid")
+			return nil, wlog.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.TaskID != nil {
 		id, ok := conds.TaskID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid taskid")
+			return nil, wlog.Errorf("invalid taskid")
 		}
 		switch conds.TaskID.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.TaskID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.EventID != nil {
 		id, ok := conds.EventID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid eventid")
+			return nil, wlog.Errorf("invalid eventid")
 		}
 		switch conds.EventID.Op {
 		case cruder.EQ:
 			q.Where(enttaskuser.EventID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -186,13 +185,13 @@ func SetQueryConds(q *ent.TaskUserQuery, conds *Conds) (*ent.TaskUserQuery, erro
 		case cruder.NEQ:
 			q.Where(enttaskuser.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	if conds.CreatedAt != nil {
 		at, ok := conds.CreatedAt.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid createdat")
+			return nil, wlog.Errorf("invalid createdat")
 		}
 		switch conds.CreatedAt.Op {
 		case cruder.LT:
@@ -208,7 +207,7 @@ func SetQueryConds(q *ent.TaskUserQuery, conds *Conds) (*ent.TaskUserQuery, erro
 		case cruder.NEQ:
 			q.Where(enttaskuser.CreatedAtNEQ(at))
 		default:
-			return nil, fmt.Errorf("invalid taskuser field")
+			return nil, wlog.Errorf("invalid taskuser field")
 		}
 	}
 	return q, nil

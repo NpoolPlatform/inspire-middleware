@@ -1,8 +1,7 @@
 package coin
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	enteventcoin "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -75,67 +74,67 @@ func SetQueryConds(q *ent.EventCoinQuery, conds *Conds) (*ent.EventCoinQuery, er
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(enteventcoin.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(enteventcoin.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(enteventcoin.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.CoinConfigID != nil {
 		id, ok := conds.CoinConfigID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid coinconfigid")
+			return nil, wlog.Errorf("invalid coinconfigid")
 		}
 		switch conds.CoinConfigID.Op {
 		case cruder.EQ:
 			q.Where(enteventcoin.CoinConfigID(id))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.EventID != nil {
 		id, ok := conds.EventID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid eventid")
+			return nil, wlog.Errorf("invalid eventid")
 		}
 		switch conds.EventID.Op {
 		case cruder.EQ:
 			q.Where(enteventcoin.EventID(id))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -143,19 +142,19 @@ func SetQueryConds(q *ent.EventCoinQuery, conds *Conds) (*ent.EventCoinQuery, er
 		case cruder.NEQ:
 			q.Where(enteventcoin.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	if conds.EventIDs != nil {
 		ids, ok := conds.EventIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid eventids")
+			return nil, wlog.Errorf("invalid eventids")
 		}
 		switch conds.EventIDs.Op {
 		case cruder.IN:
 			q.Where(enteventcoin.EventIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid eventcoin field")
+			return nil, wlog.Errorf("invalid eventcoin field")
 		}
 	}
 	return q, nil

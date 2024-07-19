@@ -2,8 +2,8 @@ package config
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	taskconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/task/config"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -34,7 +34,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -47,13 +47,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -64,13 +64,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -81,13 +81,13 @@ func WithEventID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid eventid")
+				return wlog.Errorf("invalid eventid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EventID = &_id
 		return nil
@@ -98,13 +98,13 @@ func WithLastTaskID(id *string, must bool) func(context.Context, *Handler) error
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid lasttaskid")
+				return wlog.Errorf("invalid lasttaskid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.LastTaskID = &_id
 		return nil
@@ -115,7 +115,7 @@ func WithTaskType(value *basetypes.TaskType, must bool) func(context.Context, *H
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid tasktype")
+				return wlog.Errorf("invalid tasktype")
 			}
 			return nil
 		}
@@ -125,7 +125,7 @@ func WithTaskType(value *basetypes.TaskType, must bool) func(context.Context, *H
 		case basetypes.TaskType_DailyTask:
 		case basetypes.TaskType_GrowthTask:
 		default:
-			return fmt.Errorf("invalid tasktype")
+			return wlog.Errorf("invalid tasktype")
 		}
 
 		h.TaskType = value
@@ -137,7 +137,7 @@ func WithName(value *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid name")
+				return wlog.Errorf("invalid name")
 			}
 			return nil
 		}
@@ -150,7 +150,7 @@ func WithTaskDesc(value *string, must bool) func(context.Context, *Handler) erro
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid taskdesc")
+				return wlog.Errorf("invalid taskdesc")
 			}
 			return nil
 		}
@@ -163,7 +163,7 @@ func WithStepGuide(value *string, must bool) func(context.Context, *Handler) err
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid stepguide")
+				return wlog.Errorf("invalid stepguide")
 			}
 			return nil
 		}
@@ -176,7 +176,7 @@ func WithRecommendMessage(value *string, must bool) func(context.Context, *Handl
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid recommendmessage")
+				return wlog.Errorf("invalid recommendmessage")
 			}
 			return nil
 		}
@@ -189,7 +189,7 @@ func WithIndex(value *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid Index")
+				return wlog.Errorf("invalid Index")
 			}
 			return nil
 		}
@@ -202,7 +202,7 @@ func WithMaxRewardCount(value *uint32, must bool) func(context.Context, *Handler
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid maxrewardcount")
+				return wlog.Errorf("invalid maxrewardcount")
 			}
 			return nil
 		}
@@ -215,7 +215,7 @@ func WithCooldownSecord(value *uint32, must bool) func(context.Context, *Handler
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid cooldownsecord")
+				return wlog.Errorf("invalid cooldownsecord")
 			}
 			return nil
 		}
@@ -233,7 +233,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{
 				Op: conds.GetEntID().GetOp(), Val: id,
@@ -242,7 +242,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op: conds.GetAppID().GetOp(), Val: id,
@@ -251,7 +251,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EventID != nil {
 			id, err := uuid.Parse(conds.GetEventID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EventID = &cruder.Cond{
 				Op: conds.GetEventID().GetOp(), Val: id,
@@ -260,7 +260,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.LastTaskID != nil {
 			id, err := uuid.Parse(conds.GetLastTaskID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.LastTaskID = &cruder.Cond{
 				Op: conds.GetLastTaskID().GetOp(), Val: id,
@@ -271,7 +271,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

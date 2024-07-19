@@ -1,8 +1,7 @@
 package allocated
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcreditallocated "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -67,67 +66,67 @@ func SetQueryConds(q *ent.CreditAllocatedQuery, conds *Conds) (*ent.CreditAlloca
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entcreditallocated.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entcreditallocated.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entcreditallocated.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	if conds.UserID != nil {
 		id, ok := conds.UserID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid userid")
+			return nil, wlog.Errorf("invalid userid")
 		}
 		switch conds.UserID.Op {
 		case cruder.EQ:
 			q.Where(entcreditallocated.UserID(id))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	if conds.Extra != nil {
 		id, ok := conds.Extra.Val.(string)
 		if !ok {
-			return nil, fmt.Errorf("invalid extra")
+			return nil, wlog.Errorf("invalid extra")
 		}
 		switch conds.Extra.Op {
 		case cruder.EQ:
 			q.Where(entcreditallocated.ExtraContains(id))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -135,7 +134,7 @@ func SetQueryConds(q *ent.CreditAllocatedQuery, conds *Conds) (*ent.CreditAlloca
 		case cruder.NEQ:
 			q.Where(entcreditallocated.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid creditallocated field")
+			return nil, wlog.Errorf("invalid creditallocated field")
 		}
 	}
 	return q, nil

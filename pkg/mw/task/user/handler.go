@@ -2,8 +2,8 @@ package user
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	taskusercrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/task/user"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -34,7 +34,7 @@ func WithID(id *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid id")
+				return wlog.Errorf("invalid id")
 			}
 			return nil
 		}
@@ -47,13 +47,13 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid entid")
+				return wlog.Errorf("invalid entid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EntID = &_id
 		return nil
@@ -64,13 +64,13 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid appid")
+				return wlog.Errorf("invalid appid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.AppID = &_id
 		return nil
@@ -81,13 +81,13 @@ func WithEventID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid eventid")
+				return wlog.Errorf("invalid eventid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.EventID = &_id
 		return nil
@@ -98,13 +98,13 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid userid")
+				return wlog.Errorf("invalid userid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.UserID = &_id
 		return nil
@@ -115,13 +115,13 @@ func WithTaskID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
 			if must {
-				return fmt.Errorf("invalid taskid")
+				return wlog.Errorf("invalid taskid")
 			}
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		h.TaskID = &_id
 		return nil
@@ -132,7 +132,7 @@ func WithTaskState(value *basetypes.TaskState, must bool) func(context.Context, 
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid taskstate")
+				return wlog.Errorf("invalid taskstate")
 			}
 			return nil
 		}
@@ -141,7 +141,7 @@ func WithTaskState(value *basetypes.TaskState, must bool) func(context.Context, 
 		case basetypes.TaskState_InProgress:
 		case basetypes.TaskState_Done:
 		default:
-			return fmt.Errorf("invalid taskstate")
+			return wlog.Errorf("invalid taskstate")
 		}
 
 		h.TaskState = value
@@ -153,7 +153,7 @@ func WithRewardState(value *basetypes.RewardState, must bool) func(context.Conte
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return fmt.Errorf("invalid rewardstate")
+				return wlog.Errorf("invalid rewardstate")
 			}
 			return nil
 		}
@@ -163,7 +163,7 @@ func WithRewardState(value *basetypes.RewardState, must bool) func(context.Conte
 		case basetypes.RewardState_UnIssued:
 		case basetypes.RewardState_Revoked:
 		default:
-			return fmt.Errorf("invalid rewardstate")
+			return wlog.Errorf("invalid rewardstate")
 		}
 
 		h.RewardState = value
@@ -180,7 +180,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EntID != nil {
 			id, err := uuid.Parse(conds.GetEntID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EntID = &cruder.Cond{
 				Op: conds.GetEntID().GetOp(), Val: id,
@@ -189,7 +189,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.AppID != nil {
 			id, err := uuid.Parse(conds.GetAppID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.AppID = &cruder.Cond{
 				Op: conds.GetAppID().GetOp(), Val: id,
@@ -198,7 +198,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.UserID != nil {
 			id, err := uuid.Parse(conds.GetUserID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.UserID = &cruder.Cond{
 				Op: conds.GetUserID().GetOp(), Val: id,
@@ -207,7 +207,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.TaskID != nil {
 			id, err := uuid.Parse(conds.GetTaskID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.TaskID = &cruder.Cond{
 				Op: conds.GetTaskID().GetOp(), Val: id,
@@ -216,7 +216,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.EventID != nil {
 			id, err := uuid.Parse(conds.GetEventID().GetValue())
 			if err != nil {
-				return err
+				return wlog.WrapError(err)
 			}
 			h.Conds.EventID = &cruder.Cond{
 				Op: conds.GetEventID().GetOp(), Val: id,
@@ -227,7 +227,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
-					return err
+					return wlog.WrapError(err)
 				}
 				ids = append(ids, _id)
 			}

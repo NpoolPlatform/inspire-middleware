@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	eventcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -21,7 +22,7 @@ func (h *deleteHandler) deleteEventCoin(ctx context.Context, cli *ent.Client) er
 			DeletedAt: &h.now,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -34,7 +35,7 @@ func (h *Handler) DeleteEventCoin(ctx context.Context) error {
 
 	info, err := h.GetEventCoin(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
 		return nil

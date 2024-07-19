@@ -3,6 +3,7 @@ package reward
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	rewardcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/user/reward"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -16,16 +17,16 @@ func (h *Handler) ExistUserRewardConds(ctx context.Context) (bool, error) {
 			h.Conds,
 		)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		exist, err = stm.Exist(_ctx)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	})
 	if err != nil {
-		return false, err
+		return false, wlog.WrapError(err)
 	}
 
 	return exist, nil

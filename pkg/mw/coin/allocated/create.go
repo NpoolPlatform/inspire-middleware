@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	coinconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coin/config"
 	usercoinrewardcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/user/coin/reward"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
@@ -70,11 +71,11 @@ func (h *createHandler) constructSQL() {
 func (h *createHandler) createCoinAllocated(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	n, err := rc.RowsAffected()
 	if err != nil || n != 1 {
-		return fmt.Errorf("fail create coinallocated: %v", err)
+		return wlog.Errorf("fail create coinallocated: %v", err)
 	}
 	return nil
 }
@@ -93,7 +94,7 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 		Only(ctx)
 	if err != nil {
 		if !ent.IsNotFound(err) {
-			return err
+			return wlog.WrapError(err)
 		}
 	}
 	coinRewards := decimal.NewFromInt(0)
@@ -110,7 +111,7 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 				CoinRewards: h.Value,
 			},
 		).Save(ctx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return nil
 	}
@@ -122,7 +123,7 @@ func (h *createHandler) createOrUpdateUserCoinReward(ctx context.Context, tx *en
 			CoinRewards: &coinRewards,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -138,11 +139,11 @@ func (h *createHandler) updateCoinAllocated(ctx context.Context, tx *ent.Tx) err
 		ForUpdate().
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	allocated, err := decimal.NewFromString(info.Allocated.String())
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	allocated = allocated.Add(*h.Value)
@@ -152,7 +153,7 @@ func (h *createHandler) updateCoinAllocated(ctx context.Context, tx *ent.Tx) err
 			Allocated: &allocated,
 		},
 	).Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -167,10 +168,10 @@ func (h *Handler) CreateCoinAllocated(ctx context.Context) error {
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createOrUpdateUserCoinReward(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		if err := handler.updateCoinAllocated(ctx, tx); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		return handler.createCoinAllocated(_ctx, tx)
 	})

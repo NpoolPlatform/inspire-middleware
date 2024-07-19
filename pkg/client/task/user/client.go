@@ -2,10 +2,10 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/user"
 	"google.golang.org/grpc"
@@ -102,7 +102,7 @@ func GetTaskUserOnly(ctx context.Context, conds *npool.Conds) (*npool.TaskUser, 
 		return nil, nil
 	}
 	if len(infos.([]*npool.TaskUser)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.TaskUser)[0], nil
 }

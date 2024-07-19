@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -38,10 +39,10 @@ func (h *updateHandler) constructSQL() error {
 func (h *updateHandler) updateUserCoinReward(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if _, err := rc.RowsAffected(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -53,14 +54,14 @@ func (h *Handler) UpdateUserCoinReward(ctx context.Context) error {
 
 	info, err := h.GetUserCoinReward(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return fmt.Errorf("invalid usercoinreward")
+		return wlog.Errorf("invalid usercoinreward")
 	}
 
 	if err := handler.constructSQL(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateUserCoinReward(_ctx, tx)

@@ -1,8 +1,7 @@
 package config
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entcoinconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -69,55 +68,55 @@ func SetQueryConds(q *ent.CoinConfigQuery, conds *Conds) (*ent.CoinConfigQuery, 
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entcoinconfig.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid coinconfig field")
+			return nil, wlog.Errorf("invalid coinconfig field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entcoinconfig.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid coinconfig field")
+			return nil, wlog.Errorf("invalid coinconfig field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(entcoinconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid coinconfig field")
+			return nil, wlog.Errorf("invalid coinconfig field")
 		}
 	}
 	if conds.CoinTypeID != nil {
 		id, ok := conds.CoinTypeID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid cointypeid")
+			return nil, wlog.Errorf("invalid cointypeid")
 		}
 		switch conds.CoinTypeID.Op {
 		case cruder.EQ:
 			q.Where(entcoinconfig.CoinTypeID(id))
 		default:
-			return nil, fmt.Errorf("invalid coinconfig field")
+			return nil, wlog.Errorf("invalid coinconfig field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -125,7 +124,7 @@ func SetQueryConds(q *ent.CoinConfigQuery, conds *Conds) (*ent.CoinConfigQuery, 
 		case cruder.NEQ:
 			q.Where(entcoinconfig.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid coinconfig field")
+			return nil, wlog.Errorf("invalid coinconfig field")
 		}
 	}
 	return q, nil

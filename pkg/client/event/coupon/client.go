@@ -2,10 +2,10 @@ package coupon
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coupon"
 	"google.golang.org/grpc"
@@ -102,7 +102,7 @@ func GetEventCouponOnly(ctx context.Context, conds *npool.Conds) (*npool.EventCo
 		return nil, nil
 	}
 	if len(infos.([]*npool.EventCoupon)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.EventCoupon)[0], nil
 }

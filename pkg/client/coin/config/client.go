@@ -2,10 +2,10 @@ package config
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/config"
 	"google.golang.org/grpc"
@@ -102,7 +102,7 @@ func GetCoinConfigOnly(ctx context.Context, conds *npool.Conds) (*npool.CoinConf
 		return nil, nil
 	}
 	if len(infos.([]*npool.CoinConfig)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.CoinConfig)[0], nil
 }

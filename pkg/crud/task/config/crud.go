@@ -1,8 +1,7 @@
 package config
 
 import (
-	"fmt"
-
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	enttaskconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -119,91 +118,91 @@ func SetQueryConds(q *ent.TaskConfigQuery, conds *Conds) (*ent.TaskConfigQuery, 
 	if conds.EntID != nil {
 		id, ok := conds.EntID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, wlog.Errorf("invalid entid")
 		}
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.EntID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.EntIDs != nil {
 		ids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entids")
+			return nil, wlog.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(enttaskconfig.EntIDIn(ids...))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.TaskType != nil {
 		_type, ok := conds.TaskType.Val.(types.TaskType)
 		if !ok {
-			return nil, fmt.Errorf("invalid tasktype")
+			return nil, wlog.Errorf("invalid tasktype")
 		}
 		switch conds.TaskType.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.TaskType(_type.String()))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.AppID != nil {
 		id, ok := conds.AppID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid appid")
+			return nil, wlog.Errorf("invalid appid")
 		}
 		switch conds.AppID.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.AppID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.LastTaskID != nil {
 		id, ok := conds.LastTaskID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid lasttaskid")
+			return nil, wlog.Errorf("invalid lasttaskid")
 		}
 		switch conds.LastTaskID.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.LastTaskID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.EventID != nil {
 		id, ok := conds.EventID.Val.(uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid eventid")
+			return nil, wlog.Errorf("invalid eventid")
 		}
 		switch conds.EventID.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.EventID(id))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.Index != nil {
 		value, ok := conds.Index.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid index")
+			return nil, wlog.Errorf("invalid index")
 		}
 		switch conds.Index.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.Index(value))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	if conds.ID != nil {
 		id, ok := conds.ID.Val.(uint32)
 		if !ok {
-			return nil, fmt.Errorf("invalid id")
+			return nil, wlog.Errorf("invalid id")
 		}
 		switch conds.ID.Op {
 		case cruder.EQ:
@@ -211,7 +210,7 @@ func SetQueryConds(q *ent.TaskConfigQuery, conds *Conds) (*ent.TaskConfigQuery, 
 		case cruder.NEQ:
 			q.Where(enttaskconfig.IDNEQ(id))
 		default:
-			return nil, fmt.Errorf("invalid taskconfig field")
+			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
 	return q, nil

@@ -2,10 +2,10 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/credit/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -28,7 +28,7 @@ func (h *queryHandler) selectCreditAllocated(stm *ent.CreditAllocatedQuery) {
 
 func (h *queryHandler) queryCreditAllocated(cli *ent.Client) error {
 	if h.ID == nil && h.EntID == nil {
-		return fmt.Errorf("invalid id")
+		return wlog.Errorf("invalid id")
 	}
 	stm := cli.CreditAllocated.Query().Where(entcreditallocated.DeletedAt(0))
 	if h.ID != nil {
@@ -44,11 +44,11 @@ func (h *queryHandler) queryCreditAllocated(cli *ent.Client) error {
 func (h *queryHandler) queryCreditAllocateds(ctx context.Context, cli *ent.Client) error {
 	stm, err := allocatedcrud.SetQueryConds(cli.CreditAllocated.Query(), h.Conds)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	total, err := stm.Count(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.total = uint32(total)
 	h.selectCreditAllocated(stm)
@@ -105,7 +105,7 @@ func (h *Handler) GetCreditAllocated(ctx context.Context) (*npool.CreditAllocate
 
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryCreditAllocated(cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		handler.stmSelect.
@@ -114,13 +114,13 @@ func (h *Handler) GetCreditAllocated(ctx context.Context) (*npool.CreditAllocate
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, err
+		return nil, wlog.WrapError(err)
 	}
 	if len(handler.infos) == 0 {
 		return nil, nil
 	}
 	if len(handler.infos) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	handler.formalize()
 	return handler.infos[0], nil
@@ -132,7 +132,7 @@ func (h *Handler) GetCreditAllocateds(ctx context.Context) ([]*npool.CreditAlloc
 	}
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		if err := handler.queryCreditAllocateds(_ctx, cli); err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		handler.queryJoin()
 		handler.stmSelect.
@@ -141,7 +141,7 @@ func (h *Handler) GetCreditAllocateds(ctx context.Context) ([]*npool.CreditAlloc
 		return handler.scan(_ctx)
 	})
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, wlog.WrapError(err)
 	}
 	handler.formalize()
 	return handler.infos, handler.total, nil

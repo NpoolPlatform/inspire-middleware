@@ -2,10 +2,10 @@ package reward
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/user/coin/reward"
 	"google.golang.org/grpc"
@@ -102,7 +102,7 @@ func GetUserCoinRewardOnly(ctx context.Context, conds *npool.Conds) (*npool.User
 		return nil, nil
 	}
 	if len(infos.([]*npool.UserCoinReward)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.UserCoinReward)[0], nil
 }

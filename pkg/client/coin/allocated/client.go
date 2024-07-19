@@ -2,10 +2,10 @@ package allocated
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	grpc2 "github.com/NpoolPlatform/go-service-framework/pkg/grpc"
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	servicename "github.com/NpoolPlatform/inspire-middleware/pkg/servicename"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/allocated"
 	"google.golang.org/grpc"
@@ -102,7 +102,7 @@ func GetCoinAllocatedOnly(ctx context.Context, conds *npool.Conds) (*npool.CoinA
 		return nil, nil
 	}
 	if len(infos.([]*npool.CoinAllocated)) > 1 {
-		return nil, fmt.Errorf("too many records")
+		return nil, wlog.Errorf("too many records")
 	}
 	return infos.([]*npool.CoinAllocated)[0], nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -88,10 +89,10 @@ func (h *updateHandler) constructSQL() error {
 func (h *updateHandler) updateTaskConfig(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if _, err := rc.RowsAffected(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -103,10 +104,10 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 
 	info, err := h.GetTaskConfig(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return fmt.Errorf("invalid taskconfig")
+		return wlog.Errorf("invalid taskconfig")
 	}
 
 	if h.TaskType == nil {
@@ -121,7 +122,7 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 	handler.appID = info.AppID
 
 	if err := handler.constructSQL(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.updateTaskConfig(_ctx, tx)

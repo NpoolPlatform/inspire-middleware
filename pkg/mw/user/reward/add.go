@@ -3,6 +3,7 @@ package reward
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	userrewardcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/user/reward"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -21,10 +22,10 @@ type addHandler struct {
 func (h *addHandler) addUserReward(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if _, err := rc.RowsAffected(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -38,7 +39,7 @@ func (h *addHandler) getUserCoinReward(ctx context.Context) error {
 	h.Limit = int32(1)
 	infos, _, err := h.GetUserRewards(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(infos) == 0 {
 		return nil
@@ -75,7 +76,7 @@ func (h *addHandler) calculateReward() error {
 	if h.ActionCredits != nil {
 		credits, err := decimal.NewFromString(h.info.ActionCredits)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCredits := h.ActionCredits.Add(credits)
 		h.ActionCredits = &newCredits
@@ -83,7 +84,7 @@ func (h *addHandler) calculateReward() error {
 	if h.CouponAmount != nil {
 		couponAmount, err := decimal.NewFromString(h.info.CouponAmount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCouponAmount := h.CouponAmount.Add(couponAmount)
 		h.CouponAmount = &newCouponAmount
@@ -91,14 +92,14 @@ func (h *addHandler) calculateReward() error {
 	if h.CouponCashableAmount != nil {
 		couponCashableAmount, err := decimal.NewFromString(h.info.CouponCashableAmount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCouponCashableAmount := h.CouponCashableAmount.Add(couponCashableAmount)
 		h.CouponCashableAmount = &newCouponCashableAmount
 	}
 	sql, err := h.constructUpdateSQL()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.sql = sql
 	return nil
@@ -110,11 +111,11 @@ func (h *Handler) AddUserReward(ctx context.Context) error {
 	}
 
 	if err := handler.getUserCoinReward(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	if err := handler.calculateReward(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {

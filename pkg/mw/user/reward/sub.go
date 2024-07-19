@@ -2,8 +2,8 @@ package reward
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	userrewardcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/user/reward"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -21,10 +21,10 @@ type subHandler struct {
 func (h *subHandler) updateUserReward(ctx context.Context, tx *ent.Tx) error {
 	rc, err := tx.ExecContext(ctx, h.sql)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if _, err := rc.RowsAffected(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -38,7 +38,7 @@ func (h *subHandler) getUserCoinReward(ctx context.Context) error {
 	h.Limit = int32(1)
 	infos, _, err := h.GetUserRewards(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if len(infos) == 0 {
 		return nil
@@ -53,39 +53,39 @@ func (h *subHandler) calculateReward() error {
 	if h.ActionCredits != nil {
 		credits, err := decimal.NewFromString(h.info.ActionCredits)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCredits := h.ActionCredits.Sub(credits)
 		h.ActionCredits = &newCredits
 		if h.ActionCredits.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid actioncredits")
+			return wlog.Errorf("invalid actioncredits")
 		}
 	}
 	if h.CouponAmount != nil {
 		couponAmount, err := decimal.NewFromString(h.info.CouponAmount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCouponAmount := h.CouponAmount.Sub(couponAmount)
 		h.CouponAmount = &newCouponAmount
 		if h.CouponAmount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid couponamount")
+			return wlog.Errorf("invalid couponamount")
 		}
 	}
 	if h.CouponCashableAmount != nil {
 		couponCashableAmount, err := decimal.NewFromString(h.info.CouponCashableAmount)
 		if err != nil {
-			return err
+			return wlog.WrapError(err)
 		}
 		newCouponCashableAmount := h.CouponCashableAmount.Sub(couponCashableAmount)
 		h.CouponCashableAmount = &newCouponCashableAmount
 		if h.CouponCashableAmount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return fmt.Errorf("invalid couponcashableamount")
+			return wlog.Errorf("invalid couponcashableamount")
 		}
 	}
 	sql, err := h.constructUpdateSQL()
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	h.sql = sql
 	return nil
@@ -98,13 +98,13 @@ func (h *Handler) SubUserReward(ctx context.Context) error {
 
 	err := handler.getUserCoinReward(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	if handler.info == nil {
 		return nil
 	}
 	if err := handler.calculateReward(); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
