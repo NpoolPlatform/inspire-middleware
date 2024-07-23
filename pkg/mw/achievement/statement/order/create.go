@@ -303,7 +303,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 }
 
 func (h *Handler) validateCommissionAmount() error {
-	if h.CommissionConfigID == nil {
+	if h.CommissionConfigID == nil || h.CommissionConfigID.String() == uuid.Nil.String() {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			return wlog.Errorf("commission config id mismatch commission amount usd")
 		}

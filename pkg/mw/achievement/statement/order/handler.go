@@ -290,6 +290,7 @@ func WithCommissionConfigID(id *string, must bool) func(context.Context, *Handle
 			if must {
 				return wlog.Errorf("invalid commissionconfigid")
 			}
+			h.CommissionConfigID = &uuid.Nil
 			return nil
 		}
 		_id, err := uuid.Parse(*id)
