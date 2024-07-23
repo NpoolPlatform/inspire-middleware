@@ -111,9 +111,10 @@ func (h *createHandler) constructSQL() {
 		_sql += " and exists ("
 		_sql += fmt.Sprintf("select 1 from %v ", entappconfig.Table)
 		_sql += fmt.Sprintf(
-			"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+			"where app_id = '%v' and ent_id = '%v' and end_at >= %v and deleted_at = 0 ",
 			*h.AppID,
 			*h.AppConfigID,
+			now,
 		)
 		_sql += "limit 1)"
 	}
