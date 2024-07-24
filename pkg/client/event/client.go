@@ -165,3 +165,19 @@ func CalcluateEventRewards(ctx context.Context, req *npool.CalcluateEventRewards
 	}
 	return infos.([]*npool.Reward), nil
 }
+
+func ExistEventConds(ctx context.Context, conds *npool.Conds) (exist bool, err error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.ExistEventConds(ctx, &npool.ExistEventCondsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return info.(bool), nil
+}

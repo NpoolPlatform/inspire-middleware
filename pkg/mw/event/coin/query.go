@@ -9,6 +9,7 @@ import (
 	devicecrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coin"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcoinconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	enteventcoin "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
 	"github.com/shopspring/decimal"
@@ -74,9 +75,23 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 		)
 }
 
+func (h *queryHandler) queryJoinCoinConfig(s *sql.Selector) {
+	t := sql.Table(entcoinconfig.Table)
+	s.LeftJoin(t).
+		On(
+			s.C(enteventcoin.FieldCoinConfigID),
+			t.C(entcoinconfig.FieldEntID),
+		)
+
+	s.AppendSelect(
+		sql.As(t.C(entcoinconfig.FieldCoinTypeID), "coin_type_id"),
+	)
+}
+
 func (h *queryHandler) queryJoin() {
 	h.stmSelect.Modify(func(s *sql.Selector) {
 		h.queryJoinMyself(s)
+		h.queryJoinCoinConfig(s)
 	})
 	if h.stmCount == nil {
 		return
