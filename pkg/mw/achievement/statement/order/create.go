@@ -314,6 +314,11 @@ func (h *Handler) validateCommissionAmount() error {
 			}
 		}
 	}
+	if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+			return wlog.Errorf("commission amount usd mismatch commission config type")
+		}
+	}
 	return nil
 }
 
