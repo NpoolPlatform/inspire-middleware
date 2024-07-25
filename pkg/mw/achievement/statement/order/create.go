@@ -101,7 +101,7 @@ func (h *createHandler) constructSQL() {
 	_sql += "where not exists ("
 	_sql += fmt.Sprintf("select 1 from %v ", entorderstatement.Table)
 	_sql += fmt.Sprintf(
-		"where user_id = '%v' and order_id = '%v' ",
+		"where user_id = '%v' and order_id = '%v' and deleted_at = 0 ",
 		*h.UserID,
 		*h.OrderID,
 	)
@@ -153,6 +153,7 @@ func (h *createHandler) constructSQL() {
 		_sql += "limit 1)"
 	}
 
+	fmt.Println("sql: ", _sql)
 	h.sql = _sql
 }
 

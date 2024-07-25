@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
@@ -21,7 +22,7 @@ type updateHandler struct {
 	selfOrder               bool
 	selfCommissionAmountUSD decimal.Decimal
 	statement               *ent.OrderStatement
-	payment                 *ent.OrderPaymentStatement
+	payments                map[uuid.UUID][]*ent.OrderPaymentStatement
 }
 
 func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
@@ -36,7 +37,7 @@ func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	totalCommissionUsd := goodCoinAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
@@ -47,7 +48,7 @@ func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.T
 		SetTotalCommissionUsd(totalCommissionUsd).
 		SetSelfCommissionUsd(selfCommissionUsd).
 		Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -65,7 +66,7 @@ func (h *updateHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) e
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	totalCommissionUsd := goodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
@@ -76,7 +77,7 @@ func (h *updateHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) e
 		SetTotalCommissionUsd(totalCommissionUsd).
 		SetSelfCommissionUsd(selfCommissionUsd).
 		Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
@@ -92,7 +93,7 @@ func (h *updateHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) e
 		).
 		Only(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 
 	totalCommission := achievementUser.TotalCommission.Add(*h.CommissionAmountUSD)
@@ -103,22 +104,44 @@ func (h *updateHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) e
 		SetTotalCommission(totalCommission).
 		SetSelfCommission(selfCommission).
 		Save(ctx); err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
 	return nil
 }
 
-func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) error {
+func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx) error {
 	if h.statement.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig.String() {
 		return nil
 	}
 
+	dbPaymentsAlreadyProcessed := map[uint32]bool{}
 	for _, req := range h.PaymentStatementReqs {
-		if req.Amount.Cmp(h.payment.Amount) != 0 {
-			return wlog.Errorf("mismatch amount")
+		dbPayments, found := h.payments[*req.PaymentCoinTypeID]
+		if !found {
+			return wlog.Errorf("cointypeid mismatch")
 		}
 
-		if req.CommissionAmount.Cmp(h.payment.CommissionAmount) == 0 {
+		matchFound := false
+		var payment *ent.OrderPaymentStatement
+		for _, dbPayment := range dbPayments {
+			_, ok := dbPaymentsAlreadyProcessed[dbPayment.ID]
+			if ok {
+				continue
+			}
+			if dbPayment.Amount.Cmp(*req.Amount) == 0 {
+				payment = dbPayment
+				matchFound = true
+				break
+			}
+		}
+		if !matchFound {
+			return wlog.Errorf("amount mismatch")
+		}
+		if payment == nil {
+			return wlog.Errorf("invalid payment")
+		}
+
+		if req.CommissionAmount.Cmp(payment.CommissionAmount) == 0 {
 			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) == 0 && h.statement.CommissionConfigID == uuid.Nil {
 				if _, err := tx.
 					OrderStatement.
@@ -131,7 +154,7 @@ func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) 
 			return nil
 		}
 
-		if h.payment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
+		if payment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
 			return wlog.Errorf("permission denied")
 		}
 		if _, err := tx.
@@ -140,14 +163,12 @@ func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) 
 			SetCommissionAmountUsd(*h.CommissionAmountUSD).
 			SetAppConfigID(*h.AppConfigID).
 			SetCommissionConfigID(*h.CommissionConfigID).
-			SetCommissionConfigType(h.CommissionConfigType.String()).
 			Save(ctx); err != nil {
 			return wlog.WrapError(err)
 		}
-
 		if _, err := tx.
 			OrderPaymentStatement.
-			UpdateOneID(h.payment.ID).
+			UpdateOneID(payment.ID).
 			SetCommissionAmount(*req.CommissionAmount).
 			Save(ctx); err != nil {
 			return wlog.WrapError(err)
@@ -165,19 +186,24 @@ func (h *updateHandler) updatePaymentStatement(ctx context.Context, tx *ent.Tx) 
 	return nil
 }
 
-func (h *updateHandler) requireOrderPaymentStatement(ctx context.Context, tx *ent.Tx) error {
-	payment, err := tx.
+func (h *updateHandler) requireOrderPaymentStatements(ctx context.Context, tx *ent.Tx) error {
+	payments, err := tx.
 		OrderPaymentStatement.
 		Query().
 		Where(
 			entorderpaymentstatement.StatementID(h.statement.EntID),
 			entorderpaymentstatement.DeletedAt(0),
 		).
-		Only(ctx)
+		All(ctx)
 	if err != nil {
-		return err
+		return wlog.WrapError(err)
 	}
-	h.payment = payment
+	if len(payments) != len(h.PaymentStatementReqs) {
+		return wlog.Errorf("payment statements mismatch")
+	}
+	for _, payment := range payments {
+		h.payments[payment.PaymentCoinTypeID] = append(h.payments[payment.PaymentCoinTypeID], payment)
+	}
 	return nil
 }
 
@@ -189,6 +215,7 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 			entorderstatement.AppID(*h.AppID),
 			entorderstatement.UserID(*h.UserID),
 			entorderstatement.OrderID(*h.OrderID),
+			entorderstatement.OrderUserID(*h.OrderUserID),
 			entorderstatement.DeletedAt(0),
 		).
 		Only(ctx)
@@ -199,12 +226,31 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 	return nil
 }
 
+func (h *updateHandler) requireCommission(ctx context.Context, tx *ent.Tx) error {
+	if _, err := tx.
+		Commission.
+		Query().
+		Where(
+			entcommission.EntID(*h.CommissionConfigID),
+			entcommission.AppID(*h.AppID),
+			entcommission.UserID(*h.UserID),
+			entcommission.AppGoodID(*h.AppGoodID),
+			entcommission.EndAt(0),
+			entcommission.DeletedAt(0),
+		).
+		Only(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return nil
+}
+
 func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	if err := h.validateCommissionAmount(); err != nil {
 		return wlog.WrapError(err)
 	}
 
 	handler := &updateHandler{
+		payments: map[uuid.UUID][]*ent.OrderPaymentStatement{},
 		achievementQueryHandler: &achievementQueryHandler{
 			Handler: h,
 		},
@@ -217,13 +263,16 @@ func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		}(),
 	}
 
+	if err := handler.requireCommission(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.requireOrderStatement(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.requireOrderPaymentStatement(ctx, tx); err != nil {
+	if err := handler.requireOrderPaymentStatements(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
-	if err := handler.updatePaymentStatement(ctx, tx); err != nil {
+	if err := handler.updatePaymentStatements(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
 	return nil
