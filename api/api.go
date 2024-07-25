@@ -31,6 +31,8 @@ import (
 	taskuser "github.com/NpoolPlatform/inspire-middleware/api/task/user"
 	usercoinreward "github.com/NpoolPlatform/inspire-middleware/api/user/coin/reward"
 	userreward "github.com/NpoolPlatform/inspire-middleware/api/user/reward"
+	eventcoin "github.com/NpoolPlatform/inspire-middleware/api/event/coin"
+	eventcoupon "github.com/NpoolPlatform/inspire-middleware/api/event/coupon"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -68,6 +70,8 @@ func Register(server grpc.ServiceRegistrar) {
 	usercoinreward.Register(server)
 	creditallocated.Register(server)
 	userreward.Register(server)
+	eventcoin.Register(server)
+	eventcoupon.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -138,6 +142,12 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := userreward.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := eventcoin.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := eventcoupon.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
