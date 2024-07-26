@@ -79,8 +79,6 @@ func (h *Handler) UpdateEvent(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid event")
 	}
-	id := uuid.MustParse(info.EntID)
-	h.EntID = &id
 	appID := uuid.MustParse(info.AppID)
 	h.AppID = &appID
 

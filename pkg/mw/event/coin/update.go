@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/google/uuid"
 )
 
 type updateHandler struct {
@@ -34,7 +35,7 @@ func (h *updateHandler) constructSQL() error {
 	}
 	_sql += fmt.Sprintf("updated_at = %v ", now)
 	_sql += "where "
-	_sql += fmt.Sprintf("id = %v ", *h.ID)
+	_sql += fmt.Sprintf("id = %v and app_id = '%v' ", *h.ID, *h.AppID)
 	h.sql = _sql
 	return nil
 }
@@ -62,6 +63,8 @@ func (h *Handler) UpdateEventCoin(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid eventcoin")
 	}
+	appID := uuid.MustParse(info.AppID)
+	h.AppID = &appID
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
