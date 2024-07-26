@@ -25,14 +25,14 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/scope"
 	creditallocated "github.com/NpoolPlatform/inspire-middleware/api/credit/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
+	eventcoin "github.com/NpoolPlatform/inspire-middleware/api/event/coin"
+	eventcoupon "github.com/NpoolPlatform/inspire-middleware/api/event/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
 	taskconfig "github.com/NpoolPlatform/inspire-middleware/api/task/config"
 	taskuser "github.com/NpoolPlatform/inspire-middleware/api/task/user"
 	usercoinreward "github.com/NpoolPlatform/inspire-middleware/api/user/coin/reward"
 	userreward "github.com/NpoolPlatform/inspire-middleware/api/user/reward"
-	eventcoin "github.com/NpoolPlatform/inspire-middleware/api/event/coin"
-	eventcoupon "github.com/NpoolPlatform/inspire-middleware/api/event/coupon"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -74,6 +74,7 @@ func Register(server grpc.ServiceRegistrar) {
 	eventcoupon.Register(server)
 }
 
+//nolint:funlen
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
 	if err := npool.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err

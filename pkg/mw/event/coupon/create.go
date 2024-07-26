@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	timedef "github.com/NpoolPlatform/go-service-framework/pkg/const/time"
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	entcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 
 	"github.com/google/uuid"
 )
@@ -68,6 +70,25 @@ func (h *createHandler) createEventCoupon(ctx context.Context, tx *ent.Tx) error
 	return nil
 }
 
+func (h *createHandler) validateCoupons(ctx context.Context, tx *ent.Tx) error {
+	info, err := tx.
+		Coupon.
+		Query().
+		Where(
+			entcoupon.EntID(*h.CouponID),
+			entcoupon.DeletedAt(0),
+		).
+		Only(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	now := uint32(time.Now().Unix())
+	if info.StartAt+info.DurationDays*timedef.SecondsPerDay <= now {
+		return wlog.Errorf("coupon expired")
+	}
+	return nil
+}
+
 func (h *Handler) CreateEventCoupon(ctx context.Context) error {
 	handler := &createHandler{
 		Handler: h,
@@ -77,6 +98,9 @@ func (h *Handler) CreateEventCoupon(ctx context.Context) error {
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.validateCoupons(_ctx, tx); err != nil {
+			return err
+		}
 		return handler.createEventCoupon(_ctx, tx)
 	})
 }

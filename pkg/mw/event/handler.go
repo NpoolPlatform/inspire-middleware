@@ -85,21 +85,6 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_ids := []uuid.UUID{}
-		for _, id := range ids {
-			_id, err := uuid.Parse(id)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
-			_ids = append(_ids, _id)
-		}
-		h.CouponIDs = _ids
-		return nil
-	}
-}
-
 func WithCredits(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -311,41 +296,6 @@ func WithAmount(amount *string, must bool) func(context.Context, *Handler) error
 			return wlog.WrapError(err)
 		}
 		h.Amount = &_amount
-		return nil
-	}
-}
-
-func WithCoins(coins []*eventcoinmw.EventCoinReq) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		for _, coin := range coins {
-			_, err := uuid.Parse(*coin.CoinConfigID)
-			if err != nil {
-				return err
-			}
-			_, err = decimal.NewFromString(*coin.CoinValue)
-			if err != nil {
-				return err
-			}
-			_, err = decimal.NewFromString(*coin.CoinPreUSD)
-			if err != nil {
-				return err
-			}
-		}
-		h.Coins = coins
-		return nil
-	}
-}
-
-func WithRemoveCouponIDs(value *bool, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		h.RemoveCouponIDs = value
-		return nil
-	}
-}
-
-func WithRemoveCoins(value *bool, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		h.RemoveCoins = value
 		return nil
 	}
 }

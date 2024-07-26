@@ -27,14 +27,12 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 		event1.WithEntID(req.EntID, false),
 		event1.WithAppID(req.AppID, true),
 		event1.WithEventType(req.EventType, true),
-		event1.WithCouponIDs(req.CouponIDs, false),
 		event1.WithCredits(req.Credits, false),
 		event1.WithCreditsPerUSD(req.CreditsPerUSD, false),
 		event1.WithMaxConsecutive(req.MaxConsecutive, false),
 		event1.WithGoodID(req.GoodID, false),
 		event1.WithAppGoodID(req.AppGoodID, false),
 		event1.WithInviterLayers(req.InviterLayers, false),
-		event1.WithCoins(req.Coins),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -45,7 +43,7 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 		return &npool.CreateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.CreateEvent(ctx)
+	err = handler.CreateEvent(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateEvent",
@@ -56,6 +54,6 @@ func (s *Server) CreateEvent(ctx context.Context, in *npool.CreateEventRequest) 
 	}
 
 	return &npool.CreateEventResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

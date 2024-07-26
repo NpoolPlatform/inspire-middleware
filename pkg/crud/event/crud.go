@@ -17,7 +17,6 @@ type Req struct {
 	EntID          *uuid.UUID
 	AppID          *uuid.UUID
 	EventType      *basetypes.UsedFor
-	CouponIDs      []uuid.UUID
 	Credits        *decimal.Decimal
 	CreditsPerUSD  *decimal.Decimal
 	MaxConsecutive *uint32
@@ -39,9 +38,6 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 	}
 	if req.EventType != nil {
 		c.SetEventType(req.EventType.String())
-	}
-	if len(req.CouponIDs) > 0 {
-		c.SetCouponIds(req.CouponIDs)
 	}
 	if req.Credits != nil {
 		c.SetCredits(*req.Credits)
@@ -65,9 +61,6 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 }
 
 func UpdateSet(u *ent.EventUpdateOne, req *Req) *ent.EventUpdateOne {
-	if len(req.CouponIDs) > 0 {
-		u.SetCouponIds(req.CouponIDs)
-	}
 	if req.Credits != nil {
 		u.SetCredits(*req.Credits)
 	}

@@ -10,11 +10,14 @@ import (
 
 	coinconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coin/config"
 	coupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/coupon"
+	eventcoin1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coin"
+	eventcoupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coupon"
 	taskconfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/task/config"
 	coinconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/config"
 	couponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	eventcoinmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
+	eventcouponmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coupon"
 	taskconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/config"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -35,14 +38,15 @@ func init() {
 }
 
 var (
-	appID    = uuid.NewString()
-	userID   = uuid.NewString()
-	eventRet = npool.Event{
+	appID     = uuid.NewString()
+	userID    = uuid.NewString()
+	couponID1 = uuid.NewString()
+	eventRet  = npool.Event{
 		EntID:          uuid.NewString(),
 		AppID:          appID,
 		EventType:      basetypes.UsedFor_Signup,
 		EventTypeStr:   basetypes.UsedFor_Signup.String(),
-		CouponIDs:      []string{eventcoupon.EntID},
+		CouponIDs:      []string{couponID1},
 		Credits:        decimal.RequireFromString("100").String(),
 		CreditsPerUSD:  decimal.RequireFromString("12.25").String(),
 		MaxConsecutive: 1,
@@ -124,37 +128,29 @@ var (
 		Threshold:           decimal.NewFromInt(0).String(),
 		CashableProbability: decimal.RequireFromString("0.0001").String(),
 	}
+	eventCoupon = eventcouponmwpb.EventCoupon{
+		EntID:    uuid.NewString(),
+		AppID:    appID,
+		EventID:  eventRet.EntID,
+		CouponID: eventcoupon.EntID,
+	}
 	eventCoin = eventcoinmwpb.EventCoin{
 		EntID:        uuid.NewString(),
 		AppID:        appID,
 		EventID:      eventRet.EntID,
 		CoinConfigID: coinConfig.EntID,
+		CoinTypeID:   coinConfig.CoinTypeID,
 		CoinValue:    decimal.RequireFromString("5").String(),
 		CoinPreUSD:   decimal.RequireFromString("0.1").String(),
-	}
-	eventCoinReq = eventcoinmwpb.EventCoinReq{
-		EntID:        &eventCoin.EntID,
-		AppID:        &eventCoin.AppID,
-		EventID:      &eventCoin.EventID,
-		CoinConfigID: &eventCoin.CoinConfigID,
-		CoinValue:    &eventCoin.CoinValue,
-		CoinPreUSD:   &eventCoin.CoinPreUSD,
 	}
 	eventCoin2 = eventcoinmwpb.EventCoin{
 		EntID:        uuid.NewString(),
 		AppID:        appID,
 		EventID:      eventRet.EntID,
 		CoinConfigID: coinConfig2.EntID,
+		CoinTypeID:   coinConfig2.CoinTypeID,
 		CoinValue:    decimal.RequireFromString("10").String(),
 		CoinPreUSD:   decimal.RequireFromString("0.15").String(),
-	}
-	eventCoinReq2 = eventcoinmwpb.EventCoinReq{
-		EntID:        &eventCoin2.EntID,
-		AppID:        &eventCoin2.AppID,
-		EventID:      &eventCoin2.EventID,
-		CoinConfigID: &eventCoin2.CoinConfigID,
-		CoinValue:    &eventCoin2.CoinValue,
-		CoinPreUSD:   &eventCoin2.CoinPreUSD,
 	}
 )
 
@@ -260,30 +256,33 @@ func resetup(t *testing.T) func(*testing.T) {
 		}
 	}
 
-	coins := []*eventcoinmwpb.EventCoinReq{&eventCoinReq, &eventCoinReq2}
 	handler, err := NewHandler(
 		context.Background(),
 		WithEntID(&eventRet.EntID, true),
 		WithAppID(&eventRet.AppID, true),
 		WithEventType(&eventRet.EventType, true),
-		WithCouponIDs(eventRet.CouponIDs, true),
 		WithCredits(&eventRet.Credits, true),
 		WithCreditsPerUSD(&eventRet.CreditsPerUSD, true),
 		WithMaxConsecutive(&eventRet.MaxConsecutive, true),
 		WithInviterLayers(&eventRet.InviterLayers, true),
-		WithCoins(coins),
 	)
 	assert.Nil(t, err)
 
-	info2, err := handler.CreateEvent(context.Background())
+	err = handler.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
-		eventRet.ID = info2.ID
-		eventRet.CreatedAt = info2.CreatedAt
-		eventRet.UpdatedAt = info2.UpdatedAt
-		eventRet.CouponIDsStr = info2.CouponIDsStr
-		eventRet.Coins = info2.Coins
-		assert.Equal(t, info2, &eventRet)
-		handler.ID = &info2.ID
+		info2, err := handler.GetEvent(context.Background())
+		if assert.Nil(t, err) {
+			eventRet.ID = info2.ID
+			eventRet.CreatedAt = info2.CreatedAt
+			eventRet.UpdatedAt = info2.UpdatedAt
+			eventRet.CouponIDs = info2.CouponIDs
+			eventRet.CouponIDsStr = info2.CouponIDsStr
+			eventRet.Coins = info2.Coins
+			eventRet.GoodID = info2.GoodID
+			eventRet.AppGoodID = info2.AppGoodID
+			assert.Equal(t, info2, &eventRet)
+			handler.ID = &info2.ID
+		}
 	}
 
 	h5, err := taskconfig1.NewHandler(
@@ -315,29 +314,100 @@ func resetup(t *testing.T) func(*testing.T) {
 		}
 	}
 
+	h6, err := eventcoin1.NewHandler(
+		context.Background(),
+		eventcoin1.WithEntID(&eventCoin.EntID, true),
+		eventcoin1.WithAppID(&eventCoin.AppID, true),
+		eventcoin1.WithEventID(&eventCoin.EventID, true),
+		eventcoin1.WithCoinConfigID(&eventCoin.CoinConfigID, true),
+		eventcoin1.WithCoinValue(&eventCoin.CoinValue, true),
+		eventcoin1.WithCoinPreUSD(&eventCoin.CoinPreUSD, true),
+	)
+	assert.Nil(t, err)
+
+	err = h6.CreateEventCoin(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h6.GetEventCoin(context.Background())
+		if assert.Nil(t, err) {
+			eventCoin.ID = info.ID
+			eventCoin.CreatedAt = info.CreatedAt
+			eventCoin.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &eventCoin, info)
+			h6.ID = &info.ID
+		}
+	}
+
+	h7, err := eventcoin1.NewHandler(
+		context.Background(),
+		eventcoin1.WithEntID(&eventCoin2.EntID, true),
+		eventcoin1.WithAppID(&eventCoin2.AppID, true),
+		eventcoin1.WithEventID(&eventCoin2.EventID, true),
+		eventcoin1.WithCoinConfigID(&eventCoin2.CoinConfigID, true),
+		eventcoin1.WithCoinValue(&eventCoin2.CoinValue, true),
+		eventcoin1.WithCoinPreUSD(&eventCoin2.CoinPreUSD, true),
+	)
+	assert.Nil(t, err)
+
+	err = h7.CreateEventCoin(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h7.GetEventCoin(context.Background())
+		if assert.Nil(t, err) {
+			eventCoin2.ID = info.ID
+			eventCoin2.CreatedAt = info.CreatedAt
+			eventCoin2.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &eventCoin2, info)
+			h7.ID = &info.ID
+		}
+	}
+
+	h8, err := eventcoupon1.NewHandler(
+		context.Background(),
+		eventcoupon1.WithEntID(&eventCoupon.EntID, true),
+		eventcoupon1.WithAppID(&eventCoupon.AppID, true),
+		eventcoupon1.WithEventID(&eventCoupon.EventID, true),
+		eventcoupon1.WithCouponID(&eventCoupon.CouponID, true),
+	)
+	assert.Nil(t, err)
+
+	err = h8.CreateEventCoupon(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h8.GetEventCoupon(context.Background())
+		if assert.Nil(t, err) {
+			eventCoupon.ID = info.ID
+			eventCoupon.CreatedAt = info.CreatedAt
+			eventCoupon.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &eventCoupon, info)
+			h8.ID = &info.ID
+		}
+	}
+
 	handler2, err := NewHandler(
 		context.Background(),
 		WithEntID(&eventRet2.EntID, true),
 		WithAppID(&eventRet2.AppID, true),
 		WithEventType(&eventRet2.EventType, true),
-		WithCouponIDs(eventRet2.CouponIDs, true),
 		WithCredits(&eventRet2.Credits, true),
 		WithCreditsPerUSD(&eventRet2.CreditsPerUSD, true),
 		WithMaxConsecutive(&eventRet2.MaxConsecutive, true),
 		WithInviterLayers(&eventRet2.InviterLayers, true),
-		WithCoins(coins),
 	)
 	assert.Nil(t, err)
 
-	info3, err := handler2.CreateEvent(context.Background())
+	err = handler2.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
-		eventRet2.ID = info3.ID
-		eventRet2.CreatedAt = info3.CreatedAt
-		eventRet2.UpdatedAt = info3.UpdatedAt
-		eventRet2.CouponIDsStr = info3.CouponIDsStr
-		eventRet2.Coins = info3.Coins
-		assert.Equal(t, info3, &eventRet2)
-		handler2.ID = &info3.ID
+		info3, err := handler2.GetEvent(context.Background())
+		if assert.Nil(t, err) {
+			eventRet2.ID = info3.ID
+			eventRet2.CreatedAt = info3.CreatedAt
+			eventRet2.UpdatedAt = info3.UpdatedAt
+			eventRet2.CouponIDs = info3.CouponIDs
+			eventRet2.CouponIDsStr = info3.CouponIDsStr
+			eventRet2.Coins = info3.Coins
+			eventRet2.GoodID = info3.GoodID
+			eventRet2.AppGoodID = info3.AppGoodID
+			assert.Equal(t, info3, &eventRet2)
+			handler2.ID = &info3.ID
+		}
 	}
 
 	return func(*testing.T) {
