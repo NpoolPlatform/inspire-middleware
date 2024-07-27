@@ -1,3 +1,4 @@
+//nolint:funlen,dupl
 package calculate
 
 import (
