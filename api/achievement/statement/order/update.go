@@ -1,4 +1,3 @@
-//nolint:dupl
 package orderstatement
 
 import (
@@ -26,6 +25,7 @@ func (s *Server) UpdateStatements(ctx context.Context, in *npool.UpdateStatement
 	for _, req := range reqs {
 		handler, err := orderstatement1.NewHandler(
 			ctx,
+			orderstatement1.WithID(req.ID, false),
 			orderstatement1.WithEntID(req.EntID, false),
 			orderstatement1.WithAppID(req.AppID, true),
 			orderstatement1.WithUserID(req.UserID, true),

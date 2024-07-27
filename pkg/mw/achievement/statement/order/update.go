@@ -208,7 +208,10 @@ func (h *updateHandler) requireOrderPaymentStatements(ctx context.Context, tx *e
 }
 
 func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) error {
-	statement, err := tx.
+	if h.ID == nil && h.EntID == nil {
+		return wlog.Errorf("invaild id or entid")
+	}
+	stm := tx.
 		OrderStatement.
 		Query().
 		Where(
@@ -217,8 +220,15 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 			entorderstatement.OrderID(*h.OrderID),
 			entorderstatement.OrderUserID(*h.OrderUserID),
 			entorderstatement.DeletedAt(0),
-		).
-		Only(ctx)
+		)
+	if h.ID != nil {
+		stm.Where(entorderstatement.ID(*h.ID))
+	}
+	if h.EntID != nil {
+		stm.Where(entorderstatement.EntID(*h.EntID))
+	}
+
+	statement, err := stm.Only(ctx)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
