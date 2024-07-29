@@ -2,16 +2,20 @@ package orderstatement
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
-	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
 	entcommission "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
-	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
-	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
 	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
+	goodachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good"
+	goodcoinachievement1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/good/coin"
+	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user/common"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -19,94 +23,124 @@ import (
 
 type updateHandler struct {
 	*achievementQueryHandler
-	selfOrder               bool
-	selfCommissionAmountUSD decimal.Decimal
-	statement               *ent.OrderStatement
-	payments                map[uuid.UUID]*ent.OrderPaymentStatement
+	selfOrder                    bool
+	selfCommissionAmountUSD      decimal.Decimal
+	statement                    *ent.OrderStatement
+	payments                     map[uuid.UUID]*ent.OrderPaymentStatement
+	sql                          string
+	sqlUpdateGoodAchievement     string
+	sqlUpdateGoodCoinAchievement string
+	sqlUpdateAchievementUser     string
 }
 
-func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
-	goodCoinAchievement, err := tx.
-		GoodCoinAchievement.
-		Query().
-		Where(
-			entgoodcoinachievement.AppID(*h.AppID),
-			entgoodcoinachievement.UserID(*h.UserID),
-			entgoodcoinachievement.GoodCoinTypeID(*h.GoodCoinTypeID),
-			entgoodcoinachievement.DeletedAt(0),
-		).
-		Only(ctx)
+func (h *updateHandler) constructUpdateSQL() {
+	commissionAmountUSD := decimal.NewFromInt(0)
+	if h.CommissionAmountUSD != nil {
+		commissionAmountUSD = *h.CommissionAmountUSD
+	}
+	now := time.Now().Unix()
+	sql := fmt.Sprintf(
+		`update %v set updated_at = %v, commission_amount_usd = commission_amount_usd + %v`,
+		entorderstatement.Table,
+		now,
+		commissionAmountUSD,
+	)
+	if h.AppConfigID != nil {
+		sql += fmt.Sprintf(
+			`, app_config_id = '%v'`,
+			*h.AppConfigID,
+		)
+	}
+	if h.CommissionConfigID != nil {
+		sql += fmt.Sprintf(
+			`, commission_config_id = '%v'`,
+			*h.CommissionConfigID,
+		)
+	}
+	sql += fmt.Sprintf(
+		" where id = %v and deleted_at = 0 ",
+		h.statement.ID,
+	)
+	h.sql = sql
+}
+
+func (h *updateHandler) updateOrderStatement(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sql)
+}
+
+func (h *updateHandler) execSQL(ctx context.Context, tx *ent.Tx, sql string) error {
+	rc, err := tx.ExecContext(ctx, sql)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
+	n, err := rc.RowsAffected()
+	if err != nil || n > 1 {
+		return wlog.Errorf("fail update: %v", err)
+	}
+	if n == 0 {
+		return wlog.WrapError(cruder.ErrCreateNothing)
+	}
+	return nil
+}
 
-	totalCommissionUsd := goodCoinAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
-	selfCommissionUsd := goodCoinAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
-	if _, err := tx.
-		GoodCoinAchievement.
-		UpdateOne(goodCoinAchievement).
-		SetTotalCommissionUsd(totalCommissionUsd).
-		SetSelfCommissionUsd(selfCommissionUsd).
-		Save(ctx); err != nil {
+func (h *updateHandler) constructUpdateGoodAchievementSQL(ctx context.Context) error {
+	handler, err := goodachievement1.NewHandler(
+		ctx,
+		goodachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		goodachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		goodachievement1.WithGoodID(func() *string { s := h.GoodID.String(); return &s }(), true),
+		goodachievement1.WithAppGoodID(func() *string { s := h.AppGoodID.String(); return &s }(), true),
+		goodachievement1.WithTotalCommissionUSD(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		goodachievement1.WithSelfCommissionUSD(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
+	)
+	if err != nil {
 		return wlog.WrapError(err)
 	}
+	h.sqlUpdateGoodAchievement = handler.ConstructUpdateSQL()
 	return nil
 }
 
 func (h *updateHandler) updateGoodAchievement(ctx context.Context, tx *ent.Tx) error {
-	goodAchievement, err := tx.
-		GoodAchievement.
-		Query().
-		Where(
-			entgoodachievement.AppID(*h.AppID),
-			entgoodachievement.UserID(*h.UserID),
-			entgoodachievement.GoodID(*h.GoodID),
-			entgoodachievement.AppGoodID(*h.AppGoodID),
-			entgoodachievement.DeletedAt(0),
-		).
-		Only(ctx)
+	return h.execSQL(ctx, tx, h.sqlUpdateGoodAchievement)
+}
+
+func (h *updateHandler) constructUpdateGoodCoinAchievementSQL(ctx context.Context) error {
+	handler, err := goodcoinachievement1.NewHandler(
+		ctx,
+		goodcoinachievement1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		goodcoinachievement1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		goodcoinachievement1.WithGoodCoinTypeID(func() *string { s := h.GoodCoinTypeID.String(); return &s }(), true),
+		goodcoinachievement1.WithTotalCommissionUSD(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		goodcoinachievement1.WithSelfCommissionUSD(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
+	)
 	if err != nil {
 		return wlog.WrapError(err)
 	}
+	h.sqlUpdateGoodCoinAchievement = handler.ConstructUpdateSQL()
+	return nil
+}
 
-	totalCommissionUsd := goodAchievement.TotalCommissionUsd.Add(*h.CommissionAmountUSD)
-	selfCommissionUsd := goodAchievement.SelfCommissionUsd.Add(h.selfCommissionAmountUSD)
-	if _, err := tx.
-		GoodAchievement.
-		UpdateOne(goodAchievement).
-		SetTotalCommissionUsd(totalCommissionUsd).
-		SetSelfCommissionUsd(selfCommissionUsd).
-		Save(ctx); err != nil {
+func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
+	return h.execSQL(ctx, tx, h.sqlUpdateGoodCoinAchievement)
+}
+
+func (h *updateHandler) constructUpdateAchievementUserSQL(ctx context.Context) error {
+	handler, err := achievementuser1.NewHandler(
+		ctx,
+		achievementuser1.WithAppID(func() *string { s := h.AppID.String(); return &s }(), true),
+		achievementuser1.WithUserID(func() *string { s := h.UserID.String(); return &s }(), true),
+		achievementuser1.WithTotalCommission(func() *string { s := h.CommissionAmountUSD.String(); return &s }(), true),
+		achievementuser1.WithSelfCommission(func() *string { s := h.selfCommissionAmountUSD.String(); return &s }(), true),
+	)
+	if err != nil {
 		return wlog.WrapError(err)
 	}
+	h.sqlUpdateAchievementUser = handler.ConstructUpdateSQL()
 	return nil
 }
 
 func (h *updateHandler) updateAchievementUser(ctx context.Context, tx *ent.Tx) error {
-	achievementUser, err := tx.
-		AchievementUser.
-		Query().
-		Where(
-			entachievementuser.AppID(*h.AppID),
-			entachievementuser.UserID(*h.UserID),
-			entachievementuser.DeletedAt(0),
-		).
-		Only(ctx)
-	if err != nil {
-		return wlog.WrapError(err)
-	}
-
-	totalCommission := achievementUser.TotalCommission.Add(*h.CommissionAmountUSD)
-	selfCommission := achievementUser.SelfCommission.Add(h.selfCommissionAmountUSD)
-	if _, err := tx.
-		AchievementUser.
-		UpdateOne(achievementUser).
-		SetTotalCommission(totalCommission).
-		SetSelfCommission(selfCommission).
-		Save(ctx); err != nil {
-		return wlog.WrapError(err)
-	}
-	return nil
+	return h.execSQL(ctx, tx, h.sqlUpdateAchievementUser)
 }
 
 func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx) error {
@@ -125,31 +159,8 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 		if dbPayment.PaymentCoinTypeID != *req.PaymentCoinTypeID {
 			return wlog.Errorf("invalid payment cointypeid")
 		}
-
-		if req.CommissionAmount.Cmp(dbPayment.CommissionAmount) == 0 {
-			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) == 0 && h.statement.CommissionConfigID == uuid.Nil {
-				if _, err := tx.
-					OrderStatement.
-					UpdateOneID(h.statement.ID).
-					SetCommissionConfigID(*h.CommissionConfigID).
-					Save(ctx); err != nil {
-					return wlog.WrapError(err)
-				}
-			}
-			return nil
-		}
-
 		if dbPayment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
 			return wlog.Errorf("permission denied")
-		}
-		if _, err := tx.
-			OrderStatement.
-			UpdateOneID(h.statement.ID).
-			SetCommissionAmountUsd(*h.CommissionAmountUSD).
-			SetAppConfigID(*h.AppConfigID).
-			SetCommissionConfigID(*h.CommissionConfigID).
-			Save(ctx); err != nil {
-			return wlog.WrapError(err)
 		}
 		if _, err := tx.
 			OrderPaymentStatement.
@@ -160,6 +171,9 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 		}
 	}
 	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+		if err := h.updateOrderStatement(ctx, tx); err != nil {
+			return wlog.WrapError(err)
+		}
 		if err := h.updateGoodAchievement(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -214,6 +228,7 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 			entorderstatement.UserID(*h.UserID),
 			entorderstatement.OrderID(*h.OrderID),
 			entorderstatement.OrderUserID(*h.OrderUserID),
+			entorderstatement.GoodCoinTypeID(*h.GoodCoinTypeID),
 			entorderstatement.CommissionConfigType(types.CommissionConfigType_LegacyCommissionConfig.String()),
 			entorderstatement.DeletedAt(0),
 		)
@@ -276,6 +291,16 @@ func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		return wlog.WrapError(err)
 	}
 	if err := handler.requireOrderPaymentStatements(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
+	handler.constructUpdateSQL()
+	if err := handler.constructUpdateGoodAchievementSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructUpdateGoodCoinAchievementSQL(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.constructUpdateAchievementUserSQL(ctx); err != nil {
 		return wlog.WrapError(err)
 	}
 	if err := handler.updatePaymentStatements(ctx, tx); err != nil {

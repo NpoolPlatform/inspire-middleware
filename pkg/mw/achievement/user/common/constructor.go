@@ -5,6 +5,7 @@ import (
 	"time"
 
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
+	"github.com/shopspring/decimal"
 )
 
 //nolint:goconst
@@ -58,24 +59,35 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() string {
+	totalCommission := decimal.NewFromInt(0)
+	if h.TotalCommission != nil {
+		totalCommission = *h.TotalCommission
+	}
+	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set total_commission = total_commission + %v`,
+		`update %v set updated_at = %v, total_commission = total_commission + %v`,
 		entachievementuser.Table,
-		*h.TotalCommission,
+		now,
+		totalCommission,
 	)
-	sql += fmt.Sprintf(
-		`, self_commission = self_commission + %v`,
-		*h.SelfCommission,
-	)
-	sql += fmt.Sprintf(
-		`, direct_consume_amount = direct_consume_amount + %v`,
-		*h.DirectConsumeAmount,
-	)
-	sql += fmt.Sprintf(
-		`, invitee_consume_amount = invitee_consume_amount + %v`,
-		h.InviteeConsumeAmount,
-	)
-
+	if h.SelfCommission != nil {
+		sql += fmt.Sprintf(
+			`, self_commission = self_commission + %v`,
+			*h.SelfCommission,
+		)
+	}
+	if h.DirectConsumeAmount != nil {
+		sql += fmt.Sprintf(
+			`, direct_consume_amount = direct_consume_amount + %v`,
+			*h.DirectConsumeAmount,
+		)
+	}
+	if h.InviteeConsumeAmount != nil {
+		sql += fmt.Sprintf(
+			`, invitee_consume_amount = invitee_consume_amount + %v`,
+			h.InviteeConsumeAmount,
+		)
+	}
 	sql += fmt.Sprintf(
 		" where app_id = '%v' and user_id = '%v' and deleted_at = 0 ",
 		h.AppID.String(),

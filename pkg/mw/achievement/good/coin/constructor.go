@@ -5,6 +5,7 @@ import (
 	"time"
 
 	entgoodcoinachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
+	"github.com/shopspring/decimal"
 )
 
 //nolint:goconst
@@ -65,31 +66,47 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() string {
+	totalUnits := decimal.NewFromInt(0)
+	if h.TotalUnits != nil {
+		totalUnits = *h.TotalUnits
+	}
+	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set total_units = total_units + %v`,
+		`update %v set updated_at = %v, total_units = total_units + %v`,
 		entgoodcoinachievement.Table,
-		*h.TotalUnits,
+		now,
+		totalUnits,
 	)
-	sql += fmt.Sprintf(
-		`, self_units = self_units + %v`,
-		*h.SelfUnits,
-	)
-	sql += fmt.Sprintf(
-		`, total_amount_usd = total_amount_usd + %v`,
-		*h.TotalAmountUSD,
-	)
-	sql += fmt.Sprintf(
-		`, self_amount_usd = self_amount_usd + %v`,
-		*h.SelfAmountUSD,
-	)
-	sql += fmt.Sprintf(
-		`, total_commission_usd = total_commission_usd + %v`,
-		*h.TotalCommissionUSD,
-	)
-	sql += fmt.Sprintf(
-		`, self_commission_usd = self_commission_usd + %v`,
-		h.SelfCommissionUSD,
-	)
+	if h.SelfUnits != nil {
+		sql += fmt.Sprintf(
+			`, self_units = self_units + %v`,
+			*h.SelfUnits,
+		)
+	}
+	if h.TotalAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, total_amount_usd = total_amount_usd + %v`,
+			*h.TotalAmountUSD,
+		)
+	}
+	if h.SelfAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, self_amount_usd = self_amount_usd + %v`,
+			*h.SelfAmountUSD,
+		)
+	}
+	if h.TotalCommissionUSD != nil {
+		sql += fmt.Sprintf(
+			`, total_commission_usd = total_commission_usd + %v`,
+			*h.TotalCommissionUSD,
+		)
+	}
+	if h.SelfCommissionUSD != nil {
+		sql += fmt.Sprintf(
+			`, self_commission_usd = self_commission_usd + %v`,
+			h.SelfCommissionUSD,
+		)
+	}
 	sql += fmt.Sprintf(
 		" where app_id = '%v' and user_id = '%v' and good_coin_type_id = '%v' and deleted_at = 0 ",
 		h.AppID.String(),
