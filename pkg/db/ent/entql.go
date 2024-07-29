@@ -410,7 +410,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldEntID:          {Type: field.TypeUUID, Column: event.FieldEntID},
 			event.FieldAppID:          {Type: field.TypeUUID, Column: event.FieldAppID},
 			event.FieldEventType:      {Type: field.TypeString, Column: event.FieldEventType},
-			event.FieldCouponIds:      {Type: field.TypeJSON, Column: event.FieldCouponIds},
 			event.FieldCredits:        {Type: field.TypeOther, Column: event.FieldCredits},
 			event.FieldCreditsPerUsd:  {Type: field.TypeOther, Column: event.FieldCreditsPerUsd},
 			event.FieldMaxConsecutive: {Type: field.TypeUint32, Column: event.FieldMaxConsecutive},
@@ -2241,11 +2240,6 @@ func (f *EventFilter) WhereAppID(p entql.ValueP) {
 // WhereEventType applies the entql string predicate on the event_type field.
 func (f *EventFilter) WhereEventType(p entql.StringP) {
 	f.Where(p.Field(event.FieldEventType))
-}
-
-// WhereCouponIds applies the entql json.RawMessage predicate on the coupon_ids field.
-func (f *EventFilter) WhereCouponIds(p entql.BytesP) {
-	f.Where(p.Field(event.FieldCouponIds))
 }
 
 // WhereCredits applies the entql other predicate on the credits field.

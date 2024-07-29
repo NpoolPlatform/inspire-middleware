@@ -611,20 +611,6 @@ func EventTypeContainsFold(v string) predicate.Event {
 	})
 }
 
-// CouponIdsIsNil applies the IsNil predicate on the "coupon_ids" field.
-func CouponIdsIsNil() predicate.Event {
-	return predicate.Event(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCouponIds)))
-	})
-}
-
-// CouponIdsNotNil applies the NotNil predicate on the "coupon_ids" field.
-func CouponIdsNotNil() predicate.Event {
-	return predicate.Event(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCouponIds)))
-	})
-}
-
 // CreditsEQ applies the EQ predicate on the "credits" field.
 func CreditsEQ(v decimal.Decimal) predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
