@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	"github.com/shopspring/decimal"
 
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
@@ -313,12 +314,13 @@ func (h *reconcileCalculateHandler) formalizeStatements() {
 				return &s
 			}(),
 		}
+
+		amount := decimal.NewFromInt(0)
 		for _, dbPayment := range dbPayments {
 			key := fmt.Sprintf("%v-%v-%v", dbPayment.PaymentCoinTypeID, statement.UserID, dbPayment.Amount)
 			comm, ok := _commissions[key]
 			if !ok {
 				if statement.UserID == h.UserID { // if current user no commission
-					req.CommissionAmountUSD = func() *string { amount := "0"; return &amount }()
 					req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
 						EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
 						Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
@@ -328,7 +330,8 @@ func (h *reconcileCalculateHandler) formalizeStatements() {
 				}
 				continue
 			}
-			req.CommissionAmountUSD = &comm.CommissionAmountUSD
+			amount = amount.Add(decimal.RequireFromString(comm.CommissionAmountUSD))
+			req.CommissionConfigID = &comm.CommissionConfigID
 			req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
 				EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
 				Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
@@ -336,6 +339,7 @@ func (h *reconcileCalculateHandler) formalizeStatements() {
 				PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
 			})
 		}
+		req.CommissionAmountUSD = func() *string { amount := amount.String(); return &amount }()
 		h.infos = append(h.infos, &req)
 	}
 }

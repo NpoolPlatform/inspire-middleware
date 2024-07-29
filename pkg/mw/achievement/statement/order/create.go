@@ -153,7 +153,6 @@ func (h *createHandler) constructSQL() {
 		_sql += "limit 1)"
 	}
 
-	fmt.Println("sql: ", _sql)
 	h.sql = _sql
 }
 

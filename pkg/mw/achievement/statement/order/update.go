@@ -158,6 +158,8 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 			Save(ctx); err != nil {
 			return wlog.WrapError(err)
 		}
+	}
+	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 		if err := h.updateGoodAchievement(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
