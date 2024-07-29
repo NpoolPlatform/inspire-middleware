@@ -18,7 +18,7 @@ import (
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
-	"github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
+	orderpaymentmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
 	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
 	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
@@ -39,7 +39,7 @@ type reconcileCalculateHandler struct {
 	statements         []*ent.OrderStatement
 	payments           map[uuid.UUID][]*ent.OrderPaymentStatement
 	orderUserStatement *ent.OrderStatement
-	commissions        map[uuid.UUID][]*commission2.Commission
+	commissions        map[string]*commission2.Commission
 	achievementUsers   map[string]*achievementusermwpb.AchievementUser
 	infos              []*statementmwpb.StatementReq
 }
@@ -90,12 +90,11 @@ func (h *reconcileCalculateHandler) GetCommissions(ctx context.Context) error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		commissions, ok := h.commissions[payment.PaymentCoinTypeID]
-		if !ok {
-			commissions = []*commission2.Commission{}
+
+		for _, comm := range _comms {
+			key := fmt.Sprintf("%v-%v-%v", comm.UserID, payment.PaymentCoinTypeID, payment.Amount)
+			h.commissions[key] = comm
 		}
-		commissions = append(commissions, _comms...)
-		h.commissions[payment.PaymentCoinTypeID] = commissions
 	}
 	return nil
 }
@@ -257,7 +256,7 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 		inviterIDs:       []string{},
 		statements:       []*ent.OrderStatement{},
 		payments:         map[uuid.UUID][]*ent.OrderPaymentStatement{},
-		commissions:      map[uuid.UUID][]*commission2.Commission{},
+		commissions:      map[string]*commission2.Commission{},
 		achievementUsers: map[string]*achievementusermwpb.AchievementUser{},
 		infos:            []*statementmwpb.StatementReq{},
 	}
@@ -282,14 +281,6 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 }
 
 func (h *reconcileCalculateHandler) formalizeStatements() {
-	_commissions := map[string]*commission2.Commission{}
-	for key, comms := range h.commissions {
-		for _, comm := range comms {
-			key := fmt.Sprintf("%v-%v-%v", key, comm.UserID, comm.PaymentAmount) // cointypeid-userid-paymentamount
-			_commissions[key] = comm
-		}
-	}
-
 	for _, statement := range h.statements {
 		dbPayments, ok := h.payments[statement.EntID]
 		if !ok {
@@ -317,27 +308,24 @@ func (h *reconcileCalculateHandler) formalizeStatements() {
 
 		amount := decimal.NewFromInt(0)
 		for _, dbPayment := range dbPayments {
-			key := fmt.Sprintf("%v-%v-%v", dbPayment.PaymentCoinTypeID, statement.UserID, dbPayment.Amount)
-			comm, ok := _commissions[key]
-			if !ok {
-				if statement.UserID == h.UserID { // if current user no commission
-					req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
-						EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
-						Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
-						CommissionAmount:  func() *string { amount := "0"; return &amount }(),
-						PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
-					})
-				}
-				continue
-			}
-			amount = amount.Add(decimal.RequireFromString(comm.CommissionAmountUSD))
-			req.CommissionConfigID = &comm.CommissionConfigID
-			req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
+			payment := &orderpaymentmwpb.StatementReq{
 				EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
 				Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
-				CommissionAmount:  &comm.Amount,
+				CommissionAmount:  func() *string { amount := "0"; return &amount }(),
 				PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
-			})
+			}
+
+			key := fmt.Sprintf("%v-%v-%v", statement.UserID, dbPayment.PaymentCoinTypeID, dbPayment.Amount)
+			comm, ok := h.commissions[key]
+			if !ok {
+				continue
+			}
+
+			payment.CommissionAmount = &comm.Amount
+			req.PaymentStatements = append(req.PaymentStatements, payment)
+
+			req.CommissionConfigID = &comm.CommissionConfigID
+			amount = amount.Add(decimal.RequireFromString(comm.CommissionAmountUSD))
 		}
 		req.CommissionAmountUSD = func() *string { amount := amount.String(); return &amount }()
 		h.infos = append(h.infos, &req)
