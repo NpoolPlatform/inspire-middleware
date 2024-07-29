@@ -265,11 +265,23 @@ func (h *updateHandler) requireCommission(ctx context.Context, tx *ent.Tx) error
 	return nil
 }
 
-func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.validateCommissionAmount(); err != nil {
-		return wlog.WrapError(err)
+func (h *updateHandler) validateCommissionAmount() error {
+	for _, req := range h.PaymentStatementReqs {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) <= 0 {
+			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) > 0 {
+				return wlog.Errorf("invalid commission amount")
+			}
+		}
 	}
+	if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+			return wlog.Errorf("commission amount usd mismatch commission config type")
+		}
+	}
+	return nil
+}
 
+func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	handler := &updateHandler{
 		payments: map[uuid.UUID]*ent.OrderPaymentStatement{},
 		achievementQueryHandler: &achievementQueryHandler{
@@ -283,7 +295,9 @@ func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 			return decimal.NewFromInt(0)
 		}(),
 	}
-
+	if err := handler.validateCommissionAmount(); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.requireCommission(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
