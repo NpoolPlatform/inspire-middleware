@@ -92,7 +92,11 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as payment_amount_usd", comma, *h.PaymentAmountUSD)
 	_sql += fmt.Sprintf("%v'%v' as commission_amount_usd", comma, *h.CommissionAmountUSD)
 	_sql += fmt.Sprintf("%v'%v' as app_config_id", comma, *h.AppConfigID)
-	_sql += fmt.Sprintf("%v'%v' as commission_config_id", comma, *h.CommissionConfigID)
+	commissionConfigID := uuid.Nil
+	if h.CommissionConfigID != nil {
+		commissionConfigID = *h.CommissionConfigID
+	}
+	_sql += fmt.Sprintf("%v'%v' as commission_config_id", comma, commissionConfigID)
 	_sql += fmt.Sprintf("%v'%v' as commission_config_type", comma, h.CommissionConfigType.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
