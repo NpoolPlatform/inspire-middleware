@@ -80,6 +80,11 @@ func (CouponAllocated) Fields() []ent.Field {
 			Bool("cashable").
 			Optional().
 			Default(false),
+		field.
+			String("extra").
+			Optional().
+			Default("").
+			MaxLen(512), //nolint
 	}
 }
 

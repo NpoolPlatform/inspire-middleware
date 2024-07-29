@@ -22,6 +22,7 @@ type rewardHandler struct {
 	*Handler
 }
 
+//nolint:dupl
 func (h *rewardHandler) condGood() error {
 	switch *h.EventType {
 	case basetypes.UsedFor_Purchase:

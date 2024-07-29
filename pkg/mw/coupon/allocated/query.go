@@ -78,6 +78,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entcouponallocated.FieldDenomination), "denomination"),
 			sql.As(t.C(entcouponallocated.FieldCouponScope), "coupon_scope"),
 			sql.As(t.C(entcouponallocated.FieldCashable), "cashable"),
+			sql.As(t.C(entcouponallocated.FieldExtra), "extra"),
 		)
 }
 

@@ -25,6 +25,7 @@ type Req struct {
 	StartAt       *uint32
 	CouponScope   *inspiretypes.CouponScope
 	Cashable      *bool
+	Extra         *string
 	DeletedAt     *uint32
 }
 
@@ -56,6 +57,9 @@ func CreateSet(c *ent.CouponAllocatedCreate, req *Req) *ent.CouponAllocatedCreat
 	if req.Cashable != nil {
 		c.SetCashable(*req.Cashable)
 	}
+	if req.Extra != nil {
+		c.SetExtra(*req.Extra)
+	}
 	c.SetUsed(false)
 	c.SetUsedAt(0)
 	return c
@@ -84,6 +88,7 @@ type Conds struct {
 	Used           *cruder.Cond
 	UsedByOrderID  *cruder.Cond
 	UsedByOrderIDs *cruder.Cond
+	Extra          *cruder.Cond
 }
 
 func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAllocatedQuery, error) { //nolint
@@ -195,6 +200,18 @@ func SetQueryConds(q *ent.CouponAllocatedQuery, conds *Conds) (*ent.CouponAlloca
 		switch conds.UsedByOrderIDs.Op {
 		case cruder.IN:
 			q.Where(entcouponallocated.UsedByOrderIDIn(ids...))
+		default:
+			return nil, wlog.Errorf("invalid allocated field")
+		}
+	}
+	if conds.Extra != nil {
+		id, ok := conds.Extra.Val.(string)
+		if !ok {
+			return nil, wlog.Errorf("invalid extra")
+		}
+		switch conds.Extra.Op {
+		case cruder.EQ:
+			q.Where(entcouponallocated.ExtraContains(id))
 		default:
 			return nil, wlog.Errorf("invalid allocated field")
 		}

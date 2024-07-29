@@ -124,23 +124,16 @@ func GetEventOnly(ctx context.Context, conds *npool.Conds) (*npool.Event, error)
 	return infos.([]*npool.Event)[0], nil
 }
 
-func DeleteEvent(ctx context.Context, id uint32) (*npool.Event, error) {
-	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		resp, err := cli.DeleteEvent(ctx, &npool.DeleteEventRequest{
+func DeleteEvent(ctx context.Context, id *uint32, entID *string) error {
+	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		return cli.DeleteEvent(ctx, &npool.DeleteEventRequest{
 			Info: &npool.EventReq{
-				ID: &id,
+				ID:    id,
+				EntID: entID,
 			},
 		})
-		if err != nil {
-			return nil, err
-		}
-
-		return resp.Info, nil
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Event), nil
+	return err
 }
 
 func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) ([]*npool.Credit, error) {
@@ -156,4 +149,35 @@ func RewardEvent(ctx context.Context, req *npool.RewardEventRequest) ([]*npool.C
 		return nil, err
 	}
 	return infos.([]*npool.Credit), nil
+}
+
+func CalcluateEventRewards(ctx context.Context, req *npool.CalcluateEventRewardsRequest) ([]*npool.Reward, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.CalcluateEventRewards(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp.Info, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*npool.Reward), nil
+}
+
+func ExistEventConds(ctx context.Context, conds *npool.Conds) (exist bool, err error) {
+	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.ExistEventConds(ctx, &npool.ExistEventCondsRequest{
+			Conds: conds,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return resp.Info, nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return info.(bool), nil
 }

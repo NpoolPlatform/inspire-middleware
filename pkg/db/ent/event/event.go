@@ -25,8 +25,6 @@ const (
 	FieldAppID = "app_id"
 	// FieldEventType holds the string denoting the event_type field in the database.
 	FieldEventType = "event_type"
-	// FieldCouponIds holds the string denoting the coupon_ids field in the database.
-	FieldCouponIds = "coupon_ids"
 	// FieldCredits holds the string denoting the credits field in the database.
 	FieldCredits = "credits"
 	// FieldCreditsPerUsd holds the string denoting the credits_per_usd field in the database.
@@ -52,7 +50,6 @@ var Columns = []string{
 	FieldEntID,
 	FieldAppID,
 	FieldEventType,
-	FieldCouponIds,
 	FieldCredits,
 	FieldCreditsPerUsd,
 	FieldMaxConsecutive,
@@ -94,8 +91,6 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultEventType holds the default value on creation for the "event_type" field.
 	DefaultEventType string
-	// DefaultCouponIds holds the default value on creation for the "coupon_ids" field.
-	DefaultCouponIds []uuid.UUID
 	// DefaultCredits holds the default value on creation for the "credits" field.
 	DefaultCredits decimal.Decimal
 	// DefaultCreditsPerUsd holds the default value on creation for the "credits_per_usd" field.

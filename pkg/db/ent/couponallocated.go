@@ -45,6 +45,8 @@ type CouponAllocated struct {
 	CouponScope string `json:"coupon_scope,omitempty"`
 	// Cashable holds the value of the "cashable" field.
 	Cashable bool `json:"cashable,omitempty"`
+	// Extra holds the value of the "extra" field.
+	Extra string `json:"extra,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -58,7 +60,7 @@ func (*CouponAllocated) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case couponallocated.FieldID, couponallocated.FieldCreatedAt, couponallocated.FieldUpdatedAt, couponallocated.FieldDeletedAt, couponallocated.FieldUsedAt, couponallocated.FieldStartAt:
 			values[i] = new(sql.NullInt64)
-		case couponallocated.FieldCouponScope:
+		case couponallocated.FieldCouponScope, couponallocated.FieldExtra:
 			values[i] = new(sql.NullString)
 		case couponallocated.FieldEntID, couponallocated.FieldAppID, couponallocated.FieldUserID, couponallocated.FieldCouponID, couponallocated.FieldUsedByOrderID:
 			values[i] = new(uuid.UUID)
@@ -167,6 +169,12 @@ func (ca *CouponAllocated) assignValues(columns []string, values []interface{}) 
 			} else if value.Valid {
 				ca.Cashable = value.Bool
 			}
+		case couponallocated.FieldExtra:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field extra", values[i])
+			} else if value.Valid {
+				ca.Extra = value.String
+			}
 		}
 	}
 	return nil
@@ -236,6 +244,9 @@ func (ca *CouponAllocated) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cashable=")
 	builder.WriteString(fmt.Sprintf("%v", ca.Cashable))
+	builder.WriteString(", ")
+	builder.WriteString("extra=")
+	builder.WriteString(ca.Extra)
 	builder.WriteByte(')')
 	return builder.String()
 }

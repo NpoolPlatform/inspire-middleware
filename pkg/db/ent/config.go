@@ -35,11 +35,16 @@ type hooks struct {
 	AppGoodCommissionConfig []ent.Hook
 	AppGoodScope            []ent.Hook
 	CashControl             []ent.Hook
+	CoinAllocated           []ent.Hook
+	CoinConfig              []ent.Hook
 	Commission              []ent.Hook
 	Coupon                  []ent.Hook
 	CouponAllocated         []ent.Hook
 	CouponScope             []ent.Hook
+	CreditAllocated         []ent.Hook
 	Event                   []ent.Hook
+	EventCoin               []ent.Hook
+	EventCoupon             []ent.Hook
 	GoodAchievement         []ent.Hook
 	GoodCoinAchievement     []ent.Hook
 	InvitationCode          []ent.Hook
@@ -48,6 +53,10 @@ type hooks struct {
 	PubsubMessage           []ent.Hook
 	Registration            []ent.Hook
 	Statement               []ent.Hook
+	TaskConfig              []ent.Hook
+	TaskUser                []ent.Hook
+	UserCoinReward          []ent.Hook
+	UserReward              []ent.Hook
 }
 
 // Options applies the options on the config object.

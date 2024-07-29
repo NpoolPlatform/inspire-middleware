@@ -313,6 +313,26 @@ func (cau *CouponAllocatedUpdate) ClearCashable() *CouponAllocatedUpdate {
 	return cau
 }
 
+// SetExtra sets the "extra" field.
+func (cau *CouponAllocatedUpdate) SetExtra(s string) *CouponAllocatedUpdate {
+	cau.mutation.SetExtra(s)
+	return cau
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (cau *CouponAllocatedUpdate) SetNillableExtra(s *string) *CouponAllocatedUpdate {
+	if s != nil {
+		cau.SetExtra(*s)
+	}
+	return cau
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (cau *CouponAllocatedUpdate) ClearExtra() *CouponAllocatedUpdate {
+	cau.mutation.ClearExtra()
+	return cau
+}
+
 // Mutation returns the CouponAllocatedMutation object of the builder.
 func (cau *CouponAllocatedUpdate) Mutation() *CouponAllocatedMutation {
 	return cau.mutation
@@ -328,12 +348,18 @@ func (cau *CouponAllocatedUpdate) Save(ctx context.Context) (int, error) {
 		return 0, err
 	}
 	if len(cau.hooks) == 0 {
+		if err = cau.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cau.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CouponAllocatedMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cau.check(); err != nil {
+				return 0, err
 			}
 			cau.mutation = mutation
 			affected, err = cau.sqlSave(ctx)
@@ -383,6 +409,16 @@ func (cau *CouponAllocatedUpdate) defaults() error {
 		}
 		v := couponallocated.UpdateDefaultUpdatedAt()
 		cau.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cau *CouponAllocatedUpdate) check() error {
+	if v, ok := cau.mutation.Extra(); ok {
+		if err := couponallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CouponAllocated.extra": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -602,6 +638,19 @@ func (cau *CouponAllocatedUpdate) sqlSave(ctx context.Context) (n int, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: couponallocated.FieldCashable,
+		})
+	}
+	if value, ok := cau.mutation.Extra(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldExtra,
+		})
+	}
+	if cau.mutation.ExtraCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: couponallocated.FieldExtra,
 		})
 	}
 	_spec.Modifiers = cau.modifiers
@@ -908,6 +957,26 @@ func (cauo *CouponAllocatedUpdateOne) ClearCashable() *CouponAllocatedUpdateOne 
 	return cauo
 }
 
+// SetExtra sets the "extra" field.
+func (cauo *CouponAllocatedUpdateOne) SetExtra(s string) *CouponAllocatedUpdateOne {
+	cauo.mutation.SetExtra(s)
+	return cauo
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (cauo *CouponAllocatedUpdateOne) SetNillableExtra(s *string) *CouponAllocatedUpdateOne {
+	if s != nil {
+		cauo.SetExtra(*s)
+	}
+	return cauo
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (cauo *CouponAllocatedUpdateOne) ClearExtra() *CouponAllocatedUpdateOne {
+	cauo.mutation.ClearExtra()
+	return cauo
+}
+
 // Mutation returns the CouponAllocatedMutation object of the builder.
 func (cauo *CouponAllocatedUpdateOne) Mutation() *CouponAllocatedMutation {
 	return cauo.mutation
@@ -930,12 +999,18 @@ func (cauo *CouponAllocatedUpdateOne) Save(ctx context.Context) (*CouponAllocate
 		return nil, err
 	}
 	if len(cauo.hooks) == 0 {
+		if err = cauo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cauo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CouponAllocatedMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cauo.check(); err != nil {
+				return nil, err
 			}
 			cauo.mutation = mutation
 			node, err = cauo.sqlSave(ctx)
@@ -991,6 +1066,16 @@ func (cauo *CouponAllocatedUpdateOne) defaults() error {
 		}
 		v := couponallocated.UpdateDefaultUpdatedAt()
 		cauo.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cauo *CouponAllocatedUpdateOne) check() error {
+	if v, ok := cauo.mutation.Extra(); ok {
+		if err := couponallocated.ExtraValidator(v); err != nil {
+			return &ValidationError{Name: "extra", err: fmt.Errorf(`ent: validator failed for field "CouponAllocated.extra": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -1227,6 +1312,19 @@ func (cauo *CouponAllocatedUpdateOne) sqlSave(ctx context.Context) (_node *Coupo
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: couponallocated.FieldCashable,
+		})
+	}
+	if value, ok := cauo.mutation.Extra(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: couponallocated.FieldExtra,
+		})
+	}
+	if cauo.mutation.ExtraCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: couponallocated.FieldExtra,
 		})
 	}
 	_spec.Modifiers = cauo.modifiers

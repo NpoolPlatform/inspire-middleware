@@ -2,16 +2,24 @@ package event
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
+	constant "github.com/NpoolPlatform/inspire-middleware/pkg/const"
 	eventcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event"
+	eventcoincrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coin"
+	eventcouponcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/event/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entevent "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	eventcoin1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coin"
+	eventcoupon1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/event/coupon"
+	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	eventcoinmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
+	eventcouponmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coupon"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -66,7 +74,6 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			sql.As(t.C(entevent.FieldEntID), "ent_id"),
 			sql.As(t.C(entevent.FieldAppID), "app_id"),
 			sql.As(t.C(entevent.FieldEventType), "event_type"),
-			sql.As(t.C(entevent.FieldCouponIds), "coupon_ids"),
 			sql.As(t.C(entevent.FieldCredits), "credits"),
 			sql.As(t.C(entevent.FieldCreditsPerUsd), "credits_per_usd"),
 			sql.As(t.C(entevent.FieldMaxConsecutive), "max_consecutive"),
@@ -98,10 +105,107 @@ func (h *queryHandler) scan(ctx context.Context) error {
 	return h.stmSelect.Scan(ctx, &h.infos)
 }
 
+func (h *queryHandler) queryEventCoins(ctx context.Context) error {
+	eventIDs := []uuid.UUID{}
+	for _, info := range h.infos {
+		id := uuid.MustParse(info.EntID)
+		eventIDs = append(eventIDs, id)
+	}
+	handler, err := eventcoin1.NewHandler(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	handler.Limit = constant.DefaultRowLimit
+	handler.Offset = 0
+	handler.Conds = &eventcoincrud.Conds{
+		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
+	}
+
+	coins := []*eventcoinmw.EventCoin{}
+	for {
+		_coins, _, err := handler.GetEventCoins(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if len(_coins) == 0 {
+			break
+		}
+		coins = append(coins, _coins...)
+		handler.Offset += handler.Limit
+	}
+
+	coinMap := map[string][]*eventcoinmw.EventCoin{}
+	for _, coin := range coins {
+		itemKey := fmt.Sprintf("%v_%v", coin.EventID, coin.AppID)
+		_coins, ok := coinMap[itemKey]
+		if ok {
+			coinMap[itemKey] = append(_coins, coin)
+			continue
+		}
+		coinMap[itemKey] = []*eventcoinmw.EventCoin{coin}
+	}
+	for _, info := range h.infos {
+		itemKey := fmt.Sprintf("%v_%v", info.EntID, info.AppID)
+		_coins, ok := coinMap[itemKey]
+		if ok {
+			info.Coins = _coins
+		}
+	}
+	return nil
+}
+
+func (h *queryHandler) queryEventCoupons(ctx context.Context) error {
+	eventIDs := []uuid.UUID{}
+	for _, info := range h.infos {
+		id := uuid.MustParse(info.EntID)
+		eventIDs = append(eventIDs, id)
+	}
+	handler, err := eventcoupon1.NewHandler(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	handler.Limit = constant.DefaultRowLimit
+	handler.Offset = 0
+	handler.Conds = &eventcouponcrud.Conds{
+		EventIDs: &cruder.Cond{Op: cruder.IN, Val: eventIDs},
+	}
+
+	coupons := []*eventcouponmw.EventCoupon{}
+	for {
+		_coupons, _, err := handler.GetEventCoupons(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if len(_coupons) == 0 {
+			break
+		}
+		coupons = append(coupons, _coupons...)
+		handler.Offset += handler.Limit
+	}
+
+	couponMap := map[string][]string{}
+	for _, coupon := range coupons {
+		itemKey := fmt.Sprintf("%v_%v", coupon.EventID, coupon.AppID)
+		_coupons, ok := couponMap[itemKey]
+		if ok {
+			couponMap[itemKey] = append(_coupons, coupon.CouponID)
+			continue
+		}
+		couponMap[itemKey] = []string{coupon.CouponID}
+	}
+	for _, info := range h.infos {
+		itemKey := fmt.Sprintf("%v_%v", info.EntID, info.AppID)
+		_coupons, ok := couponMap[itemKey]
+		if ok {
+			info.CouponIDs = _coupons
+		}
+	}
+	return nil
+}
+
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.EventType = basetypes.UsedFor(basetypes.UsedFor_value[info.EventTypeStr])
-		_ = json.Unmarshal([]byte(info.CouponIDsStr), &info.CouponIDs)
 		if info.GoodID != nil && *info.GoodID == uuid.Nil.String() {
 			info.GoodID = nil
 		}
@@ -147,6 +251,12 @@ func (h *Handler) GetEvent(ctx context.Context) (*npool.Event, error) {
 	if len(handler.infos) > 1 {
 		return nil, wlog.Errorf("too many records")
 	}
+	if err := handler.queryEventCoins(ctx); err != nil {
+		return nil, wlog.WrapError(err)
+	}
+	if err := handler.queryEventCoupons(ctx); err != nil {
+		return nil, wlog.WrapError(err)
+	}
 
 	handler.formalize()
 
@@ -183,6 +293,13 @@ func (h *Handler) GetEvents(ctx context.Context) ([]*npool.Event, uint32, error)
 		return handler.scan(_ctx)
 	})
 	if err != nil {
+		return nil, 0, wlog.WrapError(err)
+	}
+
+	if err := handler.queryEventCoins(ctx); err != nil {
+		return nil, 0, wlog.WrapError(err)
+	}
+	if err := handler.queryEventCoupons(ctx); err != nil {
 		return nil, 0, wlog.WrapError(err)
 	}
 
