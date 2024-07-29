@@ -22,7 +22,7 @@ type updateHandler struct {
 	selfOrder               bool
 	selfCommissionAmountUSD decimal.Decimal
 	statement               *ent.OrderStatement
-	payments                map[uuid.UUID][]*ent.OrderPaymentStatement
+	payments                map[uuid.UUID]*ent.OrderPaymentStatement
 }
 
 func (h *updateHandler) updateGoodCoinAchievement(ctx context.Context, tx *ent.Tx) error {
@@ -114,34 +114,19 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 		return nil
 	}
 
-	dbPaymentsAlreadyProcessed := map[uint32]bool{}
 	for _, req := range h.PaymentStatementReqs {
-		dbPayments, found := h.payments[*req.PaymentCoinTypeID]
-		if !found {
-			return wlog.Errorf("cointypeid mismatch")
-		}
-
-		matchFound := false
-		var payment *ent.OrderPaymentStatement
-		for _, dbPayment := range dbPayments {
-			_, ok := dbPaymentsAlreadyProcessed[dbPayment.ID]
-			if ok {
-				continue
-			}
-			if dbPayment.Amount.Cmp(*req.Amount) == 0 {
-				payment = dbPayment
-				matchFound = true
-				break
-			}
-		}
-		if !matchFound {
-			return wlog.Errorf("amount mismatch")
-		}
-		if payment == nil {
+		dbPayment, ok := h.payments[*req.EntID]
+		if !ok {
 			return wlog.Errorf("invalid payment")
 		}
+		if dbPayment.Amount.Cmp(*req.Amount) != 0 {
+			return wlog.Errorf("invalid payment amount")
+		}
+		if dbPayment.PaymentCoinTypeID != *req.PaymentCoinTypeID {
+			return wlog.Errorf("invalid payment cointypeid")
+		}
 
-		if req.CommissionAmount.Cmp(payment.CommissionAmount) == 0 {
+		if req.CommissionAmount.Cmp(dbPayment.CommissionAmount) == 0 {
 			if req.CommissionAmount.Cmp(decimal.NewFromInt(0)) == 0 && h.statement.CommissionConfigID == uuid.Nil {
 				if _, err := tx.
 					OrderStatement.
@@ -154,7 +139,7 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 			return nil
 		}
 
-		if payment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
+		if dbPayment.CommissionAmount.Cmp(decimal.NewFromInt(0)) != 0 {
 			return wlog.Errorf("permission denied")
 		}
 		if _, err := tx.
@@ -168,7 +153,7 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 		}
 		if _, err := tx.
 			OrderPaymentStatement.
-			UpdateOneID(payment.ID).
+			UpdateOneID(dbPayment.ID).
 			SetCommissionAmount(*req.CommissionAmount).
 			Save(ctx); err != nil {
 			return wlog.WrapError(err)
@@ -187,11 +172,19 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 }
 
 func (h *updateHandler) requireOrderPaymentStatements(ctx context.Context, tx *ent.Tx) error {
+	ids := []uuid.UUID{}
+	for _, payment := range h.PaymentStatementReqs {
+		if payment.EntID == nil {
+			return wlog.Errorf("invalid payment ent id")
+		}
+		ids = append(ids, *payment.EntID)
+	}
+
 	payments, err := tx.
 		OrderPaymentStatement.
 		Query().
 		Where(
-			entorderpaymentstatement.StatementID(h.statement.EntID),
+			entorderpaymentstatement.EntIDIn(ids...),
 			entorderpaymentstatement.DeletedAt(0),
 		).
 		All(ctx)
@@ -202,7 +195,7 @@ func (h *updateHandler) requireOrderPaymentStatements(ctx context.Context, tx *e
 		return wlog.Errorf("payment statements mismatch")
 	}
 	for _, payment := range payments {
-		h.payments[payment.PaymentCoinTypeID] = append(h.payments[payment.PaymentCoinTypeID], payment)
+		h.payments[payment.EntID] = payment
 	}
 	return nil
 }
@@ -219,6 +212,7 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 			entorderstatement.UserID(*h.UserID),
 			entorderstatement.OrderID(*h.OrderID),
 			entorderstatement.OrderUserID(*h.OrderUserID),
+			entorderstatement.CommissionConfigType(types.CommissionConfigType_LegacyCommissionConfig.String()),
 			entorderstatement.DeletedAt(0),
 		)
 	if h.ID != nil {
@@ -260,7 +254,7 @@ func (h *Handler) UpdateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 	}
 
 	handler := &updateHandler{
-		payments: map[uuid.UUID][]*ent.OrderPaymentStatement{},
+		payments: map[uuid.UUID]*ent.OrderPaymentStatement{},
 		achievementQueryHandler: &achievementQueryHandler{
 			Handler: h,
 		},

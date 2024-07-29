@@ -15,11 +15,7 @@ import (
 func (s *Server) ReconcileCalculate(ctx context.Context, in *npool.ReconcileCalculateRequest) (*npool.ReconcileCalculateResponse, error) {
 	handler, err := calculate1.NewHandler(
 		ctx,
-		calculate1.WithAppID(in.GetAppID()),
-		calculate1.WithUserID(in.GetUserID()),
 		calculate1.WithOrderID(in.GetOrderID()),
-		calculate1.WithOrderCreatedAt(in.GetOrderCreatedAt()),
-		calculate1.WithSettleType(in.GetSettleType()),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

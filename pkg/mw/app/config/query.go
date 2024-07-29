@@ -67,7 +67,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 }
 
 func (h *queryHandler) queryAppConfigs(cli *ent.Client) (*ent.AppConfigSelect, error) {
-	stm, err := appconfigcrud.SetQueryConds(cli.AppConfig.Query(), h.Conds)
+	stm, err := appconfigcrud.SetQueryConds(cli.Debug().AppConfig.Query(), h.Conds)
 	if err != nil {
 		return nil, wlog.WrapError(err)
 	}

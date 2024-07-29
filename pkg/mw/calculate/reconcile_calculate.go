@@ -1,4 +1,3 @@
-//nolint:dupl
 package calculate
 
 import (
@@ -39,7 +38,65 @@ type reconcileCalculateHandler struct {
 	statements         []*ent.OrderStatement
 	payments           map[uuid.UUID][]*ent.OrderPaymentStatement
 	orderUserStatement *ent.OrderStatement
+	commissions        map[uuid.UUID][]*commission2.Commission
+	achievementUsers   map[string]*achievementusermwpb.AchievementUser
 	infos              []*statementmwpb.StatementReq
+}
+
+func (h *reconcileCalculateHandler) GetCommissions(ctx context.Context) error {
+	payments, ok := h.payments[h.orderUserStatement.EntID]
+	if !ok {
+		return wlog.Errorf("invalid payment")
+	}
+
+	for _, payment := range payments {
+		h2, err := commission1.NewHandler(
+			ctx,
+			commission1.WithConds(&commmwpb.Conds{
+				AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+				SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
+				UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
+				GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+				AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
+				StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
+				EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+			}),
+			commission1.WithOffset(0),
+			commission1.WithLimit(int32(len(h.inviterIDs))),
+		)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+
+		comms, _, err := h2.GetCommissions(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		handler, err := commission2.NewHandler(
+			ctx,
+			commission2.WithInviters(h.inviters),
+			commission2.WithAppConfig(h.appConfig),
+			commission2.WithCommissions(comms),
+			commission2.WithPaymentAmount(payment.Amount.String()),
+			commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
+			commission2.WithAchievementUsers(h.achievementUsers),
+			commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
+		)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		_comms, err := handler.Calculate(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		commissions, ok := h.commissions[payment.PaymentCoinTypeID]
+		if !ok {
+			commissions = []*commission2.Commission{}
+		}
+		commissions = append(commissions, _comms...)
+		h.commissions[payment.PaymentCoinTypeID] = commissions
+	}
+	return nil
 }
 
 func (h *reconcileCalculateHandler) getLayeredInviters(ctx context.Context) error {
@@ -60,8 +117,7 @@ func (h *reconcileCalculateHandler) getLayeredInviters(ctx context.Context) erro
 	return nil
 }
 
-func (h *reconcileCalculateHandler) getAchievementUsers(ctx context.Context) (map[string]*achievementusermwpb.AchievementUser, error) {
-	achievementUserMap := map[string]*achievementusermwpb.AchievementUser{}
+func (h *reconcileCalculateHandler) getAchievementUsers(ctx context.Context) error {
 	handler, err := achievementuser1.NewHandler(
 		ctx,
 		common1.WithConds(&achievementusermwpb.Conds{
@@ -72,77 +128,53 @@ func (h *reconcileCalculateHandler) getAchievementUsers(ctx context.Context) (ma
 		common1.WithLimit(int32(len(h.inviterIDs))),
 	)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 	achievementUsers, _, err := handler.GetAchievementUsers(ctx)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
+
 	if len(achievementUsers) == 0 {
-		return achievementUserMap, nil
+		return nil
 	}
 	for _, id := range h.inviterIDs {
 		for _, achievementUser := range achievementUsers {
 			if achievementUser.UserID == id {
-				achievementUserMap[id] = achievementUser
+				h.achievementUsers[id] = achievementUser
 			}
 		}
 	}
-	return achievementUserMap, nil
-}
-
-func (h *reconcileCalculateHandler) requireOrderStatement(ctx context.Context, cli *ent.Client) error {
-	statement, err := cli.
-		OrderStatement.
-		Query().
-		Where(
-			entorderstatement.AppID(h.AppID),
-			entorderstatement.OrderID(h.OrderID),
-			entorderstatement.UserID(h.UserID),
-			entorderstatement.OrderUserID(h.UserID),
-			entorderstatement.CommissionConfigType(types.CommissionConfigType_LegacyCommissionConfig.String()),
-		).
-		Only(ctx)
-	if err != nil {
-		return wlog.WrapError(err)
-	}
-	h.GoodID = statement.GoodID
-	h.AppGoodID = statement.AppGoodID
-	h.GoodCoinTypeID = statement.GoodCoinTypeID
-	h.Units = statement.Units
-	h.GoodValueUSD = statement.GoodValueUsd
-	h.PaymentAmountUSD = statement.PaymentAmountUsd
-	h.orderUserStatement = statement
 	return nil
 }
 
-func (h *reconcileCalculateHandler) getOrderStatements(ctx context.Context) error {
-	return db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
-		if err := h.requireOrderStatement(ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
+func (h *reconcileCalculateHandler) getAppConfig(ctx context.Context) error {
+	h1, err := appConfig1.NewHandler(
+		ctx,
+		appConfig1.WithConds(&appconfigmwpb.Conds{
+			AppID: &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+			EndAt: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+		}),
+		appConfig1.WithOffset(0),
+		appConfig1.WithLimit(1),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
 
-		statements, err := cli.
-			OrderStatement.
-			Query().
-			Where(
-				entorderstatement.AppID(h.AppID),
-				entorderstatement.OrderID(h.OrderID),
-			).
-			All(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if len(statements) == 0 {
-			return wlog.Errorf("invalid statement")
-		}
-		h.statements = statements
+	appConfigs, _, err := h1.GetAppConfigs(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
 
-		if err := h.getOrderPaymentStatements(ctx, cli); err != nil {
-			return wlog.WrapError(err)
-		}
-		return nil
-	})
+	if len(appConfigs) == 0 {
+		return wlog.Errorf("invalid app config")
+	}
+	if appConfigs[0].CommissionType != types.CommissionType_LegacyCommission {
+		return wlog.Errorf("invalid commission type: %v", appConfigs[0].CommissionType.String())
+	}
+	h.appConfig = appConfigs[0]
+	return nil
 }
 
 func (h *reconcileCalculateHandler) getOrderPaymentStatements(ctx context.Context, cli *ent.Client) error {
@@ -166,41 +198,67 @@ func (h *reconcileCalculateHandler) getOrderPaymentStatements(ctx context.Contex
 	return nil
 }
 
-func (h *reconcileCalculateHandler) getAppConfig(ctx context.Context) error {
-	h1, err := appConfig1.NewHandler(
-		ctx,
-		appConfig1.WithConds(&appconfigmwpb.Conds{
-			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-			StartAt: &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-			EndAt:   &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-		}),
-		appConfig1.WithOffset(0),
-		appConfig1.WithLimit(1),
-	)
-	if err != nil {
-		return wlog.WrapError(err)
+func (h *reconcileCalculateHandler) requireOrderStatement() error {
+	found := false
+	for _, statement := range h.statements {
+		if statement.UserID != statement.OrderUserID || statement.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig.String() {
+			continue
+		}
+		found = true
+		h.AppID = statement.AppID
+		h.UserID = statement.UserID
+		h.GoodID = statement.GoodID
+		h.AppGoodID = statement.AppGoodID
+		h.GoodCoinTypeID = statement.GoodCoinTypeID
+		h.Units = statement.Units
+		h.GoodValueUSD = statement.GoodValueUsd
+		h.PaymentAmountUSD = statement.PaymentAmountUsd
+		h.OrderCreatedAt = statement.CreatedAt
+		h.orderUserStatement = statement
 	}
-
-	appConfigs, _, err := h1.GetAppConfigs(ctx)
-	if err != nil {
-		return wlog.WrapError(err)
+	if !found {
+		return wlog.Errorf("order user not found")
 	}
-	if len(appConfigs) == 0 {
-		return wlog.Errorf("invalid app config")
-	}
-
-	h.appConfig = appConfigs[0]
 	return nil
+}
+
+func (h *reconcileCalculateHandler) getOrderStatements(ctx context.Context) error {
+	return db.WithClient(ctx, func(ctx context.Context, cli *ent.Client) error {
+		statements, err := cli.
+			OrderStatement.
+			Query().
+			Where(
+				entorderstatement.OrderID(h.OrderID),
+			).
+			All(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if len(statements) == 0 {
+			return wlog.Errorf("invalid statement")
+		}
+		h.statements = statements
+
+		if err := h.requireOrderStatement(); err != nil {
+			return wlog.WrapError(err)
+		}
+		if err := h.getOrderPaymentStatements(ctx, cli); err != nil {
+			return wlog.WrapError(err)
+		}
+		return nil
+	})
 }
 
 func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.StatementReq, error) {
 	handler := &reconcileCalculateHandler{
-		Handler:    h,
-		inviters:   []*registrationmwpb.Registration{},
-		inviterIDs: []string{},
-		statements: []*ent.OrderStatement{},
-		payments:   map[uuid.UUID][]*ent.OrderPaymentStatement{},
-		infos:      []*statementmwpb.StatementReq{},
+		Handler:          h,
+		inviters:         []*registrationmwpb.Registration{},
+		inviterIDs:       []string{},
+		statements:       []*ent.OrderStatement{},
+		payments:         map[uuid.UUID][]*ent.OrderPaymentStatement{},
+		commissions:      map[uuid.UUID][]*commission2.Commission{},
+		achievementUsers: map[string]*achievementusermwpb.AchievementUser{},
+		infos:            []*statementmwpb.StatementReq{},
 	}
 	if err := handler.getOrderStatements(ctx); err != nil {
 		return nil, err
@@ -208,89 +266,23 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 	if err := handler.getAppConfig(ctx); err != nil {
 		return nil, err
 	}
-
-	switch handler.appConfig.CommissionType {
-	case types.CommissionType_LegacyCommission:
-		err := handler.getLayeredInviters(ctx)
-		if err != nil {
-			return nil, wlog.WrapError(err)
-		}
-	default:
-		return nil, wlog.Errorf("invalid commission type")
+	if err := handler.getLayeredInviters(ctx); err != nil {
+		return nil, wlog.WrapError(err)
 	}
-
-	achievementUsers, err := handler.getAchievementUsers(ctx)
-	if err != nil {
+	if err := handler.getAchievementUsers(ctx); err != nil {
+		return nil, wlog.WrapError(err)
+	}
+	if err := handler.GetCommissions(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 
-	payments, ok := handler.payments[handler.orderUserStatement.EntID]
-	if !ok {
-		return nil, wlog.Errorf("invalid payment")
-	}
-	commissions := map[uuid.UUID][]*commission2.Commission{} // cointypeid->[]Commission
-	for _, payment := range payments {
-		switch handler.appConfig.CommissionType {
-		case types.CommissionType_LegacyCommission:
-			h2, err := commission1.NewHandler(
-				ctx,
-				commission1.WithConds(&commmwpb.Conds{
-					AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-					UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: handler.inviterIDs},
-					GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
-					AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-					SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(h.SettleType)},
-					StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-					EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-				}),
-				commission1.WithOffset(0),
-				commission1.WithLimit(int32(len(handler.inviterIDs))),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-
-			comms, _, err := h2.GetCommissions(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			handler, err := commission2.NewHandler(
-				ctx,
-				commission2.WithSettleType(types.SettleType_GoodOrderPayment),
-				commission2.WithSettleAmountType(h.SettleAmountType),
-				commission2.WithInviters(handler.inviters),
-				commission2.WithAppConfig(handler.appConfig),
-				commission2.WithCommissions(comms),
-				commission2.WithPaymentAmount(payment.Amount.String()),
-				commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
-				commission2.WithAchievementUsers(achievementUsers),
-				commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
-			)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			_comms, err := handler.Calculate(ctx)
-			if err != nil {
-				return nil, wlog.WrapError(err)
-			}
-			_commissions, ok := commissions[payment.PaymentCoinTypeID]
-			if !ok {
-				_commissions = []*commission2.Commission{}
-			}
-			_commissions = append(_commissions, _comms...)
-			commissions[payment.PaymentCoinTypeID] = _commissions
-		default:
-			return nil, wlog.Errorf("invalid commission type")
-		}
-	}
-
-	handler.formalizeStatements(commissions)
+	handler.formalizeStatements()
 	return handler.infos, nil
 }
 
-func (h *reconcileCalculateHandler) formalizeStatements(commissions map[uuid.UUID][]*commission2.Commission) {
+func (h *reconcileCalculateHandler) formalizeStatements() {
 	_commissions := map[string]*commission2.Commission{}
-	for key, comms := range commissions {
+	for key, comms := range h.commissions {
 		for _, comm := range comms {
 			key := fmt.Sprintf("%v-%v-%v", key, comm.UserID, comm.PaymentAmount) // cointypeid-userid-paymentamount
 			_commissions[key] = comm
@@ -325,9 +317,10 @@ func (h *reconcileCalculateHandler) formalizeStatements(commissions map[uuid.UUI
 			key := fmt.Sprintf("%v-%v-%v", dbPayment.PaymentCoinTypeID, statement.UserID, dbPayment.Amount)
 			comm, ok := _commissions[key]
 			if !ok {
-				if statement.UserID == h.UserID {
+				if statement.UserID == h.UserID { // if current user no commission
 					req.CommissionAmountUSD = func() *string { amount := "0"; return &amount }()
 					req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
+						EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
 						Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
 						CommissionAmount:  func() *string { amount := "0"; return &amount }(),
 						PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
@@ -337,6 +330,7 @@ func (h *reconcileCalculateHandler) formalizeStatements(commissions map[uuid.UUI
 			}
 			req.CommissionAmountUSD = &comm.CommissionAmountUSD
 			req.PaymentStatements = append(req.PaymentStatements, &payment.StatementReq{
+				EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
 				Amount:            func() *string { amount := dbPayment.Amount.String(); return &amount }(),
 				CommissionAmount:  &comm.Amount,
 				PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
