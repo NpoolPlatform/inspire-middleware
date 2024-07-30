@@ -74,13 +74,6 @@ func open(hostname string) (conn *sql.DB, err error) {
 	return conn, nil
 }
 
-func migrateCashProbability(ctx context.Context, tx *ent.Tx) error {
-	if _, err := tx.ExecContext(ctx, "update coupons set cashable_probability='0' where cashable_probability is null"); err != nil {
-		return err
-	}
-	return nil
-}
-
 func Migrate(ctx context.Context) error {
 	var err error
 	var conn *sql.DB
@@ -105,9 +98,6 @@ func Migrate(ctx context.Context) error {
 		}
 	}()
 	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		if err := migrateCashProbability(ctx, tx); err != nil {
-			return err
-		}
 		return nil
 	})
 	return nil
