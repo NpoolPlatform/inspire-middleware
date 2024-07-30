@@ -20,6 +20,7 @@ type Req struct {
 	AppGoodID            *uuid.UUID
 	OrderID              *uuid.UUID
 	OrderUserID          *uuid.UUID
+	DirectContributorID  *uuid.UUID
 	GoodCoinTypeID       *uuid.UUID
 	Units                *decimal.Decimal
 	GoodValueUSD         *decimal.Decimal
@@ -52,6 +53,9 @@ func CreateSet(c *ent.OrderStatementCreate, req *Req) *ent.OrderStatementCreate 
 	}
 	if req.OrderUserID != nil {
 		c.SetOrderUserID(*req.OrderUserID)
+	}
+	if req.DirectContributorID != nil {
+		c.SetDirectContributorID(*req.DirectContributorID)
 	}
 	if req.GoodCoinTypeID != nil {
 		c.SetGoodCoinTypeID(*req.GoodCoinTypeID)

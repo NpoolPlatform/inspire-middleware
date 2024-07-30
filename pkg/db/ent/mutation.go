@@ -19992,6 +19992,7 @@ type OrderStatementMutation struct {
 	good_id                *uuid.UUID
 	app_good_id            *uuid.UUID
 	order_id               *uuid.UUID
+	direct_contributor_id  *uuid.UUID
 	order_user_id          *uuid.UUID
 	good_coin_type_id      *uuid.UUID
 	units                  *decimal.Decimal
@@ -20560,6 +20561,55 @@ func (m *OrderStatementMutation) ResetOrderID() {
 	delete(m.clearedFields, orderstatement.FieldOrderID)
 }
 
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (m *OrderStatementMutation) SetDirectContributorID(u uuid.UUID) {
+	m.direct_contributor_id = &u
+}
+
+// DirectContributorID returns the value of the "direct_contributor_id" field in the mutation.
+func (m *OrderStatementMutation) DirectContributorID() (r uuid.UUID, exists bool) {
+	v := m.direct_contributor_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDirectContributorID returns the old "direct_contributor_id" field's value of the OrderStatement entity.
+// If the OrderStatement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStatementMutation) OldDirectContributorID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDirectContributorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDirectContributorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDirectContributorID: %w", err)
+	}
+	return oldValue.DirectContributorID, nil
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (m *OrderStatementMutation) ClearDirectContributorID() {
+	m.direct_contributor_id = nil
+	m.clearedFields[orderstatement.FieldDirectContributorID] = struct{}{}
+}
+
+// DirectContributorIDCleared returns if the "direct_contributor_id" field was cleared in this mutation.
+func (m *OrderStatementMutation) DirectContributorIDCleared() bool {
+	_, ok := m.clearedFields[orderstatement.FieldDirectContributorID]
+	return ok
+}
+
+// ResetDirectContributorID resets all changes to the "direct_contributor_id" field.
+func (m *OrderStatementMutation) ResetDirectContributorID() {
+	m.direct_contributor_id = nil
+	delete(m.clearedFields, orderstatement.FieldDirectContributorID)
+}
+
 // SetOrderUserID sets the "order_user_id" field.
 func (m *OrderStatementMutation) SetOrderUserID(u uuid.UUID) {
 	m.order_user_id = &u
@@ -21020,7 +21070,7 @@ func (m *OrderStatementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStatementMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, orderstatement.FieldCreatedAt)
 	}
@@ -21047,6 +21097,9 @@ func (m *OrderStatementMutation) Fields() []string {
 	}
 	if m.order_id != nil {
 		fields = append(fields, orderstatement.FieldOrderID)
+	}
+	if m.direct_contributor_id != nil {
+		fields = append(fields, orderstatement.FieldDirectContributorID)
 	}
 	if m.order_user_id != nil {
 		fields = append(fields, orderstatement.FieldOrderUserID)
@@ -21101,6 +21154,8 @@ func (m *OrderStatementMutation) Field(name string) (ent.Value, bool) {
 		return m.AppGoodID()
 	case orderstatement.FieldOrderID:
 		return m.OrderID()
+	case orderstatement.FieldDirectContributorID:
+		return m.DirectContributorID()
 	case orderstatement.FieldOrderUserID:
 		return m.OrderUserID()
 	case orderstatement.FieldGoodCoinTypeID:
@@ -21146,6 +21201,8 @@ func (m *OrderStatementMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldAppGoodID(ctx)
 	case orderstatement.FieldOrderID:
 		return m.OldOrderID(ctx)
+	case orderstatement.FieldDirectContributorID:
+		return m.OldDirectContributorID(ctx)
 	case orderstatement.FieldOrderUserID:
 		return m.OldOrderUserID(ctx)
 	case orderstatement.FieldGoodCoinTypeID:
@@ -21235,6 +21292,13 @@ func (m *OrderStatementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderID(v)
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDirectContributorID(v)
 		return nil
 	case orderstatement.FieldOrderUserID:
 		v, ok := value.(uuid.UUID)
@@ -21383,6 +21447,9 @@ func (m *OrderStatementMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstatement.FieldOrderID) {
 		fields = append(fields, orderstatement.FieldOrderID)
 	}
+	if m.FieldCleared(orderstatement.FieldDirectContributorID) {
+		fields = append(fields, orderstatement.FieldDirectContributorID)
+	}
 	if m.FieldCleared(orderstatement.FieldOrderUserID) {
 		fields = append(fields, orderstatement.FieldOrderUserID)
 	}
@@ -21438,6 +21505,9 @@ func (m *OrderStatementMutation) ClearField(name string) error {
 		return nil
 	case orderstatement.FieldOrderID:
 		m.ClearOrderID()
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		m.ClearDirectContributorID()
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ClearOrderUserID()
@@ -21500,6 +21570,9 @@ func (m *OrderStatementMutation) ResetField(name string) error {
 		return nil
 	case orderstatement.FieldOrderID:
 		m.ResetOrderID()
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		m.ResetDirectContributorID()
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ResetOrderUserID()

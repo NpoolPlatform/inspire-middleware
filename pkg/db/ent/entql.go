@@ -459,6 +459,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatement.FieldGoodID:               {Type: field.TypeUUID, Column: orderstatement.FieldGoodID},
 			orderstatement.FieldAppGoodID:            {Type: field.TypeUUID, Column: orderstatement.FieldAppGoodID},
 			orderstatement.FieldOrderID:              {Type: field.TypeUUID, Column: orderstatement.FieldOrderID},
+			orderstatement.FieldDirectContributorID:  {Type: field.TypeUUID, Column: orderstatement.FieldDirectContributorID},
 			orderstatement.FieldOrderUserID:          {Type: field.TypeUUID, Column: orderstatement.FieldOrderUserID},
 			orderstatement.FieldGoodCoinTypeID:       {Type: field.TypeUUID, Column: orderstatement.FieldGoodCoinTypeID},
 			orderstatement.FieldUnits:                {Type: field.TypeOther, Column: orderstatement.FieldUnits},
@@ -2270,6 +2271,11 @@ func (f *OrderStatementFilter) WhereAppGoodID(p entql.ValueP) {
 // WhereOrderID applies the entql [16]byte predicate on the order_id field.
 func (f *OrderStatementFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(orderstatement.FieldOrderID))
+}
+
+// WhereDirectContributorID applies the entql [16]byte predicate on the direct_contributor_id field.
+func (f *OrderStatementFilter) WhereDirectContributorID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldDirectContributorID))
 }
 
 // WhereOrderUserID applies the entql [16]byte predicate on the order_user_id field.

@@ -57,6 +57,12 @@ func (OrderStatement) Fields() []ent.Field {
 				return uuid.UUID{}
 			}),
 		field.
+			UUID("direct_contributor_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			UUID("order_user_id", uuid.UUID{}).
 			Optional().
 			Default(func() uuid.UUID {

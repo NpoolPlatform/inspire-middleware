@@ -149,6 +149,20 @@ func (osc *OrderStatementCreate) SetNillableOrderID(u *uuid.UUID) *OrderStatemen
 	return osc
 }
 
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (osc *OrderStatementCreate) SetDirectContributorID(u uuid.UUID) *OrderStatementCreate {
+	osc.mutation.SetDirectContributorID(u)
+	return osc
+}
+
+// SetNillableDirectContributorID sets the "direct_contributor_id" field if the given value is not nil.
+func (osc *OrderStatementCreate) SetNillableDirectContributorID(u *uuid.UUID) *OrderStatementCreate {
+	if u != nil {
+		osc.SetDirectContributorID(*u)
+	}
+	return osc
+}
+
 // SetOrderUserID sets the "order_user_id" field.
 func (osc *OrderStatementCreate) SetOrderUserID(u uuid.UUID) *OrderStatementCreate {
 	osc.mutation.SetOrderUserID(u)
@@ -423,6 +437,13 @@ func (osc *OrderStatementCreate) defaults() error {
 		v := orderstatement.DefaultOrderID()
 		osc.mutation.SetOrderID(v)
 	}
+	if _, ok := osc.mutation.DirectContributorID(); !ok {
+		if orderstatement.DefaultDirectContributorID == nil {
+			return fmt.Errorf("ent: uninitialized orderstatement.DefaultDirectContributorID (forgotten import ent/runtime?)")
+		}
+		v := orderstatement.DefaultDirectContributorID()
+		osc.mutation.SetDirectContributorID(v)
+	}
 	if _, ok := osc.mutation.OrderUserID(); !ok {
 		if orderstatement.DefaultOrderUserID == nil {
 			return fmt.Errorf("ent: uninitialized orderstatement.DefaultOrderUserID (forgotten import ent/runtime?)")
@@ -593,6 +614,14 @@ func (osc *OrderStatementCreate) createSpec() (*OrderStatement, *sqlgraph.Create
 			Column: orderstatement.FieldOrderID,
 		})
 		_node.OrderID = value
+	}
+	if value, ok := osc.mutation.DirectContributorID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstatement.FieldDirectContributorID,
+		})
+		_node.DirectContributorID = value
 	}
 	if value, ok := osc.mutation.OrderUserID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -873,6 +902,24 @@ func (u *OrderStatementUpsert) UpdateOrderID() *OrderStatementUpsert {
 // ClearOrderID clears the value of the "order_id" field.
 func (u *OrderStatementUpsert) ClearOrderID() *OrderStatementUpsert {
 	u.SetNull(orderstatement.FieldOrderID)
+	return u
+}
+
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (u *OrderStatementUpsert) SetDirectContributorID(v uuid.UUID) *OrderStatementUpsert {
+	u.Set(orderstatement.FieldDirectContributorID, v)
+	return u
+}
+
+// UpdateDirectContributorID sets the "direct_contributor_id" field to the value that was provided on create.
+func (u *OrderStatementUpsert) UpdateDirectContributorID() *OrderStatementUpsert {
+	u.SetExcluded(orderstatement.FieldDirectContributorID)
+	return u
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (u *OrderStatementUpsert) ClearDirectContributorID() *OrderStatementUpsert {
+	u.SetNull(orderstatement.FieldDirectContributorID)
 	return u
 }
 
@@ -1267,6 +1314,27 @@ func (u *OrderStatementUpsertOne) UpdateOrderID() *OrderStatementUpsertOne {
 func (u *OrderStatementUpsertOne) ClearOrderID() *OrderStatementUpsertOne {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (u *OrderStatementUpsertOne) SetDirectContributorID(v uuid.UUID) *OrderStatementUpsertOne {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.SetDirectContributorID(v)
+	})
+}
+
+// UpdateDirectContributorID sets the "direct_contributor_id" field to the value that was provided on create.
+func (u *OrderStatementUpsertOne) UpdateDirectContributorID() *OrderStatementUpsertOne {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.UpdateDirectContributorID()
+	})
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (u *OrderStatementUpsertOne) ClearDirectContributorID() *OrderStatementUpsertOne {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.ClearDirectContributorID()
 	})
 }
 
@@ -1853,6 +1921,27 @@ func (u *OrderStatementUpsertBulk) UpdateOrderID() *OrderStatementUpsertBulk {
 func (u *OrderStatementUpsertBulk) ClearOrderID() *OrderStatementUpsertBulk {
 	return u.Update(func(s *OrderStatementUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (u *OrderStatementUpsertBulk) SetDirectContributorID(v uuid.UUID) *OrderStatementUpsertBulk {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.SetDirectContributorID(v)
+	})
+}
+
+// UpdateDirectContributorID sets the "direct_contributor_id" field to the value that was provided on create.
+func (u *OrderStatementUpsertBulk) UpdateDirectContributorID() *OrderStatementUpsertBulk {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.UpdateDirectContributorID()
+	})
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (u *OrderStatementUpsertBulk) ClearDirectContributorID() *OrderStatementUpsertBulk {
+	return u.Update(func(s *OrderStatementUpsert) {
+		s.ClearDirectContributorID()
 	})
 }
 

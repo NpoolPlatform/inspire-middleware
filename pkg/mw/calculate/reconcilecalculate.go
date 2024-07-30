@@ -284,20 +284,21 @@ func (h *reconcileCalculateHandler) formalize() {
 			continue
 		}
 		req := statementmwpb.StatementReq{
-			ID:                 &statement.ID,
-			EntID:              func() *string { s := statement.EntID.String(); return &s }(),
-			AppID:              func() *string { s := statement.AppID.String(); return &s }(),
-			UserID:             func() *string { s := statement.UserID.String(); return &s }(),
-			GoodID:             func() *string { s := statement.GoodID.String(); return &s }(),
-			AppGoodID:          func() *string { s := statement.AppGoodID.String(); return &s }(),
-			OrderID:            func() *string { s := statement.OrderID.String(); return &s }(),
-			OrderUserID:        func() *string { s := statement.OrderUserID.String(); return &s }(),
-			GoodCoinTypeID:     func() *string { s := statement.GoodCoinTypeID.String(); return &s }(),
-			Units:              func() *string { s := statement.Units.String(); return &s }(),
-			GoodValueUSD:       func() *string { s := statement.GoodValueUsd.String(); return &s }(),
-			PaymentAmountUSD:   func() *string { s := h.PaymentAmountUSD.String(); return &s }(),
-			CommissionConfigID: func() *string { s := statement.CommissionConfigID.String(); return &s }(),
-			AppConfigID:        &h.appConfig.EntID,
+			ID:                  &statement.ID,
+			EntID:               func() *string { s := statement.EntID.String(); return &s }(),
+			AppID:               func() *string { s := statement.AppID.String(); return &s }(),
+			UserID:              func() *string { s := statement.UserID.String(); return &s }(),
+			GoodID:              func() *string { s := statement.GoodID.String(); return &s }(),
+			AppGoodID:           func() *string { s := statement.AppGoodID.String(); return &s }(),
+			OrderID:             func() *string { s := statement.OrderID.String(); return &s }(),
+			OrderUserID:         func() *string { s := statement.OrderUserID.String(); return &s }(),
+			DirectContributorID: func() *string { s := statement.DirectContributorID.String(); return &s }(),
+			GoodCoinTypeID:      func() *string { s := statement.GoodCoinTypeID.String(); return &s }(),
+			Units:               func() *string { s := statement.Units.String(); return &s }(),
+			GoodValueUSD:        func() *string { s := statement.GoodValueUsd.String(); return &s }(),
+			PaymentAmountUSD:    func() *string { s := h.PaymentAmountUSD.String(); return &s }(),
+			CommissionConfigID:  func() *string { s := statement.CommissionConfigID.String(); return &s }(),
+			AppConfigID:         &h.appConfig.EntID,
 			CommissionConfigType: func() *types.CommissionConfigType {
 				s := types.CommissionConfigType(types.CommissionConfigType_value[statement.CommissionConfigType])
 				return &s

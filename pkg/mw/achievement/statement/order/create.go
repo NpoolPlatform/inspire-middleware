@@ -61,6 +61,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "app_good_id"
 	_sql += comma + "order_id"
 	_sql += comma + "order_user_id"
+	_sql += comma + "direct_contributor_id"
 	_sql += comma + "good_coin_type_id"
 	_sql += comma + "units"
 	_sql += comma + "good_value_usd"
@@ -86,6 +87,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_good_id", comma, *h.AppGoodID)
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	_sql += fmt.Sprintf("%v'%v' as order_user_id", comma, *h.OrderUserID)
+	_sql += fmt.Sprintf("%v'%v' as direct_contributor_id", comma, *h.DirectContributorID)
 	_sql += fmt.Sprintf("%v'%v' as good_coin_type_id", comma, *h.GoodCoinTypeID)
 	_sql += fmt.Sprintf("%v'%v' as units", comma, *h.Units)
 	_sql += fmt.Sprintf("%v'%v' as good_value_usd", comma, *h.GoodValueUSD)
