@@ -59,17 +59,18 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() string {
-	totalCommission := decimal.NewFromInt(0)
-	if h.TotalCommission != nil {
-		totalCommission = *h.TotalCommission
-	}
 	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set updated_at = %v, total_commission = total_commission + %v`,
+		`update %v set updated_at = %v`,
 		entachievementuser.Table,
 		now,
-		totalCommission,
 	)
+	if h.TotalCommission != nil {
+		sql += fmt.Sprintf(
+			`, total_commission = total_commission + %v`,
+			*h.TotalCommission,
+		)
+	}
 	if h.SelfCommission != nil {
 		sql += fmt.Sprintf(
 			`, self_commission = self_commission + %v`,
