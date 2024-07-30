@@ -2,7 +2,6 @@ package calculate
 
 import (
 	"context"
-	"fmt"
 
 	wlog "github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/shopspring/decimal"
@@ -11,17 +10,13 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entorderpaymentstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderpaymentstatement"
 	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
-	achievementuser1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user"
-	common1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/achievement/user/common"
 	appConfig1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/app/config"
-	commission2 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/calculate/commission"
 	commission1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/commission"
 	registration1 "github.com/NpoolPlatform/inspire-middleware/pkg/mw/invitation/registration"
 	statementmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
 	orderpaymentmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order/payment"
-	achievementusermwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/user"
 	appconfigmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
-	commmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
+	commisisonmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/commission"
 	registrationmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/invitation/registration"
 
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -39,62 +34,72 @@ type reconcileCalculateHandler struct {
 	statements         []*ent.OrderStatement
 	payments           map[uuid.UUID][]*ent.OrderPaymentStatement
 	orderUserStatement *ent.OrderStatement
-	commissions        map[string]*commission2.Commission
-	achievementUsers   map[string]*achievementusermwpb.AchievementUser
+	commissions        map[string]*commisisonmwpb.Commission
 	infos              []*statementmwpb.StatementReq
 }
 
+func (h *reconcileCalculateHandler) ValidateCommissionRatio(ctx context.Context) error {
+	for _, registration := range h.inviters {
+		inviterID, err := uuid.Parse(registration.InviterID)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if inviterID == uuid.Nil {
+			break
+		}
+		if _, err := uuid.Parse(registration.InviteeID); err != nil {
+			return wlog.WrapError(err)
+		}
+
+		inviterComm, inviterFound := h.commissions[registration.InviterID]
+		inviteeComm, inviteeFound := h.commissions[registration.InviteeID]
+
+		if inviterFound && inviteeFound {
+			inviterRatio, err := decimal.NewFromString(inviterComm.AmountOrPercent)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			inviteeRatio, err := decimal.NewFromString(inviteeComm.AmountOrPercent)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+			if inviteeRatio.Cmp(inviterRatio) > 0 {
+				return wlog.Errorf("invitee percent(%v) greater than inviter percent(%v)", inviteeRatio.String(), inviterRatio.String())
+			}
+		}
+	}
+	return nil
+}
+
 func (h *reconcileCalculateHandler) GetCommissions(ctx context.Context) error {
-	payments, ok := h.payments[h.orderUserStatement.EntID]
-	if !ok {
+	if _, ok := h.payments[h.orderUserStatement.EntID]; !ok {
 		return wlog.Errorf("invalid payment")
 	}
 
-	for _, payment := range payments {
-		h2, err := commission1.NewHandler(
-			ctx,
-			commission1.WithConds(&commmwpb.Conds{
-				AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-				SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
-				UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
-				GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
-				AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
-				StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
-				EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
-			}),
-			commission1.WithOffset(0),
-			commission1.WithLimit(int32(len(h.inviterIDs))),
-		)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
+	h2, err := commission1.NewHandler(
+		ctx,
+		commission1.WithConds(&commisisonmwpb.Conds{
+			AppID:      &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
+			SettleType: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(types.SettleType_GoodOrderPayment)},
+			UserIDs:    &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
+			GoodID:     &basetypes.StringVal{Op: cruder.EQ, Value: h.GoodID.String()},
+			AppGoodID:  &basetypes.StringVal{Op: cruder.EQ, Value: h.AppGoodID.String()},
+			StartAt:    &basetypes.Uint32Val{Op: cruder.LTE, Value: h.OrderCreatedAt},
+			EndAt:      &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(0)},
+		}),
+		commission1.WithOffset(0),
+		commission1.WithLimit(int32(len(h.inviterIDs))),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
 
-		comms, _, err := h2.GetCommissions(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		handler, err := commission2.NewHandler(
-			ctx,
-			commission2.WithInviters(h.inviters),
-			commission2.WithAppConfig(h.appConfig),
-			commission2.WithCommissions(comms),
-			commission2.WithPaymentAmount(payment.Amount.String()),
-			commission2.WithPaymentAmountUSD(h.PaymentAmountUSD.String()),
-			commission2.WithAchievementUsers(h.achievementUsers),
-			commission2.WithGoodValueUSD(h.GoodValueUSD.String()),
-		)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		_comms, err := handler.Calculate(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-
-		for _, comm := range _comms {
-			key := fmt.Sprintf("%v-%v-%v", comm.UserID, payment.PaymentCoinTypeID, payment.Amount)
-			h.commissions[key] = comm
-		}
+	commissions, _, err := h2.GetCommissions(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	for _, comm := range commissions {
+		h.commissions[comm.UserID] = comm
 	}
 	return nil
 }
@@ -114,37 +119,6 @@ func (h *reconcileCalculateHandler) getLayeredInviters(ctx context.Context) erro
 	}
 	h.inviters = inviters
 	h.inviterIDs = inviterIDs
-	return nil
-}
-
-func (h *reconcileCalculateHandler) getAchievementUsers(ctx context.Context) error {
-	handler, err := achievementuser1.NewHandler(
-		ctx,
-		common1.WithConds(&achievementusermwpb.Conds{
-			AppID:   &basetypes.StringVal{Op: cruder.EQ, Value: h.AppID.String()},
-			UserIDs: &basetypes.StringSliceVal{Op: cruder.IN, Value: h.inviterIDs},
-		}),
-		common1.WithOffset(0),
-		common1.WithLimit(int32(len(h.inviterIDs))),
-	)
-	if err != nil {
-		return wlog.WrapError(err)
-	}
-	achievementUsers, _, err := handler.GetAchievementUsers(ctx)
-	if err != nil {
-		return wlog.WrapError(err)
-	}
-
-	if len(achievementUsers) == 0 {
-		return nil
-	}
-	for _, id := range h.inviterIDs {
-		for _, achievementUser := range achievementUsers {
-			if achievementUser.UserID == id {
-				h.achievementUsers[id] = achievementUser
-			}
-		}
-	}
 	return nil
 }
 
@@ -200,6 +174,7 @@ func (h *reconcileCalculateHandler) getOrderPaymentStatements(ctx context.Contex
 
 func (h *reconcileCalculateHandler) requireOrderStatement() error {
 	found := false
+	// find order user statement
 	for _, statement := range h.statements {
 		if statement.UserID != statement.OrderUserID || statement.CommissionConfigType != types.CommissionConfigType_LegacyCommissionConfig.String() {
 			continue
@@ -217,7 +192,7 @@ func (h *reconcileCalculateHandler) requireOrderStatement() error {
 		h.orderUserStatement = statement
 	}
 	if !found {
-		return wlog.Errorf("order user not found")
+		return wlog.Errorf("order user statement not found")
 	}
 	return nil
 }
@@ -251,14 +226,13 @@ func (h *reconcileCalculateHandler) getOrderStatements(ctx context.Context) erro
 
 func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.StatementReq, error) {
 	handler := &reconcileCalculateHandler{
-		Handler:          h,
-		inviters:         []*registrationmwpb.Registration{},
-		inviterIDs:       []string{},
-		statements:       []*ent.OrderStatement{},
-		payments:         map[uuid.UUID][]*ent.OrderPaymentStatement{},
-		commissions:      map[string]*commission2.Commission{},
-		achievementUsers: map[string]*achievementusermwpb.AchievementUser{},
-		infos:            []*statementmwpb.StatementReq{},
+		Handler:     h,
+		inviters:    []*registrationmwpb.Registration{},
+		inviterIDs:  []string{},
+		statements:  []*ent.OrderStatement{},
+		payments:    map[uuid.UUID][]*ent.OrderPaymentStatement{},
+		commissions: map[string]*commisisonmwpb.Commission{},
+		infos:       []*statementmwpb.StatementReq{},
 	}
 	if err := handler.getOrderStatements(ctx); err != nil {
 		return nil, err
@@ -269,10 +243,10 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 	if err := handler.getLayeredInviters(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
-	if err := handler.getAchievementUsers(ctx); err != nil {
+	if err := handler.GetCommissions(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
-	if err := handler.GetCommissions(ctx); err != nil {
+	if err := handler.ValidateCommissionRatio(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 
@@ -315,18 +289,19 @@ func (h *reconcileCalculateHandler) formalize() {
 				PaymentCoinTypeID: func() *string { id := dbPayment.PaymentCoinTypeID.String(); return &id }(),
 			}
 
-			key := fmt.Sprintf("%v-%v-%v", statement.UserID, dbPayment.PaymentCoinTypeID, dbPayment.Amount)
-			comm, ok := h.commissions[key]
+			comm, ok := h.commissions[statement.UserID.String()]
 			if !ok {
 				continue
 			}
+			ratio, _ := decimal.NewFromString(comm.AmountOrPercent)
+			commissionAmount := dbPayment.Amount.Mul(ratio).Div(decimal.NewFromInt(100)).String() //nolint
+			payment.CommissionAmount = &commissionAmount
 
-			payment.CommissionAmount = &comm.Amount
 			req.PaymentStatements = append(req.PaymentStatements, payment)
-
-			req.CommissionConfigID = &comm.CommissionConfigID
-			amount = amount.Add(decimal.RequireFromString(comm.Amount))
+			req.CommissionConfigID = &comm.EntID
+			amount = amount.Add(decimal.RequireFromString(commissionAmount))
 		}
+
 		req.CommissionAmountUSD = func() *string { amount := amount.String(); return &amount }()
 		h.infos = append(h.infos, &req)
 	}
