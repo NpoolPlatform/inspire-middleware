@@ -34,17 +34,18 @@ type updateHandler struct {
 }
 
 func (h *updateHandler) constructUpdateSQL() {
-	commissionAmountUSD := decimal.NewFromInt(0)
-	if h.CommissionAmountUSD != nil {
-		commissionAmountUSD = *h.CommissionAmountUSD
-	}
 	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set updated_at = %v, commission_amount_usd = commission_amount_usd + %v`,
+		`update %v set updated_at = %v`,
 		entorderstatement.Table,
 		now,
-		commissionAmountUSD,
 	)
+	if h.CommissionAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, commission_amount_usd = commission_amount_usd + %v`,
+			*h.CommissionAmountUSD,
+		)
+	}
 	if h.AppConfigID != nil {
 		sql += fmt.Sprintf(
 			`, app_config_id = '%v'`,

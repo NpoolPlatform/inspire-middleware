@@ -5,7 +5,6 @@ import (
 	"time"
 
 	entgoodachievement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
-	"github.com/shopspring/decimal"
 )
 
 //nolint:goconst
@@ -69,17 +68,18 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() string {
-	totalAmountUSD := decimal.NewFromInt(0)
-	if h.TotalAmountUSD != nil {
-		totalAmountUSD = *h.TotalAmountUSD
-	}
 	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set updated_at = %v, total_amount_usd = total_amount_usd + %v`,
+		`update %v set updated_at = %v`,
 		entgoodachievement.Table,
 		now,
-		totalAmountUSD,
 	)
+	if h.TotalAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, total_amount_usd = total_amount_usd + %v`,
+			*h.TotalAmountUSD,
+		)
+	}
 	if h.SelfAmountUSD != nil {
 		sql += fmt.Sprintf(
 			`, self_amount_usd = self_amount_usd + %v`,
