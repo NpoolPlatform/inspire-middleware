@@ -58,10 +58,20 @@ func (h *updateHandler) constructUpdateSQL() {
 			*h.CommissionConfigID,
 		)
 	}
-	sql += fmt.Sprintf(
-		" where id = %v and deleted_at = 0 ",
-		h.statement.ID,
-	)
+	sql += " where deleted_at = 0"
+
+	if h.ID != nil {
+		sql += fmt.Sprintf(
+			" and id = %v ",
+			*h.ID,
+		)
+	}
+	if h.EntID != nil {
+		sql += fmt.Sprintf(
+			" and ent_id = '%v' ",
+			*h.EntID,
+		)
+	}
 	h.sql = sql
 }
 
@@ -245,6 +255,8 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 		return wlog.WrapError(err)
 	}
 	h.statement = statement
+	h.ID = &statement.ID
+	h.EntID = &statement.EntID
 	return nil
 }
 
