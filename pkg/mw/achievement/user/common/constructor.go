@@ -5,7 +5,6 @@ import (
 	"time"
 
 	entachievementuser "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/achievementuser"
-	"github.com/shopspring/decimal"
 )
 
 //nolint:goconst
