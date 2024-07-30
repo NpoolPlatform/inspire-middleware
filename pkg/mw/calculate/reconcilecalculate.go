@@ -35,10 +35,11 @@ type reconcileCalculateHandler struct {
 	payments           map[uuid.UUID][]*ent.OrderPaymentStatement
 	orderUserStatement *ent.OrderStatement
 	commissions        map[string]*commisisonmwpb.Commission
+	ratios             map[string]decimal.Decimal
 	infos              []*statementmwpb.StatementReq
 }
 
-func (h *reconcileCalculateHandler) ValidateCommissionRatio(ctx context.Context) error {
+func (h *reconcileCalculateHandler) CalculateUserCommissionRatio(ctx context.Context) error {
 	for _, registration := range h.inviters {
 		inviterID, err := uuid.Parse(registration.InviterID)
 		if err != nil {
@@ -51,22 +52,43 @@ func (h *reconcileCalculateHandler) ValidateCommissionRatio(ctx context.Context)
 			return wlog.WrapError(err)
 		}
 
-		inviterComm, inviterFound := h.commissions[registration.InviterID]
-		inviteeComm, inviteeFound := h.commissions[registration.InviteeID]
+		inviterRatio := decimal.NewFromInt(0)
+		inviteeRatio := decimal.NewFromInt(0)
 
-		if inviterFound && inviteeFound {
-			inviterRatio, err := decimal.NewFromString(inviterComm.AmountOrPercent)
+		inviterComm, inviterFound := h.commissions[registration.InviterID]
+		if inviterFound {
+			inviterRatio, err = decimal.NewFromString(inviterComm.AmountOrPercent)
 			if err != nil {
 				return wlog.WrapError(err)
-			}
-			inviteeRatio, err := decimal.NewFromString(inviteeComm.AmountOrPercent)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
-			if inviteeRatio.Cmp(inviterRatio) > 0 {
-				return wlog.Errorf("invitee percent(%v) greater than inviter percent(%v)", inviteeRatio.String(), inviterRatio.String())
 			}
 		}
+		inviteeComm, inviteeFound := h.commissions[registration.InviteeID]
+		if inviteeFound {
+			inviteeRatio, err = decimal.NewFromString(inviteeComm.AmountOrPercent)
+			if err != nil {
+				return wlog.WrapError(err)
+			}
+		}
+
+		if inviterRatio.Cmp(inviteeRatio) < 0 {
+			return wlog.Errorf("inviter percent(%v) less than invitee percent(%v)", inviterRatio.String(), inviteeRatio.String())
+		}
+		if inviterRatio.Cmp(inviteeRatio) == 0 {
+			h.ratios[registration.InviterID] = decimal.NewFromInt(0)
+			continue
+		}
+
+		h.ratios[registration.InviterID] = inviterRatio.Sub(inviteeRatio)
+	}
+
+	// order user ratio
+	comm, ok := h.commissions[h.UserID.String()]
+	if ok {
+		ratio, err := decimal.NewFromString(comm.AmountOrPercent)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.ratios[h.UserID.String()] = ratio
 	}
 	return nil
 }
@@ -232,6 +254,7 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 		statements:  []*ent.OrderStatement{},
 		payments:    map[uuid.UUID][]*ent.OrderPaymentStatement{},
 		commissions: map[string]*commisisonmwpb.Commission{},
+		ratios:      map[string]decimal.Decimal{},
 		infos:       []*statementmwpb.StatementReq{},
 	}
 	if err := handler.getOrderStatements(ctx); err != nil {
@@ -246,7 +269,7 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 	if err := handler.GetCommissions(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
-	if err := handler.ValidateCommissionRatio(ctx); err != nil {
+	if err := handler.CalculateUserCommissionRatio(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 
@@ -261,19 +284,20 @@ func (h *reconcileCalculateHandler) formalize() {
 			continue
 		}
 		req := statementmwpb.StatementReq{
-			ID:               &statement.ID,
-			EntID:            func() *string { s := statement.EntID.String(); return &s }(),
-			AppID:            func() *string { s := statement.AppID.String(); return &s }(),
-			UserID:           func() *string { s := statement.UserID.String(); return &s }(),
-			GoodID:           func() *string { s := statement.GoodID.String(); return &s }(),
-			AppGoodID:        func() *string { s := statement.AppGoodID.String(); return &s }(),
-			OrderID:          func() *string { s := statement.OrderID.String(); return &s }(),
-			OrderUserID:      func() *string { s := statement.OrderUserID.String(); return &s }(),
-			GoodCoinTypeID:   func() *string { s := statement.GoodCoinTypeID.String(); return &s }(),
-			Units:            func() *string { s := statement.Units.String(); return &s }(),
-			GoodValueUSD:     func() *string { s := statement.GoodValueUsd.String(); return &s }(),
-			PaymentAmountUSD: func() *string { s := h.PaymentAmountUSD.String(); return &s }(),
-			AppConfigID:      &h.appConfig.EntID,
+			ID:                 &statement.ID,
+			EntID:              func() *string { s := statement.EntID.String(); return &s }(),
+			AppID:              func() *string { s := statement.AppID.String(); return &s }(),
+			UserID:             func() *string { s := statement.UserID.String(); return &s }(),
+			GoodID:             func() *string { s := statement.GoodID.String(); return &s }(),
+			AppGoodID:          func() *string { s := statement.AppGoodID.String(); return &s }(),
+			OrderID:            func() *string { s := statement.OrderID.String(); return &s }(),
+			OrderUserID:        func() *string { s := statement.OrderUserID.String(); return &s }(),
+			GoodCoinTypeID:     func() *string { s := statement.GoodCoinTypeID.String(); return &s }(),
+			Units:              func() *string { s := statement.Units.String(); return &s }(),
+			GoodValueUSD:       func() *string { s := statement.GoodValueUsd.String(); return &s }(),
+			PaymentAmountUSD:   func() *string { s := h.PaymentAmountUSD.String(); return &s }(),
+			CommissionConfigID: func() *string { s := statement.CommissionConfigID.String(); return &s }(),
+			AppConfigID:        &h.appConfig.EntID,
 			CommissionConfigType: func() *types.CommissionConfigType {
 				s := types.CommissionConfigType(types.CommissionConfigType_value[statement.CommissionConfigType])
 				return &s
@@ -291,9 +315,15 @@ func (h *reconcileCalculateHandler) formalize() {
 
 			comm, ok := h.commissions[statement.UserID.String()]
 			if !ok {
+				req.PaymentStatements = append(req.PaymentStatements, payment)
 				continue
 			}
-			ratio, _ := decimal.NewFromString(comm.AmountOrPercent)
+			ratio, ok := h.ratios[statement.UserID.String()]
+			if !ok {
+				req.PaymentStatements = append(req.PaymentStatements, payment)
+				req.CommissionConfigID = &comm.EntID
+				continue
+			}
 			commissionAmount := dbPayment.Amount.Mul(ratio).Div(decimal.NewFromInt(100)).String() //nolint
 			payment.CommissionAmount = &commissionAmount
 
