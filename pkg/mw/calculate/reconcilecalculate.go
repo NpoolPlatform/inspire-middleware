@@ -276,11 +276,11 @@ func (h *Handler) ReconcileCalculate(ctx context.Context) ([]*statementmwpb.Stat
 		return nil, wlog.WrapError(err)
 	}
 
-	handler.formalizeStatements()
+	handler.formalize()
 	return handler.infos, nil
 }
 
-func (h *reconcileCalculateHandler) formalizeStatements() {
+func (h *reconcileCalculateHandler) formalize() {
 	for _, statement := range h.statements {
 		dbPayments, ok := h.payments[statement.EntID]
 		if !ok {
@@ -325,7 +325,7 @@ func (h *reconcileCalculateHandler) formalizeStatements() {
 			req.PaymentStatements = append(req.PaymentStatements, payment)
 
 			req.CommissionConfigID = &comm.CommissionConfigID
-			amount = amount.Add(decimal.RequireFromString(comm.CommissionAmountUSD))
+			amount = amount.Add(decimal.RequireFromString(comm.Amount))
 		}
 		req.CommissionAmountUSD = func() *string { amount := amount.String(); return &amount }()
 		h.infos = append(h.infos, &req)
