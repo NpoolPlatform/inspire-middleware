@@ -298,6 +298,7 @@ func (h *reconcileCalculateHandler) formalize() {
 			GoodValueUSD:        func() *string { s := statement.GoodValueUsd.String(); return &s }(),
 			PaymentAmountUSD:    func() *string { s := h.PaymentAmountUSD.String(); return &s }(),
 			CommissionConfigID:  func() *string { s := statement.CommissionConfigID.String(); return &s }(),
+			CommissionAmountUSD: func() *string { s := decimal.NewFromInt(0).String(); return &s }(),
 			AppConfigID:         &h.appConfig.EntID,
 			CommissionConfigType: func() *types.CommissionConfigType {
 				s := types.CommissionConfigType(types.CommissionConfigType_value[statement.CommissionConfigType])
@@ -305,7 +306,13 @@ func (h *reconcileCalculateHandler) formalize() {
 			}(),
 		}
 
-		amount := decimal.NewFromInt(0)
+		ratio, ratioFound := h.ratios[statement.UserID.String()]
+		if ratioFound {
+			req.CommissionAmountUSD = func() *string {
+				amount := statement.PaymentAmountUsd.Mul(ratio).Div(decimal.NewFromInt(100)).String() //nolint
+				return &amount
+			}()
+		}
 		for _, dbPayment := range dbPayments {
 			payment := &orderpaymentmwpb.StatementReq{
 				EntID:             func() *string { id := dbPayment.EntID.String(); return &id }(),
@@ -319,8 +326,7 @@ func (h *reconcileCalculateHandler) formalize() {
 				req.PaymentStatements = append(req.PaymentStatements, payment)
 				continue
 			}
-			ratio, ok := h.ratios[statement.UserID.String()]
-			if !ok {
+			if !ratioFound {
 				req.PaymentStatements = append(req.PaymentStatements, payment)
 				req.CommissionConfigID = &comm.EntID
 				continue
@@ -330,10 +336,8 @@ func (h *reconcileCalculateHandler) formalize() {
 
 			req.PaymentStatements = append(req.PaymentStatements, payment)
 			req.CommissionConfigID = &comm.EntID
-			amount = amount.Add(decimal.RequireFromString(commissionAmount))
 		}
 
-		req.CommissionAmountUSD = func() *string { amount := amount.String(); return &amount }()
 		h.infos = append(h.infos, &req)
 	}
 }
