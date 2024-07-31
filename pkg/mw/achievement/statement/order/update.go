@@ -276,7 +276,6 @@ func (h *updateHandler) requireCommission(ctx context.Context, tx *ent.Tx) error
 			Only(ctx); err != nil {
 			return wlog.WrapError(err)
 		}
-
 	}
 	return nil
 }
