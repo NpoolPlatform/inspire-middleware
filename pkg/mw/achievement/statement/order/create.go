@@ -336,7 +336,6 @@ func (h *createHandler) validateDirectContributorID() error {
 }
 
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
