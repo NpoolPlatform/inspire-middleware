@@ -307,7 +307,7 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 	return h.updateAchievementUser(ctx, tx)
 }
 
-func (h *Handler) validateCommissionAmount() error {
+func (h *createHandler) validateCommissionAmount() error {
 	if h.CommissionConfigID == nil || h.CommissionConfigID.String() == uuid.Nil.String() {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			return wlog.Errorf("commission config id mismatch commission amount usd")
@@ -328,10 +328,14 @@ func (h *Handler) validateCommissionAmount() error {
 	return nil
 }
 
-func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.validateCommissionAmount(); err != nil {
-		return wlog.WrapError(err)
+func (h *createHandler) validateDirectContributorID() error {
+	if h.UserID == h.OrderUserID && h.DirectContributorID != h.UserID {
+		return wlog.Errorf("invalid direct contributor id")
 	}
+	return nil
+}
+
+func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
@@ -370,6 +374,12 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		}(),
 	}
 
+	if err := handler.validateCommissionAmount(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateDirectContributorID(); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.getAchievementWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}
