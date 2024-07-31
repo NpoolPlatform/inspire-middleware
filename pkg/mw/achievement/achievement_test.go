@@ -115,6 +115,7 @@ func createStatement(t *testing.T) {
 	paymentCoinTypeID := uuid.NewString()
 	amount := "1000"
 	commissionAmount := "0"
+	ret.DirectContributorID = ret.UserID
 	handler, err := statement1.NewHandler(
 		context.Background(),
 		statement1.WithEntID(&ret.EntID, true),
@@ -124,6 +125,7 @@ func createStatement(t *testing.T) {
 		statement1.WithAppGoodID(&ret.AppGoodID, true),
 		statement1.WithOrderID(&ret.OrderID, true),
 		statement1.WithOrderUserID(&ret.OrderUserID, true),
+		statement1.WithDirectContributorID(&ret.DirectContributorID, true),
 		statement1.WithGoodCoinTypeID(&ret.GoodCoinTypeID, true),
 		statement1.WithUnits(&ret.Units, true),
 		statement1.WithGoodValueUSD(&ret.GoodValueUSD, true),

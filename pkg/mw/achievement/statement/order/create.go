@@ -61,6 +61,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "app_good_id"
 	_sql += comma + "order_id"
 	_sql += comma + "order_user_id"
+	_sql += comma + "direct_contributor_id"
 	_sql += comma + "good_coin_type_id"
 	_sql += comma + "units"
 	_sql += comma + "good_value_usd"
@@ -86,13 +87,18 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as app_good_id", comma, *h.AppGoodID)
 	_sql += fmt.Sprintf("%v'%v' as order_id", comma, *h.OrderID)
 	_sql += fmt.Sprintf("%v'%v' as order_user_id", comma, *h.OrderUserID)
+	_sql += fmt.Sprintf("%v'%v' as direct_contributor_id", comma, *h.DirectContributorID)
 	_sql += fmt.Sprintf("%v'%v' as good_coin_type_id", comma, *h.GoodCoinTypeID)
 	_sql += fmt.Sprintf("%v'%v' as units", comma, *h.Units)
 	_sql += fmt.Sprintf("%v'%v' as good_value_usd", comma, *h.GoodValueUSD)
 	_sql += fmt.Sprintf("%v'%v' as payment_amount_usd", comma, *h.PaymentAmountUSD)
 	_sql += fmt.Sprintf("%v'%v' as commission_amount_usd", comma, *h.CommissionAmountUSD)
 	_sql += fmt.Sprintf("%v'%v' as app_config_id", comma, *h.AppConfigID)
-	_sql += fmt.Sprintf("%v'%v' as commission_config_id", comma, *h.CommissionConfigID)
+	commissionConfigID := uuid.Nil
+	if h.CommissionConfigID != nil {
+		commissionConfigID = *h.CommissionConfigID
+	}
+	_sql += fmt.Sprintf("%v'%v' as commission_config_id", comma, commissionConfigID)
 	_sql += fmt.Sprintf("%v'%v' as commission_config_type", comma, h.CommissionConfigType.String())
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
@@ -101,7 +107,7 @@ func (h *createHandler) constructSQL() {
 	_sql += "where not exists ("
 	_sql += fmt.Sprintf("select 1 from %v ", entorderstatement.Table)
 	_sql += fmt.Sprintf(
-		"where user_id = '%v' and order_id = '%v' ",
+		"where user_id = '%v' and order_id = '%v' and deleted_at = 0 ",
 		*h.UserID,
 		*h.OrderID,
 	)
@@ -111,7 +117,7 @@ func (h *createHandler) constructSQL() {
 		_sql += " and exists ("
 		_sql += fmt.Sprintf("select 1 from %v ", entappconfig.Table)
 		_sql += fmt.Sprintf(
-			"where app_id = '%v' and ent_id = '%v' and deleted_at = 0 ",
+			"where app_id = '%v' and ent_id = '%v' and end_at = 0 and deleted_at = 0 ",
 			*h.AppID,
 			*h.AppConfigID,
 		)
@@ -301,8 +307,8 @@ func (h *createHandler) createOrUpdateAchievementUser(ctx context.Context, tx *e
 	return h.updateAchievementUser(ctx, tx)
 }
 
-func (h *Handler) validateCommissionAmount() error {
-	if h.CommissionConfigID == nil {
+func (h *createHandler) validateCommissionAmount() error {
+	if h.CommissionConfigID == nil || h.CommissionConfigID.String() == uuid.Nil.String() {
 		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 			return wlog.Errorf("commission config id mismatch commission amount usd")
 		}
@@ -314,14 +320,22 @@ func (h *Handler) validateCommissionAmount() error {
 			}
 		}
 	}
+	if *h.CommissionConfigType == types.CommissionConfigType_WithoutCommissionConfig {
+		if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+			return wlog.Errorf("commission amount usd mismatch commission config type")
+		}
+	}
+	return nil
+}
+
+func (h *createHandler) validateDirectContributorID() error {
+	if *h.UserID == *h.OrderUserID && *h.DirectContributorID != *h.UserID {
+		return wlog.Errorf("invalid direct contributor id")
+	}
 	return nil
 }
 
 func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
-	if err := h.validateCommissionAmount(); err != nil {
-		return wlog.WrapError(err)
-	}
-
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
@@ -359,6 +373,12 @@ func (h *Handler) CreateStatementWithTx(ctx context.Context, tx *ent.Tx) error {
 		}(),
 	}
 
+	if err := handler.validateCommissionAmount(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validateDirectContributorID(); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.getAchievementWithTx(ctx, tx); err != nil {
 		return wlog.WrapError(err)
 	}

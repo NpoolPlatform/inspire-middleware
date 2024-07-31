@@ -52,6 +52,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entorderstatement.FieldAppGoodID),
 		t.C(entorderstatement.FieldOrderID),
 		t.C(entorderstatement.FieldOrderUserID),
+		t.C(entorderstatement.FieldDirectContributorID),
 		t.C(entorderstatement.FieldGoodCoinTypeID),
 		t.C(entorderstatement.FieldUnits),
 		t.C(entorderstatement.FieldGoodValueUsd),

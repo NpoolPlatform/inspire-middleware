@@ -38,3 +38,17 @@ func Calculate(ctx context.Context, in *npool.CalculateRequest) ([]*statementmwp
 	}
 	return infos.([]*statementmwpb.StatementReq), nil
 }
+
+func ReconcileCalculate(ctx context.Context, in *npool.ReconcileCalculateRequest) ([]*statementmwpb.StatementReq, error) {
+	infos, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
+		resp, err := cli.ReconcileCalculate(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		return resp.Infos, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.([]*statementmwpb.StatementReq), nil
+}

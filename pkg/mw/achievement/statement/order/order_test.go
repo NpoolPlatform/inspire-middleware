@@ -97,6 +97,7 @@ func setup(t *testing.T) func(*testing.T) {
 }
 
 func createStatement(t *testing.T) {
+	ret.DirectContributorID = ret.UserID
 	payments := []*orderpaymentstatementmwpb.StatementReq{}
 	payments = append(payments, &orderpaymentstatementmwpb.StatementReq{
 		PaymentCoinTypeID: &ret.GoodCoinTypeID,
@@ -112,6 +113,7 @@ func createStatement(t *testing.T) {
 		WithAppGoodID(&ret.AppGoodID, true),
 		WithOrderID(&ret.OrderID, true),
 		WithOrderUserID(&ret.OrderUserID, true),
+		WithDirectContributorID(&ret.DirectContributorID, true),
 		WithGoodCoinTypeID(&ret.GoodCoinTypeID, true),
 		WithUnits(&ret.Units, true),
 		WithGoodValueUSD(&ret.GoodValueUSD, true),

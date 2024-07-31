@@ -1,3 +1,4 @@
+//nolint:funlen,dupl
 package calculate
 
 import (
@@ -432,9 +433,10 @@ func (h *calculateHandler) generateStatements(
 		}
 
 		statements = append(statements, &statementmwpb.StatementReq{
-			AppID:       func() *string { id := h.AppID.String(); return &id }(),
-			UserID:      &inviter.InviterID,
-			OrderUserID: func() *string { s := h.UserID.String(); return &s }(),
+			AppID:               func() *string { id := h.AppID.String(); return &id }(),
+			UserID:              &inviter.InviterID,
+			OrderUserID:         func() *string { s := h.UserID.String(); return &s }(),
+			DirectContributorID: &inviter.InviteeID,
 			GoodID: func() *string {
 				id := h.GoodID.String()
 				return &id
@@ -516,6 +518,10 @@ func (h *calculateHandler) generateStatements(
 			return &id
 		}(),
 		OrderUserID: func() *string {
+			id := h.UserID.String()
+			return &id
+		}(),
+		DirectContributorID: func() *string {
 			id := h.UserID.String()
 			return &id
 		}(),

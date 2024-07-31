@@ -170,6 +170,22 @@ func WithOrderUserID(id *string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
+func WithDirectContributorID(id *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if id == nil {
+			if must {
+				return wlog.Errorf("invalid orderuserid")
+			}
+			return nil
+		}
+		_id, err := uuid.Parse(*id)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		h.DirectContributorID = &_id
+		return nil
+	}
+}
 func WithGoodCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if id == nil {
