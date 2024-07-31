@@ -329,7 +329,7 @@ func (h *createHandler) validateCommissionAmount() error {
 }
 
 func (h *createHandler) validateDirectContributorID() error {
-	if h.UserID == h.OrderUserID && h.DirectContributorID != h.UserID {
+	if *h.UserID == *h.OrderUserID && *h.DirectContributorID != *h.UserID {
 		return wlog.Errorf("invalid direct contributor id")
 	}
 	return nil
