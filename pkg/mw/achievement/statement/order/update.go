@@ -261,7 +261,7 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 }
 
 func (h *updateHandler) requireCommission(ctx context.Context, tx *ent.Tx) error {
-	if *h.CommissionConfigID != uuid.Nil {
+	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
 		if _, err := tx.
 			Commission.
 			Query().
