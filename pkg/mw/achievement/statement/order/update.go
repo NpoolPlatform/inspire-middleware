@@ -261,19 +261,21 @@ func (h *updateHandler) requireOrderStatement(ctx context.Context, tx *ent.Tx) e
 }
 
 func (h *updateHandler) requireCommission(ctx context.Context, tx *ent.Tx) error {
-	if _, err := tx.
-		Commission.
-		Query().
-		Where(
-			entcommission.EntID(*h.CommissionConfigID),
-			entcommission.AppID(*h.AppID),
-			entcommission.UserID(*h.UserID),
-			entcommission.AppGoodID(*h.AppGoodID),
-			entcommission.EndAt(0),
-			entcommission.DeletedAt(0),
-		).
-		Only(ctx); err != nil {
-		return wlog.WrapError(err)
+	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
+		if _, err := tx.
+			Commission.
+			Query().
+			Where(
+				entcommission.EntID(*h.CommissionConfigID),
+				entcommission.AppID(*h.AppID),
+				entcommission.UserID(*h.UserID),
+				entcommission.AppGoodID(*h.AppGoodID),
+				entcommission.EndAt(0),
+				entcommission.DeletedAt(0),
+			).
+			Only(ctx); err != nil {
+			return wlog.WrapError(err)
+		}
 	}
 	return nil
 }
