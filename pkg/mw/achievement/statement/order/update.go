@@ -181,10 +181,11 @@ func (h *updateHandler) updatePaymentStatements(ctx context.Context, tx *ent.Tx)
 			return wlog.WrapError(err)
 		}
 	}
+	// update commission config id even commission amount is 0
+	if err := h.updateOrderStatement(ctx, tx); err != nil {
+		return wlog.WrapError(err)
+	}
 	if h.CommissionAmountUSD.Cmp(decimal.NewFromInt(0)) > 0 {
-		if err := h.updateOrderStatement(ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
 		if err := h.updateGoodAchievement(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
