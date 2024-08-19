@@ -64,6 +64,10 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)
 	_sql += ") as tmp "
+	_sql += "where exists ("
+	_sql += "select 1 from (select * from coin_configs) as di "
+	_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.coin_type_id = '%v' and di.deleted_at=0", *h.CoinConfigID, *h.AppID, *h.CoinTypeID)
+	_sql += " limit 1)"
 
 	h.sql = _sql
 }
