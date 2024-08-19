@@ -51,6 +51,7 @@ func UpdateSet(u *ent.UserCoinRewardUpdateOne, req *Req) *ent.UserCoinRewardUpda
 type Conds struct {
 	EntID      *cruder.Cond
 	EntIDs     *cruder.Cond
+	UserIDs    *cruder.Cond
 	AppID      *cruder.Cond
 	UserID     *cruder.Cond
 	ID         *cruder.Cond
@@ -83,6 +84,18 @@ func SetQueryConds(q *ent.UserCoinRewardQuery, conds *Conds) (*ent.UserCoinRewar
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entusercoinreward.EntIDIn(ids...))
+		default:
+			return nil, wlog.Errorf("invalid usercoinreward field")
+		}
+	}
+	if conds.UserIDs != nil {
+		ids, ok := conds.UserIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, wlog.Errorf("invalid userids")
+		}
+		switch conds.UserIDs.Op {
+		case cruder.IN:
+			q.Where(entusercoinreward.UserIDIn(ids...))
 		default:
 			return nil, wlog.Errorf("invalid usercoinreward field")
 		}
