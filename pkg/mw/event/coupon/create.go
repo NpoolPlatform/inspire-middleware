@@ -57,6 +57,9 @@ func (h *createHandler) constructSQL() {
 	_sql += " limit 1) and exists ("
 	_sql += "select 1 from events "
 	_sql += fmt.Sprintf("where app_id='%v' and ent_id='%v' and deleted_at=0", *h.AppID, *h.EventID)
+	_sql += " limit 1) and exists ("
+	_sql += "select 1 from coupons "
+	_sql += fmt.Sprintf("where app_id='%v' and ent_id='%v' and deleted_at=0", *h.AppID, *h.CouponID)
 	_sql += " limit 1)"
 	h.sql = _sql
 }
