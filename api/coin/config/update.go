@@ -23,7 +23,8 @@ func (s *Server) UpdateCoinConfig(ctx context.Context, in *npool.UpdateCoinConfi
 	}
 	handler, err := config1.NewHandler(
 		ctx,
-		config1.WithID(req.ID, true),
+		config1.WithID(req.ID, false),
+		config1.WithEntID(req.EntID, false),
 		config1.WithMaxValue(req.MaxValue, false),
 		config1.WithAllocated(req.Allocated, false),
 	)

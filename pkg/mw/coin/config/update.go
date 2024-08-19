@@ -62,6 +62,7 @@ func (h *Handler) UpdateCoinConfig(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid coinconfig")
 	}
+	h.ID = &info.ID
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
