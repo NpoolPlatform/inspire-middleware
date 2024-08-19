@@ -106,6 +106,9 @@ func WithActionCredits(amount *string, must bool) func(context.Context, *Handler
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid actioncredits")
+		}
 		h.ActionCredits = &_amount
 		return nil
 	}
