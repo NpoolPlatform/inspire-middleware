@@ -24,7 +24,8 @@ func (s *Server) UpdateUserCoinReward(ctx context.Context, in *npool.UpdateUserC
 	}
 	handler, err := reward1.NewHandler(
 		ctx,
-		reward1.WithID(req.ID, true),
+		reward1.WithID(req.ID, false),
+		reward1.WithEntID(req.EntID, false),
 		reward1.WithCoinRewards(req.CoinRewards, false),
 	)
 	if err != nil {

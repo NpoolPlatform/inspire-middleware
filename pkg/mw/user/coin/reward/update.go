@@ -59,6 +59,7 @@ func (h *Handler) UpdateUserCoinReward(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid usercoinreward")
 	}
+	h.ID = &info.ID
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
