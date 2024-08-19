@@ -111,6 +111,7 @@ func WithCoinConfigID(id *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
+//nolint:dupl
 func WithCoinValue(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -131,6 +132,7 @@ func WithCoinValue(amount *string, must bool) func(context.Context, *Handler) er
 	}
 }
 
+//nolint:dupl
 func WithCoinPreUSD(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {

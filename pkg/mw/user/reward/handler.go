@@ -94,6 +94,7 @@ func WithUserID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+//nolint:dupl
 func WithActionCredits(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -114,6 +115,7 @@ func WithActionCredits(amount *string, must bool) func(context.Context, *Handler
 	}
 }
 
+//nolint:dupl
 func WithCouponAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -134,6 +136,7 @@ func WithCouponAmount(amount *string, must bool) func(context.Context, *Handler)
 	}
 }
 
+//nolint:dupl
 func WithCouponCashableAmount(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {

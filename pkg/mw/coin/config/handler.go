@@ -94,6 +94,7 @@ func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error
 	}
 }
 
+//nolint:dupl
 func WithMaxValue(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -114,6 +115,7 @@ func WithMaxValue(amount *string, must bool) func(context.Context, *Handler) err
 	}
 }
 
+//nolint:dupl
 func WithAllocated(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {

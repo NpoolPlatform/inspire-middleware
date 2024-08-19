@@ -85,6 +85,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+//nolint:dupl
 func WithCredits(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -105,6 +106,7 @@ func WithCredits(amount *string, must bool) func(context.Context, *Handler) erro
 	}
 }
 
+//nolint:dupl
 func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
