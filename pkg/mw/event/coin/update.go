@@ -63,6 +63,7 @@ func (h *Handler) UpdateEventCoin(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid eventcoin")
 	}
+	h.ID = &info.ID
 	appID := uuid.MustParse(info.AppID)
 	h.AppID = &appID
 

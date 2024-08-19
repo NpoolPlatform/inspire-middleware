@@ -24,7 +24,8 @@ func (s *Server) UpdateEventCoin(ctx context.Context, in *npool.UpdateEventCoinR
 
 	handler, err := coin1.NewHandler(
 		ctx,
-		coin1.WithID(req.ID, true),
+		coin1.WithID(req.ID, false),
+		coin1.WithEntID(req.EntID, false),
 		coin1.WithCoinValue(req.CoinValue, false),
 		coin1.WithCoinPreUSD(req.CoinPreUSD, false),
 	)
