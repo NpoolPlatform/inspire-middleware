@@ -97,6 +97,9 @@ func WithCredits(amount *string, must bool) func(context.Context, *Handler) erro
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid credits")
+		}
 		h.Credits = &_amount
 		return nil
 	}
@@ -113,6 +116,9 @@ func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid creditsperusd")
 		}
 		h.CreditsPerUSD = &_amount
 		return nil
