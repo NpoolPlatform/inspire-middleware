@@ -297,6 +297,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: conds.GetName().GetValue(),
 			}
 		}
+		if conds.TaskType != nil {
+			h.Conds.TaskType = &cruder.Cond{
+				Op:  conds.GetTaskType().GetOp(),
+				Val: conds.GetTaskType().GetValue(),
+			}
+		}
 		return nil
 	}
 }

@@ -213,5 +213,17 @@ func SetQueryConds(q *ent.TaskConfigQuery, conds *Conds) (*ent.TaskConfigQuery, 
 			return nil, wlog.Errorf("invalid taskconfig field")
 		}
 	}
+	if conds.Name != nil {
+		name, ok := conds.Name.Val.(string)
+		if !ok {
+			return nil, wlog.Errorf("invalid name")
+		}
+		switch conds.Name.Op {
+		case cruder.EQ:
+			q.Where(enttaskconfig.Name(name))
+		default:
+			return nil, wlog.Errorf("invalid taskconfig field")
+		}
+	}
 	return q, nil
 }
