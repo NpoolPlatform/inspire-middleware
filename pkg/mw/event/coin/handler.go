@@ -123,6 +123,9 @@ func WithCoinValue(amount *string, must bool) func(context.Context, *Handler) er
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid coinvalue")
+		}
 		h.CoinValue = &_amount
 		return nil
 	}
@@ -139,6 +142,9 @@ func WithCoinPreUSD(amount *string, must bool) func(context.Context, *Handler) e
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid coinpreusd")
 		}
 		h.CoinPreUSD = &_amount
 		return nil
