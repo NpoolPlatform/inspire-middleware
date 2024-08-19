@@ -106,6 +106,9 @@ func WithMaxValue(amount *string, must bool) func(context.Context, *Handler) err
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid maxvalue")
+		}
 		h.MaxValue = &_amount
 		return nil
 	}
@@ -122,6 +125,9 @@ func WithAllocated(amount *string, must bool) func(context.Context, *Handler) er
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid allocated")
 		}
 		h.Allocated = &_amount
 		return nil
