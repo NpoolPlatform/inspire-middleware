@@ -109,6 +109,7 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid taskconfig")
 	}
+	h.ID = &info.ID
 
 	if h.TaskType == nil {
 		h.TaskType = &info.TaskType
