@@ -79,6 +79,7 @@ func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
 	if info == nil {
 		return nil, nil
 	}
+	h.ID = &info.ID
 
 	handler := &deleteHandler{
 		Handler: h,
