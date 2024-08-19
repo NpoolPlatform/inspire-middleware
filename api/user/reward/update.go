@@ -23,7 +23,8 @@ func (s *Server) UpdateUserReward(ctx context.Context, in *npool.UpdateUserRewar
 	}
 	handler, err := reward1.NewHandler(
 		ctx,
-		reward1.WithID(req.ID, true),
+		reward1.WithID(req.ID, false),
+		reward1.WithEntID(req.EntID, false),
 		reward1.WithActionCredits(req.ActionCredits, false),
 		reward1.WithCouponAmount(req.CouponAmount, false),
 		reward1.WithCouponCashableAmount(req.CouponCashableAmount, false),
