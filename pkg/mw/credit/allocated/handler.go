@@ -106,6 +106,9 @@ func WithValue(amount *string, must bool) func(context.Context, *Handler) error 
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid maxvalue")
+		}
 		h.Value = &_amount
 		return nil
 	}
