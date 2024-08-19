@@ -123,6 +123,9 @@ func WithCouponAmount(amount *string, must bool) func(context.Context, *Handler)
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid couponamount")
+		}
 		h.CouponAmount = &_amount
 		return nil
 	}
@@ -139,6 +142,9 @@ func WithCouponCashableAmount(amount *string, must bool) func(context.Context, *
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid couponcashableamount")
 		}
 		h.CouponCashableAmount = &_amount
 		return nil
