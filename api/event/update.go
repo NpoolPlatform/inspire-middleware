@@ -24,7 +24,8 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(req.ID, true),
+		event1.WithID(req.ID, false),
+		event1.WithEntID(req.EntID, false),
 		event1.WithCredits(req.Credits, false),
 		event1.WithCreditsPerUSD(req.CreditsPerUSD, false),
 		event1.WithMaxConsecutive(req.MaxConsecutive, false),
