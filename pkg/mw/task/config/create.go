@@ -17,7 +17,7 @@ type createHandler struct {
 	sql string
 }
 
-//nolint:goconst
+//nolint:goconst,funlen
 func (h *createHandler) constructSQL() {
 	comma := ""
 	now := uint32(time.Now().Unix())

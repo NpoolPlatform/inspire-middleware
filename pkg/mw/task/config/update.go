@@ -19,6 +19,7 @@ type updateHandler struct {
 	eventID string
 }
 
+//nolint:funlen
 func (h *updateHandler) constructSQL() error {
 	set := "set "
 	now := uint32(time.Now().Unix())
