@@ -23,7 +23,8 @@ func (s *Server) UpdateTaskUser(ctx context.Context, in *npool.UpdateTaskUserReq
 	}
 	handler, err := user1.NewHandler(
 		ctx,
-		user1.WithID(req.ID, true),
+		user1.WithID(req.ID, false),
+		user1.WithEntID(req.EntID, false),
 		user1.WithTaskState(req.TaskState, false),
 		user1.WithRewardState(req.RewardState, false),
 	)

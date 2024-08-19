@@ -63,6 +63,7 @@ func (h *Handler) UpdateTaskUser(ctx context.Context) error {
 	if info == nil {
 		return wlog.Errorf("invalid taskuser")
 	}
+	h.ID = &info.ID
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
