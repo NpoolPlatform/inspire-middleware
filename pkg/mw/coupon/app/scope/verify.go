@@ -115,6 +115,7 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 			continue
 		}
 		ids = append(ids, *req.CouponID)
+		idMap[*req.CouponID] = struct{}{}
 	}
 
 	handler.Conds = &couponcrud.Conds{
