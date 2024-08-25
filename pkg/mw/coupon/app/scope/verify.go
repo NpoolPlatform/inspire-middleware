@@ -128,7 +128,7 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	if len(coupons) != len(ids) {
+	if len(coupons) != len(idMap) {
 		return wlog.Errorf("invalid couponid")
 	}
 	return nil
