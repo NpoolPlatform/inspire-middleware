@@ -19,16 +19,11 @@ type updateHandler struct {
 	eventID string
 }
 
-//nolint:funlen
 func (h *updateHandler) constructSQL() error {
 	set := "set "
 	now := uint32(time.Now().Unix())
 
 	_sql := "update task_configs "
-	if h.EventID != nil {
-		_sql += fmt.Sprintf("%vevent_id = '%v', ", set, *h.EventID)
-		set = ""
-	}
 	if h.TaskType != nil {
 		_sql += fmt.Sprintf("%vtask_type = '%v', ", set, *h.TaskType)
 		set = ""
@@ -76,12 +71,6 @@ func (h *updateHandler) constructSQL() error {
 	_sql += fmt.Sprintf("where di.app_id = '%v' and di.event_id = '%v' and di.task_type = '%v' and di.id != %v and deleted_at=0", h.appID, h.eventID, h.TaskType.String(), *h.ID)
 	_sql += " limit 1)"
 
-	if h.EventID != nil {
-		_sql += " and not exists ("
-		_sql += "select 1 from (select * from task_users) as di "
-		_sql += fmt.Sprintf("where di.app_id = '%v' and di.task_id = '%v' and di.event_id = '%v' and deleted_at=0", h.appID, *h.EntID, h.eventID)
-		_sql += " limit 1)"
-	}
 	if h.LastTaskID != nil {
 		_sql += " and exists ("
 		_sql += "select 1 from (select * from task_configs) as di "

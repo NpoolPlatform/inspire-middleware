@@ -1,4 +1,3 @@
-//nolint:dupl
 package config
 
 import (
@@ -26,7 +25,6 @@ func (s *Server) UpdateTaskConfig(ctx context.Context, in *npool.UpdateTaskConfi
 		ctx,
 		config1.WithID(req.ID, false),
 		config1.WithEntID(req.EntID, false),
-		config1.WithEventID(req.EventID, false),
 		config1.WithTaskType(req.TaskType, false),
 		config1.WithName(req.Name, false),
 		config1.WithTaskDesc(req.TaskDesc, false),
