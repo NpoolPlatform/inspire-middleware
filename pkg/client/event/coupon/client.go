@@ -118,12 +118,3 @@ func DeleteEventCoupon(ctx context.Context, id *uint32, entID *string) error {
 	})
 	return err
 }
-
-func UpdateEventCoupon(ctx context.Context, req *npool.EventCouponReq) error {
-	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		return cli.UpdateEventCoupon(_ctx, &npool.UpdateEventCouponRequest{
-			Info: req,
-		})
-	})
-	return err
-}
