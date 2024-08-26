@@ -45,7 +45,7 @@ func (h *Handler) constructCreateSQL() string {
 	_sql += ") as tmp "
 	_sql += "where not exists ("
 	_sql += "select 1 from user_rewards "
-	_sql += fmt.Sprintf("where app_id='%v' and user_id='%v'", *h.AppID, *h.UserID)
+	_sql += fmt.Sprintf("where app_id='%v' and user_id='%v' and deleted_at=0", *h.AppID, *h.UserID)
 	_sql += " limit 1)"
 
 	return _sql
