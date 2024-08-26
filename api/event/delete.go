@@ -36,7 +36,7 @@ func (s *Server) DeleteEvent(ctx context.Context, in *npool.DeleteEventRequest) 
 		return &npool.DeleteEventResponse{}, status.Error(codes.InvalidArgument, "invalid info")
 	}
 
-	info, err := handler.DeleteEvent(ctx)
+	err = handler.DeleteEvent(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteEvent",
@@ -47,6 +47,6 @@ func (s *Server) DeleteEvent(ctx context.Context, in *npool.DeleteEventRequest) 
 	}
 
 	return &npool.DeleteEventResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

@@ -190,12 +190,10 @@ func deleteEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteEvent(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+	err = handler.DeleteEvent(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetEvent(context.Background())
+	info, err := handler.GetEvent(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

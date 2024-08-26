@@ -416,8 +416,8 @@ func resetup(t *testing.T) func(*testing.T) {
 		_ = h3.DeleteCoinConfig(context.Background())
 		_ = h4.DeleteCoinConfig(context.Background())
 		_ = h5.DeleteTaskConfig(context.Background())
-		_, _ = handler.DeleteEvent(context.Background())
-		_, _ = handler2.DeleteEvent(context.Background())
+		_ = handler.DeleteEvent(context.Background())
+		_ = handler2.DeleteEvent(context.Background())
 	}
 }
 

@@ -12,7 +12,6 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	enteventcoin "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
 	enteventcoupon "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 	"github.com/google/uuid"
 )
 
@@ -80,13 +79,13 @@ func (h *deleteHandler) deleteCoins(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) DeleteEvent(ctx context.Context) (*npool.Event, error) {
+func (h *Handler) DeleteEvent(ctx context.Context) error {
 	info, err := h.GetEvent(ctx)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return nil, nil
+		return nil
 	}
 
 	h.ID = &info.ID
@@ -100,7 +99,7 @@ func (h *Handler) DeleteEvent(ctx context.Context) (*npool.Event, error) {
 	}
 
 	now := uint32(time.Now().Unix())
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.deleteCoupons(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -117,9 +116,4 @@ func (h *Handler) DeleteEvent(ctx context.Context) (*npool.Event, error) {
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, wlog.WrapError(err)
-	}
-
-	return info, nil
 }
