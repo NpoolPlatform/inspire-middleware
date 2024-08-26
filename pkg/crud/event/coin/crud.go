@@ -16,7 +16,7 @@ type Req struct {
 	EventID      *uuid.UUID
 	CoinConfigID *uuid.UUID
 	CoinValue    *decimal.Decimal
-	CoinPreUSD   *decimal.Decimal
+	CoinPerUSD   *decimal.Decimal
 	DeletedAt    *uint32
 }
 
@@ -36,8 +36,8 @@ func CreateSet(c *ent.EventCoinCreate, req *Req) *ent.EventCoinCreate {
 	if req.CoinValue != nil {
 		c.SetCoinValue(*req.CoinValue)
 	}
-	if req.CoinPreUSD != nil {
-		c.SetCoinPreUsd(*req.CoinPreUSD)
+	if req.CoinPerUSD != nil {
+		c.SetCoinPerUsd(*req.CoinPerUSD)
 	}
 	return c
 }
@@ -46,8 +46,8 @@ func UpdateSet(u *ent.EventCoinUpdateOne, req *Req) *ent.EventCoinUpdateOne {
 	if req.CoinValue != nil {
 		u.SetCoinValue(*req.CoinValue)
 	}
-	if req.CoinPreUSD != nil {
-		u.SetCoinPreUsd(*req.CoinPreUSD)
+	if req.CoinPerUSD != nil {
+		u.SetCoinPerUsd(*req.CoinPerUSD)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

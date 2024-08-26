@@ -47,7 +47,7 @@ var ret = &npool.TaskConfig{
 	Index:            uint32(1),
 	LastTaskID:       uuid.NewString(),
 	MaxRewardCount:   uint32(1),
-	CooldownSecord:   uint32(1),
+	CooldownSecond:   uint32(1),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -67,7 +67,7 @@ func createTaskConfig(t *testing.T) {
 		Index:            &ret.Index,
 		LastTaskID:       &ret.LastTaskID,
 		MaxRewardCount:   &ret.MaxRewardCount,
-		CooldownSecord:   &ret.CooldownSecord,
+		CooldownSecond:   &ret.CooldownSecond,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetTaskConfig(context.Background(), ret.EntID)
@@ -93,7 +93,7 @@ func updateTaskConfig(t *testing.T) {
 		Index:            &ret.Index,
 		LastTaskID:       &ret.LastTaskID,
 		MaxRewardCount:   &ret.MaxRewardCount,
-		CooldownSecord:   &ret.CooldownSecord,
+		CooldownSecond:   &ret.CooldownSecond,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetTaskConfig(context.Background(), ret.EntID)

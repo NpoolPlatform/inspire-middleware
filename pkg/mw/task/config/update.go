@@ -61,8 +61,8 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vmax_reward_count = '%v', ", set, *h.MaxRewardCount)
 		set = ""
 	}
-	if h.CooldownSecord != nil {
-		_sql += fmt.Sprintf("%vcooldown_secord = '%v', ", set, *h.CooldownSecord)
+	if h.CooldownSecond != nil {
+		_sql += fmt.Sprintf("%vcooldown_second = '%v', ", set, *h.CooldownSecond)
 		set = ""
 	}
 	if set != "" {

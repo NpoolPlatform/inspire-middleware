@@ -32,7 +32,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "event_id"
 	_sql += comma + "coin_config_id"
 	_sql += comma + "coin_value"
-	_sql += comma + "coin_pre_usd"
+	_sql += comma + "coin_per_usd"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"
@@ -48,7 +48,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v'%v' as event_id", comma, *h.EventID)
 	_sql += fmt.Sprintf("%v'%v' as coin_config_id", comma, *h.CoinConfigID)
 	_sql += fmt.Sprintf("%v'%v' as coin_value", comma, *h.CoinValue)
-	_sql += fmt.Sprintf("%v'%v' as coin_pre_usd", comma, *h.CoinPreUSD)
+	_sql += fmt.Sprintf("%v'%v' as coin_per_usd", comma, *h.CoinPerUSD)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

@@ -41,7 +41,7 @@ var (
 		Index:            uint32(1),
 		LastTaskID:       uuid.NewString(),
 		MaxRewardCount:   uint32(10),
-		CooldownSecord:   uint32(10),
+		CooldownSecond:   uint32(10),
 	}
 )
 
@@ -63,7 +63,7 @@ func createTaskConfig(t *testing.T) {
 		WithIndex(&ret.Index, true),
 		WithLastTaskID(&ret.LastTaskID, true),
 		WithMaxRewardCount(&ret.MaxRewardCount, true),
-		WithCooldownSecord(&ret.CooldownSecord, true),
+		WithCooldownSecond(&ret.CooldownSecond, true),
 	)
 	assert.Nil(t, err)
 
@@ -90,7 +90,7 @@ func updateTaskConfig(t *testing.T) {
 	ret.Index = uint32(2)
 	ret.LastTaskID = uuid.NewString()
 	ret.MaxRewardCount = uint32(5)
-	ret.CooldownSecord = uint32(5)
+	ret.CooldownSecond = uint32(5)
 
 	handler, err := NewHandler(
 		context.Background(),
@@ -104,7 +104,7 @@ func updateTaskConfig(t *testing.T) {
 		WithIndex(&ret.Index, true),
 		WithLastTaskID(&ret.LastTaskID, true),
 		WithMaxRewardCount(&ret.MaxRewardCount, true),
-		WithCooldownSecord(&ret.CooldownSecord, true),
+		WithCooldownSecond(&ret.CooldownSecond, true),
 	)
 	assert.Nil(t, err)
 

@@ -22,7 +22,7 @@ type Req struct {
 	Index            *uint32
 	LastTaskID       *uuid.UUID
 	MaxRewardCount   *uint32
-	CooldownSecord   *uint32
+	CooldownSecond   *uint32
 	DeletedAt        *uint32
 }
 
@@ -60,8 +60,8 @@ func CreateSet(c *ent.TaskConfigCreate, req *Req) *ent.TaskConfigCreate {
 	if req.MaxRewardCount != nil {
 		c.SetMaxRewardCount(*req.MaxRewardCount)
 	}
-	if req.CooldownSecord != nil {
-		c.SetCooldownSecord(*req.CooldownSecord)
+	if req.CooldownSecond != nil {
+		c.SetCooldownSecord(*req.CooldownSecond)
 	}
 	return c
 }
@@ -88,8 +88,8 @@ func UpdateSet(u *ent.TaskConfigUpdateOne, req *Req) *ent.TaskConfigUpdateOne {
 	if req.MaxRewardCount != nil {
 		u.SetMaxRewardCount(*req.MaxRewardCount)
 	}
-	if req.CooldownSecord != nil {
-		u.SetCooldownSecord(*req.CooldownSecord)
+	if req.CooldownSecond != nil {
+		u.SetCooldownSecord(*req.CooldownSecond)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)

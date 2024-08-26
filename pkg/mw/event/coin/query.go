@@ -69,7 +69,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(enteventcoin.FieldEventID),
 			t1.C(enteventcoin.FieldCoinConfigID),
 			t1.C(enteventcoin.FieldCoinValue),
-			t1.C(enteventcoin.FieldCoinPreUsd),
+			t1.C(enteventcoin.FieldCoinPerUsd),
 			t1.C(enteventcoin.FieldCreatedAt),
 			t1.C(enteventcoin.FieldUpdatedAt),
 		)
@@ -111,11 +111,11 @@ func (h *queryHandler) formalize() {
 		} else {
 			info.CoinValue = amount.String()
 		}
-		amount, err = decimal.NewFromString(info.CoinPreUSD)
+		amount, err = decimal.NewFromString(info.CoinPerUSD)
 		if err != nil {
-			info.CoinPreUSD = decimal.NewFromInt(0).String()
+			info.CoinPerUSD = decimal.NewFromInt(0).String()
 		} else {
-			info.CoinPreUSD = amount.String()
+			info.CoinPerUSD = amount.String()
 		}
 	}
 }

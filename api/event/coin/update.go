@@ -27,7 +27,7 @@ func (s *Server) UpdateEventCoin(ctx context.Context, in *npool.UpdateEventCoinR
 		coin1.WithID(req.ID, false),
 		coin1.WithEntID(req.EntID, false),
 		coin1.WithCoinValue(req.CoinValue, false),
-		coin1.WithCoinPreUSD(req.CoinPreUSD, false),
+		coin1.WithCoinPerUSD(req.CoinPerUSD, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

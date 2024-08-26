@@ -88,7 +88,7 @@ var (
 		Index:            uint32(1),
 		LastTaskID:       uuid.Nil.String(),
 		MaxRewardCount:   uint32(1),
-		CooldownSecord:   uint32(120),
+		CooldownSecond:   uint32(120),
 		TaskType:         types.TaskType_BaseTask,
 		TaskTypeStr:      types.TaskType_BaseTask.String(),
 	}
@@ -103,7 +103,7 @@ var (
 		Index:            uint32(2),
 		LastTaskID:       taskConfig.EntID,
 		MaxRewardCount:   uint32(2),
-		CooldownSecord:   uint32(120),
+		CooldownSecond:   uint32(120),
 		TaskType:         types.TaskType_BaseTask,
 		TaskTypeStr:      types.TaskType_BaseTask.String(),
 	}
@@ -141,7 +141,7 @@ var (
 		CoinConfigID: coinConfig.EntID,
 		CoinTypeID:   coinConfig.CoinTypeID,
 		CoinValue:    decimal.RequireFromString("5").String(),
-		CoinPreUSD:   decimal.RequireFromString("0.1").String(),
+		CoinPerUSD:   decimal.RequireFromString("0.1").String(),
 	}
 	eventCoin2 = eventcoinmwpb.EventCoin{
 		EntID:        uuid.NewString(),
@@ -150,7 +150,7 @@ var (
 		CoinConfigID: coinConfig2.EntID,
 		CoinTypeID:   coinConfig2.CoinTypeID,
 		CoinValue:    decimal.RequireFromString("10").String(),
-		CoinPreUSD:   decimal.RequireFromString("0.15").String(),
+		CoinPerUSD:   decimal.RequireFromString("0.15").String(),
 	}
 )
 
@@ -195,7 +195,7 @@ func resetup(t *testing.T) func(*testing.T) {
 		taskconfig1.WithIndex(&taskConfig.Index, true),
 		taskconfig1.WithLastTaskID(&taskConfig.LastTaskID, true),
 		taskconfig1.WithMaxRewardCount(&taskConfig.MaxRewardCount, true),
-		taskconfig1.WithCooldownSecord(&taskConfig.CooldownSecord, true),
+		taskconfig1.WithCooldownSecond(&taskConfig.CooldownSecond, true),
 		taskconfig1.WithTaskType(&taskConfig.TaskType, true),
 	)
 	assert.Nil(t, err)
@@ -297,7 +297,7 @@ func resetup(t *testing.T) func(*testing.T) {
 		taskconfig1.WithIndex(&taskConfig2.Index, true),
 		taskconfig1.WithLastTaskID(&taskConfig2.LastTaskID, true),
 		taskconfig1.WithMaxRewardCount(&taskConfig2.MaxRewardCount, true),
-		taskconfig1.WithCooldownSecord(&taskConfig2.CooldownSecord, true),
+		taskconfig1.WithCooldownSecond(&taskConfig2.CooldownSecond, true),
 		taskconfig1.WithTaskType(&taskConfig2.TaskType, true),
 	)
 	assert.Nil(t, err)
@@ -321,7 +321,7 @@ func resetup(t *testing.T) func(*testing.T) {
 		eventcoin1.WithEventID(&eventCoin.EventID, true),
 		eventcoin1.WithCoinConfigID(&eventCoin.CoinConfigID, true),
 		eventcoin1.WithCoinValue(&eventCoin.CoinValue, true),
-		eventcoin1.WithCoinPreUSD(&eventCoin.CoinPreUSD, true),
+		eventcoin1.WithCoinPerUSD(&eventCoin.CoinPerUSD, true),
 	)
 	assert.Nil(t, err)
 
@@ -344,7 +344,7 @@ func resetup(t *testing.T) func(*testing.T) {
 		eventcoin1.WithEventID(&eventCoin2.EventID, true),
 		eventcoin1.WithCoinConfigID(&eventCoin2.CoinConfigID, true),
 		eventcoin1.WithCoinValue(&eventCoin2.CoinValue, true),
-		eventcoin1.WithCoinPreUSD(&eventCoin2.CoinPreUSD, true),
+		eventcoin1.WithCoinPerUSD(&eventCoin2.CoinPerUSD, true),
 	)
 	assert.Nil(t, err)
 

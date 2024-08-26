@@ -60,7 +60,7 @@ func (h *createHandler) constructSQL() {
 	_sql += fmt.Sprintf("%v%v as `index`", comma, *h.Index)
 	_sql += fmt.Sprintf("%v'%v' as last_task_id", comma, *h.LastTaskID)
 	_sql += fmt.Sprintf("%v%v as max_reward_count", comma, *h.MaxRewardCount)
-	_sql += fmt.Sprintf("%v%v as cooldown_secord", comma, *h.CooldownSecord)
+	_sql += fmt.Sprintf("%v%v as cooldown_second", comma, *h.CooldownSecond)
 	_sql += fmt.Sprintf("%v%v as created_at", comma, now)
 	_sql += fmt.Sprintf("%v%v as updated_at", comma, now)
 	_sql += fmt.Sprintf("%v0 as deleted_at", comma)

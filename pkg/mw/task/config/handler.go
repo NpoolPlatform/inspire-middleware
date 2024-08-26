@@ -211,15 +211,15 @@ func WithMaxRewardCount(value *uint32, must bool) func(context.Context, *Handler
 	}
 }
 
-func WithCooldownSecord(value *uint32, must bool) func(context.Context, *Handler) error {
+func WithCooldownSecond(value *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if value == nil {
 			if must {
-				return wlog.Errorf("invalid cooldownsecord")
+				return wlog.Errorf("invalid cooldownsecond")
 			}
 			return nil
 		}
-		h.CooldownSecord = value
+		h.CooldownSecond = value
 		return nil
 	}
 }

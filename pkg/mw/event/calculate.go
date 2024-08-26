@@ -33,7 +33,7 @@ type calculateHandler struct {
 	*Handler
 	taskConfig           *taskconfigmwpb.TaskConfig
 	addCredits           decimal.Decimal
-	coinPreUSDAmount     decimal.Decimal
+	coinPerUSDAmount     decimal.Decimal
 	couponAmount         decimal.Decimal
 	couponCashableAmount decimal.Decimal
 }
@@ -115,7 +115,7 @@ func (h *calculateHandler) calculateCoinRewards(ctx context.Context, ev *npool.E
 		if err != nil {
 			return nil, wlog.WrapError(err)
 		}
-		coinPreUSD, err := decimal.NewFromString(eventCoin.CoinPreUSD)
+		coinPerUSD, err := decimal.NewFromString(eventCoin.CoinPerUSD)
 		if err != nil {
 			return nil, wlog.WrapError(err)
 		}
@@ -123,10 +123,10 @@ func (h *calculateHandler) calculateCoinRewards(ctx context.Context, ev *npool.E
 		if h.Amount != nil {
 			amount = *h.Amount
 		}
-		coinPreUSDAmount := coinPreUSD.Mul(amount)
-		h.coinPreUSDAmount = coinPreUSDAmount
+		coinPerUSDAmount := coinPerUSD.Mul(amount)
+		h.coinPerUSDAmount = coinPerUSDAmount
 
-		coins := coinValue.Add(coinPreUSDAmount)
+		coins := coinValue.Add(coinPerUSDAmount)
 		if coins.Cmp(decimal.NewFromInt(0)) == 0 {
 			continue
 		}
@@ -369,7 +369,7 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 
 	// check user next task startat
 	now := uint32(time.Now().Unix())
-	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecord > now {
+	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
 		return wlog.Errorf("not the right time")
 	}
 	// check last task exist and finish status
@@ -419,7 +419,7 @@ func (h *calculateHandler) calcluateEventRewards(ctx context.Context) ([]*npool.
 	}
 
 	h.addCredits = decimal.NewFromInt(0)
-	h.coinPreUSDAmount = decimal.NewFromInt(0)
+	h.coinPerUSDAmount = decimal.NewFromInt(0)
 	h.couponAmount = decimal.NewFromInt(0)
 	h.couponCashableAmount = decimal.NewFromInt(0)
 	userID := h.UserID.String()

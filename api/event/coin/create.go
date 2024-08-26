@@ -29,7 +29,7 @@ func (s *Server) CreateEventCoin(ctx context.Context, in *npool.CreateEventCoinR
 		coin1.WithEventID(req.EventID, true),
 		coin1.WithCoinConfigID(req.CoinConfigID, true),
 		coin1.WithCoinValue(req.CoinValue, true),
-		coin1.WithCoinPreUSD(req.CoinPreUSD, true),
+		coin1.WithCoinPerUSD(req.CoinPerUSD, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

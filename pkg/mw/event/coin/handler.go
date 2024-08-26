@@ -133,11 +133,11 @@ func WithCoinValue(amount *string, must bool) func(context.Context, *Handler) er
 }
 
 //nolint:dupl
-func WithCoinPreUSD(amount *string, must bool) func(context.Context, *Handler) error {
+func WithCoinPerUSD(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return wlog.Errorf("invalid coinpreusd")
+				return wlog.Errorf("invalid coinperusd")
 			}
 			return nil
 		}
@@ -146,9 +146,9 @@ func WithCoinPreUSD(amount *string, must bool) func(context.Context, *Handler) e
 			return wlog.WrapError(err)
 		}
 		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
-			return wlog.Errorf("invalid coinpreusd")
+			return wlog.Errorf("invalid coinperusd")
 		}
-		h.CoinPreUSD = &_amount
+		h.CoinPerUSD = &_amount
 		return nil
 	}
 }

@@ -26,8 +26,8 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vcoin_value = '%v', ", set, *h.CoinValue)
 		set = ""
 	}
-	if h.CoinPreUSD != nil {
-		_sql += fmt.Sprintf("%vcoin_pre_usd = '%v', ", set, *h.CoinPreUSD)
+	if h.CoinPerUSD != nil {
+		_sql += fmt.Sprintf("%vcoin_per_usd = '%v', ", set, *h.CoinPerUSD)
 		set = ""
 	}
 	if set != "" {
