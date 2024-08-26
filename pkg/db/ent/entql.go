@@ -689,7 +689,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			taskconfig.FieldIndex:            {Type: field.TypeUint32, Column: taskconfig.FieldIndex},
 			taskconfig.FieldLastTaskID:       {Type: field.TypeUUID, Column: taskconfig.FieldLastTaskID},
 			taskconfig.FieldMaxRewardCount:   {Type: field.TypeUint32, Column: taskconfig.FieldMaxRewardCount},
-			taskconfig.FieldCooldownSecord:   {Type: field.TypeUint32, Column: taskconfig.FieldCooldownSecord},
+			taskconfig.FieldCooldownSecond:   {Type: field.TypeUint32, Column: taskconfig.FieldCooldownSecond},
 		},
 	}
 	graph.Nodes[26] = &sqlgraph.Node{
@@ -3362,9 +3362,9 @@ func (f *TaskConfigFilter) WhereMaxRewardCount(p entql.Uint32P) {
 	f.Where(p.Field(taskconfig.FieldMaxRewardCount))
 }
 
-// WhereCooldownSecord applies the entql uint32 predicate on the cooldown_secord field.
-func (f *TaskConfigFilter) WhereCooldownSecord(p entql.Uint32P) {
-	f.Where(p.Field(taskconfig.FieldCooldownSecord))
+// WhereCooldownSecond applies the entql uint32 predicate on the cooldown_second field.
+func (f *TaskConfigFilter) WhereCooldownSecond(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldCooldownSecond))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -73,7 +73,7 @@ func (TaskConfig) Fields() []ent.Field {
 			Optional().
 			Default(0),
 		field.
-			Uint32("cooldown_secord").
+			Uint32("cooldown_second").
 			Optional().
 			Default(0),
 	}

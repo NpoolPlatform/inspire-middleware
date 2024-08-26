@@ -312,30 +312,30 @@ func (tcu *TaskConfigUpdate) ClearMaxRewardCount() *TaskConfigUpdate {
 	return tcu
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (tcu *TaskConfigUpdate) SetCooldownSecord(u uint32) *TaskConfigUpdate {
-	tcu.mutation.ResetCooldownSecord()
-	tcu.mutation.SetCooldownSecord(u)
+// SetCooldownSecond sets the "cooldown_second" field.
+func (tcu *TaskConfigUpdate) SetCooldownSecond(u uint32) *TaskConfigUpdate {
+	tcu.mutation.ResetCooldownSecond()
+	tcu.mutation.SetCooldownSecond(u)
 	return tcu
 }
 
-// SetNillableCooldownSecord sets the "cooldown_secord" field if the given value is not nil.
-func (tcu *TaskConfigUpdate) SetNillableCooldownSecord(u *uint32) *TaskConfigUpdate {
+// SetNillableCooldownSecond sets the "cooldown_second" field if the given value is not nil.
+func (tcu *TaskConfigUpdate) SetNillableCooldownSecond(u *uint32) *TaskConfigUpdate {
 	if u != nil {
-		tcu.SetCooldownSecord(*u)
+		tcu.SetCooldownSecond(*u)
 	}
 	return tcu
 }
 
-// AddCooldownSecord adds u to the "cooldown_secord" field.
-func (tcu *TaskConfigUpdate) AddCooldownSecord(u int32) *TaskConfigUpdate {
-	tcu.mutation.AddCooldownSecord(u)
+// AddCooldownSecond adds u to the "cooldown_second" field.
+func (tcu *TaskConfigUpdate) AddCooldownSecond(u int32) *TaskConfigUpdate {
+	tcu.mutation.AddCooldownSecond(u)
 	return tcu
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (tcu *TaskConfigUpdate) ClearCooldownSecord() *TaskConfigUpdate {
-	tcu.mutation.ClearCooldownSecord()
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (tcu *TaskConfigUpdate) ClearCooldownSecond() *TaskConfigUpdate {
+	tcu.mutation.ClearCooldownSecond()
 	return tcu
 }
 
@@ -630,24 +630,24 @@ func (tcu *TaskConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: taskconfig.FieldMaxRewardCount,
 		})
 	}
-	if value, ok := tcu.mutation.CooldownSecord(); ok {
+	if value, ok := tcu.mutation.CooldownSecond(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
-	if value, ok := tcu.mutation.AddedCooldownSecord(); ok {
+	if value, ok := tcu.mutation.AddedCooldownSecond(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
-	if tcu.mutation.CooldownSecordCleared() {
+	if tcu.mutation.CooldownSecondCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
 	_spec.Modifiers = tcu.modifiers
@@ -954,30 +954,30 @@ func (tcuo *TaskConfigUpdateOne) ClearMaxRewardCount() *TaskConfigUpdateOne {
 	return tcuo
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (tcuo *TaskConfigUpdateOne) SetCooldownSecord(u uint32) *TaskConfigUpdateOne {
-	tcuo.mutation.ResetCooldownSecord()
-	tcuo.mutation.SetCooldownSecord(u)
+// SetCooldownSecond sets the "cooldown_second" field.
+func (tcuo *TaskConfigUpdateOne) SetCooldownSecond(u uint32) *TaskConfigUpdateOne {
+	tcuo.mutation.ResetCooldownSecond()
+	tcuo.mutation.SetCooldownSecond(u)
 	return tcuo
 }
 
-// SetNillableCooldownSecord sets the "cooldown_secord" field if the given value is not nil.
-func (tcuo *TaskConfigUpdateOne) SetNillableCooldownSecord(u *uint32) *TaskConfigUpdateOne {
+// SetNillableCooldownSecond sets the "cooldown_second" field if the given value is not nil.
+func (tcuo *TaskConfigUpdateOne) SetNillableCooldownSecond(u *uint32) *TaskConfigUpdateOne {
 	if u != nil {
-		tcuo.SetCooldownSecord(*u)
+		tcuo.SetCooldownSecond(*u)
 	}
 	return tcuo
 }
 
-// AddCooldownSecord adds u to the "cooldown_secord" field.
-func (tcuo *TaskConfigUpdateOne) AddCooldownSecord(u int32) *TaskConfigUpdateOne {
-	tcuo.mutation.AddCooldownSecord(u)
+// AddCooldownSecond adds u to the "cooldown_second" field.
+func (tcuo *TaskConfigUpdateOne) AddCooldownSecond(u int32) *TaskConfigUpdateOne {
+	tcuo.mutation.AddCooldownSecond(u)
 	return tcuo
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (tcuo *TaskConfigUpdateOne) ClearCooldownSecord() *TaskConfigUpdateOne {
-	tcuo.mutation.ClearCooldownSecord()
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (tcuo *TaskConfigUpdateOne) ClearCooldownSecond() *TaskConfigUpdateOne {
+	tcuo.mutation.ClearCooldownSecond()
 	return tcuo
 }
 
@@ -1302,24 +1302,24 @@ func (tcuo *TaskConfigUpdateOne) sqlSave(ctx context.Context) (_node *TaskConfig
 			Column: taskconfig.FieldMaxRewardCount,
 		})
 	}
-	if value, ok := tcuo.mutation.CooldownSecord(); ok {
+	if value, ok := tcuo.mutation.CooldownSecond(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
-	if value, ok := tcuo.mutation.AddedCooldownSecord(); ok {
+	if value, ok := tcuo.mutation.AddedCooldownSecond(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
-	if tcuo.mutation.CooldownSecordCleared() {
+	if tcuo.mutation.CooldownSecondCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
 	}
 	_spec.Modifiers = tcuo.modifiers

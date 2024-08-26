@@ -40,8 +40,8 @@ const (
 	FieldLastTaskID = "last_task_id"
 	// FieldMaxRewardCount holds the string denoting the max_reward_count field in the database.
 	FieldMaxRewardCount = "max_reward_count"
-	// FieldCooldownSecord holds the string denoting the cooldown_secord field in the database.
-	FieldCooldownSecord = "cooldown_secord"
+	// FieldCooldownSecond holds the string denoting the cooldown_second field in the database.
+	FieldCooldownSecond = "cooldown_second"
 	// Table holds the table name of the taskconfig in the database.
 	Table = "task_configs"
 )
@@ -63,7 +63,7 @@ var Columns = []string{
 	FieldIndex,
 	FieldLastTaskID,
 	FieldMaxRewardCount,
-	FieldCooldownSecord,
+	FieldCooldownSecond,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,6 +115,6 @@ var (
 	DefaultLastTaskID func() uuid.UUID
 	// DefaultMaxRewardCount holds the default value on creation for the "max_reward_count" field.
 	DefaultMaxRewardCount uint32
-	// DefaultCooldownSecord holds the default value on creation for the "cooldown_secord" field.
-	DefaultCooldownSecord uint32
+	// DefaultCooldownSecond holds the default value on creation for the "cooldown_second" field.
+	DefaultCooldownSecond uint32
 )

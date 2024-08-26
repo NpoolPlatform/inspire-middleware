@@ -44,8 +44,8 @@ type TaskConfig struct {
 	LastTaskID uuid.UUID `json:"last_task_id,omitempty"`
 	// MaxRewardCount holds the value of the "max_reward_count" field.
 	MaxRewardCount uint32 `json:"max_reward_count,omitempty"`
-	// CooldownSecord holds the value of the "cooldown_secord" field.
-	CooldownSecord uint32 `json:"cooldown_secord,omitempty"`
+	// CooldownSecond holds the value of the "cooldown_second" field.
+	CooldownSecond uint32 `json:"cooldown_second,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -53,7 +53,7 @@ func (*TaskConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case taskconfig.FieldID, taskconfig.FieldCreatedAt, taskconfig.FieldUpdatedAt, taskconfig.FieldDeletedAt, taskconfig.FieldIndex, taskconfig.FieldMaxRewardCount, taskconfig.FieldCooldownSecord:
+		case taskconfig.FieldID, taskconfig.FieldCreatedAt, taskconfig.FieldUpdatedAt, taskconfig.FieldDeletedAt, taskconfig.FieldIndex, taskconfig.FieldMaxRewardCount, taskconfig.FieldCooldownSecond:
 			values[i] = new(sql.NullInt64)
 		case taskconfig.FieldTaskType, taskconfig.FieldName, taskconfig.FieldTaskDesc, taskconfig.FieldStepGuide, taskconfig.FieldRecommendMessage:
 			values[i] = new(sql.NullString)
@@ -164,11 +164,11 @@ func (tc *TaskConfig) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				tc.MaxRewardCount = uint32(value.Int64)
 			}
-		case taskconfig.FieldCooldownSecord:
+		case taskconfig.FieldCooldownSecond:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field cooldown_secord", values[i])
+				return fmt.Errorf("unexpected type %T for field cooldown_second", values[i])
 			} else if value.Valid {
-				tc.CooldownSecord = uint32(value.Int64)
+				tc.CooldownSecond = uint32(value.Int64)
 			}
 		}
 	}
@@ -240,8 +240,8 @@ func (tc *TaskConfig) String() string {
 	builder.WriteString("max_reward_count=")
 	builder.WriteString(fmt.Sprintf("%v", tc.MaxRewardCount))
 	builder.WriteString(", ")
-	builder.WriteString("cooldown_secord=")
-	builder.WriteString(fmt.Sprintf("%v", tc.CooldownSecord))
+	builder.WriteString("cooldown_second=")
+	builder.WriteString(fmt.Sprintf("%v", tc.CooldownSecond))
 	builder.WriteByte(')')
 	return builder.String()
 }

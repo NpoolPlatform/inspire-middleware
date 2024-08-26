@@ -218,16 +218,16 @@ func (tcc *TaskConfigCreate) SetNillableMaxRewardCount(u *uint32) *TaskConfigCre
 	return tcc
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (tcc *TaskConfigCreate) SetCooldownSecord(u uint32) *TaskConfigCreate {
-	tcc.mutation.SetCooldownSecord(u)
+// SetCooldownSecond sets the "cooldown_second" field.
+func (tcc *TaskConfigCreate) SetCooldownSecond(u uint32) *TaskConfigCreate {
+	tcc.mutation.SetCooldownSecond(u)
 	return tcc
 }
 
-// SetNillableCooldownSecord sets the "cooldown_secord" field if the given value is not nil.
-func (tcc *TaskConfigCreate) SetNillableCooldownSecord(u *uint32) *TaskConfigCreate {
+// SetNillableCooldownSecond sets the "cooldown_second" field if the given value is not nil.
+func (tcc *TaskConfigCreate) SetNillableCooldownSecond(u *uint32) *TaskConfigCreate {
 	if u != nil {
-		tcc.SetCooldownSecord(*u)
+		tcc.SetCooldownSecond(*u)
 	}
 	return tcc
 }
@@ -394,9 +394,9 @@ func (tcc *TaskConfigCreate) defaults() error {
 		v := taskconfig.DefaultMaxRewardCount
 		tcc.mutation.SetMaxRewardCount(v)
 	}
-	if _, ok := tcc.mutation.CooldownSecord(); !ok {
-		v := taskconfig.DefaultCooldownSecord
-		tcc.mutation.SetCooldownSecord(v)
+	if _, ok := tcc.mutation.CooldownSecond(); !ok {
+		v := taskconfig.DefaultCooldownSecond
+		tcc.mutation.SetCooldownSecond(v)
 	}
 	return nil
 }
@@ -561,13 +561,13 @@ func (tcc *TaskConfigCreate) createSpec() (*TaskConfig, *sqlgraph.CreateSpec) {
 		})
 		_node.MaxRewardCount = value
 	}
-	if value, ok := tcc.mutation.CooldownSecord(); ok {
+	if value, ok := tcc.mutation.CooldownSecond(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: taskconfig.FieldCooldownSecord,
+			Column: taskconfig.FieldCooldownSecond,
 		})
-		_node.CooldownSecord = value
+		_node.CooldownSecond = value
 	}
 	return _node, _spec
 }
@@ -881,27 +881,27 @@ func (u *TaskConfigUpsert) ClearMaxRewardCount() *TaskConfigUpsert {
 	return u
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (u *TaskConfigUpsert) SetCooldownSecord(v uint32) *TaskConfigUpsert {
-	u.Set(taskconfig.FieldCooldownSecord, v)
+// SetCooldownSecond sets the "cooldown_second" field.
+func (u *TaskConfigUpsert) SetCooldownSecond(v uint32) *TaskConfigUpsert {
+	u.Set(taskconfig.FieldCooldownSecond, v)
 	return u
 }
 
-// UpdateCooldownSecord sets the "cooldown_secord" field to the value that was provided on create.
-func (u *TaskConfigUpsert) UpdateCooldownSecord() *TaskConfigUpsert {
-	u.SetExcluded(taskconfig.FieldCooldownSecord)
+// UpdateCooldownSecond sets the "cooldown_second" field to the value that was provided on create.
+func (u *TaskConfigUpsert) UpdateCooldownSecond() *TaskConfigUpsert {
+	u.SetExcluded(taskconfig.FieldCooldownSecond)
 	return u
 }
 
-// AddCooldownSecord adds v to the "cooldown_secord" field.
-func (u *TaskConfigUpsert) AddCooldownSecord(v uint32) *TaskConfigUpsert {
-	u.Add(taskconfig.FieldCooldownSecord, v)
+// AddCooldownSecond adds v to the "cooldown_second" field.
+func (u *TaskConfigUpsert) AddCooldownSecond(v uint32) *TaskConfigUpsert {
+	u.Add(taskconfig.FieldCooldownSecond, v)
 	return u
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (u *TaskConfigUpsert) ClearCooldownSecord() *TaskConfigUpsert {
-	u.SetNull(taskconfig.FieldCooldownSecord)
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (u *TaskConfigUpsert) ClearCooldownSecond() *TaskConfigUpsert {
+	u.SetNull(taskconfig.FieldCooldownSecond)
 	return u
 }
 
@@ -1256,31 +1256,31 @@ func (u *TaskConfigUpsertOne) ClearMaxRewardCount() *TaskConfigUpsertOne {
 	})
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (u *TaskConfigUpsertOne) SetCooldownSecord(v uint32) *TaskConfigUpsertOne {
+// SetCooldownSecond sets the "cooldown_second" field.
+func (u *TaskConfigUpsertOne) SetCooldownSecond(v uint32) *TaskConfigUpsertOne {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.SetCooldownSecord(v)
+		s.SetCooldownSecond(v)
 	})
 }
 
-// AddCooldownSecord adds v to the "cooldown_secord" field.
-func (u *TaskConfigUpsertOne) AddCooldownSecord(v uint32) *TaskConfigUpsertOne {
+// AddCooldownSecond adds v to the "cooldown_second" field.
+func (u *TaskConfigUpsertOne) AddCooldownSecond(v uint32) *TaskConfigUpsertOne {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.AddCooldownSecord(v)
+		s.AddCooldownSecond(v)
 	})
 }
 
-// UpdateCooldownSecord sets the "cooldown_secord" field to the value that was provided on create.
-func (u *TaskConfigUpsertOne) UpdateCooldownSecord() *TaskConfigUpsertOne {
+// UpdateCooldownSecond sets the "cooldown_second" field to the value that was provided on create.
+func (u *TaskConfigUpsertOne) UpdateCooldownSecond() *TaskConfigUpsertOne {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.UpdateCooldownSecord()
+		s.UpdateCooldownSecond()
 	})
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (u *TaskConfigUpsertOne) ClearCooldownSecord() *TaskConfigUpsertOne {
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (u *TaskConfigUpsertOne) ClearCooldownSecond() *TaskConfigUpsertOne {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.ClearCooldownSecord()
+		s.ClearCooldownSecond()
 	})
 }
 
@@ -1800,31 +1800,31 @@ func (u *TaskConfigUpsertBulk) ClearMaxRewardCount() *TaskConfigUpsertBulk {
 	})
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (u *TaskConfigUpsertBulk) SetCooldownSecord(v uint32) *TaskConfigUpsertBulk {
+// SetCooldownSecond sets the "cooldown_second" field.
+func (u *TaskConfigUpsertBulk) SetCooldownSecond(v uint32) *TaskConfigUpsertBulk {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.SetCooldownSecord(v)
+		s.SetCooldownSecond(v)
 	})
 }
 
-// AddCooldownSecord adds v to the "cooldown_secord" field.
-func (u *TaskConfigUpsertBulk) AddCooldownSecord(v uint32) *TaskConfigUpsertBulk {
+// AddCooldownSecond adds v to the "cooldown_second" field.
+func (u *TaskConfigUpsertBulk) AddCooldownSecond(v uint32) *TaskConfigUpsertBulk {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.AddCooldownSecord(v)
+		s.AddCooldownSecond(v)
 	})
 }
 
-// UpdateCooldownSecord sets the "cooldown_secord" field to the value that was provided on create.
-func (u *TaskConfigUpsertBulk) UpdateCooldownSecord() *TaskConfigUpsertBulk {
+// UpdateCooldownSecond sets the "cooldown_second" field to the value that was provided on create.
+func (u *TaskConfigUpsertBulk) UpdateCooldownSecond() *TaskConfigUpsertBulk {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.UpdateCooldownSecord()
+		s.UpdateCooldownSecond()
 	})
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (u *TaskConfigUpsertBulk) ClearCooldownSecord() *TaskConfigUpsertBulk {
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (u *TaskConfigUpsertBulk) ClearCooldownSecond() *TaskConfigUpsertBulk {
 	return u.Update(func(s *TaskConfigUpsert) {
-		s.ClearCooldownSecord()
+		s.ClearCooldownSecond()
 	})
 }
 

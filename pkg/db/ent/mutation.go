@@ -29906,8 +29906,8 @@ type TaskConfigMutation struct {
 	last_task_id        *uuid.UUID
 	max_reward_count    *uint32
 	addmax_reward_count *int32
-	cooldown_secord     *uint32
-	addcooldown_secord  *int32
+	cooldown_second     *uint32
+	addcooldown_second  *int32
 	clearedFields       map[string]struct{}
 	done                bool
 	oldValue            func(context.Context) (*TaskConfig, error)
@@ -30754,74 +30754,74 @@ func (m *TaskConfigMutation) ResetMaxRewardCount() {
 	delete(m.clearedFields, taskconfig.FieldMaxRewardCount)
 }
 
-// SetCooldownSecord sets the "cooldown_secord" field.
-func (m *TaskConfigMutation) SetCooldownSecord(u uint32) {
-	m.cooldown_secord = &u
-	m.addcooldown_secord = nil
+// SetCooldownSecond sets the "cooldown_second" field.
+func (m *TaskConfigMutation) SetCooldownSecond(u uint32) {
+	m.cooldown_second = &u
+	m.addcooldown_second = nil
 }
 
-// CooldownSecord returns the value of the "cooldown_secord" field in the mutation.
-func (m *TaskConfigMutation) CooldownSecord() (r uint32, exists bool) {
-	v := m.cooldown_secord
+// CooldownSecond returns the value of the "cooldown_second" field in the mutation.
+func (m *TaskConfigMutation) CooldownSecond() (r uint32, exists bool) {
+	v := m.cooldown_second
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCooldownSecord returns the old "cooldown_secord" field's value of the TaskConfig entity.
+// OldCooldownSecond returns the old "cooldown_second" field's value of the TaskConfig entity.
 // If the TaskConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskConfigMutation) OldCooldownSecord(ctx context.Context) (v uint32, err error) {
+func (m *TaskConfigMutation) OldCooldownSecond(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCooldownSecord is only allowed on UpdateOne operations")
+		return v, errors.New("OldCooldownSecond is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCooldownSecord requires an ID field in the mutation")
+		return v, errors.New("OldCooldownSecond requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCooldownSecord: %w", err)
+		return v, fmt.Errorf("querying old value for OldCooldownSecond: %w", err)
 	}
-	return oldValue.CooldownSecord, nil
+	return oldValue.CooldownSecond, nil
 }
 
-// AddCooldownSecord adds u to the "cooldown_secord" field.
-func (m *TaskConfigMutation) AddCooldownSecord(u int32) {
-	if m.addcooldown_secord != nil {
-		*m.addcooldown_secord += u
+// AddCooldownSecond adds u to the "cooldown_second" field.
+func (m *TaskConfigMutation) AddCooldownSecond(u int32) {
+	if m.addcooldown_second != nil {
+		*m.addcooldown_second += u
 	} else {
-		m.addcooldown_secord = &u
+		m.addcooldown_second = &u
 	}
 }
 
-// AddedCooldownSecord returns the value that was added to the "cooldown_secord" field in this mutation.
-func (m *TaskConfigMutation) AddedCooldownSecord() (r int32, exists bool) {
-	v := m.addcooldown_secord
+// AddedCooldownSecond returns the value that was added to the "cooldown_second" field in this mutation.
+func (m *TaskConfigMutation) AddedCooldownSecond() (r int32, exists bool) {
+	v := m.addcooldown_second
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearCooldownSecord clears the value of the "cooldown_secord" field.
-func (m *TaskConfigMutation) ClearCooldownSecord() {
-	m.cooldown_secord = nil
-	m.addcooldown_secord = nil
-	m.clearedFields[taskconfig.FieldCooldownSecord] = struct{}{}
+// ClearCooldownSecond clears the value of the "cooldown_second" field.
+func (m *TaskConfigMutation) ClearCooldownSecond() {
+	m.cooldown_second = nil
+	m.addcooldown_second = nil
+	m.clearedFields[taskconfig.FieldCooldownSecond] = struct{}{}
 }
 
-// CooldownSecordCleared returns if the "cooldown_secord" field was cleared in this mutation.
-func (m *TaskConfigMutation) CooldownSecordCleared() bool {
-	_, ok := m.clearedFields[taskconfig.FieldCooldownSecord]
+// CooldownSecondCleared returns if the "cooldown_second" field was cleared in this mutation.
+func (m *TaskConfigMutation) CooldownSecondCleared() bool {
+	_, ok := m.clearedFields[taskconfig.FieldCooldownSecond]
 	return ok
 }
 
-// ResetCooldownSecord resets all changes to the "cooldown_secord" field.
-func (m *TaskConfigMutation) ResetCooldownSecord() {
-	m.cooldown_secord = nil
-	m.addcooldown_secord = nil
-	delete(m.clearedFields, taskconfig.FieldCooldownSecord)
+// ResetCooldownSecond resets all changes to the "cooldown_second" field.
+func (m *TaskConfigMutation) ResetCooldownSecond() {
+	m.cooldown_second = nil
+	m.addcooldown_second = nil
+	delete(m.clearedFields, taskconfig.FieldCooldownSecond)
 }
 
 // Where appends a list predicates to the TaskConfigMutation builder.
@@ -30886,8 +30886,8 @@ func (m *TaskConfigMutation) Fields() []string {
 	if m.max_reward_count != nil {
 		fields = append(fields, taskconfig.FieldMaxRewardCount)
 	}
-	if m.cooldown_secord != nil {
-		fields = append(fields, taskconfig.FieldCooldownSecord)
+	if m.cooldown_second != nil {
+		fields = append(fields, taskconfig.FieldCooldownSecond)
 	}
 	return fields
 }
@@ -30925,8 +30925,8 @@ func (m *TaskConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.LastTaskID()
 	case taskconfig.FieldMaxRewardCount:
 		return m.MaxRewardCount()
-	case taskconfig.FieldCooldownSecord:
-		return m.CooldownSecord()
+	case taskconfig.FieldCooldownSecond:
+		return m.CooldownSecond()
 	}
 	return nil, false
 }
@@ -30964,8 +30964,8 @@ func (m *TaskConfigMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldLastTaskID(ctx)
 	case taskconfig.FieldMaxRewardCount:
 		return m.OldMaxRewardCount(ctx)
-	case taskconfig.FieldCooldownSecord:
-		return m.OldCooldownSecord(ctx)
+	case taskconfig.FieldCooldownSecond:
+		return m.OldCooldownSecond(ctx)
 	}
 	return nil, fmt.Errorf("unknown TaskConfig field %s", name)
 }
@@ -31073,12 +31073,12 @@ func (m *TaskConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMaxRewardCount(v)
 		return nil
-	case taskconfig.FieldCooldownSecord:
+	case taskconfig.FieldCooldownSecond:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCooldownSecord(v)
+		m.SetCooldownSecond(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig field %s", name)
@@ -31103,8 +31103,8 @@ func (m *TaskConfigMutation) AddedFields() []string {
 	if m.addmax_reward_count != nil {
 		fields = append(fields, taskconfig.FieldMaxRewardCount)
 	}
-	if m.addcooldown_secord != nil {
-		fields = append(fields, taskconfig.FieldCooldownSecord)
+	if m.addcooldown_second != nil {
+		fields = append(fields, taskconfig.FieldCooldownSecond)
 	}
 	return fields
 }
@@ -31124,8 +31124,8 @@ func (m *TaskConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedIndex()
 	case taskconfig.FieldMaxRewardCount:
 		return m.AddedMaxRewardCount()
-	case taskconfig.FieldCooldownSecord:
-		return m.AddedCooldownSecord()
+	case taskconfig.FieldCooldownSecond:
+		return m.AddedCooldownSecond()
 	}
 	return nil, false
 }
@@ -31170,12 +31170,12 @@ func (m *TaskConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddMaxRewardCount(v)
 		return nil
-	case taskconfig.FieldCooldownSecord:
+	case taskconfig.FieldCooldownSecond:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddCooldownSecord(v)
+		m.AddCooldownSecond(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig numeric field %s", name)
@@ -31215,8 +31215,8 @@ func (m *TaskConfigMutation) ClearedFields() []string {
 	if m.FieldCleared(taskconfig.FieldMaxRewardCount) {
 		fields = append(fields, taskconfig.FieldMaxRewardCount)
 	}
-	if m.FieldCleared(taskconfig.FieldCooldownSecord) {
-		fields = append(fields, taskconfig.FieldCooldownSecord)
+	if m.FieldCleared(taskconfig.FieldCooldownSecond) {
+		fields = append(fields, taskconfig.FieldCooldownSecond)
 	}
 	return fields
 }
@@ -31262,8 +31262,8 @@ func (m *TaskConfigMutation) ClearField(name string) error {
 	case taskconfig.FieldMaxRewardCount:
 		m.ClearMaxRewardCount()
 		return nil
-	case taskconfig.FieldCooldownSecord:
-		m.ClearCooldownSecord()
+	case taskconfig.FieldCooldownSecond:
+		m.ClearCooldownSecond()
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig nullable field %s", name)
@@ -31315,8 +31315,8 @@ func (m *TaskConfigMutation) ResetField(name string) error {
 	case taskconfig.FieldMaxRewardCount:
 		m.ResetMaxRewardCount()
 		return nil
-	case taskconfig.FieldCooldownSecord:
-		m.ResetCooldownSecord()
+	case taskconfig.FieldCooldownSecond:
+		m.ResetCooldownSecond()
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig field %s", name)

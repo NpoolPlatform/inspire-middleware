@@ -177,10 +177,10 @@ func MaxRewardCount(v uint32) predicate.TaskConfig {
 	})
 }
 
-// CooldownSecord applies equality check predicate on the "cooldown_secord" field. It's identical to CooldownSecordEQ.
-func CooldownSecord(v uint32) predicate.TaskConfig {
+// CooldownSecond applies equality check predicate on the "cooldown_second" field. It's identical to CooldownSecondEQ.
+func CooldownSecond(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCooldownSecord), v))
+		s.Where(sql.EQ(s.C(FieldCooldownSecond), v))
 	})
 }
 
@@ -1395,81 +1395,81 @@ func MaxRewardCountNotNil() predicate.TaskConfig {
 	})
 }
 
-// CooldownSecordEQ applies the EQ predicate on the "cooldown_secord" field.
-func CooldownSecordEQ(v uint32) predicate.TaskConfig {
+// CooldownSecondEQ applies the EQ predicate on the "cooldown_second" field.
+func CooldownSecondEQ(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCooldownSecord), v))
+		s.Where(sql.EQ(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordNEQ applies the NEQ predicate on the "cooldown_secord" field.
-func CooldownSecordNEQ(v uint32) predicate.TaskConfig {
+// CooldownSecondNEQ applies the NEQ predicate on the "cooldown_second" field.
+func CooldownSecondNEQ(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCooldownSecord), v))
+		s.Where(sql.NEQ(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordIn applies the In predicate on the "cooldown_secord" field.
-func CooldownSecordIn(vs ...uint32) predicate.TaskConfig {
+// CooldownSecondIn applies the In predicate on the "cooldown_second" field.
+func CooldownSecondIn(vs ...uint32) predicate.TaskConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCooldownSecord), v...))
+		s.Where(sql.In(s.C(FieldCooldownSecond), v...))
 	})
 }
 
-// CooldownSecordNotIn applies the NotIn predicate on the "cooldown_secord" field.
-func CooldownSecordNotIn(vs ...uint32) predicate.TaskConfig {
+// CooldownSecondNotIn applies the NotIn predicate on the "cooldown_second" field.
+func CooldownSecondNotIn(vs ...uint32) predicate.TaskConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCooldownSecord), v...))
+		s.Where(sql.NotIn(s.C(FieldCooldownSecond), v...))
 	})
 }
 
-// CooldownSecordGT applies the GT predicate on the "cooldown_secord" field.
-func CooldownSecordGT(v uint32) predicate.TaskConfig {
+// CooldownSecondGT applies the GT predicate on the "cooldown_second" field.
+func CooldownSecondGT(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCooldownSecord), v))
+		s.Where(sql.GT(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordGTE applies the GTE predicate on the "cooldown_secord" field.
-func CooldownSecordGTE(v uint32) predicate.TaskConfig {
+// CooldownSecondGTE applies the GTE predicate on the "cooldown_second" field.
+func CooldownSecondGTE(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCooldownSecord), v))
+		s.Where(sql.GTE(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordLT applies the LT predicate on the "cooldown_secord" field.
-func CooldownSecordLT(v uint32) predicate.TaskConfig {
+// CooldownSecondLT applies the LT predicate on the "cooldown_second" field.
+func CooldownSecondLT(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCooldownSecord), v))
+		s.Where(sql.LT(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordLTE applies the LTE predicate on the "cooldown_secord" field.
-func CooldownSecordLTE(v uint32) predicate.TaskConfig {
+// CooldownSecondLTE applies the LTE predicate on the "cooldown_second" field.
+func CooldownSecondLTE(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCooldownSecord), v))
+		s.Where(sql.LTE(s.C(FieldCooldownSecond), v))
 	})
 }
 
-// CooldownSecordIsNil applies the IsNil predicate on the "cooldown_secord" field.
-func CooldownSecordIsNil() predicate.TaskConfig {
+// CooldownSecondIsNil applies the IsNil predicate on the "cooldown_second" field.
+func CooldownSecondIsNil() predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCooldownSecord)))
+		s.Where(sql.IsNull(s.C(FieldCooldownSecond)))
 	})
 }
 
-// CooldownSecordNotNil applies the NotNil predicate on the "cooldown_secord" field.
-func CooldownSecordNotNil() predicate.TaskConfig {
+// CooldownSecondNotNil applies the NotNil predicate on the "cooldown_second" field.
+func CooldownSecondNotNil() predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCooldownSecord)))
+		s.Where(sql.NotNull(s.C(FieldCooldownSecond)))
 	})
 }
 

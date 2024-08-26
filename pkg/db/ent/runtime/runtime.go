@@ -1764,10 +1764,10 @@ func init() {
 	taskconfigDescMaxRewardCount := taskconfigFields[9].Descriptor()
 	// taskconfig.DefaultMaxRewardCount holds the default value on creation for the max_reward_count field.
 	taskconfig.DefaultMaxRewardCount = taskconfigDescMaxRewardCount.Default.(uint32)
-	// taskconfigDescCooldownSecord is the schema descriptor for cooldown_secord field.
-	taskconfigDescCooldownSecord := taskconfigFields[10].Descriptor()
-	// taskconfig.DefaultCooldownSecord holds the default value on creation for the cooldown_secord field.
-	taskconfig.DefaultCooldownSecord = taskconfigDescCooldownSecord.Default.(uint32)
+	// taskconfigDescCooldownSecond is the schema descriptor for cooldown_second field.
+	taskconfigDescCooldownSecond := taskconfigFields[10].Descriptor()
+	// taskconfig.DefaultCooldownSecond holds the default value on creation for the cooldown_second field.
+	taskconfig.DefaultCooldownSecond = taskconfigDescCooldownSecond.Default.(uint32)
 	taskuserMixin := schema.TaskUser{}.Mixin()
 	taskuser.Policy = privacy.NewPolicies(taskuserMixin[0], schema.TaskUser{})
 	taskuser.Hooks[0] = func(next ent.Mutator) ent.Mutator {
