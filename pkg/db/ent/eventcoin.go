@@ -33,8 +33,8 @@ type EventCoin struct {
 	CoinConfigID uuid.UUID `json:"coin_config_id,omitempty"`
 	// CoinValue holds the value of the "coin_value" field.
 	CoinValue decimal.Decimal `json:"coin_value,omitempty"`
-	// CoinPreUsd holds the value of the "coin_pre_usd" field.
-	CoinPreUsd decimal.Decimal `json:"coin_pre_usd,omitempty"`
+	// CoinPerUsd holds the value of the "coin_per_usd" field.
+	CoinPerUsd decimal.Decimal `json:"coin_per_usd,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -42,7 +42,7 @@ func (*EventCoin) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case eventcoin.FieldCoinValue, eventcoin.FieldCoinPreUsd:
+		case eventcoin.FieldCoinValue, eventcoin.FieldCoinPerUsd:
 			values[i] = new(decimal.Decimal)
 		case eventcoin.FieldID, eventcoin.FieldCreatedAt, eventcoin.FieldUpdatedAt, eventcoin.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
@@ -117,11 +117,11 @@ func (ec *EventCoin) assignValues(columns []string, values []interface{}) error 
 			} else if value != nil {
 				ec.CoinValue = *value
 			}
-		case eventcoin.FieldCoinPreUsd:
+		case eventcoin.FieldCoinPerUsd:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field coin_pre_usd", values[i])
+				return fmt.Errorf("unexpected type %T for field coin_per_usd", values[i])
 			} else if value != nil {
-				ec.CoinPreUsd = *value
+				ec.CoinPerUsd = *value
 			}
 		}
 	}
@@ -175,8 +175,8 @@ func (ec *EventCoin) String() string {
 	builder.WriteString("coin_value=")
 	builder.WriteString(fmt.Sprintf("%v", ec.CoinValue))
 	builder.WriteString(", ")
-	builder.WriteString("coin_pre_usd=")
-	builder.WriteString(fmt.Sprintf("%v", ec.CoinPreUsd))
+	builder.WriteString("coin_per_usd=")
+	builder.WriteString(fmt.Sprintf("%v", ec.CoinPerUsd))
 	builder.WriteByte(')')
 	return builder.String()
 }

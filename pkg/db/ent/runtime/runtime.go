@@ -1096,10 +1096,10 @@ func init() {
 	eventcoinDescCoinValue := eventcoinFields[3].Descriptor()
 	// eventcoin.DefaultCoinValue holds the default value on creation for the coin_value field.
 	eventcoin.DefaultCoinValue = eventcoinDescCoinValue.Default.(decimal.Decimal)
-	// eventcoinDescCoinPreUsd is the schema descriptor for coin_pre_usd field.
-	eventcoinDescCoinPreUsd := eventcoinFields[4].Descriptor()
-	// eventcoin.DefaultCoinPreUsd holds the default value on creation for the coin_pre_usd field.
-	eventcoin.DefaultCoinPreUsd = eventcoinDescCoinPreUsd.Default.(decimal.Decimal)
+	// eventcoinDescCoinPerUsd is the schema descriptor for coin_per_usd field.
+	eventcoinDescCoinPerUsd := eventcoinFields[4].Descriptor()
+	// eventcoin.DefaultCoinPerUsd holds the default value on creation for the coin_per_usd field.
+	eventcoin.DefaultCoinPerUsd = eventcoinDescCoinPerUsd.Default.(decimal.Decimal)
 	eventcouponMixin := schema.EventCoupon{}.Mixin()
 	eventcoupon.Policy = privacy.NewPolicies(eventcouponMixin[0], schema.EventCoupon{})
 	eventcoupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -135,16 +135,16 @@ func (ecc *EventCoinCreate) SetNillableCoinValue(d *decimal.Decimal) *EventCoinC
 	return ecc
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (ecc *EventCoinCreate) SetCoinPreUsd(d decimal.Decimal) *EventCoinCreate {
-	ecc.mutation.SetCoinPreUsd(d)
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (ecc *EventCoinCreate) SetCoinPerUsd(d decimal.Decimal) *EventCoinCreate {
+	ecc.mutation.SetCoinPerUsd(d)
 	return ecc
 }
 
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (ecc *EventCoinCreate) SetNillableCoinPreUsd(d *decimal.Decimal) *EventCoinCreate {
+// SetNillableCoinPerUsd sets the "coin_per_usd" field if the given value is not nil.
+func (ecc *EventCoinCreate) SetNillableCoinPerUsd(d *decimal.Decimal) *EventCoinCreate {
 	if d != nil {
-		ecc.SetCoinPreUsd(*d)
+		ecc.SetCoinPerUsd(*d)
 	}
 	return ecc
 }
@@ -287,9 +287,9 @@ func (ecc *EventCoinCreate) defaults() error {
 		v := eventcoin.DefaultCoinValue
 		ecc.mutation.SetCoinValue(v)
 	}
-	if _, ok := ecc.mutation.CoinPreUsd(); !ok {
-		v := eventcoin.DefaultCoinPreUsd
-		ecc.mutation.SetCoinPreUsd(v)
+	if _, ok := ecc.mutation.CoinPerUsd(); !ok {
+		v := eventcoin.DefaultCoinPerUsd
+		ecc.mutation.SetCoinPerUsd(v)
 	}
 	return nil
 }
@@ -406,13 +406,13 @@ func (ecc *EventCoinCreate) createSpec() (*EventCoin, *sqlgraph.CreateSpec) {
 		})
 		_node.CoinValue = value
 	}
-	if value, ok := ecc.mutation.CoinPreUsd(); ok {
+	if value, ok := ecc.mutation.CoinPerUsd(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: eventcoin.FieldCoinPreUsd,
+			Column: eventcoin.FieldCoinPerUsd,
 		})
-		_node.CoinPreUsd = value
+		_node.CoinPerUsd = value
 	}
 	return _node, _spec
 }
@@ -606,21 +606,21 @@ func (u *EventCoinUpsert) ClearCoinValue() *EventCoinUpsert {
 	return u
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *EventCoinUpsert) SetCoinPreUsd(v decimal.Decimal) *EventCoinUpsert {
-	u.Set(eventcoin.FieldCoinPreUsd, v)
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (u *EventCoinUpsert) SetCoinPerUsd(v decimal.Decimal) *EventCoinUpsert {
+	u.Set(eventcoin.FieldCoinPerUsd, v)
 	return u
 }
 
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *EventCoinUpsert) UpdateCoinPreUsd() *EventCoinUpsert {
-	u.SetExcluded(eventcoin.FieldCoinPreUsd)
+// UpdateCoinPerUsd sets the "coin_per_usd" field to the value that was provided on create.
+func (u *EventCoinUpsert) UpdateCoinPerUsd() *EventCoinUpsert {
+	u.SetExcluded(eventcoin.FieldCoinPerUsd)
 	return u
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *EventCoinUpsert) ClearCoinPreUsd() *EventCoinUpsert {
-	u.SetNull(eventcoin.FieldCoinPreUsd)
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (u *EventCoinUpsert) ClearCoinPerUsd() *EventCoinUpsert {
+	u.SetNull(eventcoin.FieldCoinPerUsd)
 	return u
 }
 
@@ -835,24 +835,24 @@ func (u *EventCoinUpsertOne) ClearCoinValue() *EventCoinUpsertOne {
 	})
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *EventCoinUpsertOne) SetCoinPreUsd(v decimal.Decimal) *EventCoinUpsertOne {
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (u *EventCoinUpsertOne) SetCoinPerUsd(v decimal.Decimal) *EventCoinUpsertOne {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.SetCoinPreUsd(v)
+		s.SetCoinPerUsd(v)
 	})
 }
 
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *EventCoinUpsertOne) UpdateCoinPreUsd() *EventCoinUpsertOne {
+// UpdateCoinPerUsd sets the "coin_per_usd" field to the value that was provided on create.
+func (u *EventCoinUpsertOne) UpdateCoinPerUsd() *EventCoinUpsertOne {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.UpdateCoinPreUsd()
+		s.UpdateCoinPerUsd()
 	})
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *EventCoinUpsertOne) ClearCoinPreUsd() *EventCoinUpsertOne {
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (u *EventCoinUpsertOne) ClearCoinPerUsd() *EventCoinUpsertOne {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.ClearCoinPreUsd()
+		s.ClearCoinPerUsd()
 	})
 }
 
@@ -1232,24 +1232,24 @@ func (u *EventCoinUpsertBulk) ClearCoinValue() *EventCoinUpsertBulk {
 	})
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (u *EventCoinUpsertBulk) SetCoinPreUsd(v decimal.Decimal) *EventCoinUpsertBulk {
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (u *EventCoinUpsertBulk) SetCoinPerUsd(v decimal.Decimal) *EventCoinUpsertBulk {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.SetCoinPreUsd(v)
+		s.SetCoinPerUsd(v)
 	})
 }
 
-// UpdateCoinPreUsd sets the "coin_pre_usd" field to the value that was provided on create.
-func (u *EventCoinUpsertBulk) UpdateCoinPreUsd() *EventCoinUpsertBulk {
+// UpdateCoinPerUsd sets the "coin_per_usd" field to the value that was provided on create.
+func (u *EventCoinUpsertBulk) UpdateCoinPerUsd() *EventCoinUpsertBulk {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.UpdateCoinPreUsd()
+		s.UpdateCoinPerUsd()
 	})
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (u *EventCoinUpsertBulk) ClearCoinPreUsd() *EventCoinUpsertBulk {
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (u *EventCoinUpsertBulk) ClearCoinPerUsd() *EventCoinUpsertBulk {
 	return u.Update(func(s *EventCoinUpsert) {
-		s.ClearCoinPreUsd()
+		s.ClearCoinPerUsd()
 	})
 }
 

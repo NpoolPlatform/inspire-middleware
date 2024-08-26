@@ -52,7 +52,7 @@ func (EventCoin) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Other("coin_pre_usd", decimal.Decimal{}).
+			Other("coin_per_usd", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",
 			}).

@@ -18476,7 +18476,7 @@ type EventCoinMutation struct {
 	event_id       *uuid.UUID
 	coin_config_id *uuid.UUID
 	coin_value     *decimal.Decimal
-	coin_pre_usd   *decimal.Decimal
+	coin_per_usd   *decimal.Decimal
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*EventCoin, error)
@@ -18987,53 +18987,53 @@ func (m *EventCoinMutation) ResetCoinValue() {
 	delete(m.clearedFields, eventcoin.FieldCoinValue)
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (m *EventCoinMutation) SetCoinPreUsd(d decimal.Decimal) {
-	m.coin_pre_usd = &d
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (m *EventCoinMutation) SetCoinPerUsd(d decimal.Decimal) {
+	m.coin_per_usd = &d
 }
 
-// CoinPreUsd returns the value of the "coin_pre_usd" field in the mutation.
-func (m *EventCoinMutation) CoinPreUsd() (r decimal.Decimal, exists bool) {
-	v := m.coin_pre_usd
+// CoinPerUsd returns the value of the "coin_per_usd" field in the mutation.
+func (m *EventCoinMutation) CoinPerUsd() (r decimal.Decimal, exists bool) {
+	v := m.coin_per_usd
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCoinPreUsd returns the old "coin_pre_usd" field's value of the EventCoin entity.
+// OldCoinPerUsd returns the old "coin_per_usd" field's value of the EventCoin entity.
 // If the EventCoin object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventCoinMutation) OldCoinPreUsd(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *EventCoinMutation) OldCoinPerUsd(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCoinPreUsd is only allowed on UpdateOne operations")
+		return v, errors.New("OldCoinPerUsd is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCoinPreUsd requires an ID field in the mutation")
+		return v, errors.New("OldCoinPerUsd requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCoinPreUsd: %w", err)
+		return v, fmt.Errorf("querying old value for OldCoinPerUsd: %w", err)
 	}
-	return oldValue.CoinPreUsd, nil
+	return oldValue.CoinPerUsd, nil
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (m *EventCoinMutation) ClearCoinPreUsd() {
-	m.coin_pre_usd = nil
-	m.clearedFields[eventcoin.FieldCoinPreUsd] = struct{}{}
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (m *EventCoinMutation) ClearCoinPerUsd() {
+	m.coin_per_usd = nil
+	m.clearedFields[eventcoin.FieldCoinPerUsd] = struct{}{}
 }
 
-// CoinPreUsdCleared returns if the "coin_pre_usd" field was cleared in this mutation.
-func (m *EventCoinMutation) CoinPreUsdCleared() bool {
-	_, ok := m.clearedFields[eventcoin.FieldCoinPreUsd]
+// CoinPerUsdCleared returns if the "coin_per_usd" field was cleared in this mutation.
+func (m *EventCoinMutation) CoinPerUsdCleared() bool {
+	_, ok := m.clearedFields[eventcoin.FieldCoinPerUsd]
 	return ok
 }
 
-// ResetCoinPreUsd resets all changes to the "coin_pre_usd" field.
-func (m *EventCoinMutation) ResetCoinPreUsd() {
-	m.coin_pre_usd = nil
-	delete(m.clearedFields, eventcoin.FieldCoinPreUsd)
+// ResetCoinPerUsd resets all changes to the "coin_per_usd" field.
+func (m *EventCoinMutation) ResetCoinPerUsd() {
+	m.coin_per_usd = nil
+	delete(m.clearedFields, eventcoin.FieldCoinPerUsd)
 }
 
 // Where appends a list predicates to the EventCoinMutation builder.
@@ -19080,8 +19080,8 @@ func (m *EventCoinMutation) Fields() []string {
 	if m.coin_value != nil {
 		fields = append(fields, eventcoin.FieldCoinValue)
 	}
-	if m.coin_pre_usd != nil {
-		fields = append(fields, eventcoin.FieldCoinPreUsd)
+	if m.coin_per_usd != nil {
+		fields = append(fields, eventcoin.FieldCoinPerUsd)
 	}
 	return fields
 }
@@ -19107,8 +19107,8 @@ func (m *EventCoinMutation) Field(name string) (ent.Value, bool) {
 		return m.CoinConfigID()
 	case eventcoin.FieldCoinValue:
 		return m.CoinValue()
-	case eventcoin.FieldCoinPreUsd:
-		return m.CoinPreUsd()
+	case eventcoin.FieldCoinPerUsd:
+		return m.CoinPerUsd()
 	}
 	return nil, false
 }
@@ -19134,8 +19134,8 @@ func (m *EventCoinMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCoinConfigID(ctx)
 	case eventcoin.FieldCoinValue:
 		return m.OldCoinValue(ctx)
-	case eventcoin.FieldCoinPreUsd:
-		return m.OldCoinPreUsd(ctx)
+	case eventcoin.FieldCoinPerUsd:
+		return m.OldCoinPerUsd(ctx)
 	}
 	return nil, fmt.Errorf("unknown EventCoin field %s", name)
 }
@@ -19201,12 +19201,12 @@ func (m *EventCoinMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCoinValue(v)
 		return nil
-	case eventcoin.FieldCoinPreUsd:
+	case eventcoin.FieldCoinPerUsd:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCoinPreUsd(v)
+		m.SetCoinPerUsd(v)
 		return nil
 	}
 	return fmt.Errorf("unknown EventCoin field %s", name)
@@ -19289,8 +19289,8 @@ func (m *EventCoinMutation) ClearedFields() []string {
 	if m.FieldCleared(eventcoin.FieldCoinValue) {
 		fields = append(fields, eventcoin.FieldCoinValue)
 	}
-	if m.FieldCleared(eventcoin.FieldCoinPreUsd) {
-		fields = append(fields, eventcoin.FieldCoinPreUsd)
+	if m.FieldCleared(eventcoin.FieldCoinPerUsd) {
+		fields = append(fields, eventcoin.FieldCoinPerUsd)
 	}
 	return fields
 }
@@ -19318,8 +19318,8 @@ func (m *EventCoinMutation) ClearField(name string) error {
 	case eventcoin.FieldCoinValue:
 		m.ClearCoinValue()
 		return nil
-	case eventcoin.FieldCoinPreUsd:
-		m.ClearCoinPreUsd()
+	case eventcoin.FieldCoinPerUsd:
+		m.ClearCoinPerUsd()
 		return nil
 	}
 	return fmt.Errorf("unknown EventCoin nullable field %s", name)
@@ -19353,8 +19353,8 @@ func (m *EventCoinMutation) ResetField(name string) error {
 	case eventcoin.FieldCoinValue:
 		m.ResetCoinValue()
 		return nil
-	case eventcoin.FieldCoinPreUsd:
-		m.ResetCoinPreUsd()
+	case eventcoin.FieldCoinPerUsd:
+		m.ResetCoinPerUsd()
 		return nil
 	}
 	return fmt.Errorf("unknown EventCoin field %s", name)

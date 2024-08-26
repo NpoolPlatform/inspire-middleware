@@ -179,23 +179,23 @@ func (ecu *EventCoinUpdate) ClearCoinValue() *EventCoinUpdate {
 	return ecu
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (ecu *EventCoinUpdate) SetCoinPreUsd(d decimal.Decimal) *EventCoinUpdate {
-	ecu.mutation.SetCoinPreUsd(d)
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (ecu *EventCoinUpdate) SetCoinPerUsd(d decimal.Decimal) *EventCoinUpdate {
+	ecu.mutation.SetCoinPerUsd(d)
 	return ecu
 }
 
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (ecu *EventCoinUpdate) SetNillableCoinPreUsd(d *decimal.Decimal) *EventCoinUpdate {
+// SetNillableCoinPerUsd sets the "coin_per_usd" field if the given value is not nil.
+func (ecu *EventCoinUpdate) SetNillableCoinPerUsd(d *decimal.Decimal) *EventCoinUpdate {
 	if d != nil {
-		ecu.SetCoinPreUsd(*d)
+		ecu.SetCoinPerUsd(*d)
 	}
 	return ecu
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (ecu *EventCoinUpdate) ClearCoinPreUsd() *EventCoinUpdate {
-	ecu.mutation.ClearCoinPreUsd()
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (ecu *EventCoinUpdate) ClearCoinPerUsd() *EventCoinUpdate {
+	ecu.mutation.ClearCoinPerUsd()
 	return ecu
 }
 
@@ -398,17 +398,17 @@ func (ecu *EventCoinUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: eventcoin.FieldCoinValue,
 		})
 	}
-	if value, ok := ecu.mutation.CoinPreUsd(); ok {
+	if value, ok := ecu.mutation.CoinPerUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: eventcoin.FieldCoinPreUsd,
+			Column: eventcoin.FieldCoinPerUsd,
 		})
 	}
-	if ecu.mutation.CoinPreUsdCleared() {
+	if ecu.mutation.CoinPerUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: eventcoin.FieldCoinPreUsd,
+			Column: eventcoin.FieldCoinPerUsd,
 		})
 	}
 	_spec.Modifiers = ecu.modifiers
@@ -581,23 +581,23 @@ func (ecuo *EventCoinUpdateOne) ClearCoinValue() *EventCoinUpdateOne {
 	return ecuo
 }
 
-// SetCoinPreUsd sets the "coin_pre_usd" field.
-func (ecuo *EventCoinUpdateOne) SetCoinPreUsd(d decimal.Decimal) *EventCoinUpdateOne {
-	ecuo.mutation.SetCoinPreUsd(d)
+// SetCoinPerUsd sets the "coin_per_usd" field.
+func (ecuo *EventCoinUpdateOne) SetCoinPerUsd(d decimal.Decimal) *EventCoinUpdateOne {
+	ecuo.mutation.SetCoinPerUsd(d)
 	return ecuo
 }
 
-// SetNillableCoinPreUsd sets the "coin_pre_usd" field if the given value is not nil.
-func (ecuo *EventCoinUpdateOne) SetNillableCoinPreUsd(d *decimal.Decimal) *EventCoinUpdateOne {
+// SetNillableCoinPerUsd sets the "coin_per_usd" field if the given value is not nil.
+func (ecuo *EventCoinUpdateOne) SetNillableCoinPerUsd(d *decimal.Decimal) *EventCoinUpdateOne {
 	if d != nil {
-		ecuo.SetCoinPreUsd(*d)
+		ecuo.SetCoinPerUsd(*d)
 	}
 	return ecuo
 }
 
-// ClearCoinPreUsd clears the value of the "coin_pre_usd" field.
-func (ecuo *EventCoinUpdateOne) ClearCoinPreUsd() *EventCoinUpdateOne {
-	ecuo.mutation.ClearCoinPreUsd()
+// ClearCoinPerUsd clears the value of the "coin_per_usd" field.
+func (ecuo *EventCoinUpdateOne) ClearCoinPerUsd() *EventCoinUpdateOne {
+	ecuo.mutation.ClearCoinPerUsd()
 	return ecuo
 }
 
@@ -830,17 +830,17 @@ func (ecuo *EventCoinUpdateOne) sqlSave(ctx context.Context) (_node *EventCoin, 
 			Column: eventcoin.FieldCoinValue,
 		})
 	}
-	if value, ok := ecuo.mutation.CoinPreUsd(); ok {
+	if value, ok := ecuo.mutation.CoinPerUsd(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
 			Value:  value,
-			Column: eventcoin.FieldCoinPreUsd,
+			Column: eventcoin.FieldCoinPerUsd,
 		})
 	}
-	if ecuo.mutation.CoinPreUsdCleared() {
+	if ecuo.mutation.CoinPerUsdCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
-			Column: eventcoin.FieldCoinPreUsd,
+			Column: eventcoin.FieldCoinPerUsd,
 		})
 	}
 	_spec.Modifiers = ecuo.modifiers

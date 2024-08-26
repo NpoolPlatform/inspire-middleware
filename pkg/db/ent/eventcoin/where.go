@@ -136,10 +136,10 @@ func CoinValue(v decimal.Decimal) predicate.EventCoin {
 	})
 }
 
-// CoinPreUsd applies equality check predicate on the "coin_pre_usd" field. It's identical to CoinPreUsdEQ.
-func CoinPreUsd(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsd applies equality check predicate on the "coin_per_usd" field. It's identical to CoinPerUsdEQ.
+func CoinPerUsd(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.EQ(s.C(FieldCoinPerUsd), v))
 	})
 }
 
@@ -711,81 +711,81 @@ func CoinValueNotNil() predicate.EventCoin {
 	})
 }
 
-// CoinPreUsdEQ applies the EQ predicate on the "coin_pre_usd" field.
-func CoinPreUsdEQ(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdEQ applies the EQ predicate on the "coin_per_usd" field.
+func CoinPerUsdEQ(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.EQ(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdNEQ applies the NEQ predicate on the "coin_pre_usd" field.
-func CoinPreUsdNEQ(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdNEQ applies the NEQ predicate on the "coin_per_usd" field.
+func CoinPerUsdNEQ(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.NEQ(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdIn applies the In predicate on the "coin_pre_usd" field.
-func CoinPreUsdIn(vs ...decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdIn applies the In predicate on the "coin_per_usd" field.
+func CoinPerUsdIn(vs ...decimal.Decimal) predicate.EventCoin {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldCoinPreUsd), v...))
+		s.Where(sql.In(s.C(FieldCoinPerUsd), v...))
 	})
 }
 
-// CoinPreUsdNotIn applies the NotIn predicate on the "coin_pre_usd" field.
-func CoinPreUsdNotIn(vs ...decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdNotIn applies the NotIn predicate on the "coin_per_usd" field.
+func CoinPerUsdNotIn(vs ...decimal.Decimal) predicate.EventCoin {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldCoinPreUsd), v...))
+		s.Where(sql.NotIn(s.C(FieldCoinPerUsd), v...))
 	})
 }
 
-// CoinPreUsdGT applies the GT predicate on the "coin_pre_usd" field.
-func CoinPreUsdGT(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdGT applies the GT predicate on the "coin_per_usd" field.
+func CoinPerUsdGT(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.GT(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdGTE applies the GTE predicate on the "coin_pre_usd" field.
-func CoinPreUsdGTE(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdGTE applies the GTE predicate on the "coin_per_usd" field.
+func CoinPerUsdGTE(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.GTE(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdLT applies the LT predicate on the "coin_pre_usd" field.
-func CoinPreUsdLT(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdLT applies the LT predicate on the "coin_per_usd" field.
+func CoinPerUsdLT(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.LT(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdLTE applies the LTE predicate on the "coin_pre_usd" field.
-func CoinPreUsdLTE(v decimal.Decimal) predicate.EventCoin {
+// CoinPerUsdLTE applies the LTE predicate on the "coin_per_usd" field.
+func CoinPerUsdLTE(v decimal.Decimal) predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCoinPreUsd), v))
+		s.Where(sql.LTE(s.C(FieldCoinPerUsd), v))
 	})
 }
 
-// CoinPreUsdIsNil applies the IsNil predicate on the "coin_pre_usd" field.
-func CoinPreUsdIsNil() predicate.EventCoin {
+// CoinPerUsdIsNil applies the IsNil predicate on the "coin_per_usd" field.
+func CoinPerUsdIsNil() predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCoinPreUsd)))
+		s.Where(sql.IsNull(s.C(FieldCoinPerUsd)))
 	})
 }
 
-// CoinPreUsdNotNil applies the NotNil predicate on the "coin_pre_usd" field.
-func CoinPreUsdNotNil() predicate.EventCoin {
+// CoinPerUsdNotNil applies the NotNil predicate on the "coin_per_usd" field.
+func CoinPerUsdNotNil() predicate.EventCoin {
 	return predicate.EventCoin(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCoinPreUsd)))
+		s.Where(sql.NotNull(s.C(FieldCoinPerUsd)))
 	})
 }
 

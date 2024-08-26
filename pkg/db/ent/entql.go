@@ -437,7 +437,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			eventcoin.FieldEventID:      {Type: field.TypeUUID, Column: eventcoin.FieldEventID},
 			eventcoin.FieldCoinConfigID: {Type: field.TypeUUID, Column: eventcoin.FieldCoinConfigID},
 			eventcoin.FieldCoinValue:    {Type: field.TypeOther, Column: eventcoin.FieldCoinValue},
-			eventcoin.FieldCoinPreUsd:   {Type: field.TypeOther, Column: eventcoin.FieldCoinPreUsd},
+			eventcoin.FieldCoinPerUsd:   {Type: field.TypeOther, Column: eventcoin.FieldCoinPerUsd},
 		},
 	}
 	graph.Nodes[16] = &sqlgraph.Node{
@@ -2352,9 +2352,9 @@ func (f *EventCoinFilter) WhereCoinValue(p entql.OtherP) {
 	f.Where(p.Field(eventcoin.FieldCoinValue))
 }
 
-// WhereCoinPreUsd applies the entql other predicate on the coin_pre_usd field.
-func (f *EventCoinFilter) WhereCoinPreUsd(p entql.OtherP) {
-	f.Where(p.Field(eventcoin.FieldCoinPreUsd))
+// WhereCoinPerUsd applies the entql other predicate on the coin_per_usd field.
+func (f *EventCoinFilter) WhereCoinPerUsd(p entql.OtherP) {
+	f.Where(p.Field(eventcoin.FieldCoinPerUsd))
 }
 
 // addPredicate implements the predicateAdder interface.

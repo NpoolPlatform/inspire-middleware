@@ -29,8 +29,8 @@ const (
 	FieldCoinConfigID = "coin_config_id"
 	// FieldCoinValue holds the string denoting the coin_value field in the database.
 	FieldCoinValue = "coin_value"
-	// FieldCoinPreUsd holds the string denoting the coin_pre_usd field in the database.
-	FieldCoinPreUsd = "coin_pre_usd"
+	// FieldCoinPerUsd holds the string denoting the coin_per_usd field in the database.
+	FieldCoinPerUsd = "coin_per_usd"
 	// Table holds the table name of the eventcoin in the database.
 	Table = "event_coins"
 )
@@ -46,7 +46,7 @@ var Columns = []string{
 	FieldEventID,
 	FieldCoinConfigID,
 	FieldCoinValue,
-	FieldCoinPreUsd,
+	FieldCoinPerUsd,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -86,6 +86,6 @@ var (
 	DefaultCoinConfigID func() uuid.UUID
 	// DefaultCoinValue holds the default value on creation for the "coin_value" field.
 	DefaultCoinValue decimal.Decimal
-	// DefaultCoinPreUsd holds the default value on creation for the "coin_pre_usd" field.
-	DefaultCoinPreUsd decimal.Decimal
+	// DefaultCoinPerUsd holds the default value on creation for the "coin_per_usd" field.
+	DefaultCoinPerUsd decimal.Decimal
 )
