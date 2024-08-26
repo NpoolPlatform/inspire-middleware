@@ -9,11 +9,14 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/task/user"
 )
 
 type updateHandler struct {
 	*Handler
-	sql string
+	sql  string
+	info *npool.TaskUser
 }
 
 func (h *updateHandler) constructSQL() error {
@@ -51,11 +54,32 @@ func (h *updateHandler) updateTaskUser(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) UpdateTaskUser(ctx context.Context) error {
-	handler := &updateHandler{
-		Handler: h,
+func (h *updateHandler) validTaskState() error {
+	if h.TaskState == nil {
+		return nil
 	}
+	if h.info.TaskState == basetypes.TaskState_Done && *h.TaskState == basetypes.TaskState_InProgress {
+		return wlog.Errorf("invalid taskstate")
+	}
+	return nil
+}
 
+func (h *updateHandler) validRewardState() error {
+	if h.RewardState == nil {
+		return nil
+	}
+	switch h.info.RewardState {
+	case basetypes.RewardState_Issued:
+		fallthrough //nolint
+	case basetypes.RewardState_Revoked:
+		if *h.RewardState == basetypes.RewardState_Issued {
+			return wlog.Errorf("invalid rewardstate")
+		}
+	}
+	return nil
+}
+
+func (h *Handler) UpdateTaskUser(ctx context.Context) error {
 	info, err := h.GetTaskUser(ctx)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -64,6 +88,17 @@ func (h *Handler) UpdateTaskUser(ctx context.Context) error {
 		return wlog.Errorf("invalid taskuser")
 	}
 	h.ID = &info.ID
+	handler := &updateHandler{
+		Handler: h,
+		info:    info,
+	}
+
+	if err := handler.validTaskState(); err != nil {
+		return wlog.WrapError(err)
+	}
+	if err := handler.validRewardState(); err != nil {
+		return wlog.WrapError(err)
+	}
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
