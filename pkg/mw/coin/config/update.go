@@ -9,11 +9,14 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coin/config"
+	"github.com/shopspring/decimal"
 )
 
 type updateHandler struct {
 	*Handler
-	sql string
+	sql  string
+	info *npool.CoinConfig
 }
 
 func (h *updateHandler) constructSQL() error {
@@ -50,11 +53,29 @@ func (h *updateHandler) updateCoinConfig(ctx context.Context, tx *ent.Tx) error 
 	return nil
 }
 
-func (h *Handler) UpdateCoinConfig(ctx context.Context) error {
-	handler := &updateHandler{
-		Handler: h,
+func (h *updateHandler) validAllocated() error {
+	allocated, err := decimal.NewFromString(h.info.Allocated)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	maxValue, err := decimal.NewFromString(h.info.MaxValue)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if h.Allocated != nil {
+		allocated = *h.Allocated
+	}
+	if h.MaxValue != nil {
+		maxValue = *h.MaxValue
+	}
+	if allocated.Cmp(maxValue) > 0 {
+		return wlog.Errorf("invalid allocated")
 	}
 
+	return nil
+}
+
+func (h *Handler) UpdateCoinConfig(ctx context.Context) error {
 	info, err := h.GetCoinConfig(ctx)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -64,6 +85,14 @@ func (h *Handler) UpdateCoinConfig(ctx context.Context) error {
 	}
 	h.ID = &info.ID
 
+	handler := &updateHandler{
+		Handler: h,
+		info:    info,
+	}
+
+	if err := handler.validAllocated(); err != nil {
+		return wlog.WrapError(err)
+	}
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
 	}
