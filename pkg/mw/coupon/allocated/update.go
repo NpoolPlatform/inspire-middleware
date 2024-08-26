@@ -30,9 +30,9 @@ func (h *updateHandler) updateCoupon(ctx context.Context, cli *ent.Client) error
 	return nil
 }
 
-func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
+func (h *Handler) UpdateCoupon(ctx context.Context) error {
 	if h.Used != nil && *h.Used && h.UsedByOrderID == nil {
-		return nil, wlog.Errorf("invalid usedbyorderid")
+		return wlog.Errorf("invalid usedbyorderid")
 	}
 	handler := &updateHandler{
 		Handler: h,
@@ -40,21 +40,16 @@ func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
 
 	info, err := h.GetCoupon(ctx)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return nil, wlog.Errorf("invalid usercoinreward")
+		return wlog.Errorf("invalid usercoinreward")
 	}
 	h.ID = &info.ID
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		return handler.updateCoupon(_ctx, cli)
 	})
-	if err != nil {
-		return nil, wlog.WrapError(err)
-	}
-
-	return h.GetCoupon(ctx)
 }
 
 func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {

@@ -48,6 +48,9 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 }
 
 func (h *createHandler) cashable() bool {
+	if h.Cashable != nil {
+		return *h.Cashable
+	}
 	probability := h.coupon.CashableProbability
 	if probability.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return false
@@ -76,28 +79,6 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 			Denomination: &h.coupon.Denomination,
 			CouponScope:  &couponScope,
 			Cashable:     &_cashable,
-			Extra:        h.Extra,
-		},
-	).Save(ctx); err != nil {
-		return wlog.WrapError(err)
-	}
-	return nil
-}
-
-func (h *createHandler) createDirectAllocatedCoupon(ctx context.Context, tx *ent.Tx) error {
-	startAt := uint32(time.Now().Unix())
-	couponScope := inspiretypes.CouponScope(inspiretypes.CouponScope_value[h.coupon.CouponScope])
-	if _, err := allocatedcrud.CreateSet(
-		tx.CouponAllocated.Create(),
-		&allocatedcrud.Req{
-			EntID:        h.EntID,
-			AppID:        h.AppID,
-			CouponID:     h.CouponID,
-			UserID:       h.UserID,
-			StartAt:      &startAt,
-			Denomination: &h.coupon.Denomination,
-			CouponScope:  &couponScope,
-			Cashable:     h.Cashable,
 			Extra:        h.Extra,
 		},
 	).Save(ctx); err != nil {
@@ -146,8 +127,7 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-//nolint:dupl
-func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+func (h *Handler) CreateCoupon(ctx context.Context) error {
 	id := uuid.New()
 	if h.EntID == nil {
 		h.EntID = &id
@@ -157,10 +137,10 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		Handler: h,
 	}
 	if err := handler.getCoupon(ctx); err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createAllocatedCoupon(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -169,40 +149,6 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, wlog.WrapError(err)
-	}
-
-	return h.GetCoupon(ctx)
-}
-
-//nolint:dupl
-func (h *Handler) CreateDirectCoupon(ctx context.Context) (*npool.Coupon, error) {
-	id := uuid.New()
-	if h.EntID == nil {
-		h.EntID = &id
-	}
-
-	handler := &createHandler{
-		Handler: h,
-	}
-	if err := handler.getCoupon(ctx); err != nil {
-		return nil, wlog.WrapError(err)
-	}
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		if err := handler.createDirectAllocatedCoupon(ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
-		if err := handler.updateCoupon(ctx, tx); err != nil {
-			return wlog.WrapError(err)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, wlog.WrapError(err)
-	}
-
-	return h.GetCoupon(ctx)
 }
 
 func (h *Handler) CalcluateAllocatedCoupon(ctx context.Context) (*npool.Coupon, error) {

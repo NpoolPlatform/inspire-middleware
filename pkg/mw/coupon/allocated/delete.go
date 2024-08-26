@@ -13,7 +13,6 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	allocatedcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/coupon/allocated"
-	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 	"github.com/shopspring/decimal"
 )
 
@@ -71,13 +70,13 @@ func (h *deleteHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
+func (h *Handler) DeleteCoupon(ctx context.Context) error {
 	info, err := h.GetCoupon(ctx)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return nil, nil
+		return nil
 	}
 	h.ID = &info.ID
 
@@ -87,11 +86,11 @@ func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
 	id := uuid.MustParse(info.CouponID)
 	h.CouponID = &id
 	if err := handler.getCoupon(ctx); err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 
 	now := uint32(time.Now().Unix())
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.updateCoupon(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -105,9 +104,4 @@ func (h *Handler) DeleteCoupon(ctx context.Context) (*npool.Coupon, error) {
 		}
 		return nil
 	})
-	if err != nil {
-		return nil, wlog.WrapError(err)
-	}
-
-	return info, nil
 }

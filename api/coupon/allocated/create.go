@@ -39,7 +39,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 		return &npool.CreateCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	info, err := handler.CreateCoupon(ctx)
+	err = handler.CreateCoupon(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateCoupon",
@@ -50,7 +50,7 @@ func (s *Server) CreateCoupon(ctx context.Context, in *npool.CreateCouponRequest
 	}
 
 	return &npool.CreateCouponResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }
 
@@ -82,7 +82,7 @@ func (s *Server) CreateDirectCoupon(ctx context.Context, in *npool.CreateDirectC
 		return &npool.CreateDirectCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	info, err := handler.CreateCoupon(ctx)
+	err = handler.CreateCoupon(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"CreateDirectCoupon",
@@ -93,6 +93,6 @@ func (s *Server) CreateDirectCoupon(ctx context.Context, in *npool.CreateDirectC
 	}
 
 	return &npool.CreateDirectCouponResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

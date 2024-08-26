@@ -36,7 +36,7 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 		return &npool.DeleteCouponResponse{}, status.Error(codes.Aborted, err.Error())
 	}
 
-	info, err := handler.DeleteCoupon(ctx)
+	err = handler.DeleteCoupon(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"DeleteCoupon",
@@ -47,6 +47,6 @@ func (s *Server) DeleteCoupon(ctx context.Context, in *npool.DeleteCouponRequest
 	}
 
 	return &npool.DeleteCouponResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }
