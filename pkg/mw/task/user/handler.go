@@ -253,6 +253,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: basetypes.RewardState(conds.GetRewardState().GetValue()),
 			}
 		}
+		if conds.CreatedAt != nil {
+			h.Conds.CreatedAt = &cruder.Cond{
+				Op:  conds.GetCreatedAt().GetOp(),
+				Val: conds.GetCreatedAt().GetValue(),
+			}
+		}
 		return nil
 	}
 }
