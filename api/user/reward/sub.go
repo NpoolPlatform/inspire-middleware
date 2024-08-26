@@ -25,7 +25,7 @@ func (s *Server) SubUserReward(ctx context.Context, in *npool.SubUserRewardReque
 	handler, err := reward1.NewHandler(
 		ctx,
 		reward1.WithAppID(req.AppID, true),
-		reward1.WithUserID(req.UserID, false),
+		reward1.WithUserID(req.UserID, true),
 		reward1.WithActionCredits(req.ActionCredits, false),
 		reward1.WithCouponAmount(req.CouponAmount, false),
 		reward1.WithCouponCashableAmount(req.CouponCashableAmount, false),
