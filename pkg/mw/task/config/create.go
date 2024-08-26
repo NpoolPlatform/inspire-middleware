@@ -38,7 +38,7 @@ func (h *createHandler) constructSQL() {
 	_sql += comma + "`index`"
 	_sql += comma + "last_task_id"
 	_sql += comma + "max_reward_count"
-	_sql += comma + "cooldown_secord"
+	_sql += comma + "cooldown_second"
 	_sql += comma + "created_at"
 	_sql += comma + "updated_at"
 	_sql += comma + "deleted_at"

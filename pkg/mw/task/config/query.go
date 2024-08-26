@@ -74,7 +74,7 @@ func (h *queryHandler) queryJoinMyself(s *sql.Selector) {
 			t1.C(enttaskconfig.FieldIndex),
 			t1.C(enttaskconfig.FieldLastTaskID),
 			t1.C(enttaskconfig.FieldMaxRewardCount),
-			t1.C(enttaskconfig.FieldCooldownSecord),
+			t1.C(enttaskconfig.FieldCooldownSecond),
 			t1.C(enttaskconfig.FieldCreatedAt),
 			t1.C(enttaskconfig.FieldUpdatedAt),
 		)

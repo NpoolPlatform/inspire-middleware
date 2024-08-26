@@ -61,7 +61,7 @@ func CreateSet(c *ent.TaskConfigCreate, req *Req) *ent.TaskConfigCreate {
 		c.SetMaxRewardCount(*req.MaxRewardCount)
 	}
 	if req.CooldownSecond != nil {
-		c.SetCooldownSecord(*req.CooldownSecond)
+		c.SetCooldownSecond(*req.CooldownSecond)
 	}
 	return c
 }
@@ -89,7 +89,7 @@ func UpdateSet(u *ent.TaskConfigUpdateOne, req *Req) *ent.TaskConfigUpdateOne {
 		u.SetMaxRewardCount(*req.MaxRewardCount)
 	}
 	if req.CooldownSecond != nil {
-		u.SetCooldownSecord(*req.CooldownSecond)
+		u.SetCooldownSecond(*req.CooldownSecond)
 	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
