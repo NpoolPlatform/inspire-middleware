@@ -163,30 +163,30 @@ func (auc *AchievementUserCreate) SetNillableInviteeConsumeAmount(d *decimal.Dec
 	return auc
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (auc *AchievementUserCreate) SetDirectInvites(u uint32) *AchievementUserCreate {
-	auc.mutation.SetDirectInvites(u)
+// SetDirectInvitees sets the "direct_invitees" field.
+func (auc *AchievementUserCreate) SetDirectInvitees(u uint32) *AchievementUserCreate {
+	auc.mutation.SetDirectInvitees(u)
 	return auc
 }
 
-// SetNillableDirectInvites sets the "direct_invites" field if the given value is not nil.
-func (auc *AchievementUserCreate) SetNillableDirectInvites(u *uint32) *AchievementUserCreate {
+// SetNillableDirectInvitees sets the "direct_invitees" field if the given value is not nil.
+func (auc *AchievementUserCreate) SetNillableDirectInvitees(u *uint32) *AchievementUserCreate {
 	if u != nil {
-		auc.SetDirectInvites(*u)
+		auc.SetDirectInvitees(*u)
 	}
 	return auc
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (auc *AchievementUserCreate) SetIndirectInvites(u uint32) *AchievementUserCreate {
-	auc.mutation.SetIndirectInvites(u)
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (auc *AchievementUserCreate) SetIndirectInvitees(u uint32) *AchievementUserCreate {
+	auc.mutation.SetIndirectInvitees(u)
 	return auc
 }
 
-// SetNillableIndirectInvites sets the "indirect_invites" field if the given value is not nil.
-func (auc *AchievementUserCreate) SetNillableIndirectInvites(u *uint32) *AchievementUserCreate {
+// SetNillableIndirectInvitees sets the "indirect_invitees" field if the given value is not nil.
+func (auc *AchievementUserCreate) SetNillableIndirectInvitees(u *uint32) *AchievementUserCreate {
 	if u != nil {
-		auc.SetIndirectInvites(*u)
+		auc.SetIndirectInvitees(*u)
 	}
 	return auc
 }
@@ -334,13 +334,13 @@ func (auc *AchievementUserCreate) defaults() error {
 		v := achievementuser.DefaultInviteeConsumeAmount
 		auc.mutation.SetInviteeConsumeAmount(v)
 	}
-	if _, ok := auc.mutation.DirectInvites(); !ok {
-		v := achievementuser.DefaultDirectInvites
-		auc.mutation.SetDirectInvites(v)
+	if _, ok := auc.mutation.DirectInvitees(); !ok {
+		v := achievementuser.DefaultDirectInvitees
+		auc.mutation.SetDirectInvitees(v)
 	}
-	if _, ok := auc.mutation.IndirectInvites(); !ok {
-		v := achievementuser.DefaultIndirectInvites
-		auc.mutation.SetIndirectInvites(v)
+	if _, ok := auc.mutation.IndirectInvitees(); !ok {
+		v := achievementuser.DefaultIndirectInvitees
+		auc.mutation.SetIndirectInvitees(v)
 	}
 	return nil
 }
@@ -473,21 +473,21 @@ func (auc *AchievementUserCreate) createSpec() (*AchievementUser, *sqlgraph.Crea
 		})
 		_node.InviteeConsumeAmount = value
 	}
-	if value, ok := auc.mutation.DirectInvites(); ok {
+	if value, ok := auc.mutation.DirectInvitees(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
-		_node.DirectInvites = value
+		_node.DirectInvitees = value
 	}
-	if value, ok := auc.mutation.IndirectInvites(); ok {
+	if value, ok := auc.mutation.IndirectInvitees(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
-		_node.IndirectInvites = value
+		_node.IndirectInvitees = value
 	}
 	return _node, _spec
 }
@@ -717,51 +717,51 @@ func (u *AchievementUserUpsert) ClearInviteeConsumeAmount() *AchievementUserUpse
 	return u
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (u *AchievementUserUpsert) SetDirectInvites(v uint32) *AchievementUserUpsert {
-	u.Set(achievementuser.FieldDirectInvites, v)
+// SetDirectInvitees sets the "direct_invitees" field.
+func (u *AchievementUserUpsert) SetDirectInvitees(v uint32) *AchievementUserUpsert {
+	u.Set(achievementuser.FieldDirectInvitees, v)
 	return u
 }
 
-// UpdateDirectInvites sets the "direct_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsert) UpdateDirectInvites() *AchievementUserUpsert {
-	u.SetExcluded(achievementuser.FieldDirectInvites)
+// UpdateDirectInvitees sets the "direct_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsert) UpdateDirectInvitees() *AchievementUserUpsert {
+	u.SetExcluded(achievementuser.FieldDirectInvitees)
 	return u
 }
 
-// AddDirectInvites adds v to the "direct_invites" field.
-func (u *AchievementUserUpsert) AddDirectInvites(v uint32) *AchievementUserUpsert {
-	u.Add(achievementuser.FieldDirectInvites, v)
+// AddDirectInvitees adds v to the "direct_invitees" field.
+func (u *AchievementUserUpsert) AddDirectInvitees(v uint32) *AchievementUserUpsert {
+	u.Add(achievementuser.FieldDirectInvitees, v)
 	return u
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (u *AchievementUserUpsert) ClearDirectInvites() *AchievementUserUpsert {
-	u.SetNull(achievementuser.FieldDirectInvites)
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (u *AchievementUserUpsert) ClearDirectInvitees() *AchievementUserUpsert {
+	u.SetNull(achievementuser.FieldDirectInvitees)
 	return u
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (u *AchievementUserUpsert) SetIndirectInvites(v uint32) *AchievementUserUpsert {
-	u.Set(achievementuser.FieldIndirectInvites, v)
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (u *AchievementUserUpsert) SetIndirectInvitees(v uint32) *AchievementUserUpsert {
+	u.Set(achievementuser.FieldIndirectInvitees, v)
 	return u
 }
 
-// UpdateIndirectInvites sets the "indirect_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsert) UpdateIndirectInvites() *AchievementUserUpsert {
-	u.SetExcluded(achievementuser.FieldIndirectInvites)
+// UpdateIndirectInvitees sets the "indirect_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsert) UpdateIndirectInvitees() *AchievementUserUpsert {
+	u.SetExcluded(achievementuser.FieldIndirectInvitees)
 	return u
 }
 
-// AddIndirectInvites adds v to the "indirect_invites" field.
-func (u *AchievementUserUpsert) AddIndirectInvites(v uint32) *AchievementUserUpsert {
-	u.Add(achievementuser.FieldIndirectInvites, v)
+// AddIndirectInvitees adds v to the "indirect_invitees" field.
+func (u *AchievementUserUpsert) AddIndirectInvitees(v uint32) *AchievementUserUpsert {
+	u.Add(achievementuser.FieldIndirectInvitees, v)
 	return u
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (u *AchievementUserUpsert) ClearIndirectInvites() *AchievementUserUpsert {
-	u.SetNull(achievementuser.FieldIndirectInvites)
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (u *AchievementUserUpsert) ClearIndirectInvitees() *AchievementUserUpsert {
+	u.SetNull(achievementuser.FieldIndirectInvitees)
 	return u
 }
 
@@ -1018,59 +1018,59 @@ func (u *AchievementUserUpsertOne) ClearInviteeConsumeAmount() *AchievementUserU
 	})
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (u *AchievementUserUpsertOne) SetDirectInvites(v uint32) *AchievementUserUpsertOne {
+// SetDirectInvitees sets the "direct_invitees" field.
+func (u *AchievementUserUpsertOne) SetDirectInvitees(v uint32) *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.SetDirectInvites(v)
+		s.SetDirectInvitees(v)
 	})
 }
 
-// AddDirectInvites adds v to the "direct_invites" field.
-func (u *AchievementUserUpsertOne) AddDirectInvites(v uint32) *AchievementUserUpsertOne {
+// AddDirectInvitees adds v to the "direct_invitees" field.
+func (u *AchievementUserUpsertOne) AddDirectInvitees(v uint32) *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.AddDirectInvites(v)
+		s.AddDirectInvitees(v)
 	})
 }
 
-// UpdateDirectInvites sets the "direct_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsertOne) UpdateDirectInvites() *AchievementUserUpsertOne {
+// UpdateDirectInvitees sets the "direct_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsertOne) UpdateDirectInvitees() *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.UpdateDirectInvites()
+		s.UpdateDirectInvitees()
 	})
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (u *AchievementUserUpsertOne) ClearDirectInvites() *AchievementUserUpsertOne {
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (u *AchievementUserUpsertOne) ClearDirectInvitees() *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.ClearDirectInvites()
+		s.ClearDirectInvitees()
 	})
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (u *AchievementUserUpsertOne) SetIndirectInvites(v uint32) *AchievementUserUpsertOne {
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (u *AchievementUserUpsertOne) SetIndirectInvitees(v uint32) *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.SetIndirectInvites(v)
+		s.SetIndirectInvitees(v)
 	})
 }
 
-// AddIndirectInvites adds v to the "indirect_invites" field.
-func (u *AchievementUserUpsertOne) AddIndirectInvites(v uint32) *AchievementUserUpsertOne {
+// AddIndirectInvitees adds v to the "indirect_invitees" field.
+func (u *AchievementUserUpsertOne) AddIndirectInvitees(v uint32) *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.AddIndirectInvites(v)
+		s.AddIndirectInvitees(v)
 	})
 }
 
-// UpdateIndirectInvites sets the "indirect_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsertOne) UpdateIndirectInvites() *AchievementUserUpsertOne {
+// UpdateIndirectInvitees sets the "indirect_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsertOne) UpdateIndirectInvitees() *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.UpdateIndirectInvites()
+		s.UpdateIndirectInvitees()
 	})
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (u *AchievementUserUpsertOne) ClearIndirectInvites() *AchievementUserUpsertOne {
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (u *AchievementUserUpsertOne) ClearIndirectInvitees() *AchievementUserUpsertOne {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.ClearIndirectInvites()
+		s.ClearIndirectInvitees()
 	})
 }
 
@@ -1492,59 +1492,59 @@ func (u *AchievementUserUpsertBulk) ClearInviteeConsumeAmount() *AchievementUser
 	})
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (u *AchievementUserUpsertBulk) SetDirectInvites(v uint32) *AchievementUserUpsertBulk {
+// SetDirectInvitees sets the "direct_invitees" field.
+func (u *AchievementUserUpsertBulk) SetDirectInvitees(v uint32) *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.SetDirectInvites(v)
+		s.SetDirectInvitees(v)
 	})
 }
 
-// AddDirectInvites adds v to the "direct_invites" field.
-func (u *AchievementUserUpsertBulk) AddDirectInvites(v uint32) *AchievementUserUpsertBulk {
+// AddDirectInvitees adds v to the "direct_invitees" field.
+func (u *AchievementUserUpsertBulk) AddDirectInvitees(v uint32) *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.AddDirectInvites(v)
+		s.AddDirectInvitees(v)
 	})
 }
 
-// UpdateDirectInvites sets the "direct_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsertBulk) UpdateDirectInvites() *AchievementUserUpsertBulk {
+// UpdateDirectInvitees sets the "direct_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsertBulk) UpdateDirectInvitees() *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.UpdateDirectInvites()
+		s.UpdateDirectInvitees()
 	})
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (u *AchievementUserUpsertBulk) ClearDirectInvites() *AchievementUserUpsertBulk {
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (u *AchievementUserUpsertBulk) ClearDirectInvitees() *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.ClearDirectInvites()
+		s.ClearDirectInvitees()
 	})
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (u *AchievementUserUpsertBulk) SetIndirectInvites(v uint32) *AchievementUserUpsertBulk {
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (u *AchievementUserUpsertBulk) SetIndirectInvitees(v uint32) *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.SetIndirectInvites(v)
+		s.SetIndirectInvitees(v)
 	})
 }
 
-// AddIndirectInvites adds v to the "indirect_invites" field.
-func (u *AchievementUserUpsertBulk) AddIndirectInvites(v uint32) *AchievementUserUpsertBulk {
+// AddIndirectInvitees adds v to the "indirect_invitees" field.
+func (u *AchievementUserUpsertBulk) AddIndirectInvitees(v uint32) *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.AddIndirectInvites(v)
+		s.AddIndirectInvitees(v)
 	})
 }
 
-// UpdateIndirectInvites sets the "indirect_invites" field to the value that was provided on create.
-func (u *AchievementUserUpsertBulk) UpdateIndirectInvites() *AchievementUserUpsertBulk {
+// UpdateIndirectInvitees sets the "indirect_invitees" field to the value that was provided on create.
+func (u *AchievementUserUpsertBulk) UpdateIndirectInvitees() *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.UpdateIndirectInvites()
+		s.UpdateIndirectInvitees()
 	})
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (u *AchievementUserUpsertBulk) ClearIndirectInvites() *AchievementUserUpsertBulk {
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (u *AchievementUserUpsertBulk) ClearIndirectInvitees() *AchievementUserUpsertBulk {
 	return u.Update(func(s *AchievementUserUpsert) {
-		s.ClearIndirectInvites()
+		s.ClearIndirectInvitees()
 	})
 }
 

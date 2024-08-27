@@ -134,8 +134,8 @@ var ret = npool.AchievementUser{
 	UserID:               statement.UserID,
 	TotalCommission:      decimal.Zero.String(),
 	SelfCommission:       decimal.Zero.String(),
-	DirectInvites:        0,
-	IndirectInvites:      0,
+	DirectInvitees:       0,
+	IndirectInvitees:     0,
 	DirectConsumeAmount:  statement.GoodValueUSD,
 	InviteeConsumeAmount: decimal.Zero.String(),
 }

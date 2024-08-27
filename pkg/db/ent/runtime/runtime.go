@@ -173,14 +173,14 @@ func init() {
 	achievementuserDescInviteeConsumeAmount := achievementuserFields[5].Descriptor()
 	// achievementuser.DefaultInviteeConsumeAmount holds the default value on creation for the invitee_consume_amount field.
 	achievementuser.DefaultInviteeConsumeAmount = achievementuserDescInviteeConsumeAmount.Default.(decimal.Decimal)
-	// achievementuserDescDirectInvites is the schema descriptor for direct_invites field.
-	achievementuserDescDirectInvites := achievementuserFields[6].Descriptor()
-	// achievementuser.DefaultDirectInvites holds the default value on creation for the direct_invites field.
-	achievementuser.DefaultDirectInvites = achievementuserDescDirectInvites.Default.(uint32)
-	// achievementuserDescIndirectInvites is the schema descriptor for indirect_invites field.
-	achievementuserDescIndirectInvites := achievementuserFields[7].Descriptor()
-	// achievementuser.DefaultIndirectInvites holds the default value on creation for the indirect_invites field.
-	achievementuser.DefaultIndirectInvites = achievementuserDescIndirectInvites.Default.(uint32)
+	// achievementuserDescDirectInvitees is the schema descriptor for direct_invitees field.
+	achievementuserDescDirectInvitees := achievementuserFields[6].Descriptor()
+	// achievementuser.DefaultDirectInvitees holds the default value on creation for the direct_invitees field.
+	achievementuser.DefaultDirectInvitees = achievementuserDescDirectInvitees.Default.(uint32)
+	// achievementuserDescIndirectInvitees is the schema descriptor for indirect_invitees field.
+	achievementuserDescIndirectInvitees := achievementuserFields[7].Descriptor()
+	// achievementuser.DefaultIndirectInvitees holds the default value on creation for the indirect_invitees field.
+	achievementuser.DefaultIndirectInvitees = achievementuserDescIndirectInvitees.Default.(uint32)
 	appcommissionconfigMixin := schema.AppCommissionConfig{}.Mixin()
 	appcommissionconfig.Policy = privacy.NewPolicies(appcommissionconfigMixin[0], schema.AppCommissionConfig{})
 	appcommissionconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {

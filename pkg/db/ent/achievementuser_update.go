@@ -219,57 +219,57 @@ func (auu *AchievementUserUpdate) ClearInviteeConsumeAmount() *AchievementUserUp
 	return auu
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (auu *AchievementUserUpdate) SetDirectInvites(u uint32) *AchievementUserUpdate {
-	auu.mutation.ResetDirectInvites()
-	auu.mutation.SetDirectInvites(u)
+// SetDirectInvitees sets the "direct_invitees" field.
+func (auu *AchievementUserUpdate) SetDirectInvitees(u uint32) *AchievementUserUpdate {
+	auu.mutation.ResetDirectInvitees()
+	auu.mutation.SetDirectInvitees(u)
 	return auu
 }
 
-// SetNillableDirectInvites sets the "direct_invites" field if the given value is not nil.
-func (auu *AchievementUserUpdate) SetNillableDirectInvites(u *uint32) *AchievementUserUpdate {
+// SetNillableDirectInvitees sets the "direct_invitees" field if the given value is not nil.
+func (auu *AchievementUserUpdate) SetNillableDirectInvitees(u *uint32) *AchievementUserUpdate {
 	if u != nil {
-		auu.SetDirectInvites(*u)
+		auu.SetDirectInvitees(*u)
 	}
 	return auu
 }
 
-// AddDirectInvites adds u to the "direct_invites" field.
-func (auu *AchievementUserUpdate) AddDirectInvites(u int32) *AchievementUserUpdate {
-	auu.mutation.AddDirectInvites(u)
+// AddDirectInvitees adds u to the "direct_invitees" field.
+func (auu *AchievementUserUpdate) AddDirectInvitees(u int32) *AchievementUserUpdate {
+	auu.mutation.AddDirectInvitees(u)
 	return auu
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (auu *AchievementUserUpdate) ClearDirectInvites() *AchievementUserUpdate {
-	auu.mutation.ClearDirectInvites()
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (auu *AchievementUserUpdate) ClearDirectInvitees() *AchievementUserUpdate {
+	auu.mutation.ClearDirectInvitees()
 	return auu
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (auu *AchievementUserUpdate) SetIndirectInvites(u uint32) *AchievementUserUpdate {
-	auu.mutation.ResetIndirectInvites()
-	auu.mutation.SetIndirectInvites(u)
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (auu *AchievementUserUpdate) SetIndirectInvitees(u uint32) *AchievementUserUpdate {
+	auu.mutation.ResetIndirectInvitees()
+	auu.mutation.SetIndirectInvitees(u)
 	return auu
 }
 
-// SetNillableIndirectInvites sets the "indirect_invites" field if the given value is not nil.
-func (auu *AchievementUserUpdate) SetNillableIndirectInvites(u *uint32) *AchievementUserUpdate {
+// SetNillableIndirectInvitees sets the "indirect_invitees" field if the given value is not nil.
+func (auu *AchievementUserUpdate) SetNillableIndirectInvitees(u *uint32) *AchievementUserUpdate {
 	if u != nil {
-		auu.SetIndirectInvites(*u)
+		auu.SetIndirectInvitees(*u)
 	}
 	return auu
 }
 
-// AddIndirectInvites adds u to the "indirect_invites" field.
-func (auu *AchievementUserUpdate) AddIndirectInvites(u int32) *AchievementUserUpdate {
-	auu.mutation.AddIndirectInvites(u)
+// AddIndirectInvitees adds u to the "indirect_invitees" field.
+func (auu *AchievementUserUpdate) AddIndirectInvitees(u int32) *AchievementUserUpdate {
+	auu.mutation.AddIndirectInvitees(u)
 	return auu
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (auu *AchievementUserUpdate) ClearIndirectInvites() *AchievementUserUpdate {
-	auu.mutation.ClearIndirectInvites()
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (auu *AchievementUserUpdate) ClearIndirectInvitees() *AchievementUserUpdate {
+	auu.mutation.ClearIndirectInvitees()
 	return auu
 }
 
@@ -498,44 +498,44 @@ func (auu *AchievementUserUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: achievementuser.FieldInviteeConsumeAmount,
 		})
 	}
-	if value, ok := auu.mutation.DirectInvites(); ok {
+	if value, ok := auu.mutation.DirectInvitees(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if value, ok := auu.mutation.AddedDirectInvites(); ok {
+	if value, ok := auu.mutation.AddedDirectInvitees(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if auu.mutation.DirectInvitesCleared() {
+	if auu.mutation.DirectInviteesCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if value, ok := auu.mutation.IndirectInvites(); ok {
+	if value, ok := auu.mutation.IndirectInvitees(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
-	if value, ok := auu.mutation.AddedIndirectInvites(); ok {
+	if value, ok := auu.mutation.AddedIndirectInvitees(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
-	if auu.mutation.IndirectInvitesCleared() {
+	if auu.mutation.IndirectInviteesCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
 	_spec.Modifiers = auu.modifiers
@@ -748,57 +748,57 @@ func (auuo *AchievementUserUpdateOne) ClearInviteeConsumeAmount() *AchievementUs
 	return auuo
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (auuo *AchievementUserUpdateOne) SetDirectInvites(u uint32) *AchievementUserUpdateOne {
-	auuo.mutation.ResetDirectInvites()
-	auuo.mutation.SetDirectInvites(u)
+// SetDirectInvitees sets the "direct_invitees" field.
+func (auuo *AchievementUserUpdateOne) SetDirectInvitees(u uint32) *AchievementUserUpdateOne {
+	auuo.mutation.ResetDirectInvitees()
+	auuo.mutation.SetDirectInvitees(u)
 	return auuo
 }
 
-// SetNillableDirectInvites sets the "direct_invites" field if the given value is not nil.
-func (auuo *AchievementUserUpdateOne) SetNillableDirectInvites(u *uint32) *AchievementUserUpdateOne {
+// SetNillableDirectInvitees sets the "direct_invitees" field if the given value is not nil.
+func (auuo *AchievementUserUpdateOne) SetNillableDirectInvitees(u *uint32) *AchievementUserUpdateOne {
 	if u != nil {
-		auuo.SetDirectInvites(*u)
+		auuo.SetDirectInvitees(*u)
 	}
 	return auuo
 }
 
-// AddDirectInvites adds u to the "direct_invites" field.
-func (auuo *AchievementUserUpdateOne) AddDirectInvites(u int32) *AchievementUserUpdateOne {
-	auuo.mutation.AddDirectInvites(u)
+// AddDirectInvitees adds u to the "direct_invitees" field.
+func (auuo *AchievementUserUpdateOne) AddDirectInvitees(u int32) *AchievementUserUpdateOne {
+	auuo.mutation.AddDirectInvitees(u)
 	return auuo
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (auuo *AchievementUserUpdateOne) ClearDirectInvites() *AchievementUserUpdateOne {
-	auuo.mutation.ClearDirectInvites()
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (auuo *AchievementUserUpdateOne) ClearDirectInvitees() *AchievementUserUpdateOne {
+	auuo.mutation.ClearDirectInvitees()
 	return auuo
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (auuo *AchievementUserUpdateOne) SetIndirectInvites(u uint32) *AchievementUserUpdateOne {
-	auuo.mutation.ResetIndirectInvites()
-	auuo.mutation.SetIndirectInvites(u)
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (auuo *AchievementUserUpdateOne) SetIndirectInvitees(u uint32) *AchievementUserUpdateOne {
+	auuo.mutation.ResetIndirectInvitees()
+	auuo.mutation.SetIndirectInvitees(u)
 	return auuo
 }
 
-// SetNillableIndirectInvites sets the "indirect_invites" field if the given value is not nil.
-func (auuo *AchievementUserUpdateOne) SetNillableIndirectInvites(u *uint32) *AchievementUserUpdateOne {
+// SetNillableIndirectInvitees sets the "indirect_invitees" field if the given value is not nil.
+func (auuo *AchievementUserUpdateOne) SetNillableIndirectInvitees(u *uint32) *AchievementUserUpdateOne {
 	if u != nil {
-		auuo.SetIndirectInvites(*u)
+		auuo.SetIndirectInvitees(*u)
 	}
 	return auuo
 }
 
-// AddIndirectInvites adds u to the "indirect_invites" field.
-func (auuo *AchievementUserUpdateOne) AddIndirectInvites(u int32) *AchievementUserUpdateOne {
-	auuo.mutation.AddIndirectInvites(u)
+// AddIndirectInvitees adds u to the "indirect_invitees" field.
+func (auuo *AchievementUserUpdateOne) AddIndirectInvitees(u int32) *AchievementUserUpdateOne {
+	auuo.mutation.AddIndirectInvitees(u)
 	return auuo
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (auuo *AchievementUserUpdateOne) ClearIndirectInvites() *AchievementUserUpdateOne {
-	auuo.mutation.ClearIndirectInvites()
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (auuo *AchievementUserUpdateOne) ClearIndirectInvitees() *AchievementUserUpdateOne {
+	auuo.mutation.ClearIndirectInvitees()
 	return auuo
 }
 
@@ -1057,44 +1057,44 @@ func (auuo *AchievementUserUpdateOne) sqlSave(ctx context.Context) (_node *Achie
 			Column: achievementuser.FieldInviteeConsumeAmount,
 		})
 	}
-	if value, ok := auuo.mutation.DirectInvites(); ok {
+	if value, ok := auuo.mutation.DirectInvitees(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if value, ok := auuo.mutation.AddedDirectInvites(); ok {
+	if value, ok := auuo.mutation.AddedDirectInvitees(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if auuo.mutation.DirectInvitesCleared() {
+	if auuo.mutation.DirectInviteesCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: achievementuser.FieldDirectInvites,
+			Column: achievementuser.FieldDirectInvitees,
 		})
 	}
-	if value, ok := auuo.mutation.IndirectInvites(); ok {
+	if value, ok := auuo.mutation.IndirectInvitees(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
-	if value, ok := auuo.mutation.AddedIndirectInvites(); ok {
+	if value, ok := auuo.mutation.AddedIndirectInvitees(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Value:  value,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
-	if auuo.mutation.IndirectInvitesCleared() {
+	if auuo.mutation.IndirectInviteesCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
-			Column: achievementuser.FieldIndirectInvites,
+			Column: achievementuser.FieldIndirectInvitees,
 		})
 	}
 	_spec.Modifiers = auuo.modifiers
