@@ -72,7 +72,7 @@ func (h *createHandler) constructSQL() {
 	_sql += "select 1 from events "
 	_sql += fmt.Sprintf("where app_id='%v' and ent_id='%v' and deleted_at=0", *h.AppID, *h.EventID)
 	_sql += " limit 1)"
-	if h.LastTaskID != nil {
+	if h.LastTaskID != nil && *h.LastTaskID != uuid.Nil {
 		_sql += " and exists ("
 		_sql += "select 1 from (select * from task_configs) as di "
 		_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.deleted_at=0", *h.LastTaskID, *h.AppID)

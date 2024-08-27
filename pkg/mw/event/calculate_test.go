@@ -183,6 +183,35 @@ func resetup(t *testing.T) func(*testing.T) {
 		h1.ID = &info.ID
 	}
 
+	handler, err := NewHandler(
+		context.Background(),
+		WithEntID(&eventRet.EntID, true),
+		WithAppID(&eventRet.AppID, true),
+		WithEventType(&eventRet.EventType, true),
+		WithCredits(&eventRet.Credits, true),
+		WithCreditsPerUSD(&eventRet.CreditsPerUSD, true),
+		WithMaxConsecutive(&eventRet.MaxConsecutive, true),
+		WithInviterLayers(&eventRet.InviterLayers, true),
+	)
+	assert.Nil(t, err)
+
+	err = handler.CreateEvent(context.Background())
+	if assert.Nil(t, err) {
+		info2, err := handler.GetEvent(context.Background())
+		if assert.Nil(t, err) {
+			eventRet.ID = info2.ID
+			eventRet.CreatedAt = info2.CreatedAt
+			eventRet.UpdatedAt = info2.UpdatedAt
+			eventRet.CouponIDs = info2.CouponIDs
+			eventRet.CouponIDsStr = info2.CouponIDsStr
+			eventRet.Coins = info2.Coins
+			eventRet.GoodID = info2.GoodID
+			eventRet.AppGoodID = info2.AppGoodID
+			assert.Equal(t, info2, &eventRet)
+			handler.ID = &info2.ID
+		}
+	}
+
 	h2, err := taskconfig1.NewHandler(
 		context.Background(),
 		taskconfig1.WithEntID(&taskConfig.EntID, true),
@@ -253,64 +282,6 @@ func resetup(t *testing.T) func(*testing.T) {
 			coinConfig2.UpdatedAt = info.UpdatedAt
 			assert.Equal(t, &coinConfig2, info)
 			h4.ID = &info.ID
-		}
-	}
-
-	handler, err := NewHandler(
-		context.Background(),
-		WithEntID(&eventRet.EntID, true),
-		WithAppID(&eventRet.AppID, true),
-		WithEventType(&eventRet.EventType, true),
-		WithCredits(&eventRet.Credits, true),
-		WithCreditsPerUSD(&eventRet.CreditsPerUSD, true),
-		WithMaxConsecutive(&eventRet.MaxConsecutive, true),
-		WithInviterLayers(&eventRet.InviterLayers, true),
-	)
-	assert.Nil(t, err)
-
-	err = handler.CreateEvent(context.Background())
-	if assert.Nil(t, err) {
-		info2, err := handler.GetEvent(context.Background())
-		if assert.Nil(t, err) {
-			eventRet.ID = info2.ID
-			eventRet.CreatedAt = info2.CreatedAt
-			eventRet.UpdatedAt = info2.UpdatedAt
-			eventRet.CouponIDs = info2.CouponIDs
-			eventRet.CouponIDsStr = info2.CouponIDsStr
-			eventRet.Coins = info2.Coins
-			eventRet.GoodID = info2.GoodID
-			eventRet.AppGoodID = info2.AppGoodID
-			assert.Equal(t, info2, &eventRet)
-			handler.ID = &info2.ID
-		}
-	}
-
-	h5, err := taskconfig1.NewHandler(
-		context.Background(),
-		taskconfig1.WithEntID(&taskConfig2.EntID, true),
-		taskconfig1.WithAppID(&taskConfig2.AppID, true),
-		taskconfig1.WithEventID(&taskConfig2.EventID, true),
-		taskconfig1.WithName(&taskConfig2.Name, true),
-		taskconfig1.WithTaskDesc(&taskConfig2.TaskDesc, true),
-		taskconfig1.WithStepGuide(&taskConfig2.StepGuide, true),
-		taskconfig1.WithRecommendMessage(&taskConfig2.RecommendMessage, true),
-		taskconfig1.WithIndex(&taskConfig2.Index, true),
-		taskconfig1.WithLastTaskID(&taskConfig2.LastTaskID, true),
-		taskconfig1.WithMaxRewardCount(&taskConfig2.MaxRewardCount, true),
-		taskconfig1.WithCooldownSecond(&taskConfig2.CooldownSecond, true),
-		taskconfig1.WithTaskType(&taskConfig2.TaskType, true),
-	)
-	assert.Nil(t, err)
-
-	err = h5.CreateTaskConfig(context.Background())
-	if assert.Nil(t, err) {
-		info, err := h5.GetTaskConfig(context.Background())
-		if assert.Nil(t, err) {
-			taskConfig2.ID = info.ID
-			taskConfig2.CreatedAt = info.CreatedAt
-			taskConfig2.UpdatedAt = info.UpdatedAt
-			assert.Equal(t, &taskConfig2, info)
-			h5.ID = &info.ID
 		}
 	}
 
@@ -407,6 +378,35 @@ func resetup(t *testing.T) func(*testing.T) {
 			eventRet2.AppGoodID = info3.AppGoodID
 			assert.Equal(t, info3, &eventRet2)
 			handler2.ID = &info3.ID
+		}
+	}
+
+	h5, err := taskconfig1.NewHandler(
+		context.Background(),
+		taskconfig1.WithEntID(&taskConfig2.EntID, true),
+		taskconfig1.WithAppID(&taskConfig2.AppID, true),
+		taskconfig1.WithEventID(&taskConfig2.EventID, true),
+		taskconfig1.WithName(&taskConfig2.Name, true),
+		taskconfig1.WithTaskDesc(&taskConfig2.TaskDesc, true),
+		taskconfig1.WithStepGuide(&taskConfig2.StepGuide, true),
+		taskconfig1.WithRecommendMessage(&taskConfig2.RecommendMessage, true),
+		taskconfig1.WithIndex(&taskConfig2.Index, true),
+		taskconfig1.WithLastTaskID(&taskConfig2.LastTaskID, true),
+		taskconfig1.WithMaxRewardCount(&taskConfig2.MaxRewardCount, true),
+		taskconfig1.WithCooldownSecond(&taskConfig2.CooldownSecond, true),
+		taskconfig1.WithTaskType(&taskConfig2.TaskType, true),
+	)
+	assert.Nil(t, err)
+
+	err = h5.CreateTaskConfig(context.Background())
+	if assert.Nil(t, err) {
+		info, err := h5.GetTaskConfig(context.Background())
+		if assert.Nil(t, err) {
+			taskConfig2.ID = info.ID
+			taskConfig2.CreatedAt = info.CreatedAt
+			taskConfig2.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, &taskConfig2, info)
+			h5.ID = &info.ID
 		}
 	}
 
