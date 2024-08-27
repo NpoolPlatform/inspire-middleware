@@ -79,6 +79,8 @@ func addUserReward(t *testing.T) {
 	err := AddUserReward(context.Background(), &npool.UserRewardReq{
 		ID:                   &ret.ID,
 		EntID:                &ret.EntID,
+		AppID:                &ret.AppID,
+		UserID:               &ret.UserID,
 		ActionCredits:        &addActionCredits,
 		CouponAmount:         &addCouponAmount,
 		CouponCashableAmount: &addCouponCashableAmount,
@@ -101,9 +103,11 @@ func subUserReward(t *testing.T) {
 	ret.ActionCredits = decimal.RequireFromString("11.25").String()
 	ret.CouponAmount = decimal.RequireFromString("11.25").String()
 	ret.CouponCashableAmount = decimal.RequireFromString("11.25").String()
-	err := AddUserReward(context.Background(), &npool.UserRewardReq{
+	err := SubUserReward(context.Background(), &npool.UserRewardReq{
 		ID:                   &ret.ID,
 		EntID:                &ret.EntID,
+		AppID:                &ret.AppID,
+		UserID:               &ret.UserID,
 		ActionCredits:        &subActionCredits,
 		CouponAmount:         &subCouponAmount,
 		CouponCashableAmount: &subCouponCashableAmount,
