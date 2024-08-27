@@ -38,9 +38,9 @@ var ret = &npool.UserReward{
 	EntID:                uuid.NewString(),
 	AppID:                uuid.NewString(),
 	UserID:               uuid.NewString(),
-	ActionCredits:        decimal.RequireFromString("12.25").String(),
-	CouponAmount:         decimal.RequireFromString("12.25").String(),
-	CouponCashableAmount: decimal.RequireFromString("12.25").String(),
+	ActionCredits:        decimal.RequireFromString("11.25").String(),
+	CouponAmount:         decimal.RequireFromString("11.25").String(),
+	CouponCashableAmount: decimal.RequireFromString("11.25").String(),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -48,7 +48,7 @@ func setup(t *testing.T) func(*testing.T) {
 }
 
 func createUserReward(t *testing.T) {
-	err := CreateUserReward(context.Background(), &npool.UserRewardReq{
+	err := AddUserReward(context.Background(), &npool.UserRewardReq{
 		EntID:                &ret.EntID,
 		AppID:                &ret.AppID,
 		UserID:               &ret.UserID,
@@ -67,13 +67,46 @@ func createUserReward(t *testing.T) {
 	}
 }
 
-func updateUserReward(t *testing.T) {
-	err := UpdateUserReward(context.Background(), &npool.UserRewardReq{
+//nolint:dupl
+func addUserReward(t *testing.T) {
+	addActionCredits := decimal.RequireFromString("22.25").String()
+	addCouponAmount := decimal.RequireFromString("22.25").String()
+	addCouponCashableAmount := decimal.RequireFromString("22.25").String()
+
+	ret.ActionCredits = decimal.RequireFromString("33.5").String()
+	ret.CouponAmount = decimal.RequireFromString("33.5").String()
+	ret.CouponCashableAmount = decimal.RequireFromString("33.5").String()
+	err := AddUserReward(context.Background(), &npool.UserRewardReq{
 		ID:                   &ret.ID,
 		EntID:                &ret.EntID,
-		ActionCredits:        &ret.ActionCredits,
-		CouponAmount:         &ret.CouponAmount,
-		CouponCashableAmount: &ret.CouponCashableAmount,
+		ActionCredits:        &addActionCredits,
+		CouponAmount:         &addCouponAmount,
+		CouponCashableAmount: &addCouponCashableAmount,
+	})
+	if assert.Nil(t, err) {
+		info, err := GetUserReward(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+		}
+	}
+}
+
+//nolint:dupl
+func subUserReward(t *testing.T) {
+	subActionCredits := decimal.RequireFromString("22.25").String()
+	subCouponAmount := decimal.RequireFromString("22.25").String()
+	subCouponCashableAmount := decimal.RequireFromString("22.25").String()
+
+	ret.ActionCredits = decimal.RequireFromString("11.25").String()
+	ret.CouponAmount = decimal.RequireFromString("11.25").String()
+	ret.CouponCashableAmount = decimal.RequireFromString("11.25").String()
+	err := AddUserReward(context.Background(), &npool.UserRewardReq{
+		ID:                   &ret.ID,
+		EntID:                &ret.EntID,
+		ActionCredits:        &subActionCredits,
+		CouponAmount:         &subCouponAmount,
+		CouponCashableAmount: &subCouponCashableAmount,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetUserReward(context.Background(), ret.EntID)
@@ -146,7 +179,8 @@ func TestUserReward(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createUserReward", createUserReward)
-	t.Run("updateUserReward", updateUserReward)
+	t.Run("addUserReward", addUserReward)
+	t.Run("subUserReward", subUserReward)
 	t.Run("getUserReward", getUserReward)
 	t.Run("getUserRewards", getUserRewards)
 	t.Run("getUserRewardOnly", getUserRewardOnly)

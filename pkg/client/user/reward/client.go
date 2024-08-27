@@ -23,15 +23,6 @@ func withClient(ctx context.Context, handler func(context.Context, npool.Middlew
 	)
 }
 
-func CreateUserReward(ctx context.Context, req *npool.UserRewardReq) error {
-	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		return cli.CreateUserReward(_ctx, &npool.CreateUserRewardRequest{
-			Info: req,
-		})
-	})
-	return err
-}
-
 func GetUserReward(ctx context.Context, id string) (*npool.UserReward, error) {
 	info, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
 		resp, err := cli.GetUserReward(ctx, &npool.GetUserRewardRequest{
@@ -114,15 +105,6 @@ func DeleteUserReward(ctx context.Context, id *uint32, entID *string) error {
 				ID:    id,
 				EntID: entID,
 			},
-		})
-	})
-	return err
-}
-
-func UpdateUserReward(ctx context.Context, req *npool.UserRewardReq) error {
-	_, err := withClient(ctx, func(_ctx context.Context, cli npool.MiddlewareClient) (interface{}, error) {
-		return cli.UpdateUserReward(_ctx, &npool.UpdateUserRewardRequest{
-			Info: req,
 		})
 	})
 	return err

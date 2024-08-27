@@ -54,7 +54,7 @@ func createUserReward(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	err = handler.CreateUserReward(context.Background())
+	err = handler.AddUserReward(context.Background())
 	if assert.Nil(t, err) {
 		info, err := handler.GetUserReward(context.Background())
 		if assert.Nil(t, err) {
@@ -66,21 +66,59 @@ func createUserReward(t *testing.T) {
 	}
 }
 
-func updateUserReward(t *testing.T) {
-	ret.ActionCredits = decimal.RequireFromString("22.25").String()
-	ret.CouponAmount = decimal.RequireFromString("22.25").String()
-	ret.CouponCashableAmount = decimal.RequireFromString("22.25").String()
+//nolint:dupl
+func addUserReward(t *testing.T) {
+	addActionCredits := decimal.RequireFromString("22.25").String()
+	addCouponAmount := decimal.RequireFromString("22.25").String()
+	addCouponCashableAmount := decimal.RequireFromString("22.25").String()
+
+	ret.ActionCredits = decimal.RequireFromString("33.5").String()
+	ret.CouponAmount = decimal.RequireFromString("33.5").String()
+	ret.CouponCashableAmount = decimal.RequireFromString("33.5").String()
 
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithActionCredits(&ret.ActionCredits, true),
-		WithCouponAmount(&ret.CouponAmount, true),
-		WithCouponCashableAmount(&ret.CouponCashableAmount, true),
+		WithAppID(&ret.AppID, true),
+		WithUserID(&ret.UserID, true),
+		WithActionCredits(&addActionCredits, true),
+		WithCouponAmount(&addCouponAmount, true),
+		WithCouponCashableAmount(&addCouponCashableAmount, true),
 	)
 	assert.Nil(t, err)
 
-	err = handler.UpdateUserReward(context.Background())
+	err = handler.AddUserReward(context.Background())
+	if assert.Nil(t, err) {
+		info, err := handler.GetUserReward(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
+	}
+}
+
+//nolint:dupl
+func subUserReward(t *testing.T) {
+	subActionCredits := decimal.RequireFromString("22.25").String()
+	subCouponAmount := decimal.RequireFromString("22.25").String()
+	subCouponCashableAmount := decimal.RequireFromString("22.25").String()
+
+	ret.ActionCredits = decimal.RequireFromString("11.25").String()
+	ret.CouponAmount = decimal.RequireFromString("11.25").String()
+	ret.CouponCashableAmount = decimal.RequireFromString("11.25").String()
+
+	handler, err := NewHandler(
+		context.Background(),
+		WithID(&ret.ID, true),
+		WithAppID(&ret.AppID, true),
+		WithUserID(&ret.UserID, true),
+		WithActionCredits(&subActionCredits, true),
+		WithCouponAmount(&subCouponAmount, true),
+		WithCouponCashableAmount(&subCouponCashableAmount, true),
+	)
+	assert.Nil(t, err)
+
+	err = handler.SubUserReward(context.Background())
 	if assert.Nil(t, err) {
 		info, err := handler.GetUserReward(context.Background())
 		if assert.Nil(t, err) {
@@ -151,7 +189,8 @@ func TestUserReward(t *testing.T) {
 	defer teardown(t)
 
 	t.Run("createUserReward", createUserReward)
-	t.Run("updateUserReward", updateUserReward)
+	t.Run("addUserReward", addUserReward)
+	t.Run("subUserReward", subUserReward)
 	t.Run("getUserReward", getUserReward)
 	t.Run("getUserRewards", getUserRewards)
 	t.Run("deleteUserReward", deleteUserReward)

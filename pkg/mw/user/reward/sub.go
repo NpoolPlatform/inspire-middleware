@@ -55,7 +55,7 @@ func (h *subHandler) calculateReward() error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		newCredits := h.ActionCredits.Sub(credits)
+		newCredits := credits.Sub(*h.ActionCredits)
 		h.ActionCredits = &newCredits
 		if h.ActionCredits.Cmp(decimal.NewFromInt(0)) < 0 {
 			return wlog.Errorf("invalid actioncredits")
@@ -66,7 +66,7 @@ func (h *subHandler) calculateReward() error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		newCouponAmount := h.CouponAmount.Sub(couponAmount)
+		newCouponAmount := couponAmount.Sub(*h.CouponAmount)
 		h.CouponAmount = &newCouponAmount
 		if h.CouponAmount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return wlog.Errorf("invalid couponamount")
@@ -77,7 +77,7 @@ func (h *subHandler) calculateReward() error {
 		if err != nil {
 			return wlog.WrapError(err)
 		}
-		newCouponCashableAmount := h.CouponCashableAmount.Sub(couponCashableAmount)
+		newCouponCashableAmount := couponCashableAmount.Sub(*h.CouponCashableAmount)
 		h.CouponCashableAmount = &newCouponCashableAmount
 		if h.CouponCashableAmount.Cmp(decimal.NewFromInt(0)) < 0 {
 			return wlog.Errorf("invalid couponcashableamount")
