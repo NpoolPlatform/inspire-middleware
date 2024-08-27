@@ -82,8 +82,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			achievementuser.FieldSelfCommission:       {Type: field.TypeOther, Column: achievementuser.FieldSelfCommission},
 			achievementuser.FieldDirectConsumeAmount:  {Type: field.TypeOther, Column: achievementuser.FieldDirectConsumeAmount},
 			achievementuser.FieldInviteeConsumeAmount: {Type: field.TypeOther, Column: achievementuser.FieldInviteeConsumeAmount},
-			achievementuser.FieldDirectInvites:        {Type: field.TypeUint32, Column: achievementuser.FieldDirectInvites},
-			achievementuser.FieldIndirectInvites:      {Type: field.TypeUint32, Column: achievementuser.FieldIndirectInvites},
+			achievementuser.FieldDirectInvitees:       {Type: field.TypeUint32, Column: achievementuser.FieldDirectInvitees},
+			achievementuser.FieldIndirectInvitees:     {Type: field.TypeUint32, Column: achievementuser.FieldIndirectInvitees},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -763,14 +763,14 @@ func (f *AchievementUserFilter) WhereInviteeConsumeAmount(p entql.OtherP) {
 	f.Where(p.Field(achievementuser.FieldInviteeConsumeAmount))
 }
 
-// WhereDirectInvites applies the entql uint32 predicate on the direct_invites field.
-func (f *AchievementUserFilter) WhereDirectInvites(p entql.Uint32P) {
-	f.Where(p.Field(achievementuser.FieldDirectInvites))
+// WhereDirectInvitees applies the entql uint32 predicate on the direct_invitees field.
+func (f *AchievementUserFilter) WhereDirectInvitees(p entql.Uint32P) {
+	f.Where(p.Field(achievementuser.FieldDirectInvitees))
 }
 
-// WhereIndirectInvites applies the entql uint32 predicate on the indirect_invites field.
-func (f *AchievementUserFilter) WhereIndirectInvites(p entql.Uint32P) {
-	f.Where(p.Field(achievementuser.FieldIndirectInvites))
+// WhereIndirectInvitees applies the entql uint32 predicate on the indirect_invitees field.
+func (f *AchievementUserFilter) WhereIndirectInvitees(p entql.Uint32P) {
+	f.Where(p.Field(achievementuser.FieldIndirectInvitees))
 }
 
 // addPredicate implements the predicateAdder interface.
