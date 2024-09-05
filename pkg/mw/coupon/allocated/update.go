@@ -43,7 +43,7 @@ func (h *Handler) UpdateCoupon(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 	if info == nil {
-		return wlog.Errorf("invalid usercoinreward")
+		return wlog.Errorf("invalid coupon")
 	}
 	h.ID = &info.ID
 
