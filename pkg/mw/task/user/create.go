@@ -57,7 +57,7 @@ func (h *createHandler) constructSQL() {
 	_sql += ") as tmp "
 	_sql += "where exists ("
 	_sql += "select 1 from (select * from task_configs) as di "
-	_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.deleted_at=0", *h.TaskID, *h.AppID)
+	_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.event_id = '%v' and di.deleted_at=0", *h.TaskID, *h.AppID, *h.EventID)
 	_sql += " limit 1)"
 	_sql += " and exists ("
 	_sql += "select 1 from (select * from events) as di "
