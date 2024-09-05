@@ -101,10 +101,10 @@ func (h *Handler) CreateEvent(ctx context.Context) error {
 		h.CreditsPerUSD = func() *decimal.Decimal { s := decimal.NewFromInt32(0); return &s }()
 	}
 	if h.GoodID == nil {
-		h.GoodID = func() *uuid.UUID { s := uuid.New(); return &s }()
+		h.GoodID = func() *uuid.UUID { s := uuid.Nil; return &s }()
 	}
 	if h.AppGoodID == nil {
-		h.AppGoodID = func() *uuid.UUID { s := uuid.New(); return &s }()
+		h.AppGoodID = func() *uuid.UUID { s := uuid.Nil; return &s }()
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
