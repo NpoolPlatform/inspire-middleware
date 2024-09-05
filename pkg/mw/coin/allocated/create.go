@@ -152,12 +152,19 @@ func (h *createHandler) updateCoinAllocated(ctx context.Context, tx *ent.Tx) err
 	if err != nil {
 		return wlog.WrapError(err)
 	}
+	maxValue, err := decimal.NewFromString(info.MaxValue.String())
+	if err != nil {
+		return wlog.WrapError(err)
+	}
 	allocated, err := decimal.NewFromString(info.Allocated.String())
 	if err != nil {
 		return wlog.WrapError(err)
 	}
 
 	allocated = allocated.Add(*h.Value)
+	if allocated.Cmp(maxValue) > 0 {
+		return wlog.Errorf("invalid value")
+	}
 	if _, err := coinconfigcrud.UpdateSet(
 		info.Update(),
 		&coinconfigcrud.Req{
