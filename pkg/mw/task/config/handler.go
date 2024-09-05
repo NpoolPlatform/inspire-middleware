@@ -300,7 +300,7 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 		if conds.TaskType != nil {
 			h.Conds.TaskType = &cruder.Cond{
 				Op:  conds.GetTaskType().GetOp(),
-				Val: conds.GetTaskType().GetValue(),
+				Val: basetypes.TaskType(conds.GetTaskType().GetValue()),
 			}
 		}
 		return nil
