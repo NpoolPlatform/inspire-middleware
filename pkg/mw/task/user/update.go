@@ -58,8 +58,19 @@ func (h *updateHandler) validTaskState() error {
 	if h.TaskState == nil {
 		return nil
 	}
-	if h.info.TaskState == basetypes.TaskState_Done && *h.TaskState == basetypes.TaskState_InProgress {
-		return wlog.Errorf("invalid taskstate")
+	switch h.info.TaskState {
+	case basetypes.TaskState_NotStarted:
+		if *h.TaskState != basetypes.TaskState_InProgress {
+			return wlog.Errorf("invalid taskstate")
+		}
+	case basetypes.TaskState_InProgress:
+		if *h.TaskState != basetypes.TaskState_Done {
+			return wlog.Errorf("invalid taskstate")
+		}
+	case basetypes.TaskState_Done:
+		if *h.TaskState != basetypes.TaskState_Done {
+			return wlog.Errorf("invalid taskstate")
+		}
 	}
 	return nil
 }
@@ -72,9 +83,7 @@ func (h *updateHandler) validRewardState() error {
 	case basetypes.RewardState_Issued:
 		fallthrough //nolint
 	case basetypes.RewardState_Revoked:
-		if *h.RewardState == basetypes.RewardState_Issued {
-			return wlog.Errorf("invalid rewardstate")
-		}
+		return wlog.Errorf("invalid rewardstate")
 	}
 	return nil
 }
