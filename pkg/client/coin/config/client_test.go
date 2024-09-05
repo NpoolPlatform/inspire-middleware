@@ -39,7 +39,7 @@ var ret = &npool.CoinConfig{
 	AppID:      uuid.NewString(),
 	CoinTypeID: uuid.NewString(),
 	MaxValue:   decimal.RequireFromString("202.25").String(),
-	Allocated:  decimal.RequireFromString("12.25").String(),
+	Allocated:  decimal.RequireFromString("0").String(),
 }
 
 func setup(t *testing.T) func(*testing.T) {
@@ -52,7 +52,6 @@ func createCoinConfig(t *testing.T) {
 		AppID:      &ret.AppID,
 		CoinTypeID: &ret.CoinTypeID,
 		MaxValue:   &ret.MaxValue,
-		Allocated:  &ret.Allocated,
 	})
 	if assert.Nil(t, err) {
 		info, err := GetCoinConfig(context.Background(), ret.EntID)

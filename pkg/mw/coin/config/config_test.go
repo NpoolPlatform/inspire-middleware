@@ -33,7 +33,7 @@ var (
 		AppID:      uuid.NewString(),
 		CoinTypeID: uuid.NewString(),
 		MaxValue:   decimal.RequireFromString("11.25").String(),
-		Allocated:  decimal.RequireFromString("2.25").String(),
+		Allocated:  decimal.RequireFromString("0").String(),
 	}
 )
 
@@ -48,7 +48,6 @@ func createCoinConfig(t *testing.T) {
 		WithAppID(&ret.AppID, true),
 		WithCoinTypeID(&ret.CoinTypeID, true),
 		WithMaxValue(&ret.MaxValue, true),
-		WithAllocated(&ret.Allocated, true),
 	)
 	assert.Nil(t, err)
 

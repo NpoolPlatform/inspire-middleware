@@ -27,7 +27,6 @@ func (s *Server) CreateCoinConfig(ctx context.Context, in *npool.CreateCoinConfi
 		config1.WithAppID(req.AppID, true),
 		config1.WithCoinTypeID(req.CoinTypeID, true),
 		config1.WithMaxValue(req.MaxValue, true),
-		config1.WithAllocated(req.Allocated, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

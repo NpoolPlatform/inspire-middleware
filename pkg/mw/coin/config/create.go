@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	"github.com/shopspring/decimal"
 
 	"github.com/google/uuid"
 )
@@ -76,6 +77,10 @@ func (h *Handler) CreateCoinConfig(ctx context.Context) error {
 	}
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
+	}
+	if h.Allocated == nil {
+		allocated := decimal.NewFromInt(0)
+		h.Allocated = &allocated
 	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
