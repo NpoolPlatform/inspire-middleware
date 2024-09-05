@@ -132,13 +132,16 @@ func WithValue(amount *string, must bool) func(context.Context, *Handler) error 
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
 			if must {
-				return wlog.Errorf("invalid maxvalue")
+				return wlog.Errorf("invalid value")
 			}
 			return nil
 		}
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid value")
 		}
 		h.Value = &_amount
 		return nil
