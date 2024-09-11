@@ -117,6 +117,9 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 	}
 	handler.eventID = info.EventID
 	handler.appID = info.AppID
+	if h.LastTaskID != nil && *h.EntID == *h.LastTaskID {
+		return wlog.Errorf("invalid lasttaskid")
+	}
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
