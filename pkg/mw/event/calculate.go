@@ -329,9 +329,39 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	if len(configs) == 0 {
 		return wlog.Errorf("invalid taskconfig")
 	}
+	if configs[0].MaxRewardCount == 0 {
+		return wlog.Errorf("invalid maxrewardcount")
+	}
+
 	h.taskConfig = configs[0]
-	// check user has finished this task
 	userID := h.UserID.String()
+	// check last task exist and finish status
+	if configs[0].LastTaskID != uuid.Nil.String() {
+		done := types.TaskState_Done
+		handler3, err := taskuser1.NewHandler(
+			ctx,
+			taskuser1.WithConds(&taskusermwpb.Conds{
+				AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+				UserID:    &basetypes.StringVal{Op: cruder.EQ, Value: userID},
+				TaskID:    &basetypes.StringVal{Op: cruder.EQ, Value: configs[0].LastTaskID},
+				TaskState: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(done)},
+			}),
+			taskuser1.WithOffset(0),
+			taskuser1.WithLimit(constant.DefaultRowLimit),
+		)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		lastTaskUsers, _, err := handler3.GetTaskUsers(ctx)
+		if err != nil {
+			return wlog.WrapError(err)
+		}
+		if len(lastTaskUsers) == 0 {
+			return wlog.Errorf("invalid last task")
+		}
+	}
+
+	// check user has finished this task
 	handler2, err := taskuser1.NewHandler(
 		ctx,
 		taskuser1.WithConds(&taskusermwpb.Conds{
@@ -371,31 +401,6 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	now := uint32(time.Now().Unix())
 	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
 		return wlog.Errorf("not the right time")
-	}
-	// check last task exist and finish status
-	if configs[0].LastTaskID != uuid.Nil.String() {
-		done := types.TaskState_Done
-		handler3, err := taskuser1.NewHandler(
-			ctx,
-			taskuser1.WithConds(&taskusermwpb.Conds{
-				AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
-				UserID:    &basetypes.StringVal{Op: cruder.EQ, Value: userID},
-				TaskID:    &basetypes.StringVal{Op: cruder.EQ, Value: configs[0].LastTaskID},
-				TaskState: &basetypes.Uint32Val{Op: cruder.EQ, Value: uint32(done)},
-			}),
-			taskuser1.WithOffset(0),
-			taskuser1.WithLimit(constant.DefaultRowLimit),
-		)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		lastTaskUsers, _, err := handler3.GetTaskUsers(ctx)
-		if err != nil {
-			return wlog.WrapError(err)
-		}
-		if len(lastTaskUsers) == 0 {
-			return wlog.Errorf("invalid last task")
-		}
 	}
 
 	return nil
