@@ -121,6 +121,11 @@ func (h *Handler) CreateTaskConfig(ctx context.Context) error {
 	if h.LastTaskID == nil {
 		h.LastTaskID = func() *uuid.UUID { s := uuid.Nil; return &s }()
 	}
+	if h.IntervalReset != nil && *h.IntervalReset {
+		if h.IntervalResetSecond == nil || h.MaxIntervalRewardCount == nil {
+			return wlog.Errorf("invalid intervalreset")
+		}
+	}
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		return handler.createTaskConfig(_ctx, tx)

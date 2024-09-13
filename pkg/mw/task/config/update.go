@@ -134,6 +134,11 @@ func (h *Handler) UpdateTaskConfig(ctx context.Context) error {
 	if h.LastTaskID != nil && *h.EntID == *h.LastTaskID {
 		return wlog.Errorf("invalid lasttaskid")
 	}
+	if h.IntervalReset != nil && *h.IntervalReset {
+		if h.IntervalResetSecond == nil || h.MaxIntervalRewardCount == nil {
+			return wlog.Errorf("invalid intervalreset")
+		}
+	}
 
 	if err := handler.constructSQL(); err != nil {
 		return wlog.WrapError(err)
