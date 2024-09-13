@@ -101,7 +101,7 @@ var (
 		StepGuide:        uuid.NewString(),
 		RecommendMessage: uuid.NewString(),
 		Index:            uint32(2),
-		LastTaskID:       taskConfig.EntID,
+		LastTaskID:       uuid.Nil.String(),
 		MaxRewardCount:   uint32(2),
 		CooldownSecond:   uint32(120),
 		TaskType:         types.TaskType_BaseTask,
