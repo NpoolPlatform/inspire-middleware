@@ -46,6 +46,12 @@ type TaskConfig struct {
 	MaxRewardCount uint32 `json:"max_reward_count,omitempty"`
 	// CooldownSecond holds the value of the "cooldown_second" field.
 	CooldownSecond uint32 `json:"cooldown_second,omitempty"`
+	// IntervalReset holds the value of the "interval_reset" field.
+	IntervalReset bool `json:"interval_reset,omitempty"`
+	// IntervalResetSecond holds the value of the "interval_reset_second" field.
+	IntervalResetSecond uint32 `json:"interval_reset_second,omitempty"`
+	// MaxIntervalRewardCount holds the value of the "max_interval_reward_count" field.
+	MaxIntervalRewardCount uint32 `json:"max_interval_reward_count,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -53,7 +59,9 @@ func (*TaskConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case taskconfig.FieldID, taskconfig.FieldCreatedAt, taskconfig.FieldUpdatedAt, taskconfig.FieldDeletedAt, taskconfig.FieldIndex, taskconfig.FieldMaxRewardCount, taskconfig.FieldCooldownSecond:
+		case taskconfig.FieldIntervalReset:
+			values[i] = new(sql.NullBool)
+		case taskconfig.FieldID, taskconfig.FieldCreatedAt, taskconfig.FieldUpdatedAt, taskconfig.FieldDeletedAt, taskconfig.FieldIndex, taskconfig.FieldMaxRewardCount, taskconfig.FieldCooldownSecond, taskconfig.FieldIntervalResetSecond, taskconfig.FieldMaxIntervalRewardCount:
 			values[i] = new(sql.NullInt64)
 		case taskconfig.FieldTaskType, taskconfig.FieldName, taskconfig.FieldTaskDesc, taskconfig.FieldStepGuide, taskconfig.FieldRecommendMessage:
 			values[i] = new(sql.NullString)
@@ -170,6 +178,24 @@ func (tc *TaskConfig) assignValues(columns []string, values []interface{}) error
 			} else if value.Valid {
 				tc.CooldownSecond = uint32(value.Int64)
 			}
+		case taskconfig.FieldIntervalReset:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field interval_reset", values[i])
+			} else if value.Valid {
+				tc.IntervalReset = value.Bool
+			}
+		case taskconfig.FieldIntervalResetSecond:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field interval_reset_second", values[i])
+			} else if value.Valid {
+				tc.IntervalResetSecond = uint32(value.Int64)
+			}
+		case taskconfig.FieldMaxIntervalRewardCount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_interval_reward_count", values[i])
+			} else if value.Valid {
+				tc.MaxIntervalRewardCount = uint32(value.Int64)
+			}
 		}
 	}
 	return nil
@@ -242,6 +268,15 @@ func (tc *TaskConfig) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cooldown_second=")
 	builder.WriteString(fmt.Sprintf("%v", tc.CooldownSecond))
+	builder.WriteString(", ")
+	builder.WriteString("interval_reset=")
+	builder.WriteString(fmt.Sprintf("%v", tc.IntervalReset))
+	builder.WriteString(", ")
+	builder.WriteString("interval_reset_second=")
+	builder.WriteString(fmt.Sprintf("%v", tc.IntervalResetSecond))
+	builder.WriteString(", ")
+	builder.WriteString("max_interval_reward_count=")
+	builder.WriteString(fmt.Sprintf("%v", tc.MaxIntervalRewardCount))
 	builder.WriteByte(')')
 	return builder.String()
 }

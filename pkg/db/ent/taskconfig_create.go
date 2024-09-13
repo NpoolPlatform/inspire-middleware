@@ -232,6 +232,48 @@ func (tcc *TaskConfigCreate) SetNillableCooldownSecond(u *uint32) *TaskConfigCre
 	return tcc
 }
 
+// SetIntervalReset sets the "interval_reset" field.
+func (tcc *TaskConfigCreate) SetIntervalReset(b bool) *TaskConfigCreate {
+	tcc.mutation.SetIntervalReset(b)
+	return tcc
+}
+
+// SetNillableIntervalReset sets the "interval_reset" field if the given value is not nil.
+func (tcc *TaskConfigCreate) SetNillableIntervalReset(b *bool) *TaskConfigCreate {
+	if b != nil {
+		tcc.SetIntervalReset(*b)
+	}
+	return tcc
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (tcc *TaskConfigCreate) SetIntervalResetSecond(u uint32) *TaskConfigCreate {
+	tcc.mutation.SetIntervalResetSecond(u)
+	return tcc
+}
+
+// SetNillableIntervalResetSecond sets the "interval_reset_second" field if the given value is not nil.
+func (tcc *TaskConfigCreate) SetNillableIntervalResetSecond(u *uint32) *TaskConfigCreate {
+	if u != nil {
+		tcc.SetIntervalResetSecond(*u)
+	}
+	return tcc
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (tcc *TaskConfigCreate) SetMaxIntervalRewardCount(u uint32) *TaskConfigCreate {
+	tcc.mutation.SetMaxIntervalRewardCount(u)
+	return tcc
+}
+
+// SetNillableMaxIntervalRewardCount sets the "max_interval_reward_count" field if the given value is not nil.
+func (tcc *TaskConfigCreate) SetNillableMaxIntervalRewardCount(u *uint32) *TaskConfigCreate {
+	if u != nil {
+		tcc.SetMaxIntervalRewardCount(*u)
+	}
+	return tcc
+}
+
 // SetID sets the "id" field.
 func (tcc *TaskConfigCreate) SetID(u uint32) *TaskConfigCreate {
 	tcc.mutation.SetID(u)
@@ -397,6 +439,18 @@ func (tcc *TaskConfigCreate) defaults() error {
 	if _, ok := tcc.mutation.CooldownSecond(); !ok {
 		v := taskconfig.DefaultCooldownSecond
 		tcc.mutation.SetCooldownSecond(v)
+	}
+	if _, ok := tcc.mutation.IntervalReset(); !ok {
+		v := taskconfig.DefaultIntervalReset
+		tcc.mutation.SetIntervalReset(v)
+	}
+	if _, ok := tcc.mutation.IntervalResetSecond(); !ok {
+		v := taskconfig.DefaultIntervalResetSecond
+		tcc.mutation.SetIntervalResetSecond(v)
+	}
+	if _, ok := tcc.mutation.MaxIntervalRewardCount(); !ok {
+		v := taskconfig.DefaultMaxIntervalRewardCount
+		tcc.mutation.SetMaxIntervalRewardCount(v)
 	}
 	return nil
 }
@@ -568,6 +622,30 @@ func (tcc *TaskConfigCreate) createSpec() (*TaskConfig, *sqlgraph.CreateSpec) {
 			Column: taskconfig.FieldCooldownSecond,
 		})
 		_node.CooldownSecond = value
+	}
+	if value, ok := tcc.mutation.IntervalReset(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: taskconfig.FieldIntervalReset,
+		})
+		_node.IntervalReset = value
+	}
+	if value, ok := tcc.mutation.IntervalResetSecond(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+		_node.IntervalResetSecond = value
+	}
+	if value, ok := tcc.mutation.MaxIntervalRewardCount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
+		})
+		_node.MaxIntervalRewardCount = value
 	}
 	return _node, _spec
 }
@@ -902,6 +980,72 @@ func (u *TaskConfigUpsert) AddCooldownSecond(v uint32) *TaskConfigUpsert {
 // ClearCooldownSecond clears the value of the "cooldown_second" field.
 func (u *TaskConfigUpsert) ClearCooldownSecond() *TaskConfigUpsert {
 	u.SetNull(taskconfig.FieldCooldownSecond)
+	return u
+}
+
+// SetIntervalReset sets the "interval_reset" field.
+func (u *TaskConfigUpsert) SetIntervalReset(v bool) *TaskConfigUpsert {
+	u.Set(taskconfig.FieldIntervalReset, v)
+	return u
+}
+
+// UpdateIntervalReset sets the "interval_reset" field to the value that was provided on create.
+func (u *TaskConfigUpsert) UpdateIntervalReset() *TaskConfigUpsert {
+	u.SetExcluded(taskconfig.FieldIntervalReset)
+	return u
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (u *TaskConfigUpsert) ClearIntervalReset() *TaskConfigUpsert {
+	u.SetNull(taskconfig.FieldIntervalReset)
+	return u
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (u *TaskConfigUpsert) SetIntervalResetSecond(v uint32) *TaskConfigUpsert {
+	u.Set(taskconfig.FieldIntervalResetSecond, v)
+	return u
+}
+
+// UpdateIntervalResetSecond sets the "interval_reset_second" field to the value that was provided on create.
+func (u *TaskConfigUpsert) UpdateIntervalResetSecond() *TaskConfigUpsert {
+	u.SetExcluded(taskconfig.FieldIntervalResetSecond)
+	return u
+}
+
+// AddIntervalResetSecond adds v to the "interval_reset_second" field.
+func (u *TaskConfigUpsert) AddIntervalResetSecond(v uint32) *TaskConfigUpsert {
+	u.Add(taskconfig.FieldIntervalResetSecond, v)
+	return u
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (u *TaskConfigUpsert) ClearIntervalResetSecond() *TaskConfigUpsert {
+	u.SetNull(taskconfig.FieldIntervalResetSecond)
+	return u
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (u *TaskConfigUpsert) SetMaxIntervalRewardCount(v uint32) *TaskConfigUpsert {
+	u.Set(taskconfig.FieldMaxIntervalRewardCount, v)
+	return u
+}
+
+// UpdateMaxIntervalRewardCount sets the "max_interval_reward_count" field to the value that was provided on create.
+func (u *TaskConfigUpsert) UpdateMaxIntervalRewardCount() *TaskConfigUpsert {
+	u.SetExcluded(taskconfig.FieldMaxIntervalRewardCount)
+	return u
+}
+
+// AddMaxIntervalRewardCount adds v to the "max_interval_reward_count" field.
+func (u *TaskConfigUpsert) AddMaxIntervalRewardCount(v uint32) *TaskConfigUpsert {
+	u.Add(taskconfig.FieldMaxIntervalRewardCount, v)
+	return u
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (u *TaskConfigUpsert) ClearMaxIntervalRewardCount() *TaskConfigUpsert {
+	u.SetNull(taskconfig.FieldMaxIntervalRewardCount)
 	return u
 }
 
@@ -1281,6 +1425,83 @@ func (u *TaskConfigUpsertOne) UpdateCooldownSecond() *TaskConfigUpsertOne {
 func (u *TaskConfigUpsertOne) ClearCooldownSecond() *TaskConfigUpsertOne {
 	return u.Update(func(s *TaskConfigUpsert) {
 		s.ClearCooldownSecond()
+	})
+}
+
+// SetIntervalReset sets the "interval_reset" field.
+func (u *TaskConfigUpsertOne) SetIntervalReset(v bool) *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetIntervalReset(v)
+	})
+}
+
+// UpdateIntervalReset sets the "interval_reset" field to the value that was provided on create.
+func (u *TaskConfigUpsertOne) UpdateIntervalReset() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateIntervalReset()
+	})
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (u *TaskConfigUpsertOne) ClearIntervalReset() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearIntervalReset()
+	})
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (u *TaskConfigUpsertOne) SetIntervalResetSecond(v uint32) *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetIntervalResetSecond(v)
+	})
+}
+
+// AddIntervalResetSecond adds v to the "interval_reset_second" field.
+func (u *TaskConfigUpsertOne) AddIntervalResetSecond(v uint32) *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.AddIntervalResetSecond(v)
+	})
+}
+
+// UpdateIntervalResetSecond sets the "interval_reset_second" field to the value that was provided on create.
+func (u *TaskConfigUpsertOne) UpdateIntervalResetSecond() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateIntervalResetSecond()
+	})
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (u *TaskConfigUpsertOne) ClearIntervalResetSecond() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearIntervalResetSecond()
+	})
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertOne) SetMaxIntervalRewardCount(v uint32) *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetMaxIntervalRewardCount(v)
+	})
+}
+
+// AddMaxIntervalRewardCount adds v to the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertOne) AddMaxIntervalRewardCount(v uint32) *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.AddMaxIntervalRewardCount(v)
+	})
+}
+
+// UpdateMaxIntervalRewardCount sets the "max_interval_reward_count" field to the value that was provided on create.
+func (u *TaskConfigUpsertOne) UpdateMaxIntervalRewardCount() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateMaxIntervalRewardCount()
+	})
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertOne) ClearMaxIntervalRewardCount() *TaskConfigUpsertOne {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearMaxIntervalRewardCount()
 	})
 }
 
@@ -1825,6 +2046,83 @@ func (u *TaskConfigUpsertBulk) UpdateCooldownSecond() *TaskConfigUpsertBulk {
 func (u *TaskConfigUpsertBulk) ClearCooldownSecond() *TaskConfigUpsertBulk {
 	return u.Update(func(s *TaskConfigUpsert) {
 		s.ClearCooldownSecond()
+	})
+}
+
+// SetIntervalReset sets the "interval_reset" field.
+func (u *TaskConfigUpsertBulk) SetIntervalReset(v bool) *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetIntervalReset(v)
+	})
+}
+
+// UpdateIntervalReset sets the "interval_reset" field to the value that was provided on create.
+func (u *TaskConfigUpsertBulk) UpdateIntervalReset() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateIntervalReset()
+	})
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (u *TaskConfigUpsertBulk) ClearIntervalReset() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearIntervalReset()
+	})
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (u *TaskConfigUpsertBulk) SetIntervalResetSecond(v uint32) *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetIntervalResetSecond(v)
+	})
+}
+
+// AddIntervalResetSecond adds v to the "interval_reset_second" field.
+func (u *TaskConfigUpsertBulk) AddIntervalResetSecond(v uint32) *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.AddIntervalResetSecond(v)
+	})
+}
+
+// UpdateIntervalResetSecond sets the "interval_reset_second" field to the value that was provided on create.
+func (u *TaskConfigUpsertBulk) UpdateIntervalResetSecond() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateIntervalResetSecond()
+	})
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (u *TaskConfigUpsertBulk) ClearIntervalResetSecond() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearIntervalResetSecond()
+	})
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertBulk) SetMaxIntervalRewardCount(v uint32) *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.SetMaxIntervalRewardCount(v)
+	})
+}
+
+// AddMaxIntervalRewardCount adds v to the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertBulk) AddMaxIntervalRewardCount(v uint32) *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.AddMaxIntervalRewardCount(v)
+	})
+}
+
+// UpdateMaxIntervalRewardCount sets the "max_interval_reward_count" field to the value that was provided on create.
+func (u *TaskConfigUpsertBulk) UpdateMaxIntervalRewardCount() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.UpdateMaxIntervalRewardCount()
+	})
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (u *TaskConfigUpsertBulk) ClearMaxIntervalRewardCount() *TaskConfigUpsertBulk {
+	return u.Update(func(s *TaskConfigUpsert) {
+		s.ClearMaxIntervalRewardCount()
 	})
 }
 

@@ -29884,34 +29884,39 @@ func (m *StatementMutation) ResetEdge(name string) error {
 // TaskConfigMutation represents an operation that mutates the TaskConfig nodes in the graph.
 type TaskConfigMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *uint32
-	created_at          *uint32
-	addcreated_at       *int32
-	updated_at          *uint32
-	addupdated_at       *int32
-	deleted_at          *uint32
-	adddeleted_at       *int32
-	ent_id              *uuid.UUID
-	app_id              *uuid.UUID
-	event_id            *uuid.UUID
-	task_type           *string
-	name                *string
-	task_desc           *string
-	step_guide          *string
-	recommend_message   *string
-	index               *uint32
-	addindex            *int32
-	last_task_id        *uuid.UUID
-	max_reward_count    *uint32
-	addmax_reward_count *int32
-	cooldown_second     *uint32
-	addcooldown_second  *int32
-	clearedFields       map[string]struct{}
-	done                bool
-	oldValue            func(context.Context) (*TaskConfig, error)
-	predicates          []predicate.TaskConfig
+	op                           Op
+	typ                          string
+	id                           *uint32
+	created_at                   *uint32
+	addcreated_at                *int32
+	updated_at                   *uint32
+	addupdated_at                *int32
+	deleted_at                   *uint32
+	adddeleted_at                *int32
+	ent_id                       *uuid.UUID
+	app_id                       *uuid.UUID
+	event_id                     *uuid.UUID
+	task_type                    *string
+	name                         *string
+	task_desc                    *string
+	step_guide                   *string
+	recommend_message            *string
+	index                        *uint32
+	addindex                     *int32
+	last_task_id                 *uuid.UUID
+	max_reward_count             *uint32
+	addmax_reward_count          *int32
+	cooldown_second              *uint32
+	addcooldown_second           *int32
+	interval_reset               *bool
+	interval_reset_second        *uint32
+	addinterval_reset_second     *int32
+	max_interval_reward_count    *uint32
+	addmax_interval_reward_count *int32
+	clearedFields                map[string]struct{}
+	done                         bool
+	oldValue                     func(context.Context) (*TaskConfig, error)
+	predicates                   []predicate.TaskConfig
 }
 
 var _ ent.Mutation = (*TaskConfigMutation)(nil)
@@ -30824,6 +30829,195 @@ func (m *TaskConfigMutation) ResetCooldownSecond() {
 	delete(m.clearedFields, taskconfig.FieldCooldownSecond)
 }
 
+// SetIntervalReset sets the "interval_reset" field.
+func (m *TaskConfigMutation) SetIntervalReset(b bool) {
+	m.interval_reset = &b
+}
+
+// IntervalReset returns the value of the "interval_reset" field in the mutation.
+func (m *TaskConfigMutation) IntervalReset() (r bool, exists bool) {
+	v := m.interval_reset
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntervalReset returns the old "interval_reset" field's value of the TaskConfig entity.
+// If the TaskConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskConfigMutation) OldIntervalReset(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntervalReset is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntervalReset requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntervalReset: %w", err)
+	}
+	return oldValue.IntervalReset, nil
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (m *TaskConfigMutation) ClearIntervalReset() {
+	m.interval_reset = nil
+	m.clearedFields[taskconfig.FieldIntervalReset] = struct{}{}
+}
+
+// IntervalResetCleared returns if the "interval_reset" field was cleared in this mutation.
+func (m *TaskConfigMutation) IntervalResetCleared() bool {
+	_, ok := m.clearedFields[taskconfig.FieldIntervalReset]
+	return ok
+}
+
+// ResetIntervalReset resets all changes to the "interval_reset" field.
+func (m *TaskConfigMutation) ResetIntervalReset() {
+	m.interval_reset = nil
+	delete(m.clearedFields, taskconfig.FieldIntervalReset)
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (m *TaskConfigMutation) SetIntervalResetSecond(u uint32) {
+	m.interval_reset_second = &u
+	m.addinterval_reset_second = nil
+}
+
+// IntervalResetSecond returns the value of the "interval_reset_second" field in the mutation.
+func (m *TaskConfigMutation) IntervalResetSecond() (r uint32, exists bool) {
+	v := m.interval_reset_second
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntervalResetSecond returns the old "interval_reset_second" field's value of the TaskConfig entity.
+// If the TaskConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskConfigMutation) OldIntervalResetSecond(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntervalResetSecond is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntervalResetSecond requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntervalResetSecond: %w", err)
+	}
+	return oldValue.IntervalResetSecond, nil
+}
+
+// AddIntervalResetSecond adds u to the "interval_reset_second" field.
+func (m *TaskConfigMutation) AddIntervalResetSecond(u int32) {
+	if m.addinterval_reset_second != nil {
+		*m.addinterval_reset_second += u
+	} else {
+		m.addinterval_reset_second = &u
+	}
+}
+
+// AddedIntervalResetSecond returns the value that was added to the "interval_reset_second" field in this mutation.
+func (m *TaskConfigMutation) AddedIntervalResetSecond() (r int32, exists bool) {
+	v := m.addinterval_reset_second
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (m *TaskConfigMutation) ClearIntervalResetSecond() {
+	m.interval_reset_second = nil
+	m.addinterval_reset_second = nil
+	m.clearedFields[taskconfig.FieldIntervalResetSecond] = struct{}{}
+}
+
+// IntervalResetSecondCleared returns if the "interval_reset_second" field was cleared in this mutation.
+func (m *TaskConfigMutation) IntervalResetSecondCleared() bool {
+	_, ok := m.clearedFields[taskconfig.FieldIntervalResetSecond]
+	return ok
+}
+
+// ResetIntervalResetSecond resets all changes to the "interval_reset_second" field.
+func (m *TaskConfigMutation) ResetIntervalResetSecond() {
+	m.interval_reset_second = nil
+	m.addinterval_reset_second = nil
+	delete(m.clearedFields, taskconfig.FieldIntervalResetSecond)
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (m *TaskConfigMutation) SetMaxIntervalRewardCount(u uint32) {
+	m.max_interval_reward_count = &u
+	m.addmax_interval_reward_count = nil
+}
+
+// MaxIntervalRewardCount returns the value of the "max_interval_reward_count" field in the mutation.
+func (m *TaskConfigMutation) MaxIntervalRewardCount() (r uint32, exists bool) {
+	v := m.max_interval_reward_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxIntervalRewardCount returns the old "max_interval_reward_count" field's value of the TaskConfig entity.
+// If the TaskConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskConfigMutation) OldMaxIntervalRewardCount(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxIntervalRewardCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxIntervalRewardCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxIntervalRewardCount: %w", err)
+	}
+	return oldValue.MaxIntervalRewardCount, nil
+}
+
+// AddMaxIntervalRewardCount adds u to the "max_interval_reward_count" field.
+func (m *TaskConfigMutation) AddMaxIntervalRewardCount(u int32) {
+	if m.addmax_interval_reward_count != nil {
+		*m.addmax_interval_reward_count += u
+	} else {
+		m.addmax_interval_reward_count = &u
+	}
+}
+
+// AddedMaxIntervalRewardCount returns the value that was added to the "max_interval_reward_count" field in this mutation.
+func (m *TaskConfigMutation) AddedMaxIntervalRewardCount() (r int32, exists bool) {
+	v := m.addmax_interval_reward_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (m *TaskConfigMutation) ClearMaxIntervalRewardCount() {
+	m.max_interval_reward_count = nil
+	m.addmax_interval_reward_count = nil
+	m.clearedFields[taskconfig.FieldMaxIntervalRewardCount] = struct{}{}
+}
+
+// MaxIntervalRewardCountCleared returns if the "max_interval_reward_count" field was cleared in this mutation.
+func (m *TaskConfigMutation) MaxIntervalRewardCountCleared() bool {
+	_, ok := m.clearedFields[taskconfig.FieldMaxIntervalRewardCount]
+	return ok
+}
+
+// ResetMaxIntervalRewardCount resets all changes to the "max_interval_reward_count" field.
+func (m *TaskConfigMutation) ResetMaxIntervalRewardCount() {
+	m.max_interval_reward_count = nil
+	m.addmax_interval_reward_count = nil
+	delete(m.clearedFields, taskconfig.FieldMaxIntervalRewardCount)
+}
+
 // Where appends a list predicates to the TaskConfigMutation builder.
 func (m *TaskConfigMutation) Where(ps ...predicate.TaskConfig) {
 	m.predicates = append(m.predicates, ps...)
@@ -30843,7 +31037,7 @@ func (m *TaskConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskConfigMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, taskconfig.FieldCreatedAt)
 	}
@@ -30889,6 +31083,15 @@ func (m *TaskConfigMutation) Fields() []string {
 	if m.cooldown_second != nil {
 		fields = append(fields, taskconfig.FieldCooldownSecond)
 	}
+	if m.interval_reset != nil {
+		fields = append(fields, taskconfig.FieldIntervalReset)
+	}
+	if m.interval_reset_second != nil {
+		fields = append(fields, taskconfig.FieldIntervalResetSecond)
+	}
+	if m.max_interval_reward_count != nil {
+		fields = append(fields, taskconfig.FieldMaxIntervalRewardCount)
+	}
 	return fields
 }
 
@@ -30927,6 +31130,12 @@ func (m *TaskConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.MaxRewardCount()
 	case taskconfig.FieldCooldownSecond:
 		return m.CooldownSecond()
+	case taskconfig.FieldIntervalReset:
+		return m.IntervalReset()
+	case taskconfig.FieldIntervalResetSecond:
+		return m.IntervalResetSecond()
+	case taskconfig.FieldMaxIntervalRewardCount:
+		return m.MaxIntervalRewardCount()
 	}
 	return nil, false
 }
@@ -30966,6 +31175,12 @@ func (m *TaskConfigMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldMaxRewardCount(ctx)
 	case taskconfig.FieldCooldownSecond:
 		return m.OldCooldownSecond(ctx)
+	case taskconfig.FieldIntervalReset:
+		return m.OldIntervalReset(ctx)
+	case taskconfig.FieldIntervalResetSecond:
+		return m.OldIntervalResetSecond(ctx)
+	case taskconfig.FieldMaxIntervalRewardCount:
+		return m.OldMaxIntervalRewardCount(ctx)
 	}
 	return nil, fmt.Errorf("unknown TaskConfig field %s", name)
 }
@@ -31080,6 +31295,27 @@ func (m *TaskConfigMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCooldownSecond(v)
 		return nil
+	case taskconfig.FieldIntervalReset:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntervalReset(v)
+		return nil
+	case taskconfig.FieldIntervalResetSecond:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntervalResetSecond(v)
+		return nil
+	case taskconfig.FieldMaxIntervalRewardCount:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxIntervalRewardCount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig field %s", name)
 }
@@ -31106,6 +31342,12 @@ func (m *TaskConfigMutation) AddedFields() []string {
 	if m.addcooldown_second != nil {
 		fields = append(fields, taskconfig.FieldCooldownSecond)
 	}
+	if m.addinterval_reset_second != nil {
+		fields = append(fields, taskconfig.FieldIntervalResetSecond)
+	}
+	if m.addmax_interval_reward_count != nil {
+		fields = append(fields, taskconfig.FieldMaxIntervalRewardCount)
+	}
 	return fields
 }
 
@@ -31126,6 +31368,10 @@ func (m *TaskConfigMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedMaxRewardCount()
 	case taskconfig.FieldCooldownSecond:
 		return m.AddedCooldownSecond()
+	case taskconfig.FieldIntervalResetSecond:
+		return m.AddedIntervalResetSecond()
+	case taskconfig.FieldMaxIntervalRewardCount:
+		return m.AddedMaxIntervalRewardCount()
 	}
 	return nil, false
 }
@@ -31177,6 +31423,20 @@ func (m *TaskConfigMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCooldownSecond(v)
 		return nil
+	case taskconfig.FieldIntervalResetSecond:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIntervalResetSecond(v)
+		return nil
+	case taskconfig.FieldMaxIntervalRewardCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxIntervalRewardCount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig numeric field %s", name)
 }
@@ -31217,6 +31477,15 @@ func (m *TaskConfigMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(taskconfig.FieldCooldownSecond) {
 		fields = append(fields, taskconfig.FieldCooldownSecond)
+	}
+	if m.FieldCleared(taskconfig.FieldIntervalReset) {
+		fields = append(fields, taskconfig.FieldIntervalReset)
+	}
+	if m.FieldCleared(taskconfig.FieldIntervalResetSecond) {
+		fields = append(fields, taskconfig.FieldIntervalResetSecond)
+	}
+	if m.FieldCleared(taskconfig.FieldMaxIntervalRewardCount) {
+		fields = append(fields, taskconfig.FieldMaxIntervalRewardCount)
 	}
 	return fields
 }
@@ -31264,6 +31533,15 @@ func (m *TaskConfigMutation) ClearField(name string) error {
 		return nil
 	case taskconfig.FieldCooldownSecond:
 		m.ClearCooldownSecond()
+		return nil
+	case taskconfig.FieldIntervalReset:
+		m.ClearIntervalReset()
+		return nil
+	case taskconfig.FieldIntervalResetSecond:
+		m.ClearIntervalResetSecond()
+		return nil
+	case taskconfig.FieldMaxIntervalRewardCount:
+		m.ClearMaxIntervalRewardCount()
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig nullable field %s", name)
@@ -31317,6 +31595,15 @@ func (m *TaskConfigMutation) ResetField(name string) error {
 		return nil
 	case taskconfig.FieldCooldownSecond:
 		m.ResetCooldownSecond()
+		return nil
+	case taskconfig.FieldIntervalReset:
+		m.ResetIntervalReset()
+		return nil
+	case taskconfig.FieldIntervalResetSecond:
+		m.ResetIntervalResetSecond()
+		return nil
+	case taskconfig.FieldMaxIntervalRewardCount:
+		m.ResetMaxIntervalRewardCount()
 		return nil
 	}
 	return fmt.Errorf("unknown TaskConfig field %s", name)

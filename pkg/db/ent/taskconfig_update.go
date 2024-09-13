@@ -339,6 +339,80 @@ func (tcu *TaskConfigUpdate) ClearCooldownSecond() *TaskConfigUpdate {
 	return tcu
 }
 
+// SetIntervalReset sets the "interval_reset" field.
+func (tcu *TaskConfigUpdate) SetIntervalReset(b bool) *TaskConfigUpdate {
+	tcu.mutation.SetIntervalReset(b)
+	return tcu
+}
+
+// SetNillableIntervalReset sets the "interval_reset" field if the given value is not nil.
+func (tcu *TaskConfigUpdate) SetNillableIntervalReset(b *bool) *TaskConfigUpdate {
+	if b != nil {
+		tcu.SetIntervalReset(*b)
+	}
+	return tcu
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (tcu *TaskConfigUpdate) ClearIntervalReset() *TaskConfigUpdate {
+	tcu.mutation.ClearIntervalReset()
+	return tcu
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (tcu *TaskConfigUpdate) SetIntervalResetSecond(u uint32) *TaskConfigUpdate {
+	tcu.mutation.ResetIntervalResetSecond()
+	tcu.mutation.SetIntervalResetSecond(u)
+	return tcu
+}
+
+// SetNillableIntervalResetSecond sets the "interval_reset_second" field if the given value is not nil.
+func (tcu *TaskConfigUpdate) SetNillableIntervalResetSecond(u *uint32) *TaskConfigUpdate {
+	if u != nil {
+		tcu.SetIntervalResetSecond(*u)
+	}
+	return tcu
+}
+
+// AddIntervalResetSecond adds u to the "interval_reset_second" field.
+func (tcu *TaskConfigUpdate) AddIntervalResetSecond(u int32) *TaskConfigUpdate {
+	tcu.mutation.AddIntervalResetSecond(u)
+	return tcu
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (tcu *TaskConfigUpdate) ClearIntervalResetSecond() *TaskConfigUpdate {
+	tcu.mutation.ClearIntervalResetSecond()
+	return tcu
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (tcu *TaskConfigUpdate) SetMaxIntervalRewardCount(u uint32) *TaskConfigUpdate {
+	tcu.mutation.ResetMaxIntervalRewardCount()
+	tcu.mutation.SetMaxIntervalRewardCount(u)
+	return tcu
+}
+
+// SetNillableMaxIntervalRewardCount sets the "max_interval_reward_count" field if the given value is not nil.
+func (tcu *TaskConfigUpdate) SetNillableMaxIntervalRewardCount(u *uint32) *TaskConfigUpdate {
+	if u != nil {
+		tcu.SetMaxIntervalRewardCount(*u)
+	}
+	return tcu
+}
+
+// AddMaxIntervalRewardCount adds u to the "max_interval_reward_count" field.
+func (tcu *TaskConfigUpdate) AddMaxIntervalRewardCount(u int32) *TaskConfigUpdate {
+	tcu.mutation.AddMaxIntervalRewardCount(u)
+	return tcu
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (tcu *TaskConfigUpdate) ClearMaxIntervalRewardCount() *TaskConfigUpdate {
+	tcu.mutation.ClearMaxIntervalRewardCount()
+	return tcu
+}
+
 // Mutation returns the TaskConfigMutation object of the builder.
 func (tcu *TaskConfigUpdate) Mutation() *TaskConfigMutation {
 	return tcu.mutation
@@ -648,6 +722,59 @@ func (tcu *TaskConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: taskconfig.FieldCooldownSecond,
+		})
+	}
+	if value, ok := tcu.mutation.IntervalReset(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: taskconfig.FieldIntervalReset,
+		})
+	}
+	if tcu.mutation.IntervalResetCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: taskconfig.FieldIntervalReset,
+		})
+	}
+	if value, ok := tcu.mutation.IntervalResetSecond(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if value, ok := tcu.mutation.AddedIntervalResetSecond(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if tcu.mutation.IntervalResetSecondCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if value, ok := tcu.mutation.MaxIntervalRewardCount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
+		})
+	}
+	if value, ok := tcu.mutation.AddedMaxIntervalRewardCount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
+		})
+	}
+	if tcu.mutation.MaxIntervalRewardCountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
 		})
 	}
 	_spec.Modifiers = tcu.modifiers
@@ -978,6 +1105,80 @@ func (tcuo *TaskConfigUpdateOne) AddCooldownSecond(u int32) *TaskConfigUpdateOne
 // ClearCooldownSecond clears the value of the "cooldown_second" field.
 func (tcuo *TaskConfigUpdateOne) ClearCooldownSecond() *TaskConfigUpdateOne {
 	tcuo.mutation.ClearCooldownSecond()
+	return tcuo
+}
+
+// SetIntervalReset sets the "interval_reset" field.
+func (tcuo *TaskConfigUpdateOne) SetIntervalReset(b bool) *TaskConfigUpdateOne {
+	tcuo.mutation.SetIntervalReset(b)
+	return tcuo
+}
+
+// SetNillableIntervalReset sets the "interval_reset" field if the given value is not nil.
+func (tcuo *TaskConfigUpdateOne) SetNillableIntervalReset(b *bool) *TaskConfigUpdateOne {
+	if b != nil {
+		tcuo.SetIntervalReset(*b)
+	}
+	return tcuo
+}
+
+// ClearIntervalReset clears the value of the "interval_reset" field.
+func (tcuo *TaskConfigUpdateOne) ClearIntervalReset() *TaskConfigUpdateOne {
+	tcuo.mutation.ClearIntervalReset()
+	return tcuo
+}
+
+// SetIntervalResetSecond sets the "interval_reset_second" field.
+func (tcuo *TaskConfigUpdateOne) SetIntervalResetSecond(u uint32) *TaskConfigUpdateOne {
+	tcuo.mutation.ResetIntervalResetSecond()
+	tcuo.mutation.SetIntervalResetSecond(u)
+	return tcuo
+}
+
+// SetNillableIntervalResetSecond sets the "interval_reset_second" field if the given value is not nil.
+func (tcuo *TaskConfigUpdateOne) SetNillableIntervalResetSecond(u *uint32) *TaskConfigUpdateOne {
+	if u != nil {
+		tcuo.SetIntervalResetSecond(*u)
+	}
+	return tcuo
+}
+
+// AddIntervalResetSecond adds u to the "interval_reset_second" field.
+func (tcuo *TaskConfigUpdateOne) AddIntervalResetSecond(u int32) *TaskConfigUpdateOne {
+	tcuo.mutation.AddIntervalResetSecond(u)
+	return tcuo
+}
+
+// ClearIntervalResetSecond clears the value of the "interval_reset_second" field.
+func (tcuo *TaskConfigUpdateOne) ClearIntervalResetSecond() *TaskConfigUpdateOne {
+	tcuo.mutation.ClearIntervalResetSecond()
+	return tcuo
+}
+
+// SetMaxIntervalRewardCount sets the "max_interval_reward_count" field.
+func (tcuo *TaskConfigUpdateOne) SetMaxIntervalRewardCount(u uint32) *TaskConfigUpdateOne {
+	tcuo.mutation.ResetMaxIntervalRewardCount()
+	tcuo.mutation.SetMaxIntervalRewardCount(u)
+	return tcuo
+}
+
+// SetNillableMaxIntervalRewardCount sets the "max_interval_reward_count" field if the given value is not nil.
+func (tcuo *TaskConfigUpdateOne) SetNillableMaxIntervalRewardCount(u *uint32) *TaskConfigUpdateOne {
+	if u != nil {
+		tcuo.SetMaxIntervalRewardCount(*u)
+	}
+	return tcuo
+}
+
+// AddMaxIntervalRewardCount adds u to the "max_interval_reward_count" field.
+func (tcuo *TaskConfigUpdateOne) AddMaxIntervalRewardCount(u int32) *TaskConfigUpdateOne {
+	tcuo.mutation.AddMaxIntervalRewardCount(u)
+	return tcuo
+}
+
+// ClearMaxIntervalRewardCount clears the value of the "max_interval_reward_count" field.
+func (tcuo *TaskConfigUpdateOne) ClearMaxIntervalRewardCount() *TaskConfigUpdateOne {
+	tcuo.mutation.ClearMaxIntervalRewardCount()
 	return tcuo
 }
 
@@ -1320,6 +1521,59 @@ func (tcuo *TaskConfigUpdateOne) sqlSave(ctx context.Context) (_node *TaskConfig
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: taskconfig.FieldCooldownSecond,
+		})
+	}
+	if value, ok := tcuo.mutation.IntervalReset(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: taskconfig.FieldIntervalReset,
+		})
+	}
+	if tcuo.mutation.IntervalResetCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: taskconfig.FieldIntervalReset,
+		})
+	}
+	if value, ok := tcuo.mutation.IntervalResetSecond(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if value, ok := tcuo.mutation.AddedIntervalResetSecond(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if tcuo.mutation.IntervalResetSecondCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: taskconfig.FieldIntervalResetSecond,
+		})
+	}
+	if value, ok := tcuo.mutation.MaxIntervalRewardCount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
+		})
+	}
+	if value, ok := tcuo.mutation.AddedMaxIntervalRewardCount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
+		})
+	}
+	if tcuo.mutation.MaxIntervalRewardCountCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Column: taskconfig.FieldMaxIntervalRewardCount,
 		})
 	}
 	_spec.Modifiers = tcuo.modifiers

@@ -675,21 +675,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TaskConfig",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			taskconfig.FieldCreatedAt:        {Type: field.TypeUint32, Column: taskconfig.FieldCreatedAt},
-			taskconfig.FieldUpdatedAt:        {Type: field.TypeUint32, Column: taskconfig.FieldUpdatedAt},
-			taskconfig.FieldDeletedAt:        {Type: field.TypeUint32, Column: taskconfig.FieldDeletedAt},
-			taskconfig.FieldEntID:            {Type: field.TypeUUID, Column: taskconfig.FieldEntID},
-			taskconfig.FieldAppID:            {Type: field.TypeUUID, Column: taskconfig.FieldAppID},
-			taskconfig.FieldEventID:          {Type: field.TypeUUID, Column: taskconfig.FieldEventID},
-			taskconfig.FieldTaskType:         {Type: field.TypeString, Column: taskconfig.FieldTaskType},
-			taskconfig.FieldName:             {Type: field.TypeString, Column: taskconfig.FieldName},
-			taskconfig.FieldTaskDesc:         {Type: field.TypeString, Column: taskconfig.FieldTaskDesc},
-			taskconfig.FieldStepGuide:        {Type: field.TypeString, Column: taskconfig.FieldStepGuide},
-			taskconfig.FieldRecommendMessage: {Type: field.TypeString, Column: taskconfig.FieldRecommendMessage},
-			taskconfig.FieldIndex:            {Type: field.TypeUint32, Column: taskconfig.FieldIndex},
-			taskconfig.FieldLastTaskID:       {Type: field.TypeUUID, Column: taskconfig.FieldLastTaskID},
-			taskconfig.FieldMaxRewardCount:   {Type: field.TypeUint32, Column: taskconfig.FieldMaxRewardCount},
-			taskconfig.FieldCooldownSecond:   {Type: field.TypeUint32, Column: taskconfig.FieldCooldownSecond},
+			taskconfig.FieldCreatedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldCreatedAt},
+			taskconfig.FieldUpdatedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldUpdatedAt},
+			taskconfig.FieldDeletedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldDeletedAt},
+			taskconfig.FieldEntID:                  {Type: field.TypeUUID, Column: taskconfig.FieldEntID},
+			taskconfig.FieldAppID:                  {Type: field.TypeUUID, Column: taskconfig.FieldAppID},
+			taskconfig.FieldEventID:                {Type: field.TypeUUID, Column: taskconfig.FieldEventID},
+			taskconfig.FieldTaskType:               {Type: field.TypeString, Column: taskconfig.FieldTaskType},
+			taskconfig.FieldName:                   {Type: field.TypeString, Column: taskconfig.FieldName},
+			taskconfig.FieldTaskDesc:               {Type: field.TypeString, Column: taskconfig.FieldTaskDesc},
+			taskconfig.FieldStepGuide:              {Type: field.TypeString, Column: taskconfig.FieldStepGuide},
+			taskconfig.FieldRecommendMessage:       {Type: field.TypeString, Column: taskconfig.FieldRecommendMessage},
+			taskconfig.FieldIndex:                  {Type: field.TypeUint32, Column: taskconfig.FieldIndex},
+			taskconfig.FieldLastTaskID:             {Type: field.TypeUUID, Column: taskconfig.FieldLastTaskID},
+			taskconfig.FieldMaxRewardCount:         {Type: field.TypeUint32, Column: taskconfig.FieldMaxRewardCount},
+			taskconfig.FieldCooldownSecond:         {Type: field.TypeUint32, Column: taskconfig.FieldCooldownSecond},
+			taskconfig.FieldIntervalReset:          {Type: field.TypeBool, Column: taskconfig.FieldIntervalReset},
+			taskconfig.FieldIntervalResetSecond:    {Type: field.TypeUint32, Column: taskconfig.FieldIntervalResetSecond},
+			taskconfig.FieldMaxIntervalRewardCount: {Type: field.TypeUint32, Column: taskconfig.FieldMaxIntervalRewardCount},
 		},
 	}
 	graph.Nodes[26] = &sqlgraph.Node{
@@ -3365,6 +3368,21 @@ func (f *TaskConfigFilter) WhereMaxRewardCount(p entql.Uint32P) {
 // WhereCooldownSecond applies the entql uint32 predicate on the cooldown_second field.
 func (f *TaskConfigFilter) WhereCooldownSecond(p entql.Uint32P) {
 	f.Where(p.Field(taskconfig.FieldCooldownSecond))
+}
+
+// WhereIntervalReset applies the entql bool predicate on the interval_reset field.
+func (f *TaskConfigFilter) WhereIntervalReset(p entql.BoolP) {
+	f.Where(p.Field(taskconfig.FieldIntervalReset))
+}
+
+// WhereIntervalResetSecond applies the entql uint32 predicate on the interval_reset_second field.
+func (f *TaskConfigFilter) WhereIntervalResetSecond(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldIntervalResetSecond))
+}
+
+// WhereMaxIntervalRewardCount applies the entql uint32 predicate on the max_interval_reward_count field.
+func (f *TaskConfigFilter) WhereMaxIntervalRewardCount(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldMaxIntervalRewardCount))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -42,6 +42,12 @@ const (
 	FieldMaxRewardCount = "max_reward_count"
 	// FieldCooldownSecond holds the string denoting the cooldown_second field in the database.
 	FieldCooldownSecond = "cooldown_second"
+	// FieldIntervalReset holds the string denoting the interval_reset field in the database.
+	FieldIntervalReset = "interval_reset"
+	// FieldIntervalResetSecond holds the string denoting the interval_reset_second field in the database.
+	FieldIntervalResetSecond = "interval_reset_second"
+	// FieldMaxIntervalRewardCount holds the string denoting the max_interval_reward_count field in the database.
+	FieldMaxIntervalRewardCount = "max_interval_reward_count"
 	// Table holds the table name of the taskconfig in the database.
 	Table = "task_configs"
 )
@@ -64,6 +70,9 @@ var Columns = []string{
 	FieldLastTaskID,
 	FieldMaxRewardCount,
 	FieldCooldownSecond,
+	FieldIntervalReset,
+	FieldIntervalResetSecond,
+	FieldMaxIntervalRewardCount,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -117,4 +126,10 @@ var (
 	DefaultMaxRewardCount uint32
 	// DefaultCooldownSecond holds the default value on creation for the "cooldown_second" field.
 	DefaultCooldownSecond uint32
+	// DefaultIntervalReset holds the default value on creation for the "interval_reset" field.
+	DefaultIntervalReset bool
+	// DefaultIntervalResetSecond holds the default value on creation for the "interval_reset_second" field.
+	DefaultIntervalResetSecond uint32
+	// DefaultMaxIntervalRewardCount holds the default value on creation for the "max_interval_reward_count" field.
+	DefaultMaxIntervalRewardCount uint32
 )

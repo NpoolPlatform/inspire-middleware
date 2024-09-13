@@ -1768,6 +1768,18 @@ func init() {
 	taskconfigDescCooldownSecond := taskconfigFields[10].Descriptor()
 	// taskconfig.DefaultCooldownSecond holds the default value on creation for the cooldown_second field.
 	taskconfig.DefaultCooldownSecond = taskconfigDescCooldownSecond.Default.(uint32)
+	// taskconfigDescIntervalReset is the schema descriptor for interval_reset field.
+	taskconfigDescIntervalReset := taskconfigFields[11].Descriptor()
+	// taskconfig.DefaultIntervalReset holds the default value on creation for the interval_reset field.
+	taskconfig.DefaultIntervalReset = taskconfigDescIntervalReset.Default.(bool)
+	// taskconfigDescIntervalResetSecond is the schema descriptor for interval_reset_second field.
+	taskconfigDescIntervalResetSecond := taskconfigFields[12].Descriptor()
+	// taskconfig.DefaultIntervalResetSecond holds the default value on creation for the interval_reset_second field.
+	taskconfig.DefaultIntervalResetSecond = taskconfigDescIntervalResetSecond.Default.(uint32)
+	// taskconfigDescMaxIntervalRewardCount is the schema descriptor for max_interval_reward_count field.
+	taskconfigDescMaxIntervalRewardCount := taskconfigFields[13].Descriptor()
+	// taskconfig.DefaultMaxIntervalRewardCount holds the default value on creation for the max_interval_reward_count field.
+	taskconfig.DefaultMaxIntervalRewardCount = taskconfigDescMaxIntervalRewardCount.Default.(uint32)
 	taskuserMixin := schema.TaskUser{}.Mixin()
 	taskuser.Policy = privacy.NewPolicies(taskuserMixin[0], schema.TaskUser{})
 	taskuser.Hooks[0] = func(next ent.Mutator) ent.Mutator {

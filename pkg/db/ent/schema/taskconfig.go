@@ -76,6 +76,18 @@ func (TaskConfig) Fields() []ent.Field {
 			Uint32("cooldown_second").
 			Optional().
 			Default(0),
+		field.
+			Bool("interval_reset").
+			Optional().
+			Default(false),
+		field.
+			Uint32("interval_reset_second").
+			Optional().
+			Default(0),
+		field.
+			Uint32("max_interval_reward_count").
+			Optional().
+			Default(0),
 	}
 }
 

@@ -184,6 +184,27 @@ func CooldownSecond(v uint32) predicate.TaskConfig {
 	})
 }
 
+// IntervalReset applies equality check predicate on the "interval_reset" field. It's identical to IntervalResetEQ.
+func IntervalReset(v bool) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntervalReset), v))
+	})
+}
+
+// IntervalResetSecond applies equality check predicate on the "interval_reset_second" field. It's identical to IntervalResetSecondEQ.
+func IntervalResetSecond(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// MaxIntervalRewardCount applies equality check predicate on the "max_interval_reward_count" field. It's identical to MaxIntervalRewardCountEQ.
+func MaxIntervalRewardCount(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
@@ -1470,6 +1491,190 @@ func CooldownSecondIsNil() predicate.TaskConfig {
 func CooldownSecondNotNil() predicate.TaskConfig {
 	return predicate.TaskConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldCooldownSecond)))
+	})
+}
+
+// IntervalResetEQ applies the EQ predicate on the "interval_reset" field.
+func IntervalResetEQ(v bool) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntervalReset), v))
+	})
+}
+
+// IntervalResetNEQ applies the NEQ predicate on the "interval_reset" field.
+func IntervalResetNEQ(v bool) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIntervalReset), v))
+	})
+}
+
+// IntervalResetIsNil applies the IsNil predicate on the "interval_reset" field.
+func IntervalResetIsNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIntervalReset)))
+	})
+}
+
+// IntervalResetNotNil applies the NotNil predicate on the "interval_reset" field.
+func IntervalResetNotNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIntervalReset)))
+	})
+}
+
+// IntervalResetSecondEQ applies the EQ predicate on the "interval_reset_second" field.
+func IntervalResetSecondEQ(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondNEQ applies the NEQ predicate on the "interval_reset_second" field.
+func IntervalResetSecondNEQ(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondIn applies the In predicate on the "interval_reset_second" field.
+func IntervalResetSecondIn(vs ...uint32) predicate.TaskConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldIntervalResetSecond), v...))
+	})
+}
+
+// IntervalResetSecondNotIn applies the NotIn predicate on the "interval_reset_second" field.
+func IntervalResetSecondNotIn(vs ...uint32) predicate.TaskConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldIntervalResetSecond), v...))
+	})
+}
+
+// IntervalResetSecondGT applies the GT predicate on the "interval_reset_second" field.
+func IntervalResetSecondGT(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondGTE applies the GTE predicate on the "interval_reset_second" field.
+func IntervalResetSecondGTE(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondLT applies the LT predicate on the "interval_reset_second" field.
+func IntervalResetSecondLT(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondLTE applies the LTE predicate on the "interval_reset_second" field.
+func IntervalResetSecondLTE(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIntervalResetSecond), v))
+	})
+}
+
+// IntervalResetSecondIsNil applies the IsNil predicate on the "interval_reset_second" field.
+func IntervalResetSecondIsNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIntervalResetSecond)))
+	})
+}
+
+// IntervalResetSecondNotNil applies the NotNil predicate on the "interval_reset_second" field.
+func IntervalResetSecondNotNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIntervalResetSecond)))
+	})
+}
+
+// MaxIntervalRewardCountEQ applies the EQ predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountEQ(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountNEQ applies the NEQ predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountNEQ(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountIn applies the In predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountIn(vs ...uint32) predicate.TaskConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldMaxIntervalRewardCount), v...))
+	})
+}
+
+// MaxIntervalRewardCountNotIn applies the NotIn predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountNotIn(vs ...uint32) predicate.TaskConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldMaxIntervalRewardCount), v...))
+	})
+}
+
+// MaxIntervalRewardCountGT applies the GT predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountGT(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountGTE applies the GTE predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountGTE(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountLT applies the LT predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountLT(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountLTE applies the LTE predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountLTE(v uint32) predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMaxIntervalRewardCount), v))
+	})
+}
+
+// MaxIntervalRewardCountIsNil applies the IsNil predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountIsNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldMaxIntervalRewardCount)))
+	})
+}
+
+// MaxIntervalRewardCountNotNil applies the NotNil predicate on the "max_interval_reward_count" field.
+func MaxIntervalRewardCountNotNil() predicate.TaskConfig {
+	return predicate.TaskConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldMaxIntervalRewardCount)))
 	})
 }
 

@@ -2,15 +2,20 @@ package config
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	appconfigcrud "github.com/NpoolPlatform/inspire-middleware/pkg/crud/app/config"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
 	entappconfig "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appconfig"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/app/config"
+	eventmwpb "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
 )
 
 type queryHandler struct {
@@ -166,6 +171,68 @@ func (h *Handler) GetAppConfigs(ctx context.Context) ([]*npool.AppConfig, uint32
 	}
 
 	handler.formalize()
+	fmt.Println("1111111111111111111111111111111111111")
+	handler.testReward()
 
 	return handler.infos, handler.total, nil
+}
+
+func (h *queryHandler) testReward() {
+	fmt.Println("test reward")
+	appID := "ff2c5d50-be56-413e-aba5-9c7ad888a769"
+	// userID := "7e1e5d1e-0a1e-4bfb-b68b-19e669437da6"
+	userID2 := "52c2f1c6-d1f6-4f59-928e-32e13b209438"
+	eventType := basetypes.UsedFor_UpdatePassword
+	consecutive := uint32(1)
+	amount := "0"
+	// for i := 0; i < 3; i++ {
+	// if err := pubsub.WithPublisher(func(publisher *pubsub.Publisher) error {
+	// 	req := &eventmwpb.CalcluateEventRewardsRequest{
+	// 		AppID:       appID,
+	// 		UserID:      userID,
+	// 		EventType:   eventType,
+	// 		Consecutive: consecutive,
+	// 		Amount:      &amount,
+	// 	}
+	// 	return publisher.Update(
+	// 		basetypes.MsgID_CalculateEventRewardReq.String(),
+	// 		nil,
+	// 		nil,
+	// 		nil,
+	// 		req,
+	// 	)
+	// }); err != nil {
+	// 	logger.Sugar().Errorw(
+	// 		"notifyLogin",
+	// 		"AppID", appID,
+	// 		"UserID", userID,
+	// 		"EventType", eventType,
+	// 		"Error", err,
+	// 	)
+	// }
+	if err := pubsub.WithPublisher(func(publisher *pubsub.Publisher) error {
+		req := &eventmwpb.CalcluateEventRewardsRequest{
+			AppID:       appID,
+			UserID:      userID2,
+			EventType:   eventType,
+			Consecutive: consecutive,
+			Amount:      &amount,
+		}
+		return publisher.Update(
+			basetypes.MsgID_CalculateEventRewardReq.String(),
+			nil,
+			nil,
+			nil,
+			req,
+		)
+	}); err != nil {
+		logger.Sugar().Errorw(
+			"notifyLogin",
+			"AppID", appID,
+			"UserID", userID2,
+			"EventType", eventType,
+			"Error", err,
+		)
+	}
+	// }
 }
