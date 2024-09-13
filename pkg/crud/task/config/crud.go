@@ -10,20 +10,23 @@ import (
 )
 
 type Req struct {
-	ID               *uint32
-	EntID            *uuid.UUID
-	AppID            *uuid.UUID
-	EventID          *uuid.UUID
-	TaskType         *types.TaskType
-	Name             *string
-	TaskDesc         *string
-	StepGuide        *string
-	RecommendMessage *string
-	Index            *uint32
-	LastTaskID       *uuid.UUID
-	MaxRewardCount   *uint32
-	CooldownSecond   *uint32
-	DeletedAt        *uint32
+	ID                     *uint32
+	EntID                  *uuid.UUID
+	AppID                  *uuid.UUID
+	EventID                *uuid.UUID
+	TaskType               *types.TaskType
+	Name                   *string
+	TaskDesc               *string
+	StepGuide              *string
+	RecommendMessage       *string
+	Index                  *uint32
+	LastTaskID             *uuid.UUID
+	MaxRewardCount         *uint32
+	CooldownSecond         *uint32
+	IntervalReset          *bool
+	IntervalResetSecond    *uint32
+	MaxIntervalRewardCount *uint32
+	DeletedAt              *uint32
 }
 
 func CreateSet(c *ent.TaskConfigCreate, req *Req) *ent.TaskConfigCreate {
@@ -63,6 +66,15 @@ func CreateSet(c *ent.TaskConfigCreate, req *Req) *ent.TaskConfigCreate {
 	if req.CooldownSecond != nil {
 		c.SetCooldownSecond(*req.CooldownSecond)
 	}
+	if req.IntervalReset != nil {
+		c.SetIntervalReset(*req.IntervalReset)
+	}
+	if req.IntervalResetSecond != nil {
+		c.SetIntervalResetSecond(*req.IntervalResetSecond)
+	}
+	if req.MaxIntervalRewardCount != nil {
+		c.SetMaxIntervalRewardCount(*req.MaxIntervalRewardCount)
+	}
 	return c
 }
 
@@ -91,6 +103,15 @@ func UpdateSet(u *ent.TaskConfigUpdateOne, req *Req) *ent.TaskConfigUpdateOne {
 	if req.CooldownSecond != nil {
 		u.SetCooldownSecond(*req.CooldownSecond)
 	}
+	if req.IntervalReset != nil {
+		u.SetIntervalReset(*req.IntervalReset)
+	}
+	if req.IntervalResetSecond != nil {
+		u.SetIntervalResetSecond(*req.IntervalResetSecond)
+	}
+	if req.MaxIntervalRewardCount != nil {
+		u.SetMaxIntervalRewardCount(*req.MaxIntervalRewardCount)
+	}
 	if req.DeletedAt != nil {
 		u.SetDeletedAt(*req.DeletedAt)
 	}
@@ -98,15 +119,16 @@ func UpdateSet(u *ent.TaskConfigUpdateOne, req *Req) *ent.TaskConfigUpdateOne {
 }
 
 type Conds struct {
-	EntID      *cruder.Cond
-	EntIDs     *cruder.Cond
-	TaskType   *cruder.Cond
-	AppID      *cruder.Cond
-	Name       *cruder.Cond
-	Index      *cruder.Cond
-	LastTaskID *cruder.Cond
-	EventID    *cruder.Cond
-	ID         *cruder.Cond
+	EntID         *cruder.Cond
+	EntIDs        *cruder.Cond
+	TaskType      *cruder.Cond
+	AppID         *cruder.Cond
+	Name          *cruder.Cond
+	Index         *cruder.Cond
+	LastTaskID    *cruder.Cond
+	EventID       *cruder.Cond
+	ID            *cruder.Cond
+	IntervalReset *cruder.Cond
 }
 
 //nolint:funlen
@@ -221,6 +243,18 @@ func SetQueryConds(q *ent.TaskConfigQuery, conds *Conds) (*ent.TaskConfigQuery, 
 		switch conds.Name.Op {
 		case cruder.EQ:
 			q.Where(enttaskconfig.Name(name))
+		default:
+			return nil, wlog.Errorf("invalid taskconfig field")
+		}
+	}
+	if conds.IntervalReset != nil {
+		value, ok := conds.IntervalReset.Val.(bool)
+		if !ok {
+			return nil, wlog.Errorf("invalid intervalreset")
+		}
+		switch conds.IntervalReset.Op {
+		case cruder.EQ:
+			q.Where(enttaskconfig.IntervalReset(value))
 		default:
 			return nil, wlog.Errorf("invalid taskconfig field")
 		}

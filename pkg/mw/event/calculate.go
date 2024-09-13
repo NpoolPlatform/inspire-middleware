@@ -309,6 +309,7 @@ func (h *calculateHandler) calcluateAffiliate(ctx context.Context) ([]*npool.Rew
 	return rewards, nil
 }
 
+//nolint:funlen
 func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) error {
 	handler, err := taskconfig1.NewHandler(
 		ctx,
@@ -390,17 +391,40 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 		return wlog.Errorf("invalid maxrewardcount")
 	}
 
-	// check daily task
-	nowTime := time.Now()
-	midnightTime := uint32(time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 0, 0, 0, 0, nowTime.Location()).Unix())
-	if h.taskConfig.TaskType == types.TaskType_DailyTask && taskUsers[len(taskUsers)-1].CreatedAt > midnightTime {
-		return wlog.Errorf("dailytask have been completed")
+	// check interval task
+	if !h.taskConfig.IntervalReset {
+		return nil
 	}
-
-	// check user next task startat
 	now := uint32(time.Now().Unix())
-	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
-		return wlog.Errorf("not the right time")
+	intervalTime := now % configs[0].IntervalResetSecond
+	startTime := intervalTime * configs[0].IntervalResetSecond
+	handler3, err := taskuser1.NewHandler(
+		ctx,
+		taskuser1.WithConds(&taskusermwpb.Conds{
+			AppID:     &basetypes.StringVal{Op: cruder.EQ, Value: ev.AppID},
+			UserID:    &basetypes.StringVal{Op: cruder.EQ, Value: userID},
+			TaskID:    &basetypes.StringVal{Op: cruder.EQ, Value: configs[0].EntID},
+			CreatedAt: &basetypes.Uint32Val{Op: cruder.GTE, Value: startTime},
+		}),
+		taskuser1.WithOffset(0),
+		taskuser1.WithLimit(int32(configs[0].MaxIntervalRewardCount+1)),
+	)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	intervalTaskUsers, _, err := handler3.GetTaskUsers(ctx)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	if len(intervalTaskUsers) == 0 {
+		return nil
+	}
+	// check user has over the max finish times
+	if len(intervalTaskUsers) >= int(configs[0].MaxIntervalRewardCount) {
+		return wlog.Errorf("invalid maxrewardcount")
 	}
 
 	return nil

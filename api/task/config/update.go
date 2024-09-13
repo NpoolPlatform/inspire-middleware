@@ -34,6 +34,9 @@ func (s *Server) UpdateTaskConfig(ctx context.Context, in *npool.UpdateTaskConfi
 		config1.WithLastTaskID(req.LastTaskID, false),
 		config1.WithMaxRewardCount(req.MaxRewardCount, false),
 		config1.WithCooldownSecond(req.CooldownSecond, false),
+		config1.WithIntervalReset(req.IntervalReset, false),
+		config1.WithIntervalResetSecond(req.IntervalResetSecond, false),
+		config1.WithMaxIntervalRewardCount(req.MaxIntervalRewardCount, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(

@@ -122,13 +122,51 @@ func WithTaskType(value *basetypes.TaskType, must bool) func(context.Context, *H
 
 		switch *value {
 		case basetypes.TaskType_BaseTask:
-		case basetypes.TaskType_DailyTask:
 		case basetypes.TaskType_GrowthTask:
 		default:
 			return wlog.Errorf("invalid tasktype")
 		}
 
 		h.TaskType = value
+		return nil
+	}
+}
+
+func WithIntervalReset(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid intervalreset")
+			}
+			return nil
+		}
+		h.IntervalReset = value
+		return nil
+	}
+}
+
+func WithIntervalResetSecond(value *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid intervalresetsecond")
+			}
+			return nil
+		}
+		h.IntervalResetSecond = value
+		return nil
+	}
+}
+
+func WithMaxIntervalRewardCount(value *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid maxintervalrewardcount")
+			}
+			return nil
+		}
+		h.MaxIntervalRewardCount = value
 		return nil
 	}
 }
