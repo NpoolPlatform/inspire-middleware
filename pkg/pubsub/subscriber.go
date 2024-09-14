@@ -10,7 +10,6 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	allocated1 "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/coupon/allocated"
-	event1 "github.com/NpoolPlatform/inspire-middleware/pkg/pubsub/event"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/go-service-framework/pkg/pubsub"
@@ -49,8 +48,6 @@ func finish(ctx context.Context, msg *pubsub.Msg, err error) error {
 
 func prepare(mid, body string) (req interface{}, err error) {
 	switch mid {
-	case basetypes.MsgID_RewardEventReq.String():
-		req, err = event1.Prepare(body)
 	case basetypes.MsgID_UpdateCouponsUsedReq.String():
 		req, err = allocated1.Prepare(body)
 	default:
@@ -133,8 +130,6 @@ func stat(ctx context.Context, mid string, uid uuid.UUID, rid *uuid.UUID) (bool,
 //   error   reason of error, if nil, means the message should be acked
 func process(ctx context.Context, mid string, uid uuid.UUID, req interface{}) (err error) { //nolint
 	switch mid {
-	case basetypes.MsgID_RewardEventReq.String():
-		err = event1.Apply(ctx, req, publisher)
 	case basetypes.MsgID_UpdateCouponsUsedReq.String():
 		err = allocated1.Apply(ctx, req, publisher)
 	default:
