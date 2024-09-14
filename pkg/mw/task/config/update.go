@@ -65,7 +65,7 @@ func (h *updateHandler) constructSQL() error {
 		_sql += fmt.Sprintf("%vinterval_reset = %v, ", set, *h.IntervalReset)
 	}
 	if h.IntervalResetSecond != nil {
-		_sql += fmt.Sprintf("%vinterval_reset_second = %v, ", set, *h.MaxIntervalRewardCount)
+		_sql += fmt.Sprintf("%vinterval_reset_second = %v, ", set, *h.IntervalResetSecond)
 	}
 	if h.MaxIntervalRewardCount != nil {
 		_sql += fmt.Sprintf("%vmax_interval_reward_count = %v, ", set, *h.MaxIntervalRewardCount)
