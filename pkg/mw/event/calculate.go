@@ -302,10 +302,6 @@ func (h *calculateHandler) calcluateAffiliate(ctx context.Context) ([]*npool.Rew
 		j--
 	}
 
-	if h.taskConfig == nil {
-		return nil, nil
-	}
-
 	return rewards, nil
 }
 
