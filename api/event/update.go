@@ -30,6 +30,8 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 		event1.WithCreditsPerUSD(req.CreditsPerUSD, false),
 		event1.WithMaxConsecutive(req.MaxConsecutive, false),
 		event1.WithInviterLayers(req.InviterLayers, false),
+		event1.WithGoodID(req.GoodID, false),
+		event1.WithAppGoodID(req.AppGoodID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
