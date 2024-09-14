@@ -54,21 +54,21 @@ func (h *updateHandler) constructSQL() error {
 		set = ""
 	}
 	if h.MaxRewardCount != nil {
-		_sql += fmt.Sprintf("%vmax_reward_count = '%v', ", set, *h.MaxRewardCount)
+		_sql += fmt.Sprintf("%vmax_reward_count = %v, ", set, *h.MaxRewardCount)
 		set = ""
 	}
 	if h.CooldownSecond != nil {
-		_sql += fmt.Sprintf("%vcooldown_second = '%v', ", set, *h.CooldownSecond)
+		_sql += fmt.Sprintf("%vcooldown_second = %v, ", set, *h.CooldownSecond)
 		set = ""
 	}
 	if h.IntervalReset != nil {
-		_sql += fmt.Sprintf("%vinterval_reset = '%v', ", set, *h.IntervalReset)
+		_sql += fmt.Sprintf("%vinterval_reset = %v, ", set, *h.IntervalReset)
 	}
 	if h.IntervalResetSecond != nil {
-		_sql += fmt.Sprintf("%vinterval_reset_second = '%v', ", set, *h.MaxIntervalRewardCount)
+		_sql += fmt.Sprintf("%vinterval_reset_second = %v, ", set, *h.MaxIntervalRewardCount)
 	}
 	if h.MaxIntervalRewardCount != nil {
-		_sql += fmt.Sprintf("%vmax_interval_reward_count = '%v', ", set, *h.MaxIntervalRewardCount)
+		_sql += fmt.Sprintf("%vmax_interval_reward_count = %v, ", set, *h.MaxIntervalRewardCount)
 	}
 	if set != "" {
 		return cruder.ErrUpdateNothing
