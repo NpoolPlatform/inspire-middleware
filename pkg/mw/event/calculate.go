@@ -392,8 +392,8 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 		return nil
 	}
 	now := uint32(time.Now().Unix())
-	intervalTime := now % configs[0].IntervalResetSecond
-	startTime := intervalTime * configs[0].IntervalResetSecond
+	intervalTime := int32(now / configs[0].IntervalResetSecond)
+	startTime := uint32(intervalTime) * configs[0].IntervalResetSecond
 	handler3, err := taskuser1.NewHandler(
 		ctx,
 		taskuser1.WithConds(&taskusermwpb.Conds{
