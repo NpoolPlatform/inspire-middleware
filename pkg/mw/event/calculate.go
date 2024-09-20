@@ -386,12 +386,15 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	if len(taskUsers) >= int(configs[0].MaxRewardCount) {
 		return wlog.Errorf("invalid maxrewardcount")
 	}
+	now := uint32(time.Now().Unix())
+	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
+		return wlog.Errorf("not the right time")
+	}
 
 	// check interval task
 	if !h.taskConfig.IntervalReset {
 		return nil
 	}
-	now := uint32(time.Now().Unix())
 	intervalTime := int32(now / configs[0].IntervalResetSecond)
 	startTime := uint32(intervalTime) * configs[0].IntervalResetSecond
 	handler3, err := taskuser1.NewHandler(
