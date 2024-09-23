@@ -395,6 +395,9 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	if !h.taskConfig.IntervalReset {
 		return nil
 	}
+	if configs[0].IntervalResetSecond == 0 {
+		return wlog.Errorf("invalid intervalresetsecond")
+	}
 	intervalTime := int32(now / configs[0].IntervalResetSecond)
 	startTime := uint32(intervalTime) * configs[0].IntervalResetSecond
 	handler3, err := taskuser1.NewHandler(
