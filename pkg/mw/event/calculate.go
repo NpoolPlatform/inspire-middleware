@@ -387,12 +387,13 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 		return wlog.Errorf("invalid maxrewardcount")
 	}
 	now := uint32(time.Now().Unix())
-	if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
-		return wlog.Errorf("not the right time")
-	}
 
 	// check interval task
 	if !h.taskConfig.IntervalReset {
+		// check cooldown second in all records
+		if taskUsers[len(taskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
+			return wlog.Errorf("not the right time")
+		}
 		return nil
 	}
 	if configs[0].IntervalResetSecond == 0 {
@@ -427,6 +428,10 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	// check user has over the max finish times
 	if len(intervalTaskUsers) >= int(configs[0].MaxIntervalRewardCount) {
 		return wlog.Errorf("invalid maxrewardcount")
+	}
+	// check cooldown second in interval records
+	if intervalTaskUsers[len(intervalTaskUsers)-1].UpdatedAt+configs[0].CooldownSecond > now {
+		return wlog.Errorf("not the right time")
 	}
 
 	return nil
