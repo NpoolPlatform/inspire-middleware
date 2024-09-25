@@ -140,7 +140,7 @@ func (h *calculateHandler) calculateCoinRewards(ctx context.Context, ev *npool.E
 			return nil, wlog.WrapError(err)
 		}
 
-		if coins.Add(allocated).Cmp(maxValue) >= 0 {
+		if coins.Add(allocated).Cmp(maxValue) > 0 {
 			continue
 		}
 		coinsStr := coins.String()
