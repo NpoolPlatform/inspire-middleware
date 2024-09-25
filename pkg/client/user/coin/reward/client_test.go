@@ -54,7 +54,6 @@ func createUserCoinReward(t *testing.T) {
 		CoinTypeID:  &ret.CoinTypeID,
 		CoinRewards: &ret.CoinRewards,
 	})
-	fmt.Println("err: ", err)
 	if assert.Nil(t, err) {
 		info, err := GetUserCoinReward(context.Background(), ret.EntID)
 		if assert.Nil(t, err) {

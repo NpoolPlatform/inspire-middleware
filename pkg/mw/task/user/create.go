@@ -21,7 +21,6 @@ type createHandler struct {
 
 //nolint:goconst
 func (h *createHandler) constructSQL() {
-	fmt.Println("--onlyOneReward: ", h.onlyOneReward)
 	comma := ""
 	now := uint32(time.Now().Unix())
 	_sql := "insert into task_users "
@@ -73,7 +72,6 @@ func (h *createHandler) constructSQL() {
 		_sql += " limit 1)"
 	}
 
-	fmt.Println("--create task_users sql: ", _sql)
 	h.sql = _sql
 }
 
@@ -92,9 +90,6 @@ func (h *createHandler) createTaskUser(ctx context.Context, tx *ent.Tx) error {
 func (h *createHandler) checkOnlyOneRewardTask(ctx context.Context, tx *ent.Tx) error {
 	onlyOneRewardEvents := fmt.Sprintf("'%v', '%v'", basetypes.UsedFor_FirstBenefit.String(), basetypes.UsedFor_FirstOrderCompleted.String())
 	sql := fmt.Sprintf("select 1 from events where app_id='%v' and ent_id='%v' and event_type in (%v) and deleted_at=0", h.AppID, h.EventID, onlyOneRewardEvents)
-	fmt.Println("--userID: ", h.UserID)
-	fmt.Println("--eventID: ", h.EventID)
-	fmt.Println("--checkOnlyOneRewardTask sql: ", sql)
 	rows, err := tx.QueryContext(ctx, sql)
 	if err != nil {
 		return wlog.WrapError(err)
@@ -108,7 +103,6 @@ func (h *createHandler) checkOnlyOneRewardTask(ctx context.Context, tx *ent.Tx) 
 	if err != nil {
 		return wlog.Errorf("query event failed: %v", err)
 	}
-	fmt.Println("--select count: ", count)
 	if count != 0 {
 		h.onlyOneReward = true
 	}
