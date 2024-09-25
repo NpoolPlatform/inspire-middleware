@@ -332,6 +332,7 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	}
 
 	h.taskConfig = configs[0]
+	fmt.Println("task config: ", configs[0])
 	if h.taskConfig.MaxRewardCount == 0 {
 		return wlog.Errorf("invalid maxrewardcount")
 	}
@@ -410,6 +411,7 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	}
 	intervalTime := int32(now / configs[0].IntervalResetSecond)
 	startTime := uint32(intervalTime) * configs[0].IntervalResetSecond
+	fmt.Println("start time: ", startTime)
 	handler3, err := taskuser1.NewHandler(
 		ctx,
 		taskuser1.WithConds(&taskusermwpb.Conds{
@@ -520,6 +522,9 @@ func (h *calculateHandler) calcluateEventRewards(ctx context.Context) ([]*npool.
 		CoinRewards:   coinRewards,
 		CouponRewards: couponRewards,
 	}
+	fmt.Println("UserID: ", h.UserID)
+	fmt.Println("ev: ", ev)
+	fmt.Println("_rewards: ", _rewards)
 
 	return []*npool.Reward{_rewards}, nil
 }
