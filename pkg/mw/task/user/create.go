@@ -8,13 +8,15 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/wlog"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 
 	"github.com/google/uuid"
 )
 
 type createHandler struct {
 	*Handler
-	sql string
+	sql           string
+	onlyOneReward bool
 }
 
 //nolint:goconst
@@ -63,6 +65,12 @@ func (h *createHandler) constructSQL() {
 	_sql += "select 1 from (select * from events) as di "
 	_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.deleted_at=0", *h.EventID, *h.AppID)
 	_sql += " limit 1)"
+	if h.onlyOneReward {
+		_sql += " and not exists ("
+		_sql += "select 1 from (select * from task_users) as di "
+		_sql += fmt.Sprintf("where di.app_id = '%v' and di.user_id = '%v' and di.task_id = '%v' and di.event_id = '%v' and di.deleted_at=0", *h.AppID, *h.UserID, *h.TaskID, *h.EventID)
+		_sql += " limit 1)"
+	}
 
 	h.sql = _sql
 }
@@ -79,15 +87,42 @@ func (h *createHandler) createTaskUser(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
+func (h *createHandler) checkOnlyOneRewardTask(ctx context.Context, tx *ent.Tx) error {
+	onlyOneRewardEvents := fmt.Sprintf("'%v', '%v'", basetypes.UsedFor_FirstBenefit.String(), basetypes.UsedFor_FirstOrderCompleted.String())
+	sql := fmt.Sprintf("select 1 from events where app_id='%v' and ent_id='%v' and event_type in (%v) and deleted_at=0", h.AppID, h.EventID, onlyOneRewardEvents)
+	rows, err := tx.QueryContext(ctx, sql)
+	if err != nil {
+		return wlog.WrapError(err)
+	}
+	defer rows.Close()
+
+	count := 0
+	for rows.Next() {
+		count++
+	}
+	if err != nil {
+		return wlog.Errorf("query event failed: %v", err)
+	}
+	if count != 0 {
+		h.onlyOneReward = true
+	}
+	return nil
+}
+
 func (h *Handler) CreateTaskUser(ctx context.Context) error {
 	handler := &createHandler{
-		Handler: h,
+		Handler:       h,
+		onlyOneReward: false,
 	}
 	if h.EntID == nil {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
+
 	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		if err := handler.checkOnlyOneRewardTask(_ctx, tx); err != nil {
+			return err
+		}
 		return handler.createTaskUser(_ctx, tx)
 	})
 }
