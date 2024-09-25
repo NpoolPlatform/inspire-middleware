@@ -326,11 +326,15 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	if len(configs) == 0 {
 		return wlog.Errorf("invalid taskconfig")
 	}
-	if configs[0].MaxRewardCount == 0 {
-		return wlog.Errorf("invalid maxrewardcount")
-	}
 
 	h.taskConfig = configs[0]
+	if h.taskConfig.MaxRewardCount == 0 {
+		return wlog.Errorf("invalid maxrewardcount")
+	}
+	if h.taskConfig.IntervalReset && h.taskConfig.MaxIntervalRewardCount == 0 {
+		return wlog.Errorf("invalid maxintervalrewardcount")
+	}
+
 	userID := h.UserID.String()
 	// check last task exist and finish status
 	if configs[0].LastTaskID != uuid.Nil.String() {
@@ -382,6 +386,7 @@ func (h *calculateHandler) validateTask(ctx context.Context, ev *npool.Event) er
 	if len(taskUsers) == 0 {
 		return nil
 	}
+
 	// check user has over the max finish times
 	if len(taskUsers) >= int(configs[0].MaxRewardCount) {
 		return wlog.Errorf("invalid maxrewardcount")
