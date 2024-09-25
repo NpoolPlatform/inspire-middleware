@@ -124,11 +124,11 @@ func (h *Handler) CreateTaskUser(ctx context.Context) error {
 		h.EntID = func() *uuid.UUID { s := uuid.New(); return &s }()
 	}
 
-	handler.constructSQL()
 	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.checkOnlyOneRewardTask(_ctx, tx); err != nil {
 			return err
 		}
+		handler.constructSQL()
 		return handler.createTaskUser(_ctx, tx)
 	})
 }
