@@ -202,7 +202,11 @@ func (h *calculateHandler) calculateCouponRewards(ctx context.Context, ev *npool
 
 		info, err := handler.CalcluateAllocatedCoupon(ctx)
 		if err != nil {
-			return nil, wlog.WrapError(err)
+			logger.Sugar().Errorw(
+				"coupon can not allocate",
+				"couponID", coup.EntID,
+			)
+			continue
 		}
 		couponAmount, err := decimal.NewFromString(info.Denomination)
 		if err != nil {
