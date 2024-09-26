@@ -147,7 +147,7 @@ func (h *calculateHandler) getInvites(userID string) uint32 {
 		return uint32(0)
 	}
 
-	return achivmentUser.DirectInvites + achivmentUser.IndirectInvites
+	return achivmentUser.DirectInvitees + achivmentUser.IndirectInvitees
 }
 
 //nolint:dupl

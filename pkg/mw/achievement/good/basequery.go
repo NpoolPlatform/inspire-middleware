@@ -58,7 +58,7 @@ func (h *baseQueryHandler) queryJoinMyself(s *sql.Selector) {
 		t.C(entgoodachievement.FieldTotalAmountUsd),
 		t.C(entgoodachievement.FieldSelfAmountUsd),
 		t.C(entgoodachievement.FieldTotalCommissionUsd),
-		t.C(entgoodachievement.FieldSelfAmountUsd),
+		t.C(entgoodachievement.FieldSelfCommissionUsd),
 		t.C(entgoodachievement.FieldCreatedAt),
 		t.C(entgoodachievement.FieldUpdatedAt),
 	)

@@ -68,31 +68,48 @@ func (h *Handler) ConstructCreateSQL() string {
 }
 
 func (h *Handler) ConstructUpdateSQL() string {
+	now := time.Now().Unix()
 	sql := fmt.Sprintf(
-		`update %v set total_amount_usd = total_amount_usd + %v`,
+		`update %v set updated_at = %v`,
 		entgoodachievement.Table,
-		*h.TotalAmountUSD,
+		now,
 	)
-	sql += fmt.Sprintf(
-		`, self_amount_usd = self_amount_usd + %v`,
-		*h.SelfAmountUSD,
-	)
-	sql += fmt.Sprintf(
-		`, total_units = total_units + %v`,
-		*h.TotalUnits,
-	)
-	sql += fmt.Sprintf(
-		`, self_units = self_units + %v`,
-		*h.SelfUnits,
-	)
-	sql += fmt.Sprintf(
-		`, total_commission_usd = total_commission_usd + %v`,
-		*h.TotalCommissionUSD,
-	)
-	sql += fmt.Sprintf(
-		`, self_commission_usd = self_commission_usd + %v`,
-		h.SelfCommissionUSD,
-	)
+	if h.TotalAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, total_amount_usd = total_amount_usd + %v`,
+			*h.TotalAmountUSD,
+		)
+	}
+	if h.SelfAmountUSD != nil {
+		sql += fmt.Sprintf(
+			`, self_amount_usd = self_amount_usd + %v`,
+			*h.SelfAmountUSD,
+		)
+	}
+	if h.TotalUnits != nil {
+		sql += fmt.Sprintf(
+			`, total_units = total_units + %v`,
+			*h.TotalUnits,
+		)
+	}
+	if h.SelfUnits != nil {
+		sql += fmt.Sprintf(
+			`, self_units = self_units + %v`,
+			*h.SelfUnits,
+		)
+	}
+	if h.TotalCommissionUSD != nil {
+		sql += fmt.Sprintf(
+			`, total_commission_usd = total_commission_usd + %v`,
+			*h.TotalCommissionUSD,
+		)
+	}
+	if h.SelfCommissionUSD != nil {
+		sql += fmt.Sprintf(
+			`, self_commission_usd = self_commission_usd + %v`,
+			h.SelfCommissionUSD,
+		)
+	}
 
 	sql += fmt.Sprintf(
 		" where app_id = '%v' and user_id = '%v' and good_id = '%v' and app_good_id = '%v' and deleted_at = 0 ",

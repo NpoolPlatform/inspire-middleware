@@ -91,8 +91,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			achievementuser.FieldSelfCommission:       {Type: field.TypeOther, Column: achievementuser.FieldSelfCommission},
 			achievementuser.FieldDirectConsumeAmount:  {Type: field.TypeOther, Column: achievementuser.FieldDirectConsumeAmount},
 			achievementuser.FieldInviteeConsumeAmount: {Type: field.TypeOther, Column: achievementuser.FieldInviteeConsumeAmount},
-			achievementuser.FieldDirectInvites:        {Type: field.TypeUint32, Column: achievementuser.FieldDirectInvites},
-			achievementuser.FieldIndirectInvites:      {Type: field.TypeUint32, Column: achievementuser.FieldIndirectInvites},
+			achievementuser.FieldDirectInvitees:       {Type: field.TypeUint32, Column: achievementuser.FieldDirectInvitees},
+			achievementuser.FieldIndirectInvitees:     {Type: field.TypeUint32, Column: achievementuser.FieldIndirectInvitees},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -575,6 +575,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatement.FieldGoodID:               {Type: field.TypeUUID, Column: orderstatement.FieldGoodID},
 			orderstatement.FieldAppGoodID:            {Type: field.TypeUUID, Column: orderstatement.FieldAppGoodID},
 			orderstatement.FieldOrderID:              {Type: field.TypeUUID, Column: orderstatement.FieldOrderID},
+			orderstatement.FieldDirectContributorID:  {Type: field.TypeUUID, Column: orderstatement.FieldDirectContributorID},
 			orderstatement.FieldOrderUserID:          {Type: field.TypeUUID, Column: orderstatement.FieldOrderUserID},
 			orderstatement.FieldGoodCoinTypeID:       {Type: field.TypeUUID, Column: orderstatement.FieldGoodCoinTypeID},
 			orderstatement.FieldUnits:                {Type: field.TypeOther, Column: orderstatement.FieldUnits},
@@ -975,14 +976,14 @@ func (f *AchievementUserFilter) WhereInviteeConsumeAmount(p entql.OtherP) {
 	f.Where(p.Field(achievementuser.FieldInviteeConsumeAmount))
 }
 
-// WhereDirectInvites applies the entql uint32 predicate on the direct_invites field.
-func (f *AchievementUserFilter) WhereDirectInvites(p entql.Uint32P) {
-	f.Where(p.Field(achievementuser.FieldDirectInvites))
+// WhereDirectInvitees applies the entql uint32 predicate on the direct_invitees field.
+func (f *AchievementUserFilter) WhereDirectInvitees(p entql.Uint32P) {
+	f.Where(p.Field(achievementuser.FieldDirectInvitees))
 }
 
-// WhereIndirectInvites applies the entql uint32 predicate on the indirect_invites field.
-func (f *AchievementUserFilter) WhereIndirectInvites(p entql.Uint32P) {
-	f.Where(p.Field(achievementuser.FieldIndirectInvites))
+// WhereIndirectInvitees applies the entql uint32 predicate on the indirect_invitees field.
+func (f *AchievementUserFilter) WhereIndirectInvitees(p entql.Uint32P) {
+	f.Where(p.Field(achievementuser.FieldIndirectInvitees))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -2893,6 +2894,11 @@ func (f *OrderStatementFilter) WhereAppGoodID(p entql.ValueP) {
 // WhereOrderID applies the entql [16]byte predicate on the order_id field.
 func (f *OrderStatementFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(orderstatement.FieldOrderID))
+}
+
+// WhereDirectContributorID applies the entql [16]byte predicate on the direct_contributor_id field.
+func (f *OrderStatementFilter) WhereDirectContributorID(p entql.ValueP) {
+	f.Where(p.Field(orderstatement.FieldDirectContributorID))
 }
 
 // WhereOrderUserID applies the entql [16]byte predicate on the order_user_id field.

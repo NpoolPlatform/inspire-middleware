@@ -199,6 +199,26 @@ func (osu *OrderStatementUpdate) ClearOrderID() *OrderStatementUpdate {
 	return osu
 }
 
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (osu *OrderStatementUpdate) SetDirectContributorID(u uuid.UUID) *OrderStatementUpdate {
+	osu.mutation.SetDirectContributorID(u)
+	return osu
+}
+
+// SetNillableDirectContributorID sets the "direct_contributor_id" field if the given value is not nil.
+func (osu *OrderStatementUpdate) SetNillableDirectContributorID(u *uuid.UUID) *OrderStatementUpdate {
+	if u != nil {
+		osu.SetDirectContributorID(*u)
+	}
+	return osu
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (osu *OrderStatementUpdate) ClearDirectContributorID() *OrderStatementUpdate {
+	osu.mutation.ClearDirectContributorID()
+	return osu
+}
+
 // SetOrderUserID sets the "order_user_id" field.
 func (osu *OrderStatementUpdate) SetOrderUserID(u uuid.UUID) *OrderStatementUpdate {
 	osu.mutation.SetOrderUserID(u)
@@ -591,6 +611,19 @@ func (osu *OrderStatementUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: orderstatement.FieldOrderID,
 		})
 	}
+	if value, ok := osu.mutation.DirectContributorID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstatement.FieldDirectContributorID,
+		})
+	}
+	if osu.mutation.DirectContributorIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderstatement.FieldDirectContributorID,
+		})
+	}
 	if value, ok := osu.mutation.OrderUserID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
@@ -895,6 +928,26 @@ func (osuo *OrderStatementUpdateOne) SetNillableOrderID(u *uuid.UUID) *OrderStat
 // ClearOrderID clears the value of the "order_id" field.
 func (osuo *OrderStatementUpdateOne) ClearOrderID() *OrderStatementUpdateOne {
 	osuo.mutation.ClearOrderID()
+	return osuo
+}
+
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (osuo *OrderStatementUpdateOne) SetDirectContributorID(u uuid.UUID) *OrderStatementUpdateOne {
+	osuo.mutation.SetDirectContributorID(u)
+	return osuo
+}
+
+// SetNillableDirectContributorID sets the "direct_contributor_id" field if the given value is not nil.
+func (osuo *OrderStatementUpdateOne) SetNillableDirectContributorID(u *uuid.UUID) *OrderStatementUpdateOne {
+	if u != nil {
+		osuo.SetDirectContributorID(*u)
+	}
+	return osuo
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (osuo *OrderStatementUpdateOne) ClearDirectContributorID() *OrderStatementUpdateOne {
+	osuo.mutation.ClearDirectContributorID()
 	return osuo
 }
 
@@ -1318,6 +1371,19 @@ func (osuo *OrderStatementUpdateOne) sqlSave(ctx context.Context) (_node *OrderS
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: orderstatement.FieldOrderID,
+		})
+	}
+	if value, ok := osuo.mutation.DirectContributorID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderstatement.FieldDirectContributorID,
+		})
+	}
+	if osuo.mutation.DirectContributorIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: orderstatement.FieldDirectContributorID,
 		})
 	}
 	if value, ok := osuo.mutation.OrderUserID(); ok {

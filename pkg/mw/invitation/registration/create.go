@@ -59,11 +59,11 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		UserID: req.InviterID,
 	}
 
-	invites := uint32(1)
+	invitees := uint32(1)
 	if h.InviterID == req.InviterID {
-		_req.DirectInvites = &invites
+		_req.DirectInvitees = &invitees
 	} else {
-		_req.IndirectInvites = &invites
+		_req.IndirectInvitees = &invitees
 	}
 
 	if info == nil {
@@ -76,14 +76,14 @@ func (h *createHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		return nil
 	}
 
-	directInvites := info.DirectInvites
-	indirectInvites := info.IndirectInvites
+	directInvitees := info.DirectInvitees
+	indirectInvitees := info.IndirectInvitees
 	if h.InviterID == req.InviterID {
-		invites += directInvites
-		_req.DirectInvites = &invites
+		invitees += directInvitees
+		_req.DirectInvitees = &invitees
 	} else {
-		invites += indirectInvites
-		_req.IndirectInvites = &invites
+		invitees += indirectInvitees
+		_req.IndirectInvitees = &invitees
 	}
 
 	if _, err := achievementusercrud.UpdateSet(

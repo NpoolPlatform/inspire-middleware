@@ -109,8 +109,13 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 		return wlog.WrapError(err)
 	}
 	ids := []uuid.UUID{}
+	idMap := map[uuid.UUID]struct{}{}
 	for _, req := range h.Reqs {
+		if _, ok := idMap[*req.CouponID]; ok {
+			continue
+		}
 		ids = append(ids, *req.CouponID)
+		idMap[*req.CouponID] = struct{}{}
 	}
 
 	handler.Conds = &couponcrud.Conds{
@@ -124,7 +129,7 @@ func (h *verifyHandler) checkCoupons(ctx context.Context) error {
 	if err != nil {
 		return wlog.WrapError(err)
 	}
-	if len(coupons) != len(h.Reqs) {
+	if len(coupons) != len(idMap) {
 		return wlog.Errorf("invalid couponid")
 	}
 	return nil

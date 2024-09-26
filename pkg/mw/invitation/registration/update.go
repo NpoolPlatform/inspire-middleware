@@ -54,22 +54,22 @@ func (h *updateHandler) subAchievementInvites(ctx context.Context, tx *ent.Tx, r
 	_req := &achievementusercrud.Req{}
 
 	invites := uint32(1)
-	directInvites := info.DirectInvites
-	indirectInvites := info.IndirectInvites
+	directInvitees := info.DirectInvitees
+	indirectInvitees := info.IndirectInvitees
 	oldInviterID := uuid.MustParse(h.registration.InviterID)
 	if oldInviterID == *req.InviterID {
-		if directInvites != uint32(0) {
-			directInvites -= invites
-			_req.DirectInvites = &directInvites
+		if directInvitees != uint32(0) {
+			directInvitees -= invites
+			_req.DirectInvitees = &directInvitees
 		}
-		if indirectInvites != uint32(0) {
-			indirectInvites -= h.inviteeInvites
-			_req.IndirectInvites = &indirectInvites
+		if indirectInvitees != uint32(0) {
+			indirectInvitees -= h.inviteeInvites
+			_req.IndirectInvitees = &indirectInvitees
 		}
 	}
-	if oldInviterID != *req.InviterID && indirectInvites != uint32(0) {
-		indirectInvites = indirectInvites - invites - h.inviteeInvites
-		_req.IndirectInvites = &indirectInvites
+	if oldInviterID != *req.InviterID && indirectInvitees != uint32(0) {
+		indirectInvitees = indirectInvitees - invites - h.inviteeInvites
+		_req.IndirectInvitees = &indirectInvitees
 	}
 
 	if _, err := achievementusercrud.UpdateSet(
@@ -101,7 +101,7 @@ func (h *updateHandler) getTotalInvites(ctx context.Context) error {
 	if len(achivmentUsers) == 0 {
 		return nil
 	}
-	h.inviteeInvites = achivmentUsers[0].DirectInvites + achivmentUsers[0].IndirectInvites
+	h.inviteeInvites = achivmentUsers[0].DirectInvitees + achivmentUsers[0].IndirectInvitees
 	return nil
 }
 
@@ -144,9 +144,9 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 
 	invites := uint32(1)
 	if h.InviterID == req.InviterID {
-		_req.DirectInvites = &invites
+		_req.DirectInvitees = &invites
 	} else {
-		_req.IndirectInvites = &invites
+		_req.IndirectInvitees = &invites
 	}
 
 	if info == nil {
@@ -159,17 +159,17 @@ func (h *updateHandler) createOrAddInvites(ctx context.Context, tx *ent.Tx, req 
 		return nil
 	}
 
-	directInvites := info.DirectInvites
-	indirectInvites := info.IndirectInvites
+	directInvitees := info.DirectInvitees
+	indirectInvitees := info.IndirectInvitees
 
 	if h.InviterID.String() == req.InviterID.String() {
-		directInvites += invites
-		_req.DirectInvites = &directInvites
-		indirectInvites += h.inviteeInvites
-		_req.IndirectInvites = &indirectInvites
+		directInvitees += invites
+		_req.DirectInvitees = &directInvitees
+		indirectInvitees += h.inviteeInvites
+		_req.IndirectInvitees = &indirectInvitees
 	} else {
-		indirectInvites = indirectInvites + invites + h.inviteeInvites
-		_req.IndirectInvites = &indirectInvites
+		indirectInvitees = indirectInvitees + invites + h.inviteeInvites
+		_req.IndirectInvitees = &indirectInvitees
 	}
 
 	if _, err := achievementusercrud.UpdateSet(

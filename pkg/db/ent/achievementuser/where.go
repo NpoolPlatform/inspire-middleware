@@ -150,17 +150,17 @@ func InviteeConsumeAmount(v decimal.Decimal) predicate.AchievementUser {
 	})
 }
 
-// DirectInvites applies equality check predicate on the "direct_invites" field. It's identical to DirectInvitesEQ.
-func DirectInvites(v uint32) predicate.AchievementUser {
+// DirectInvitees applies equality check predicate on the "direct_invitees" field. It's identical to DirectInviteesEQ.
+func DirectInvitees(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDirectInvites), v))
+		s.Where(sql.EQ(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// IndirectInvites applies equality check predicate on the "indirect_invites" field. It's identical to IndirectInvitesEQ.
-func IndirectInvites(v uint32) predicate.AchievementUser {
+// IndirectInvitees applies equality check predicate on the "indirect_invitees" field. It's identical to IndirectInviteesEQ.
+func IndirectInvitees(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIndirectInvites), v))
+		s.Where(sql.EQ(s.C(FieldIndirectInvitees), v))
 	})
 }
 
@@ -888,159 +888,159 @@ func InviteeConsumeAmountNotNil() predicate.AchievementUser {
 	})
 }
 
-// DirectInvitesEQ applies the EQ predicate on the "direct_invites" field.
-func DirectInvitesEQ(v uint32) predicate.AchievementUser {
+// DirectInviteesEQ applies the EQ predicate on the "direct_invitees" field.
+func DirectInviteesEQ(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDirectInvites), v))
+		s.Where(sql.EQ(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesNEQ applies the NEQ predicate on the "direct_invites" field.
-func DirectInvitesNEQ(v uint32) predicate.AchievementUser {
+// DirectInviteesNEQ applies the NEQ predicate on the "direct_invitees" field.
+func DirectInviteesNEQ(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDirectInvites), v))
+		s.Where(sql.NEQ(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesIn applies the In predicate on the "direct_invites" field.
-func DirectInvitesIn(vs ...uint32) predicate.AchievementUser {
+// DirectInviteesIn applies the In predicate on the "direct_invitees" field.
+func DirectInviteesIn(vs ...uint32) predicate.AchievementUser {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldDirectInvites), v...))
+		s.Where(sql.In(s.C(FieldDirectInvitees), v...))
 	})
 }
 
-// DirectInvitesNotIn applies the NotIn predicate on the "direct_invites" field.
-func DirectInvitesNotIn(vs ...uint32) predicate.AchievementUser {
+// DirectInviteesNotIn applies the NotIn predicate on the "direct_invitees" field.
+func DirectInviteesNotIn(vs ...uint32) predicate.AchievementUser {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldDirectInvites), v...))
+		s.Where(sql.NotIn(s.C(FieldDirectInvitees), v...))
 	})
 }
 
-// DirectInvitesGT applies the GT predicate on the "direct_invites" field.
-func DirectInvitesGT(v uint32) predicate.AchievementUser {
+// DirectInviteesGT applies the GT predicate on the "direct_invitees" field.
+func DirectInviteesGT(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDirectInvites), v))
+		s.Where(sql.GT(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesGTE applies the GTE predicate on the "direct_invites" field.
-func DirectInvitesGTE(v uint32) predicate.AchievementUser {
+// DirectInviteesGTE applies the GTE predicate on the "direct_invitees" field.
+func DirectInviteesGTE(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDirectInvites), v))
+		s.Where(sql.GTE(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesLT applies the LT predicate on the "direct_invites" field.
-func DirectInvitesLT(v uint32) predicate.AchievementUser {
+// DirectInviteesLT applies the LT predicate on the "direct_invitees" field.
+func DirectInviteesLT(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDirectInvites), v))
+		s.Where(sql.LT(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesLTE applies the LTE predicate on the "direct_invites" field.
-func DirectInvitesLTE(v uint32) predicate.AchievementUser {
+// DirectInviteesLTE applies the LTE predicate on the "direct_invitees" field.
+func DirectInviteesLTE(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDirectInvites), v))
+		s.Where(sql.LTE(s.C(FieldDirectInvitees), v))
 	})
 }
 
-// DirectInvitesIsNil applies the IsNil predicate on the "direct_invites" field.
-func DirectInvitesIsNil() predicate.AchievementUser {
+// DirectInviteesIsNil applies the IsNil predicate on the "direct_invitees" field.
+func DirectInviteesIsNil() predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDirectInvites)))
+		s.Where(sql.IsNull(s.C(FieldDirectInvitees)))
 	})
 }
 
-// DirectInvitesNotNil applies the NotNil predicate on the "direct_invites" field.
-func DirectInvitesNotNil() predicate.AchievementUser {
+// DirectInviteesNotNil applies the NotNil predicate on the "direct_invitees" field.
+func DirectInviteesNotNil() predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDirectInvites)))
+		s.Where(sql.NotNull(s.C(FieldDirectInvitees)))
 	})
 }
 
-// IndirectInvitesEQ applies the EQ predicate on the "indirect_invites" field.
-func IndirectInvitesEQ(v uint32) predicate.AchievementUser {
+// IndirectInviteesEQ applies the EQ predicate on the "indirect_invitees" field.
+func IndirectInviteesEQ(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIndirectInvites), v))
+		s.Where(sql.EQ(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesNEQ applies the NEQ predicate on the "indirect_invites" field.
-func IndirectInvitesNEQ(v uint32) predicate.AchievementUser {
+// IndirectInviteesNEQ applies the NEQ predicate on the "indirect_invitees" field.
+func IndirectInviteesNEQ(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldIndirectInvites), v))
+		s.Where(sql.NEQ(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesIn applies the In predicate on the "indirect_invites" field.
-func IndirectInvitesIn(vs ...uint32) predicate.AchievementUser {
+// IndirectInviteesIn applies the In predicate on the "indirect_invitees" field.
+func IndirectInviteesIn(vs ...uint32) predicate.AchievementUser {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldIndirectInvites), v...))
+		s.Where(sql.In(s.C(FieldIndirectInvitees), v...))
 	})
 }
 
-// IndirectInvitesNotIn applies the NotIn predicate on the "indirect_invites" field.
-func IndirectInvitesNotIn(vs ...uint32) predicate.AchievementUser {
+// IndirectInviteesNotIn applies the NotIn predicate on the "indirect_invitees" field.
+func IndirectInviteesNotIn(vs ...uint32) predicate.AchievementUser {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldIndirectInvites), v...))
+		s.Where(sql.NotIn(s.C(FieldIndirectInvitees), v...))
 	})
 }
 
-// IndirectInvitesGT applies the GT predicate on the "indirect_invites" field.
-func IndirectInvitesGT(v uint32) predicate.AchievementUser {
+// IndirectInviteesGT applies the GT predicate on the "indirect_invitees" field.
+func IndirectInviteesGT(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldIndirectInvites), v))
+		s.Where(sql.GT(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesGTE applies the GTE predicate on the "indirect_invites" field.
-func IndirectInvitesGTE(v uint32) predicate.AchievementUser {
+// IndirectInviteesGTE applies the GTE predicate on the "indirect_invitees" field.
+func IndirectInviteesGTE(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldIndirectInvites), v))
+		s.Where(sql.GTE(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesLT applies the LT predicate on the "indirect_invites" field.
-func IndirectInvitesLT(v uint32) predicate.AchievementUser {
+// IndirectInviteesLT applies the LT predicate on the "indirect_invitees" field.
+func IndirectInviteesLT(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldIndirectInvites), v))
+		s.Where(sql.LT(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesLTE applies the LTE predicate on the "indirect_invites" field.
-func IndirectInvitesLTE(v uint32) predicate.AchievementUser {
+// IndirectInviteesLTE applies the LTE predicate on the "indirect_invitees" field.
+func IndirectInviteesLTE(v uint32) predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldIndirectInvites), v))
+		s.Where(sql.LTE(s.C(FieldIndirectInvitees), v))
 	})
 }
 
-// IndirectInvitesIsNil applies the IsNil predicate on the "indirect_invites" field.
-func IndirectInvitesIsNil() predicate.AchievementUser {
+// IndirectInviteesIsNil applies the IsNil predicate on the "indirect_invitees" field.
+func IndirectInviteesIsNil() predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldIndirectInvites)))
+		s.Where(sql.IsNull(s.C(FieldIndirectInvitees)))
 	})
 }
 
-// IndirectInvitesNotNil applies the NotNil predicate on the "indirect_invites" field.
-func IndirectInvitesNotNil() predicate.AchievementUser {
+// IndirectInviteesNotNil applies the NotNil predicate on the "indirect_invitees" field.
+func IndirectInviteesNotNil() predicate.AchievementUser {
 	return predicate.AchievementUser(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldIndirectInvites)))
+		s.Where(sql.NotNull(s.C(FieldIndirectInvitees)))
 	})
 }
 

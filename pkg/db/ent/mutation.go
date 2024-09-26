@@ -1490,10 +1490,10 @@ type AchievementUserMutation struct {
 	self_commission        *decimal.Decimal
 	direct_consume_amount  *decimal.Decimal
 	invitee_consume_amount *decimal.Decimal
-	direct_invites         *uint32
-	adddirect_invites      *int32
-	indirect_invites       *uint32
-	addindirect_invites    *int32
+	direct_invitees        *uint32
+	adddirect_invitees     *int32
+	indirect_invitees      *uint32
+	addindirect_invitees   *int32
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*AchievementUser, error)
@@ -2102,144 +2102,144 @@ func (m *AchievementUserMutation) ResetInviteeConsumeAmount() {
 	delete(m.clearedFields, achievementuser.FieldInviteeConsumeAmount)
 }
 
-// SetDirectInvites sets the "direct_invites" field.
-func (m *AchievementUserMutation) SetDirectInvites(u uint32) {
-	m.direct_invites = &u
-	m.adddirect_invites = nil
+// SetDirectInvitees sets the "direct_invitees" field.
+func (m *AchievementUserMutation) SetDirectInvitees(u uint32) {
+	m.direct_invitees = &u
+	m.adddirect_invitees = nil
 }
 
-// DirectInvites returns the value of the "direct_invites" field in the mutation.
-func (m *AchievementUserMutation) DirectInvites() (r uint32, exists bool) {
-	v := m.direct_invites
+// DirectInvitees returns the value of the "direct_invitees" field in the mutation.
+func (m *AchievementUserMutation) DirectInvitees() (r uint32, exists bool) {
+	v := m.direct_invitees
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDirectInvites returns the old "direct_invites" field's value of the AchievementUser entity.
+// OldDirectInvitees returns the old "direct_invitees" field's value of the AchievementUser entity.
 // If the AchievementUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchievementUserMutation) OldDirectInvites(ctx context.Context) (v uint32, err error) {
+func (m *AchievementUserMutation) OldDirectInvitees(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDirectInvites is only allowed on UpdateOne operations")
+		return v, errors.New("OldDirectInvitees is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDirectInvites requires an ID field in the mutation")
+		return v, errors.New("OldDirectInvitees requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDirectInvites: %w", err)
+		return v, fmt.Errorf("querying old value for OldDirectInvitees: %w", err)
 	}
-	return oldValue.DirectInvites, nil
+	return oldValue.DirectInvitees, nil
 }
 
-// AddDirectInvites adds u to the "direct_invites" field.
-func (m *AchievementUserMutation) AddDirectInvites(u int32) {
-	if m.adddirect_invites != nil {
-		*m.adddirect_invites += u
+// AddDirectInvitees adds u to the "direct_invitees" field.
+func (m *AchievementUserMutation) AddDirectInvitees(u int32) {
+	if m.adddirect_invitees != nil {
+		*m.adddirect_invitees += u
 	} else {
-		m.adddirect_invites = &u
+		m.adddirect_invitees = &u
 	}
 }
 
-// AddedDirectInvites returns the value that was added to the "direct_invites" field in this mutation.
-func (m *AchievementUserMutation) AddedDirectInvites() (r int32, exists bool) {
-	v := m.adddirect_invites
+// AddedDirectInvitees returns the value that was added to the "direct_invitees" field in this mutation.
+func (m *AchievementUserMutation) AddedDirectInvitees() (r int32, exists bool) {
+	v := m.adddirect_invitees
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearDirectInvites clears the value of the "direct_invites" field.
-func (m *AchievementUserMutation) ClearDirectInvites() {
-	m.direct_invites = nil
-	m.adddirect_invites = nil
-	m.clearedFields[achievementuser.FieldDirectInvites] = struct{}{}
+// ClearDirectInvitees clears the value of the "direct_invitees" field.
+func (m *AchievementUserMutation) ClearDirectInvitees() {
+	m.direct_invitees = nil
+	m.adddirect_invitees = nil
+	m.clearedFields[achievementuser.FieldDirectInvitees] = struct{}{}
 }
 
-// DirectInvitesCleared returns if the "direct_invites" field was cleared in this mutation.
-func (m *AchievementUserMutation) DirectInvitesCleared() bool {
-	_, ok := m.clearedFields[achievementuser.FieldDirectInvites]
+// DirectInviteesCleared returns if the "direct_invitees" field was cleared in this mutation.
+func (m *AchievementUserMutation) DirectInviteesCleared() bool {
+	_, ok := m.clearedFields[achievementuser.FieldDirectInvitees]
 	return ok
 }
 
-// ResetDirectInvites resets all changes to the "direct_invites" field.
-func (m *AchievementUserMutation) ResetDirectInvites() {
-	m.direct_invites = nil
-	m.adddirect_invites = nil
-	delete(m.clearedFields, achievementuser.FieldDirectInvites)
+// ResetDirectInvitees resets all changes to the "direct_invitees" field.
+func (m *AchievementUserMutation) ResetDirectInvitees() {
+	m.direct_invitees = nil
+	m.adddirect_invitees = nil
+	delete(m.clearedFields, achievementuser.FieldDirectInvitees)
 }
 
-// SetIndirectInvites sets the "indirect_invites" field.
-func (m *AchievementUserMutation) SetIndirectInvites(u uint32) {
-	m.indirect_invites = &u
-	m.addindirect_invites = nil
+// SetIndirectInvitees sets the "indirect_invitees" field.
+func (m *AchievementUserMutation) SetIndirectInvitees(u uint32) {
+	m.indirect_invitees = &u
+	m.addindirect_invitees = nil
 }
 
-// IndirectInvites returns the value of the "indirect_invites" field in the mutation.
-func (m *AchievementUserMutation) IndirectInvites() (r uint32, exists bool) {
-	v := m.indirect_invites
+// IndirectInvitees returns the value of the "indirect_invitees" field in the mutation.
+func (m *AchievementUserMutation) IndirectInvitees() (r uint32, exists bool) {
+	v := m.indirect_invitees
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIndirectInvites returns the old "indirect_invites" field's value of the AchievementUser entity.
+// OldIndirectInvitees returns the old "indirect_invitees" field's value of the AchievementUser entity.
 // If the AchievementUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AchievementUserMutation) OldIndirectInvites(ctx context.Context) (v uint32, err error) {
+func (m *AchievementUserMutation) OldIndirectInvitees(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIndirectInvites is only allowed on UpdateOne operations")
+		return v, errors.New("OldIndirectInvitees is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIndirectInvites requires an ID field in the mutation")
+		return v, errors.New("OldIndirectInvitees requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIndirectInvites: %w", err)
+		return v, fmt.Errorf("querying old value for OldIndirectInvitees: %w", err)
 	}
-	return oldValue.IndirectInvites, nil
+	return oldValue.IndirectInvitees, nil
 }
 
-// AddIndirectInvites adds u to the "indirect_invites" field.
-func (m *AchievementUserMutation) AddIndirectInvites(u int32) {
-	if m.addindirect_invites != nil {
-		*m.addindirect_invites += u
+// AddIndirectInvitees adds u to the "indirect_invitees" field.
+func (m *AchievementUserMutation) AddIndirectInvitees(u int32) {
+	if m.addindirect_invitees != nil {
+		*m.addindirect_invitees += u
 	} else {
-		m.addindirect_invites = &u
+		m.addindirect_invitees = &u
 	}
 }
 
-// AddedIndirectInvites returns the value that was added to the "indirect_invites" field in this mutation.
-func (m *AchievementUserMutation) AddedIndirectInvites() (r int32, exists bool) {
-	v := m.addindirect_invites
+// AddedIndirectInvitees returns the value that was added to the "indirect_invitees" field in this mutation.
+func (m *AchievementUserMutation) AddedIndirectInvitees() (r int32, exists bool) {
+	v := m.addindirect_invitees
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearIndirectInvites clears the value of the "indirect_invites" field.
-func (m *AchievementUserMutation) ClearIndirectInvites() {
-	m.indirect_invites = nil
-	m.addindirect_invites = nil
-	m.clearedFields[achievementuser.FieldIndirectInvites] = struct{}{}
+// ClearIndirectInvitees clears the value of the "indirect_invitees" field.
+func (m *AchievementUserMutation) ClearIndirectInvitees() {
+	m.indirect_invitees = nil
+	m.addindirect_invitees = nil
+	m.clearedFields[achievementuser.FieldIndirectInvitees] = struct{}{}
 }
 
-// IndirectInvitesCleared returns if the "indirect_invites" field was cleared in this mutation.
-func (m *AchievementUserMutation) IndirectInvitesCleared() bool {
-	_, ok := m.clearedFields[achievementuser.FieldIndirectInvites]
+// IndirectInviteesCleared returns if the "indirect_invitees" field was cleared in this mutation.
+func (m *AchievementUserMutation) IndirectInviteesCleared() bool {
+	_, ok := m.clearedFields[achievementuser.FieldIndirectInvitees]
 	return ok
 }
 
-// ResetIndirectInvites resets all changes to the "indirect_invites" field.
-func (m *AchievementUserMutation) ResetIndirectInvites() {
-	m.indirect_invites = nil
-	m.addindirect_invites = nil
-	delete(m.clearedFields, achievementuser.FieldIndirectInvites)
+// ResetIndirectInvitees resets all changes to the "indirect_invitees" field.
+func (m *AchievementUserMutation) ResetIndirectInvitees() {
+	m.indirect_invitees = nil
+	m.addindirect_invitees = nil
+	delete(m.clearedFields, achievementuser.FieldIndirectInvitees)
 }
 
 // Where appends a list predicates to the AchievementUserMutation builder.
@@ -2292,11 +2292,11 @@ func (m *AchievementUserMutation) Fields() []string {
 	if m.invitee_consume_amount != nil {
 		fields = append(fields, achievementuser.FieldInviteeConsumeAmount)
 	}
-	if m.direct_invites != nil {
-		fields = append(fields, achievementuser.FieldDirectInvites)
+	if m.direct_invitees != nil {
+		fields = append(fields, achievementuser.FieldDirectInvitees)
 	}
-	if m.indirect_invites != nil {
-		fields = append(fields, achievementuser.FieldIndirectInvites)
+	if m.indirect_invitees != nil {
+		fields = append(fields, achievementuser.FieldIndirectInvitees)
 	}
 	return fields
 }
@@ -2326,10 +2326,10 @@ func (m *AchievementUserMutation) Field(name string) (ent.Value, bool) {
 		return m.DirectConsumeAmount()
 	case achievementuser.FieldInviteeConsumeAmount:
 		return m.InviteeConsumeAmount()
-	case achievementuser.FieldDirectInvites:
-		return m.DirectInvites()
-	case achievementuser.FieldIndirectInvites:
-		return m.IndirectInvites()
+	case achievementuser.FieldDirectInvitees:
+		return m.DirectInvitees()
+	case achievementuser.FieldIndirectInvitees:
+		return m.IndirectInvitees()
 	}
 	return nil, false
 }
@@ -2359,10 +2359,10 @@ func (m *AchievementUserMutation) OldField(ctx context.Context, name string) (en
 		return m.OldDirectConsumeAmount(ctx)
 	case achievementuser.FieldInviteeConsumeAmount:
 		return m.OldInviteeConsumeAmount(ctx)
-	case achievementuser.FieldDirectInvites:
-		return m.OldDirectInvites(ctx)
-	case achievementuser.FieldIndirectInvites:
-		return m.OldIndirectInvites(ctx)
+	case achievementuser.FieldDirectInvitees:
+		return m.OldDirectInvitees(ctx)
+	case achievementuser.FieldIndirectInvitees:
+		return m.OldIndirectInvitees(ctx)
 	}
 	return nil, fmt.Errorf("unknown AchievementUser field %s", name)
 }
@@ -2442,19 +2442,19 @@ func (m *AchievementUserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetInviteeConsumeAmount(v)
 		return nil
-	case achievementuser.FieldDirectInvites:
+	case achievementuser.FieldDirectInvitees:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDirectInvites(v)
+		m.SetDirectInvitees(v)
 		return nil
-	case achievementuser.FieldIndirectInvites:
+	case achievementuser.FieldIndirectInvitees:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIndirectInvites(v)
+		m.SetIndirectInvitees(v)
 		return nil
 	}
 	return fmt.Errorf("unknown AchievementUser field %s", name)
@@ -2473,11 +2473,11 @@ func (m *AchievementUserMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, achievementuser.FieldDeletedAt)
 	}
-	if m.adddirect_invites != nil {
-		fields = append(fields, achievementuser.FieldDirectInvites)
+	if m.adddirect_invitees != nil {
+		fields = append(fields, achievementuser.FieldDirectInvitees)
 	}
-	if m.addindirect_invites != nil {
-		fields = append(fields, achievementuser.FieldIndirectInvites)
+	if m.addindirect_invitees != nil {
+		fields = append(fields, achievementuser.FieldIndirectInvitees)
 	}
 	return fields
 }
@@ -2493,10 +2493,10 @@ func (m *AchievementUserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case achievementuser.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case achievementuser.FieldDirectInvites:
-		return m.AddedDirectInvites()
-	case achievementuser.FieldIndirectInvites:
-		return m.AddedIndirectInvites()
+	case achievementuser.FieldDirectInvitees:
+		return m.AddedDirectInvitees()
+	case achievementuser.FieldIndirectInvitees:
+		return m.AddedIndirectInvitees()
 	}
 	return nil, false
 }
@@ -2527,19 +2527,19 @@ func (m *AchievementUserMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
-	case achievementuser.FieldDirectInvites:
+	case achievementuser.FieldDirectInvitees:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddDirectInvites(v)
+		m.AddDirectInvitees(v)
 		return nil
-	case achievementuser.FieldIndirectInvites:
+	case achievementuser.FieldIndirectInvitees:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddIndirectInvites(v)
+		m.AddIndirectInvitees(v)
 		return nil
 	}
 	return fmt.Errorf("unknown AchievementUser numeric field %s", name)
@@ -2567,11 +2567,11 @@ func (m *AchievementUserMutation) ClearedFields() []string {
 	if m.FieldCleared(achievementuser.FieldInviteeConsumeAmount) {
 		fields = append(fields, achievementuser.FieldInviteeConsumeAmount)
 	}
-	if m.FieldCleared(achievementuser.FieldDirectInvites) {
-		fields = append(fields, achievementuser.FieldDirectInvites)
+	if m.FieldCleared(achievementuser.FieldDirectInvitees) {
+		fields = append(fields, achievementuser.FieldDirectInvitees)
 	}
-	if m.FieldCleared(achievementuser.FieldIndirectInvites) {
-		fields = append(fields, achievementuser.FieldIndirectInvites)
+	if m.FieldCleared(achievementuser.FieldIndirectInvitees) {
+		fields = append(fields, achievementuser.FieldIndirectInvitees)
 	}
 	return fields
 }
@@ -2605,11 +2605,11 @@ func (m *AchievementUserMutation) ClearField(name string) error {
 	case achievementuser.FieldInviteeConsumeAmount:
 		m.ClearInviteeConsumeAmount()
 		return nil
-	case achievementuser.FieldDirectInvites:
-		m.ClearDirectInvites()
+	case achievementuser.FieldDirectInvitees:
+		m.ClearDirectInvitees()
 		return nil
-	case achievementuser.FieldIndirectInvites:
-		m.ClearIndirectInvites()
+	case achievementuser.FieldIndirectInvitees:
+		m.ClearIndirectInvitees()
 		return nil
 	}
 	return fmt.Errorf("unknown AchievementUser nullable field %s", name)
@@ -2649,11 +2649,11 @@ func (m *AchievementUserMutation) ResetField(name string) error {
 	case achievementuser.FieldInviteeConsumeAmount:
 		m.ResetInviteeConsumeAmount()
 		return nil
-	case achievementuser.FieldDirectInvites:
-		m.ResetDirectInvites()
+	case achievementuser.FieldDirectInvitees:
+		m.ResetDirectInvitees()
 		return nil
-	case achievementuser.FieldIndirectInvites:
-		m.ResetIndirectInvites()
+	case achievementuser.FieldIndirectInvitees:
+		m.ResetIndirectInvitees()
 		return nil
 	}
 	return fmt.Errorf("unknown AchievementUser field %s", name)
@@ -24536,6 +24536,7 @@ type OrderStatementMutation struct {
 	good_id                *uuid.UUID
 	app_good_id            *uuid.UUID
 	order_id               *uuid.UUID
+	direct_contributor_id  *uuid.UUID
 	order_user_id          *uuid.UUID
 	good_coin_type_id      *uuid.UUID
 	units                  *decimal.Decimal
@@ -25104,6 +25105,55 @@ func (m *OrderStatementMutation) ResetOrderID() {
 	delete(m.clearedFields, orderstatement.FieldOrderID)
 }
 
+// SetDirectContributorID sets the "direct_contributor_id" field.
+func (m *OrderStatementMutation) SetDirectContributorID(u uuid.UUID) {
+	m.direct_contributor_id = &u
+}
+
+// DirectContributorID returns the value of the "direct_contributor_id" field in the mutation.
+func (m *OrderStatementMutation) DirectContributorID() (r uuid.UUID, exists bool) {
+	v := m.direct_contributor_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDirectContributorID returns the old "direct_contributor_id" field's value of the OrderStatement entity.
+// If the OrderStatement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderStatementMutation) OldDirectContributorID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDirectContributorID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDirectContributorID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDirectContributorID: %w", err)
+	}
+	return oldValue.DirectContributorID, nil
+}
+
+// ClearDirectContributorID clears the value of the "direct_contributor_id" field.
+func (m *OrderStatementMutation) ClearDirectContributorID() {
+	m.direct_contributor_id = nil
+	m.clearedFields[orderstatement.FieldDirectContributorID] = struct{}{}
+}
+
+// DirectContributorIDCleared returns if the "direct_contributor_id" field was cleared in this mutation.
+func (m *OrderStatementMutation) DirectContributorIDCleared() bool {
+	_, ok := m.clearedFields[orderstatement.FieldDirectContributorID]
+	return ok
+}
+
+// ResetDirectContributorID resets all changes to the "direct_contributor_id" field.
+func (m *OrderStatementMutation) ResetDirectContributorID() {
+	m.direct_contributor_id = nil
+	delete(m.clearedFields, orderstatement.FieldDirectContributorID)
+}
+
 // SetOrderUserID sets the "order_user_id" field.
 func (m *OrderStatementMutation) SetOrderUserID(u uuid.UUID) {
 	m.order_user_id = &u
@@ -25564,7 +25614,7 @@ func (m *OrderStatementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderStatementMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, orderstatement.FieldCreatedAt)
 	}
@@ -25591,6 +25641,9 @@ func (m *OrderStatementMutation) Fields() []string {
 	}
 	if m.order_id != nil {
 		fields = append(fields, orderstatement.FieldOrderID)
+	}
+	if m.direct_contributor_id != nil {
+		fields = append(fields, orderstatement.FieldDirectContributorID)
 	}
 	if m.order_user_id != nil {
 		fields = append(fields, orderstatement.FieldOrderUserID)
@@ -25645,6 +25698,8 @@ func (m *OrderStatementMutation) Field(name string) (ent.Value, bool) {
 		return m.AppGoodID()
 	case orderstatement.FieldOrderID:
 		return m.OrderID()
+	case orderstatement.FieldDirectContributorID:
+		return m.DirectContributorID()
 	case orderstatement.FieldOrderUserID:
 		return m.OrderUserID()
 	case orderstatement.FieldGoodCoinTypeID:
@@ -25690,6 +25745,8 @@ func (m *OrderStatementMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldAppGoodID(ctx)
 	case orderstatement.FieldOrderID:
 		return m.OldOrderID(ctx)
+	case orderstatement.FieldDirectContributorID:
+		return m.OldDirectContributorID(ctx)
 	case orderstatement.FieldOrderUserID:
 		return m.OldOrderUserID(ctx)
 	case orderstatement.FieldGoodCoinTypeID:
@@ -25779,6 +25836,13 @@ func (m *OrderStatementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderID(v)
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDirectContributorID(v)
 		return nil
 	case orderstatement.FieldOrderUserID:
 		v, ok := value.(uuid.UUID)
@@ -25927,6 +25991,9 @@ func (m *OrderStatementMutation) ClearedFields() []string {
 	if m.FieldCleared(orderstatement.FieldOrderID) {
 		fields = append(fields, orderstatement.FieldOrderID)
 	}
+	if m.FieldCleared(orderstatement.FieldDirectContributorID) {
+		fields = append(fields, orderstatement.FieldDirectContributorID)
+	}
 	if m.FieldCleared(orderstatement.FieldOrderUserID) {
 		fields = append(fields, orderstatement.FieldOrderUserID)
 	}
@@ -25982,6 +26049,9 @@ func (m *OrderStatementMutation) ClearField(name string) error {
 		return nil
 	case orderstatement.FieldOrderID:
 		m.ClearOrderID()
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		m.ClearDirectContributorID()
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ClearOrderUserID()
@@ -26044,6 +26114,9 @@ func (m *OrderStatementMutation) ResetField(name string) error {
 		return nil
 	case orderstatement.FieldOrderID:
 		m.ResetOrderID()
+		return nil
+	case orderstatement.FieldDirectContributorID:
+		m.ResetDirectContributorID()
 		return nil
 	case orderstatement.FieldOrderUserID:
 		m.ResetOrderUserID()

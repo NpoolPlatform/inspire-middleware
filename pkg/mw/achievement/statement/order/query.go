@@ -9,6 +9,7 @@ import (
 	entorderstatement "github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/orderstatement"
 	types "github.com/NpoolPlatform/message/npool/basetypes/inspire/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/achievement/statement/order"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
 
@@ -41,6 +42,13 @@ func (h *queryHandler) formalize() {
 		info.Units = func() string {
 			units := decimal.RequireFromString(info.Units)
 			return units.String()
+		}()
+		info.DirectContributorID = func() string {
+			id, err := uuid.Parse(info.DirectContributorID)
+			if err != nil {
+				return uuid.Nil.String()
+			}
+			return id.String()
 		}()
 	}
 }

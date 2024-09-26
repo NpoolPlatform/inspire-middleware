@@ -143,6 +143,13 @@ func OrderID(v uuid.UUID) predicate.OrderStatement {
 	})
 }
 
+// DirectContributorID applies equality check predicate on the "direct_contributor_id" field. It's identical to DirectContributorIDEQ.
+func DirectContributorID(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDirectContributorID), v))
+	})
+}
+
 // OrderUserID applies equality check predicate on the "order_user_id" field. It's identical to OrderUserIDEQ.
 func OrderUserID(v uuid.UUID) predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
@@ -849,6 +856,84 @@ func OrderIDIsNil() predicate.OrderStatement {
 func OrderIDNotNil() predicate.OrderStatement {
 	return predicate.OrderStatement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldOrderID)))
+	})
+}
+
+// DirectContributorIDEQ applies the EQ predicate on the "direct_contributor_id" field.
+func DirectContributorIDEQ(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDNEQ applies the NEQ predicate on the "direct_contributor_id" field.
+func DirectContributorIDNEQ(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDIn applies the In predicate on the "direct_contributor_id" field.
+func DirectContributorIDIn(vs ...uuid.UUID) predicate.OrderStatement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldDirectContributorID), v...))
+	})
+}
+
+// DirectContributorIDNotIn applies the NotIn predicate on the "direct_contributor_id" field.
+func DirectContributorIDNotIn(vs ...uuid.UUID) predicate.OrderStatement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldDirectContributorID), v...))
+	})
+}
+
+// DirectContributorIDGT applies the GT predicate on the "direct_contributor_id" field.
+func DirectContributorIDGT(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDGTE applies the GTE predicate on the "direct_contributor_id" field.
+func DirectContributorIDGTE(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDLT applies the LT predicate on the "direct_contributor_id" field.
+func DirectContributorIDLT(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDLTE applies the LTE predicate on the "direct_contributor_id" field.
+func DirectContributorIDLTE(v uuid.UUID) predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDirectContributorID), v))
+	})
+}
+
+// DirectContributorIDIsNil applies the IsNil predicate on the "direct_contributor_id" field.
+func DirectContributorIDIsNil() predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDirectContributorID)))
+	})
+}
+
+// DirectContributorIDNotNil applies the NotNil predicate on the "direct_contributor_id" field.
+func DirectContributorIDNotNil() predicate.OrderStatement {
+	return predicate.OrderStatement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDirectContributorID)))
 	})
 }
 

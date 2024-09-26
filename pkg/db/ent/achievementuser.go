@@ -37,10 +37,10 @@ type AchievementUser struct {
 	DirectConsumeAmount decimal.Decimal `json:"direct_consume_amount,omitempty"`
 	// InviteeConsumeAmount holds the value of the "invitee_consume_amount" field.
 	InviteeConsumeAmount decimal.Decimal `json:"invitee_consume_amount,omitempty"`
-	// DirectInvites holds the value of the "direct_invites" field.
-	DirectInvites uint32 `json:"direct_invites,omitempty"`
-	// IndirectInvites holds the value of the "indirect_invites" field.
-	IndirectInvites uint32 `json:"indirect_invites,omitempty"`
+	// DirectInvitees holds the value of the "direct_invitees" field.
+	DirectInvitees uint32 `json:"direct_invitees,omitempty"`
+	// IndirectInvitees holds the value of the "indirect_invitees" field.
+	IndirectInvitees uint32 `json:"indirect_invitees,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -50,7 +50,7 @@ func (*AchievementUser) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case achievementuser.FieldTotalCommission, achievementuser.FieldSelfCommission, achievementuser.FieldDirectConsumeAmount, achievementuser.FieldInviteeConsumeAmount:
 			values[i] = new(decimal.Decimal)
-		case achievementuser.FieldID, achievementuser.FieldCreatedAt, achievementuser.FieldUpdatedAt, achievementuser.FieldDeletedAt, achievementuser.FieldDirectInvites, achievementuser.FieldIndirectInvites:
+		case achievementuser.FieldID, achievementuser.FieldCreatedAt, achievementuser.FieldUpdatedAt, achievementuser.FieldDeletedAt, achievementuser.FieldDirectInvitees, achievementuser.FieldIndirectInvitees:
 			values[i] = new(sql.NullInt64)
 		case achievementuser.FieldEntID, achievementuser.FieldAppID, achievementuser.FieldUserID:
 			values[i] = new(uuid.UUID)
@@ -135,17 +135,17 @@ func (au *AchievementUser) assignValues(columns []string, values []interface{}) 
 			} else if value != nil {
 				au.InviteeConsumeAmount = *value
 			}
-		case achievementuser.FieldDirectInvites:
+		case achievementuser.FieldDirectInvitees:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field direct_invites", values[i])
+				return fmt.Errorf("unexpected type %T for field direct_invitees", values[i])
 			} else if value.Valid {
-				au.DirectInvites = uint32(value.Int64)
+				au.DirectInvitees = uint32(value.Int64)
 			}
-		case achievementuser.FieldIndirectInvites:
+		case achievementuser.FieldIndirectInvitees:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field indirect_invites", values[i])
+				return fmt.Errorf("unexpected type %T for field indirect_invitees", values[i])
 			} else if value.Valid {
-				au.IndirectInvites = uint32(value.Int64)
+				au.IndirectInvitees = uint32(value.Int64)
 			}
 		}
 	}
@@ -205,11 +205,11 @@ func (au *AchievementUser) String() string {
 	builder.WriteString("invitee_consume_amount=")
 	builder.WriteString(fmt.Sprintf("%v", au.InviteeConsumeAmount))
 	builder.WriteString(", ")
-	builder.WriteString("direct_invites=")
-	builder.WriteString(fmt.Sprintf("%v", au.DirectInvites))
+	builder.WriteString("direct_invitees=")
+	builder.WriteString(fmt.Sprintf("%v", au.DirectInvitees))
 	builder.WriteString(", ")
-	builder.WriteString("indirect_invites=")
-	builder.WriteString(fmt.Sprintf("%v", au.IndirectInvites))
+	builder.WriteString("indirect_invitees=")
+	builder.WriteString(fmt.Sprintf("%v", au.IndirectInvitees))
 	builder.WriteByte(')')
 	return builder.String()
 }

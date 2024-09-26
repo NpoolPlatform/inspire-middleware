@@ -54,8 +54,8 @@ var (
 		{Name: "self_commission", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "direct_consume_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
 		{Name: "invitee_consume_amount", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},
-		{Name: "direct_invites", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "indirect_invites", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "direct_invitees", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "indirect_invitees", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// AchievementUsersTable holds the schema information for the "achievement_users" table.
 	AchievementUsersTable = &schema.Table{
@@ -618,6 +618,7 @@ var (
 		{Name: "good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "app_good_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "direct_contributor_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "good_coin_type_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "units", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(37,18)"}},

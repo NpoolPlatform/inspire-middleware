@@ -66,11 +66,11 @@ func (AchievementUser) Fields() []ent.Field {
 			Optional().
 			Default(decimal.Decimal{}),
 		field.
-			Uint32("direct_invites").
+			Uint32("direct_invitees").
 			Optional().
 			Default(0),
 		field.
-			Uint32("indirect_invites").
+			Uint32("indirect_invitees").
 			Optional().
 			Default(0),
 	}

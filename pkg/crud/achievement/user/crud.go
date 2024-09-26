@@ -16,8 +16,8 @@ type Req struct {
 	UserID               *uuid.UUID
 	TotalCommission      *decimal.Decimal
 	SelfCommission       *decimal.Decimal
-	DirectInvites        *uint32
-	IndirectInvites      *uint32
+	DirectInvitees       *uint32
+	IndirectInvitees     *uint32
 	DirectConsumeAmount  *decimal.Decimal
 	InviteeConsumeAmount *decimal.Decimal
 }
@@ -38,11 +38,11 @@ func CreateSet(c *ent.AchievementUserCreate, req *Req) *ent.AchievementUserCreat
 	if req.SelfCommission != nil {
 		c.SetSelfCommission(*req.SelfCommission)
 	}
-	if req.DirectInvites != nil {
-		c.SetDirectInvites(*req.DirectInvites)
+	if req.DirectInvitees != nil {
+		c.SetDirectInvitees(*req.DirectInvitees)
 	}
-	if req.IndirectInvites != nil {
-		c.SetIndirectInvites(*req.IndirectInvites)
+	if req.IndirectInvitees != nil {
+		c.SetIndirectInvitees(*req.IndirectInvitees)
 	}
 	if req.DirectConsumeAmount != nil {
 		c.SetDirectConsumeAmount(*req.DirectConsumeAmount)
@@ -61,11 +61,11 @@ func UpdateSet(u *ent.AchievementUserUpdateOne, req *Req) *ent.AchievementUserUp
 	if req.SelfCommission != nil {
 		u = u.SetSelfCommission(*req.SelfCommission)
 	}
-	if req.DirectInvites != nil {
-		u = u.SetDirectInvites(*req.DirectInvites)
+	if req.DirectInvitees != nil {
+		u = u.SetDirectInvitees(*req.DirectInvitees)
 	}
-	if req.IndirectInvites != nil {
-		u = u.SetIndirectInvites(*req.IndirectInvites)
+	if req.IndirectInvitees != nil {
+		u = u.SetIndirectInvitees(*req.IndirectInvitees)
 	}
 	if req.DirectConsumeAmount != nil {
 		u = u.SetDirectConsumeAmount(*req.DirectConsumeAmount)

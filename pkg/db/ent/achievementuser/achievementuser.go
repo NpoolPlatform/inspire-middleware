@@ -33,10 +33,10 @@ const (
 	FieldDirectConsumeAmount = "direct_consume_amount"
 	// FieldInviteeConsumeAmount holds the string denoting the invitee_consume_amount field in the database.
 	FieldInviteeConsumeAmount = "invitee_consume_amount"
-	// FieldDirectInvites holds the string denoting the direct_invites field in the database.
-	FieldDirectInvites = "direct_invites"
-	// FieldIndirectInvites holds the string denoting the indirect_invites field in the database.
-	FieldIndirectInvites = "indirect_invites"
+	// FieldDirectInvitees holds the string denoting the direct_invitees field in the database.
+	FieldDirectInvitees = "direct_invitees"
+	// FieldIndirectInvitees holds the string denoting the indirect_invitees field in the database.
+	FieldIndirectInvitees = "indirect_invitees"
 	// Table holds the table name of the achievementuser in the database.
 	Table = "achievement_users"
 )
@@ -54,8 +54,8 @@ var Columns = []string{
 	FieldSelfCommission,
 	FieldDirectConsumeAmount,
 	FieldInviteeConsumeAmount,
-	FieldDirectInvites,
-	FieldIndirectInvites,
+	FieldDirectInvitees,
+	FieldIndirectInvitees,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -99,8 +99,8 @@ var (
 	DefaultDirectConsumeAmount decimal.Decimal
 	// DefaultInviteeConsumeAmount holds the default value on creation for the "invitee_consume_amount" field.
 	DefaultInviteeConsumeAmount decimal.Decimal
-	// DefaultDirectInvites holds the default value on creation for the "direct_invites" field.
-	DefaultDirectInvites uint32
-	// DefaultIndirectInvites holds the default value on creation for the "indirect_invites" field.
-	DefaultIndirectInvites uint32
+	// DefaultDirectInvitees holds the default value on creation for the "direct_invitees" field.
+	DefaultDirectInvitees uint32
+	// DefaultIndirectInvitees holds the default value on creation for the "indirect_invitees" field.
+	DefaultIndirectInvitees uint32
 )
