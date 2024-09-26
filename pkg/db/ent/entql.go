@@ -10,11 +10,16 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodcommissionconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/appgoodscope"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/cashcontrol"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinallocated"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coinconfig"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/commission"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/couponscope"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/creditallocated"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/event"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoin"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/eventcoupon"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/goodcoinachievement"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/invitationcode"
@@ -23,6 +28,10 @@ import (
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/pubsubmessage"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/registration"
 	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/statement"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskconfig"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/taskuser"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/usercoinreward"
+	"github.com/NpoolPlatform/inspire-middleware/pkg/db/ent/userreward"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -32,7 +41,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 20)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 29)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   achievement.Table,
@@ -210,6 +219,50 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   coinallocated.Table,
+			Columns: coinallocated.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: coinallocated.FieldID,
+			},
+		},
+		Type: "CoinAllocated",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			coinallocated.FieldCreatedAt:    {Type: field.TypeUint32, Column: coinallocated.FieldCreatedAt},
+			coinallocated.FieldUpdatedAt:    {Type: field.TypeUint32, Column: coinallocated.FieldUpdatedAt},
+			coinallocated.FieldDeletedAt:    {Type: field.TypeUint32, Column: coinallocated.FieldDeletedAt},
+			coinallocated.FieldEntID:        {Type: field.TypeUUID, Column: coinallocated.FieldEntID},
+			coinallocated.FieldAppID:        {Type: field.TypeUUID, Column: coinallocated.FieldAppID},
+			coinallocated.FieldCoinConfigID: {Type: field.TypeUUID, Column: coinallocated.FieldCoinConfigID},
+			coinallocated.FieldCoinTypeID:   {Type: field.TypeUUID, Column: coinallocated.FieldCoinTypeID},
+			coinallocated.FieldUserID:       {Type: field.TypeUUID, Column: coinallocated.FieldUserID},
+			coinallocated.FieldValue:        {Type: field.TypeOther, Column: coinallocated.FieldValue},
+			coinallocated.FieldExtra:        {Type: field.TypeString, Column: coinallocated.FieldExtra},
+		},
+	}
+	graph.Nodes[8] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   coinconfig.Table,
+			Columns: coinconfig.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: coinconfig.FieldID,
+			},
+		},
+		Type: "CoinConfig",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			coinconfig.FieldCreatedAt:  {Type: field.TypeUint32, Column: coinconfig.FieldCreatedAt},
+			coinconfig.FieldUpdatedAt:  {Type: field.TypeUint32, Column: coinconfig.FieldUpdatedAt},
+			coinconfig.FieldDeletedAt:  {Type: field.TypeUint32, Column: coinconfig.FieldDeletedAt},
+			coinconfig.FieldEntID:      {Type: field.TypeUUID, Column: coinconfig.FieldEntID},
+			coinconfig.FieldAppID:      {Type: field.TypeUUID, Column: coinconfig.FieldAppID},
+			coinconfig.FieldCoinTypeID: {Type: field.TypeUUID, Column: coinconfig.FieldCoinTypeID},
+			coinconfig.FieldMaxValue:   {Type: field.TypeOther, Column: coinconfig.FieldMaxValue},
+			coinconfig.FieldAllocated:  {Type: field.TypeOther, Column: coinconfig.FieldAllocated},
+		},
+	}
+	graph.Nodes[9] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   commission.Table,
 			Columns: commission.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -238,7 +291,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			commission.FieldOrderLimit:       {Type: field.TypeUint32, Column: commission.FieldOrderLimit},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   coupon.Table,
 			Columns: coupon.Columns,
@@ -271,7 +324,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupon.FieldCashableProbability: {Type: field.TypeOther, Column: coupon.FieldCashableProbability},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponallocated.Table,
 			Columns: couponallocated.Columns,
@@ -296,9 +349,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponallocated.FieldStartAt:       {Type: field.TypeUint32, Column: couponallocated.FieldStartAt},
 			couponallocated.FieldCouponScope:   {Type: field.TypeString, Column: couponallocated.FieldCouponScope},
 			couponallocated.FieldCashable:      {Type: field.TypeBool, Column: couponallocated.FieldCashable},
+			couponallocated.FieldExtra:         {Type: field.TypeString, Column: couponallocated.FieldExtra},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   couponscope.Table,
 			Columns: couponscope.Columns,
@@ -318,7 +372,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 			couponscope.FieldCouponScope: {Type: field.TypeString, Column: couponscope.FieldCouponScope},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[13] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   creditallocated.Table,
+			Columns: creditallocated.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: creditallocated.FieldID,
+			},
+		},
+		Type: "CreditAllocated",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			creditallocated.FieldCreatedAt: {Type: field.TypeUint32, Column: creditallocated.FieldCreatedAt},
+			creditallocated.FieldUpdatedAt: {Type: field.TypeUint32, Column: creditallocated.FieldUpdatedAt},
+			creditallocated.FieldDeletedAt: {Type: field.TypeUint32, Column: creditallocated.FieldDeletedAt},
+			creditallocated.FieldEntID:     {Type: field.TypeUUID, Column: creditallocated.FieldEntID},
+			creditallocated.FieldAppID:     {Type: field.TypeUUID, Column: creditallocated.FieldAppID},
+			creditallocated.FieldUserID:    {Type: field.TypeUUID, Column: creditallocated.FieldUserID},
+			creditallocated.FieldValue:     {Type: field.TypeOther, Column: creditallocated.FieldValue},
+			creditallocated.FieldExtra:     {Type: field.TypeString, Column: creditallocated.FieldExtra},
+		},
+	}
+	graph.Nodes[14] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   event.Table,
 			Columns: event.Columns,
@@ -335,7 +410,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldEntID:          {Type: field.TypeUUID, Column: event.FieldEntID},
 			event.FieldAppID:          {Type: field.TypeUUID, Column: event.FieldAppID},
 			event.FieldEventType:      {Type: field.TypeString, Column: event.FieldEventType},
-			event.FieldCouponIds:      {Type: field.TypeJSON, Column: event.FieldCouponIds},
 			event.FieldCredits:        {Type: field.TypeOther, Column: event.FieldCredits},
 			event.FieldCreditsPerUsd:  {Type: field.TypeOther, Column: event.FieldCreditsPerUsd},
 			event.FieldMaxConsecutive: {Type: field.TypeUint32, Column: event.FieldMaxConsecutive},
@@ -344,7 +418,49 @@ var schemaGraph = func() *sqlgraph.Schema {
 			event.FieldInviterLayers:  {Type: field.TypeUint32, Column: event.FieldInviterLayers},
 		},
 	}
-	graph.Nodes[12] = &sqlgraph.Node{
+	graph.Nodes[15] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   eventcoin.Table,
+			Columns: eventcoin.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: eventcoin.FieldID,
+			},
+		},
+		Type: "EventCoin",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			eventcoin.FieldCreatedAt:    {Type: field.TypeUint32, Column: eventcoin.FieldCreatedAt},
+			eventcoin.FieldUpdatedAt:    {Type: field.TypeUint32, Column: eventcoin.FieldUpdatedAt},
+			eventcoin.FieldDeletedAt:    {Type: field.TypeUint32, Column: eventcoin.FieldDeletedAt},
+			eventcoin.FieldEntID:        {Type: field.TypeUUID, Column: eventcoin.FieldEntID},
+			eventcoin.FieldAppID:        {Type: field.TypeUUID, Column: eventcoin.FieldAppID},
+			eventcoin.FieldEventID:      {Type: field.TypeUUID, Column: eventcoin.FieldEventID},
+			eventcoin.FieldCoinConfigID: {Type: field.TypeUUID, Column: eventcoin.FieldCoinConfigID},
+			eventcoin.FieldCoinValue:    {Type: field.TypeOther, Column: eventcoin.FieldCoinValue},
+			eventcoin.FieldCoinPerUsd:   {Type: field.TypeOther, Column: eventcoin.FieldCoinPerUsd},
+		},
+	}
+	graph.Nodes[16] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   eventcoupon.Table,
+			Columns: eventcoupon.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: eventcoupon.FieldID,
+			},
+		},
+		Type: "EventCoupon",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			eventcoupon.FieldCreatedAt: {Type: field.TypeUint32, Column: eventcoupon.FieldCreatedAt},
+			eventcoupon.FieldUpdatedAt: {Type: field.TypeUint32, Column: eventcoupon.FieldUpdatedAt},
+			eventcoupon.FieldDeletedAt: {Type: field.TypeUint32, Column: eventcoupon.FieldDeletedAt},
+			eventcoupon.FieldEntID:     {Type: field.TypeUUID, Column: eventcoupon.FieldEntID},
+			eventcoupon.FieldAppID:     {Type: field.TypeUUID, Column: eventcoupon.FieldAppID},
+			eventcoupon.FieldEventID:   {Type: field.TypeUUID, Column: eventcoupon.FieldEventID},
+			eventcoupon.FieldCouponID:  {Type: field.TypeUUID, Column: eventcoupon.FieldCouponID},
+		},
+	}
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   goodachievement.Table,
 			Columns: goodachievement.Columns,
@@ -371,7 +487,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			goodachievement.FieldSelfCommissionUsd:  {Type: field.TypeOther, Column: goodachievement.FieldSelfCommissionUsd},
 		},
 	}
-	graph.Nodes[13] = &sqlgraph.Node{
+	graph.Nodes[18] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   goodcoinachievement.Table,
 			Columns: goodcoinachievement.Columns,
@@ -397,7 +513,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			goodcoinachievement.FieldSelfCommissionUsd:  {Type: field.TypeOther, Column: goodcoinachievement.FieldSelfCommissionUsd},
 		},
 	}
-	graph.Nodes[14] = &sqlgraph.Node{
+	graph.Nodes[19] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invitationcode.Table,
 			Columns: invitationcode.Columns,
@@ -418,7 +534,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invitationcode.FieldDisabled:       {Type: field.TypeBool, Column: invitationcode.FieldDisabled},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[20] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderpaymentstatement.Table,
 			Columns: orderpaymentstatement.Columns,
@@ -439,7 +555,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderpaymentstatement.FieldCommissionAmount:  {Type: field.TypeOther, Column: orderpaymentstatement.FieldCommissionAmount},
 		},
 	}
-	graph.Nodes[16] = &sqlgraph.Node{
+	graph.Nodes[21] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderstatement.Table,
 			Columns: orderstatement.Columns,
@@ -471,7 +587,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderstatement.FieldCommissionConfigType: {Type: field.TypeString, Column: orderstatement.FieldCommissionConfigType},
 		},
 	}
-	graph.Nodes[17] = &sqlgraph.Node{
+	graph.Nodes[22] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   pubsubmessage.Table,
 			Columns: pubsubmessage.Columns,
@@ -493,7 +609,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			pubsubmessage.FieldArguments: {Type: field.TypeString, Column: pubsubmessage.FieldArguments},
 		},
 	}
-	graph.Nodes[18] = &sqlgraph.Node{
+	graph.Nodes[23] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   registration.Table,
 			Columns: registration.Columns,
@@ -513,7 +629,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			registration.FieldInviteeID: {Type: field.TypeUUID, Column: registration.FieldInviteeID},
 		},
 	}
-	graph.Nodes[19] = &sqlgraph.Node{
+	graph.Nodes[24] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   statement.Table,
 			Columns: statement.Columns,
@@ -547,6 +663,103 @@ var schemaGraph = func() *sqlgraph.Schema {
 			statement.FieldAppConfigID:            {Type: field.TypeUUID, Column: statement.FieldAppConfigID},
 			statement.FieldCommissionConfigID:     {Type: field.TypeUUID, Column: statement.FieldCommissionConfigID},
 			statement.FieldCommissionConfigType:   {Type: field.TypeString, Column: statement.FieldCommissionConfigType},
+		},
+	}
+	graph.Nodes[25] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   taskconfig.Table,
+			Columns: taskconfig.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: taskconfig.FieldID,
+			},
+		},
+		Type: "TaskConfig",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			taskconfig.FieldCreatedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldCreatedAt},
+			taskconfig.FieldUpdatedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldUpdatedAt},
+			taskconfig.FieldDeletedAt:              {Type: field.TypeUint32, Column: taskconfig.FieldDeletedAt},
+			taskconfig.FieldEntID:                  {Type: field.TypeUUID, Column: taskconfig.FieldEntID},
+			taskconfig.FieldAppID:                  {Type: field.TypeUUID, Column: taskconfig.FieldAppID},
+			taskconfig.FieldEventID:                {Type: field.TypeUUID, Column: taskconfig.FieldEventID},
+			taskconfig.FieldTaskType:               {Type: field.TypeString, Column: taskconfig.FieldTaskType},
+			taskconfig.FieldName:                   {Type: field.TypeString, Column: taskconfig.FieldName},
+			taskconfig.FieldTaskDesc:               {Type: field.TypeString, Column: taskconfig.FieldTaskDesc},
+			taskconfig.FieldStepGuide:              {Type: field.TypeString, Column: taskconfig.FieldStepGuide},
+			taskconfig.FieldRecommendMessage:       {Type: field.TypeString, Column: taskconfig.FieldRecommendMessage},
+			taskconfig.FieldIndex:                  {Type: field.TypeUint32, Column: taskconfig.FieldIndex},
+			taskconfig.FieldLastTaskID:             {Type: field.TypeUUID, Column: taskconfig.FieldLastTaskID},
+			taskconfig.FieldMaxRewardCount:         {Type: field.TypeUint32, Column: taskconfig.FieldMaxRewardCount},
+			taskconfig.FieldCooldownSecond:         {Type: field.TypeUint32, Column: taskconfig.FieldCooldownSecond},
+			taskconfig.FieldIntervalReset:          {Type: field.TypeBool, Column: taskconfig.FieldIntervalReset},
+			taskconfig.FieldIntervalResetSecond:    {Type: field.TypeUint32, Column: taskconfig.FieldIntervalResetSecond},
+			taskconfig.FieldMaxIntervalRewardCount: {Type: field.TypeUint32, Column: taskconfig.FieldMaxIntervalRewardCount},
+		},
+	}
+	graph.Nodes[26] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   taskuser.Table,
+			Columns: taskuser.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: taskuser.FieldID,
+			},
+		},
+		Type: "TaskUser",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			taskuser.FieldCreatedAt:   {Type: field.TypeUint32, Column: taskuser.FieldCreatedAt},
+			taskuser.FieldUpdatedAt:   {Type: field.TypeUint32, Column: taskuser.FieldUpdatedAt},
+			taskuser.FieldDeletedAt:   {Type: field.TypeUint32, Column: taskuser.FieldDeletedAt},
+			taskuser.FieldEntID:       {Type: field.TypeUUID, Column: taskuser.FieldEntID},
+			taskuser.FieldAppID:       {Type: field.TypeUUID, Column: taskuser.FieldAppID},
+			taskuser.FieldUserID:      {Type: field.TypeUUID, Column: taskuser.FieldUserID},
+			taskuser.FieldTaskID:      {Type: field.TypeUUID, Column: taskuser.FieldTaskID},
+			taskuser.FieldEventID:     {Type: field.TypeUUID, Column: taskuser.FieldEventID},
+			taskuser.FieldTaskState:   {Type: field.TypeString, Column: taskuser.FieldTaskState},
+			taskuser.FieldRewardState: {Type: field.TypeString, Column: taskuser.FieldRewardState},
+		},
+	}
+	graph.Nodes[27] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usercoinreward.Table,
+			Columns: usercoinreward.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: usercoinreward.FieldID,
+			},
+		},
+		Type: "UserCoinReward",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usercoinreward.FieldCreatedAt:   {Type: field.TypeUint32, Column: usercoinreward.FieldCreatedAt},
+			usercoinreward.FieldUpdatedAt:   {Type: field.TypeUint32, Column: usercoinreward.FieldUpdatedAt},
+			usercoinreward.FieldDeletedAt:   {Type: field.TypeUint32, Column: usercoinreward.FieldDeletedAt},
+			usercoinreward.FieldEntID:       {Type: field.TypeUUID, Column: usercoinreward.FieldEntID},
+			usercoinreward.FieldAppID:       {Type: field.TypeUUID, Column: usercoinreward.FieldAppID},
+			usercoinreward.FieldUserID:      {Type: field.TypeUUID, Column: usercoinreward.FieldUserID},
+			usercoinreward.FieldCoinTypeID:  {Type: field.TypeUUID, Column: usercoinreward.FieldCoinTypeID},
+			usercoinreward.FieldCoinRewards: {Type: field.TypeOther, Column: usercoinreward.FieldCoinRewards},
+		},
+	}
+	graph.Nodes[28] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   userreward.Table,
+			Columns: userreward.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUint32,
+				Column: userreward.FieldID,
+			},
+		},
+		Type: "UserReward",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			userreward.FieldCreatedAt:            {Type: field.TypeUint32, Column: userreward.FieldCreatedAt},
+			userreward.FieldUpdatedAt:            {Type: field.TypeUint32, Column: userreward.FieldUpdatedAt},
+			userreward.FieldDeletedAt:            {Type: field.TypeUint32, Column: userreward.FieldDeletedAt},
+			userreward.FieldEntID:                {Type: field.TypeUUID, Column: userreward.FieldEntID},
+			userreward.FieldAppID:                {Type: field.TypeUUID, Column: userreward.FieldAppID},
+			userreward.FieldUserID:               {Type: field.TypeUUID, Column: userreward.FieldUserID},
+			userreward.FieldActionCredits:        {Type: field.TypeOther, Column: userreward.FieldActionCredits},
+			userreward.FieldCouponAmount:         {Type: field.TypeOther, Column: userreward.FieldCouponAmount},
+			userreward.FieldCouponCashableAmount: {Type: field.TypeOther, Column: userreward.FieldCouponCashableAmount},
 		},
 	}
 	return graph
@@ -1259,6 +1472,176 @@ func (f *CashControlFilter) WhereValue(p entql.OtherP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (caq *CoinAllocatedQuery) addPredicate(pred func(s *sql.Selector)) {
+	caq.predicates = append(caq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CoinAllocatedQuery builder.
+func (caq *CoinAllocatedQuery) Filter() *CoinAllocatedFilter {
+	return &CoinAllocatedFilter{config: caq.config, predicateAdder: caq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CoinAllocatedMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CoinAllocatedMutation builder.
+func (m *CoinAllocatedMutation) Filter() *CoinAllocatedFilter {
+	return &CoinAllocatedFilter{config: m.config, predicateAdder: m}
+}
+
+// CoinAllocatedFilter provides a generic filtering capability at runtime for CoinAllocatedQuery.
+type CoinAllocatedFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CoinAllocatedFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CoinAllocatedFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(coinallocated.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CoinAllocatedFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinallocated.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CoinAllocatedFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinallocated.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CoinAllocatedFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinallocated.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CoinAllocatedFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(coinallocated.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CoinAllocatedFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(coinallocated.FieldAppID))
+}
+
+// WhereCoinConfigID applies the entql [16]byte predicate on the coin_config_id field.
+func (f *CoinAllocatedFilter) WhereCoinConfigID(p entql.ValueP) {
+	f.Where(p.Field(coinallocated.FieldCoinConfigID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *CoinAllocatedFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(coinallocated.FieldCoinTypeID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *CoinAllocatedFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(coinallocated.FieldUserID))
+}
+
+// WhereValue applies the entql other predicate on the value field.
+func (f *CoinAllocatedFilter) WhereValue(p entql.OtherP) {
+	f.Where(p.Field(coinallocated.FieldValue))
+}
+
+// WhereExtra applies the entql string predicate on the extra field.
+func (f *CoinAllocatedFilter) WhereExtra(p entql.StringP) {
+	f.Where(p.Field(coinallocated.FieldExtra))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ccq *CoinConfigQuery) addPredicate(pred func(s *sql.Selector)) {
+	ccq.predicates = append(ccq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CoinConfigQuery builder.
+func (ccq *CoinConfigQuery) Filter() *CoinConfigFilter {
+	return &CoinConfigFilter{config: ccq.config, predicateAdder: ccq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CoinConfigMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CoinConfigMutation builder.
+func (m *CoinConfigMutation) Filter() *CoinConfigFilter {
+	return &CoinConfigFilter{config: m.config, predicateAdder: m}
+}
+
+// CoinConfigFilter provides a generic filtering capability at runtime for CoinConfigQuery.
+type CoinConfigFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CoinConfigFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CoinConfigFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(coinconfig.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CoinConfigFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinconfig.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CoinConfigFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinconfig.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CoinConfigFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(coinconfig.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CoinConfigFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(coinconfig.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CoinConfigFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(coinconfig.FieldAppID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *CoinConfigFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(coinconfig.FieldCoinTypeID))
+}
+
+// WhereMaxValue applies the entql other predicate on the max_value field.
+func (f *CoinConfigFilter) WhereMaxValue(p entql.OtherP) {
+	f.Where(p.Field(coinconfig.FieldMaxValue))
+}
+
+// WhereAllocated applies the entql other predicate on the allocated field.
+func (f *CoinConfigFilter) WhereAllocated(p entql.OtherP) {
+	f.Where(p.Field(coinconfig.FieldAllocated))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (cq *CommissionQuery) addPredicate(pred func(s *sql.Selector)) {
 	cq.predicates = append(cq.predicates, pred)
 }
@@ -1287,7 +1670,7 @@ type CommissionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CommissionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1412,7 +1795,7 @@ type CouponFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1552,7 +1935,7 @@ type CouponAllocatedFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponAllocatedFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1633,6 +2016,11 @@ func (f *CouponAllocatedFilter) WhereCashable(p entql.BoolP) {
 	f.Where(p.Field(couponallocated.FieldCashable))
 }
 
+// WhereExtra applies the entql string predicate on the extra field.
+func (f *CouponAllocatedFilter) WhereExtra(p entql.StringP) {
+	f.Where(p.Field(couponallocated.FieldExtra))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (csq *CouponScopeQuery) addPredicate(pred func(s *sql.Selector)) {
 	csq.predicates = append(csq.predicates, pred)
@@ -1662,7 +2050,7 @@ type CouponScopeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CouponScopeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1709,6 +2097,86 @@ func (f *CouponScopeFilter) WhereCouponScope(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (caq *CreditAllocatedQuery) addPredicate(pred func(s *sql.Selector)) {
+	caq.predicates = append(caq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CreditAllocatedQuery builder.
+func (caq *CreditAllocatedQuery) Filter() *CreditAllocatedFilter {
+	return &CreditAllocatedFilter{config: caq.config, predicateAdder: caq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CreditAllocatedMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CreditAllocatedMutation builder.
+func (m *CreditAllocatedMutation) Filter() *CreditAllocatedFilter {
+	return &CreditAllocatedFilter{config: m.config, predicateAdder: m}
+}
+
+// CreditAllocatedFilter provides a generic filtering capability at runtime for CreditAllocatedQuery.
+type CreditAllocatedFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CreditAllocatedFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *CreditAllocatedFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(creditallocated.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *CreditAllocatedFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(creditallocated.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *CreditAllocatedFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(creditallocated.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *CreditAllocatedFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(creditallocated.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *CreditAllocatedFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(creditallocated.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *CreditAllocatedFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(creditallocated.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *CreditAllocatedFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(creditallocated.FieldUserID))
+}
+
+// WhereValue applies the entql other predicate on the value field.
+func (f *CreditAllocatedFilter) WhereValue(p entql.OtherP) {
+	f.Where(p.Field(creditallocated.FieldValue))
+}
+
+// WhereExtra applies the entql string predicate on the extra field.
+func (f *CreditAllocatedFilter) WhereExtra(p entql.StringP) {
+	f.Where(p.Field(creditallocated.FieldExtra))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (eq *EventQuery) addPredicate(pred func(s *sql.Selector)) {
 	eq.predicates = append(eq.predicates, pred)
 }
@@ -1737,7 +2205,7 @@ type EventFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EventFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1778,11 +2246,6 @@ func (f *EventFilter) WhereEventType(p entql.StringP) {
 	f.Where(p.Field(event.FieldEventType))
 }
 
-// WhereCouponIds applies the entql json.RawMessage predicate on the coupon_ids field.
-func (f *EventFilter) WhereCouponIds(p entql.BytesP) {
-	f.Where(p.Field(event.FieldCouponIds))
-}
-
 // WhereCredits applies the entql other predicate on the credits field.
 func (f *EventFilter) WhereCredits(p entql.OtherP) {
 	f.Where(p.Field(event.FieldCredits))
@@ -1814,6 +2277,166 @@ func (f *EventFilter) WhereInviterLayers(p entql.Uint32P) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ecq *EventCoinQuery) addPredicate(pred func(s *sql.Selector)) {
+	ecq.predicates = append(ecq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EventCoinQuery builder.
+func (ecq *EventCoinQuery) Filter() *EventCoinFilter {
+	return &EventCoinFilter{config: ecq.config, predicateAdder: ecq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EventCoinMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EventCoinMutation builder.
+func (m *EventCoinMutation) Filter() *EventCoinFilter {
+	return &EventCoinFilter{config: m.config, predicateAdder: m}
+}
+
+// EventCoinFilter provides a generic filtering capability at runtime for EventCoinQuery.
+type EventCoinFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EventCoinFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *EventCoinFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(eventcoin.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *EventCoinFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoin.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *EventCoinFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoin.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *EventCoinFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoin.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *EventCoinFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(eventcoin.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *EventCoinFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(eventcoin.FieldAppID))
+}
+
+// WhereEventID applies the entql [16]byte predicate on the event_id field.
+func (f *EventCoinFilter) WhereEventID(p entql.ValueP) {
+	f.Where(p.Field(eventcoin.FieldEventID))
+}
+
+// WhereCoinConfigID applies the entql [16]byte predicate on the coin_config_id field.
+func (f *EventCoinFilter) WhereCoinConfigID(p entql.ValueP) {
+	f.Where(p.Field(eventcoin.FieldCoinConfigID))
+}
+
+// WhereCoinValue applies the entql other predicate on the coin_value field.
+func (f *EventCoinFilter) WhereCoinValue(p entql.OtherP) {
+	f.Where(p.Field(eventcoin.FieldCoinValue))
+}
+
+// WhereCoinPerUsd applies the entql other predicate on the coin_per_usd field.
+func (f *EventCoinFilter) WhereCoinPerUsd(p entql.OtherP) {
+	f.Where(p.Field(eventcoin.FieldCoinPerUsd))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ecq *EventCouponQuery) addPredicate(pred func(s *sql.Selector)) {
+	ecq.predicates = append(ecq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EventCouponQuery builder.
+func (ecq *EventCouponQuery) Filter() *EventCouponFilter {
+	return &EventCouponFilter{config: ecq.config, predicateAdder: ecq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EventCouponMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EventCouponMutation builder.
+func (m *EventCouponMutation) Filter() *EventCouponFilter {
+	return &EventCouponFilter{config: m.config, predicateAdder: m}
+}
+
+// EventCouponFilter provides a generic filtering capability at runtime for EventCouponQuery.
+type EventCouponFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EventCouponFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *EventCouponFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(eventcoupon.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *EventCouponFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoupon.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *EventCouponFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoupon.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *EventCouponFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(eventcoupon.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *EventCouponFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(eventcoupon.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *EventCouponFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(eventcoupon.FieldAppID))
+}
+
+// WhereEventID applies the entql [16]byte predicate on the event_id field.
+func (f *EventCouponFilter) WhereEventID(p entql.ValueP) {
+	f.Where(p.Field(eventcoupon.FieldEventID))
+}
+
+// WhereCouponID applies the entql [16]byte predicate on the coupon_id field.
+func (f *EventCouponFilter) WhereCouponID(p entql.ValueP) {
+	f.Where(p.Field(eventcoupon.FieldCouponID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (gaq *GoodAchievementQuery) addPredicate(pred func(s *sql.Selector)) {
 	gaq.predicates = append(gaq.predicates, pred)
 }
@@ -1842,7 +2465,7 @@ type GoodAchievementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GoodAchievementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1952,7 +2575,7 @@ type GoodCoinAchievementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GoodCoinAchievementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2057,7 +2680,7 @@ type InvitationCodeFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvitationCodeFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2137,7 +2760,7 @@ type OrderPaymentStatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderPaymentStatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2217,7 +2840,7 @@ type OrderStatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderStatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[21].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2352,7 +2975,7 @@ type PubsubMessageFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PubsubMessageFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[22].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2437,7 +3060,7 @@ type RegistrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RegistrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[23].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2512,7 +3135,7 @@ type StatementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *StatementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[24].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2636,4 +3259,389 @@ func (f *StatementFilter) WhereCommissionConfigID(p entql.ValueP) {
 // WhereCommissionConfigType applies the entql string predicate on the commission_config_type field.
 func (f *StatementFilter) WhereCommissionConfigType(p entql.StringP) {
 	f.Where(p.Field(statement.FieldCommissionConfigType))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (tcq *TaskConfigQuery) addPredicate(pred func(s *sql.Selector)) {
+	tcq.predicates = append(tcq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TaskConfigQuery builder.
+func (tcq *TaskConfigQuery) Filter() *TaskConfigFilter {
+	return &TaskConfigFilter{config: tcq.config, predicateAdder: tcq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TaskConfigMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TaskConfigMutation builder.
+func (m *TaskConfigMutation) Filter() *TaskConfigFilter {
+	return &TaskConfigFilter{config: m.config, predicateAdder: m}
+}
+
+// TaskConfigFilter provides a generic filtering capability at runtime for TaskConfigQuery.
+type TaskConfigFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TaskConfigFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[25].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *TaskConfigFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *TaskConfigFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *TaskConfigFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *TaskConfigFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *TaskConfigFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(taskconfig.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *TaskConfigFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(taskconfig.FieldAppID))
+}
+
+// WhereEventID applies the entql [16]byte predicate on the event_id field.
+func (f *TaskConfigFilter) WhereEventID(p entql.ValueP) {
+	f.Where(p.Field(taskconfig.FieldEventID))
+}
+
+// WhereTaskType applies the entql string predicate on the task_type field.
+func (f *TaskConfigFilter) WhereTaskType(p entql.StringP) {
+	f.Where(p.Field(taskconfig.FieldTaskType))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *TaskConfigFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(taskconfig.FieldName))
+}
+
+// WhereTaskDesc applies the entql string predicate on the task_desc field.
+func (f *TaskConfigFilter) WhereTaskDesc(p entql.StringP) {
+	f.Where(p.Field(taskconfig.FieldTaskDesc))
+}
+
+// WhereStepGuide applies the entql string predicate on the step_guide field.
+func (f *TaskConfigFilter) WhereStepGuide(p entql.StringP) {
+	f.Where(p.Field(taskconfig.FieldStepGuide))
+}
+
+// WhereRecommendMessage applies the entql string predicate on the recommend_message field.
+func (f *TaskConfigFilter) WhereRecommendMessage(p entql.StringP) {
+	f.Where(p.Field(taskconfig.FieldRecommendMessage))
+}
+
+// WhereIndex applies the entql uint32 predicate on the index field.
+func (f *TaskConfigFilter) WhereIndex(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldIndex))
+}
+
+// WhereLastTaskID applies the entql [16]byte predicate on the last_task_id field.
+func (f *TaskConfigFilter) WhereLastTaskID(p entql.ValueP) {
+	f.Where(p.Field(taskconfig.FieldLastTaskID))
+}
+
+// WhereMaxRewardCount applies the entql uint32 predicate on the max_reward_count field.
+func (f *TaskConfigFilter) WhereMaxRewardCount(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldMaxRewardCount))
+}
+
+// WhereCooldownSecond applies the entql uint32 predicate on the cooldown_second field.
+func (f *TaskConfigFilter) WhereCooldownSecond(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldCooldownSecond))
+}
+
+// WhereIntervalReset applies the entql bool predicate on the interval_reset field.
+func (f *TaskConfigFilter) WhereIntervalReset(p entql.BoolP) {
+	f.Where(p.Field(taskconfig.FieldIntervalReset))
+}
+
+// WhereIntervalResetSecond applies the entql uint32 predicate on the interval_reset_second field.
+func (f *TaskConfigFilter) WhereIntervalResetSecond(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldIntervalResetSecond))
+}
+
+// WhereMaxIntervalRewardCount applies the entql uint32 predicate on the max_interval_reward_count field.
+func (f *TaskConfigFilter) WhereMaxIntervalRewardCount(p entql.Uint32P) {
+	f.Where(p.Field(taskconfig.FieldMaxIntervalRewardCount))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (tuq *TaskUserQuery) addPredicate(pred func(s *sql.Selector)) {
+	tuq.predicates = append(tuq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TaskUserQuery builder.
+func (tuq *TaskUserQuery) Filter() *TaskUserFilter {
+	return &TaskUserFilter{config: tuq.config, predicateAdder: tuq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TaskUserMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TaskUserMutation builder.
+func (m *TaskUserMutation) Filter() *TaskUserFilter {
+	return &TaskUserFilter{config: m.config, predicateAdder: m}
+}
+
+// TaskUserFilter provides a generic filtering capability at runtime for TaskUserQuery.
+type TaskUserFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TaskUserFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[26].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *TaskUserFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(taskuser.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *TaskUserFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskuser.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *TaskUserFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskuser.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *TaskUserFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(taskuser.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *TaskUserFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(taskuser.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *TaskUserFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(taskuser.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *TaskUserFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(taskuser.FieldUserID))
+}
+
+// WhereTaskID applies the entql [16]byte predicate on the task_id field.
+func (f *TaskUserFilter) WhereTaskID(p entql.ValueP) {
+	f.Where(p.Field(taskuser.FieldTaskID))
+}
+
+// WhereEventID applies the entql [16]byte predicate on the event_id field.
+func (f *TaskUserFilter) WhereEventID(p entql.ValueP) {
+	f.Where(p.Field(taskuser.FieldEventID))
+}
+
+// WhereTaskState applies the entql string predicate on the task_state field.
+func (f *TaskUserFilter) WhereTaskState(p entql.StringP) {
+	f.Where(p.Field(taskuser.FieldTaskState))
+}
+
+// WhereRewardState applies the entql string predicate on the reward_state field.
+func (f *TaskUserFilter) WhereRewardState(p entql.StringP) {
+	f.Where(p.Field(taskuser.FieldRewardState))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ucrq *UserCoinRewardQuery) addPredicate(pred func(s *sql.Selector)) {
+	ucrq.predicates = append(ucrq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserCoinRewardQuery builder.
+func (ucrq *UserCoinRewardQuery) Filter() *UserCoinRewardFilter {
+	return &UserCoinRewardFilter{config: ucrq.config, predicateAdder: ucrq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserCoinRewardMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserCoinRewardMutation builder.
+func (m *UserCoinRewardMutation) Filter() *UserCoinRewardFilter {
+	return &UserCoinRewardFilter{config: m.config, predicateAdder: m}
+}
+
+// UserCoinRewardFilter provides a generic filtering capability at runtime for UserCoinRewardQuery.
+type UserCoinRewardFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserCoinRewardFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[27].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserCoinRewardFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(usercoinreward.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserCoinRewardFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercoinreward.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserCoinRewardFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercoinreward.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserCoinRewardFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(usercoinreward.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserCoinRewardFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(usercoinreward.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserCoinRewardFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(usercoinreward.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserCoinRewardFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(usercoinreward.FieldUserID))
+}
+
+// WhereCoinTypeID applies the entql [16]byte predicate on the coin_type_id field.
+func (f *UserCoinRewardFilter) WhereCoinTypeID(p entql.ValueP) {
+	f.Where(p.Field(usercoinreward.FieldCoinTypeID))
+}
+
+// WhereCoinRewards applies the entql other predicate on the coin_rewards field.
+func (f *UserCoinRewardFilter) WhereCoinRewards(p entql.OtherP) {
+	f.Where(p.Field(usercoinreward.FieldCoinRewards))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (urq *UserRewardQuery) addPredicate(pred func(s *sql.Selector)) {
+	urq.predicates = append(urq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserRewardQuery builder.
+func (urq *UserRewardQuery) Filter() *UserRewardFilter {
+	return &UserRewardFilter{config: urq.config, predicateAdder: urq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserRewardMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserRewardMutation builder.
+func (m *UserRewardMutation) Filter() *UserRewardFilter {
+	return &UserRewardFilter{config: m.config, predicateAdder: m}
+}
+
+// UserRewardFilter provides a generic filtering capability at runtime for UserRewardQuery.
+type UserRewardFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserRewardFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[28].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *UserRewardFilter) WhereID(p entql.Uint32P) {
+	f.Where(p.Field(userreward.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserRewardFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(userreward.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserRewardFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(userreward.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserRewardFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(userreward.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *UserRewardFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(userreward.FieldEntID))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserRewardFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(userreward.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserRewardFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(userreward.FieldUserID))
+}
+
+// WhereActionCredits applies the entql other predicate on the action_credits field.
+func (f *UserRewardFilter) WhereActionCredits(p entql.OtherP) {
+	f.Where(p.Field(userreward.FieldActionCredits))
+}
+
+// WhereCouponAmount applies the entql other predicate on the coupon_amount field.
+func (f *UserRewardFilter) WhereCouponAmount(p entql.OtherP) {
+	f.Where(p.Field(userreward.FieldCouponAmount))
+}
+
+// WhereCouponCashableAmount applies the entql other predicate on the coupon_cashable_amount field.
+func (f *UserRewardFilter) WhereCouponCashableAmount(p entql.OtherP) {
+	f.Where(p.Field(userreward.FieldCouponCashableAmount))
 }

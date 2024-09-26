@@ -121,14 +121,17 @@ func createCoupon(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.CreateCoupon(context.Background())
+	err = handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		ret.StartAt = info.StartAt
-		ret.EndAt = info.EndAt
-		assert.Equal(t, &ret, info)
+		info, err := handler.GetCoupon(context.Background())
+		if assert.Nil(t, err) {
+			ret.ID = info.ID
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			ret.StartAt = info.StartAt
+			ret.EndAt = info.EndAt
+			assert.Equal(t, &ret, info)
+		}
 	}
 
 	handler, err = NewHandler(
@@ -140,15 +143,18 @@ func createCoupon(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err = handler.CreateCoupon(context.Background())
+	err = handler.CreateCoupon(context.Background())
 	if assert.Nil(t, err) {
-		ret1.ID = info.ID
-		ret1.CreatedAt = info.CreatedAt
-		ret1.UpdatedAt = info.UpdatedAt
-		ret1.StartAt = info.StartAt
-		ret1.EndAt = info.EndAt
-		assert.Equal(t, &ret1, info)
-		ret.Allocated = info.Allocated
+		info, err := handler.GetCoupon(context.Background())
+		if assert.Nil(t, err) {
+			ret1.ID = info.ID
+			ret1.CreatedAt = info.CreatedAt
+			ret1.UpdatedAt = info.UpdatedAt
+			ret1.StartAt = info.StartAt
+			ret1.EndAt = info.EndAt
+			assert.Equal(t, &ret1, info)
+			ret.Allocated = info.Allocated
+		}
 	}
 }
 
@@ -165,11 +171,14 @@ func updateCoupon(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.UpdateCoupon(context.Background())
+	err = handler.UpdateCoupon(context.Background())
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		ret.UsedAt = info.UsedAt
-		assert.Equal(t, &ret, info)
+		info, err := handler.GetCoupon(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			ret.UsedAt = info.UsedAt
+			assert.Equal(t, &ret, info)
+		}
 	}
 }
 
@@ -244,12 +253,10 @@ func deleteCoupon(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteCoupon(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, &ret, info)
-	}
+	err = handler.DeleteCoupon(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetCoupon(context.Background())
+	info, err := handler.GetCoupon(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

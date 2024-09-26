@@ -105,20 +105,23 @@ func createCoupon(t *testing.T) {
 		assert.Equal(t, coupon, info1)
 	}
 
-	info, err := CreateCoupon(context.Background(), &npool.CouponReq{
+	_, err = CreateCoupon(context.Background(), &npool.CouponReq{
 		EntID:    &ret.EntID,
 		AppID:    &ret.AppID,
 		CouponID: &ret.CouponID,
 		UserID:   &ret.UserID,
 	})
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.StartAt = info.StartAt
-		ret.EndAt = info.EndAt
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, ret, info)
-		coupon.Allocated = info.Allocated
+		info, err := GetCoupon(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.ID = info.ID
+			ret.StartAt = info.StartAt
+			ret.EndAt = info.EndAt
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, ret, info)
+			coupon.Allocated = info.Allocated
+		}
 	}
 }
 
@@ -129,15 +132,18 @@ func updateCoupon(t *testing.T) {
 	ret.Used = used
 	ret.UsedByOrderID = orderID
 
-	info, err := UpdateCoupon(context.Background(), &npool.CouponReq{
+	_, err := UpdateCoupon(context.Background(), &npool.CouponReq{
 		ID:            &ret.ID,
 		Used:          &ret.Used,
 		UsedByOrderID: &ret.UsedByOrderID,
 	})
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		ret.UsedAt = info.UsedAt
-		assert.Equal(t, ret, info)
+		info, err := GetCoupon(context.Background(), ret.EntID)
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			ret.UsedAt = info.UsedAt
+			assert.Equal(t, ret, info)
+		}
 	}
 }
 

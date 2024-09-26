@@ -41,6 +41,8 @@ const (
 	FieldCouponScope = "coupon_scope"
 	// FieldCashable holds the string denoting the cashable field in the database.
 	FieldCashable = "cashable"
+	// FieldExtra holds the string denoting the extra field in the database.
+	FieldExtra = "extra"
 	// Table holds the table name of the couponallocated in the database.
 	Table = "coupon_allocateds"
 )
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldStartAt,
 	FieldCouponScope,
 	FieldCashable,
+	FieldExtra,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -113,4 +116,8 @@ var (
 	DefaultCouponScope string
 	// DefaultCashable holds the default value on creation for the "cashable" field.
 	DefaultCashable bool
+	// DefaultExtra holds the default value on creation for the "extra" field.
+	DefaultExtra string
+	// ExtraValidator is a validator for the "extra" field. It is called by the builders before save.
+	ExtraValidator func(string) error
 )

@@ -24,12 +24,14 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 
 	handler, err := event1.NewHandler(
 		ctx,
-		event1.WithID(req.ID, true),
-		event1.WithCouponIDs(req.CouponIDs, false),
+		event1.WithID(req.ID, false),
+		event1.WithEntID(req.EntID, false),
 		event1.WithCredits(req.Credits, false),
 		event1.WithCreditsPerUSD(req.CreditsPerUSD, false),
 		event1.WithMaxConsecutive(req.MaxConsecutive, false),
 		event1.WithInviterLayers(req.InviterLayers, false),
+		event1.WithGoodID(req.GoodID, false),
+		event1.WithAppGoodID(req.AppGoodID, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -40,7 +42,7 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 		return &npool.UpdateEventResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateEvent(ctx)
+	err = handler.UpdateEvent(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateEvent",
@@ -51,6 +53,6 @@ func (s *Server) UpdateEvent(ctx context.Context, in *npool.UpdateEventRequest) 
 	}
 
 	return &npool.UpdateEventResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }

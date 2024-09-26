@@ -107,12 +107,6 @@ func (ec *EventCreate) SetNillableEventType(s *string) *EventCreate {
 	return ec
 }
 
-// SetCouponIds sets the "coupon_ids" field.
-func (ec *EventCreate) SetCouponIds(u []uuid.UUID) *EventCreate {
-	ec.mutation.SetCouponIds(u)
-	return ec
-}
-
 // SetCredits sets the "credits" field.
 func (ec *EventCreate) SetCredits(d decimal.Decimal) *EventCreate {
 	ec.mutation.SetCredits(d)
@@ -321,10 +315,6 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultEventType
 		ec.mutation.SetEventType(v)
 	}
-	if _, ok := ec.mutation.CouponIds(); !ok {
-		v := event.DefaultCouponIds
-		ec.mutation.SetCouponIds(v)
-	}
 	if _, ok := ec.mutation.Credits(); !ok {
 		v := event.DefaultCredits
 		ec.mutation.SetCredits(v)
@@ -453,14 +443,6 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 			Column: event.FieldEventType,
 		})
 		_node.EventType = value
-	}
-	if value, ok := ec.mutation.CouponIds(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: event.FieldCouponIds,
-		})
-		_node.CouponIds = value
 	}
 	if value, ok := ec.mutation.Credits(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -663,24 +645,6 @@ func (u *EventUpsert) UpdateEventType() *EventUpsert {
 // ClearEventType clears the value of the "event_type" field.
 func (u *EventUpsert) ClearEventType() *EventUpsert {
 	u.SetNull(event.FieldEventType)
-	return u
-}
-
-// SetCouponIds sets the "coupon_ids" field.
-func (u *EventUpsert) SetCouponIds(v []uuid.UUID) *EventUpsert {
-	u.Set(event.FieldCouponIds, v)
-	return u
-}
-
-// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
-func (u *EventUpsert) UpdateCouponIds() *EventUpsert {
-	u.SetExcluded(event.FieldCouponIds)
-	return u
-}
-
-// ClearCouponIds clears the value of the "coupon_ids" field.
-func (u *EventUpsert) ClearCouponIds() *EventUpsert {
-	u.SetNull(event.FieldCouponIds)
 	return u
 }
 
@@ -970,27 +934,6 @@ func (u *EventUpsertOne) UpdateEventType() *EventUpsertOne {
 func (u *EventUpsertOne) ClearEventType() *EventUpsertOne {
 	return u.Update(func(s *EventUpsert) {
 		s.ClearEventType()
-	})
-}
-
-// SetCouponIds sets the "coupon_ids" field.
-func (u *EventUpsertOne) SetCouponIds(v []uuid.UUID) *EventUpsertOne {
-	return u.Update(func(s *EventUpsert) {
-		s.SetCouponIds(v)
-	})
-}
-
-// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
-func (u *EventUpsertOne) UpdateCouponIds() *EventUpsertOne {
-	return u.Update(func(s *EventUpsert) {
-		s.UpdateCouponIds()
-	})
-}
-
-// ClearCouponIds clears the value of the "coupon_ids" field.
-func (u *EventUpsertOne) ClearCouponIds() *EventUpsertOne {
-	return u.Update(func(s *EventUpsert) {
-		s.ClearCouponIds()
 	})
 }
 
@@ -1465,27 +1408,6 @@ func (u *EventUpsertBulk) UpdateEventType() *EventUpsertBulk {
 func (u *EventUpsertBulk) ClearEventType() *EventUpsertBulk {
 	return u.Update(func(s *EventUpsert) {
 		s.ClearEventType()
-	})
-}
-
-// SetCouponIds sets the "coupon_ids" field.
-func (u *EventUpsertBulk) SetCouponIds(v []uuid.UUID) *EventUpsertBulk {
-	return u.Update(func(s *EventUpsert) {
-		s.SetCouponIds(v)
-	})
-}
-
-// UpdateCouponIds sets the "coupon_ids" field to the value that was provided on create.
-func (u *EventUpsertBulk) UpdateCouponIds() *EventUpsertBulk {
-	return u.Update(func(s *EventUpsert) {
-		s.UpdateCouponIds()
-	})
-}
-
-// ClearCouponIds clears the value of the "coupon_ids" field.
-func (u *EventUpsertBulk) ClearCouponIds() *EventUpsertBulk {
-	return u.Update(func(s *EventUpsert) {
-		s.ClearCouponIds()
 	})
 }
 

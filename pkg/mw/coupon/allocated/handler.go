@@ -148,6 +148,26 @@ func WithUsedByOrderID(id *string, must bool) func(context.Context, *Handler) er
 	}
 }
 
+func WithCashable(value *bool, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		h.Cashable = value
+		return nil
+	}
+}
+
+func WithExtra(value *string, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if value == nil {
+			if must {
+				return wlog.Errorf("invalid extra")
+			}
+			return nil
+		}
+		h.Extra = value
+		return nil
+	}
+}
+
 func WithReqs(reqs []*npool.CouponReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*allocatedcrud.Req{}
@@ -260,6 +280,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				ids = append(ids, _id)
 			}
 			h.Conds.UsedByOrderIDs = &cruder.Cond{Op: conds.GetUsedByOrderIDs().GetOp(), Val: ids}
+		}
+		if conds.Extra != nil {
+			h.Conds.Extra = &cruder.Cond{
+				Op:  conds.GetExtra().GetOp(),
+				Val: conds.GetExtra().GetValue(),
+			}
 		}
 		return nil
 	}

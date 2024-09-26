@@ -13,28 +13,43 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/coupon/allocated"
 )
 
-func (h *Handler) UpdateCoupon(ctx context.Context) (*npool.Coupon, error) {
+type updateHandler struct {
+	*Handler
+}
+
+func (h *updateHandler) updateCoupon(ctx context.Context, cli *ent.Client) error {
+	if _, err := allocatedcrud.UpdateSet(
+		cli.CouponAllocated.UpdateOneID(*h.ID),
+		&allocatedcrud.Req{
+			Used:          h.Used,
+			UsedByOrderID: h.UsedByOrderID,
+		},
+	).Save(ctx); err != nil {
+		return wlog.WrapError(err)
+	}
+	return nil
+}
+
+func (h *Handler) UpdateCoupon(ctx context.Context) error {
 	if h.Used != nil && *h.Used && h.UsedByOrderID == nil {
-		return nil, wlog.Errorf("invalid usedbyorderid")
+		return wlog.Errorf("invalid usedbyorderid")
+	}
+	handler := &updateHandler{
+		Handler: h,
 	}
 
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		if _, err := allocatedcrud.UpdateSet(
-			cli.CouponAllocated.UpdateOneID(*h.ID),
-			&allocatedcrud.Req{
-				Used:          h.Used,
-				UsedByOrderID: h.UsedByOrderID,
-			},
-		).Save(_ctx); err != nil {
-			return wlog.WrapError(err)
-		}
-		return nil
-	})
+	info, err := h.GetCoupon(ctx)
 	if err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
+	if info == nil {
+		return wlog.Errorf("invalid coupon")
+	}
+	h.ID = &info.ID
 
-	return h.GetCoupon(ctx)
+	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
+		return handler.updateCoupon(_ctx, cli)
+	})
 }
 
 func (h *Handler) UpdateCoupons(ctx context.Context) ([]*npool.Coupon, error) {

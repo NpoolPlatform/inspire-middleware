@@ -9,6 +9,7 @@ import (
 	cruder "github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event"
+	eventcoinmw "github.com/NpoolPlatform/message/npool/inspire/mw/v1/event/coin"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -16,12 +17,15 @@ import (
 
 type Handler struct {
 	eventcrud.Req
-	Consecutive *uint32
-	Amount      *decimal.Decimal
-	UserID      *uuid.UUID
-	Conds       *eventcrud.Conds
-	Offset      int32
-	Limit       int32
+	Coins           []*eventcoinmw.EventCoinReq
+	RemoveCouponIDs *bool
+	RemoveCoins     *bool
+	Consecutive     *uint32
+	Amount          *decimal.Decimal
+	UserID          *uuid.UUID
+	Conds           *eventcrud.Conds
+	Offset          int32
+	Limit           int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -81,21 +85,7 @@ func WithAppID(id *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithCouponIDs(ids []string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		_ids := []uuid.UUID{}
-		for _, id := range ids {
-			_id, err := uuid.Parse(id)
-			if err != nil {
-				return wlog.WrapError(err)
-			}
-			_ids = append(_ids, _id)
-		}
-		h.CouponIDs = _ids
-		return nil
-	}
-}
-
+//nolint:dupl
 func WithCredits(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -108,11 +98,15 @@ func WithCredits(amount *string, must bool) func(context.Context, *Handler) erro
 		if err != nil {
 			return wlog.WrapError(err)
 		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid credits")
+		}
 		h.Credits = &_amount
 		return nil
 	}
 }
 
+//nolint:dupl
 func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if amount == nil {
@@ -124,6 +118,9 @@ func WithCreditsPerUSD(amount *string, must bool) func(context.Context, *Handler
 		_amount, err := decimal.NewFromString(*amount)
 		if err != nil {
 			return wlog.WrapError(err)
+		}
+		if _amount.Cmp(decimal.NewFromInt(0)) < 0 {
+			return wlog.Errorf("invalid creditsperusd")
 		}
 		h.CreditsPerUSD = &_amount
 		return nil
@@ -181,14 +178,54 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_AffiliatePurchase:
 			fallthrough //nolint
 		case basetypes.UsedFor_SimulateOrderProfit:
-		// Not implemented
+			fallthrough //nolint
+		case basetypes.UsedFor_SetWithdrawAddress:
+			fallthrough //nolint
+		case basetypes.UsedFor_ConsecutiveLogin:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodSocialSharing:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstOrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetAddress:
+			fallthrough //nolint
+		case basetypes.UsedFor_Set2FA:
+			fallthrough //nolint
+		case basetypes.UsedFor_FirstBenefit:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteComment:
+			fallthrough //nolint
+		case basetypes.UsedFor_WriteRecommend:
+			fallthrough //nolint
+		case basetypes.UsedFor_GoodScoring:
+			fallthrough //nolint
+		case basetypes.UsedFor_SubmitTicket:
+			fallthrough //nolint
+		case basetypes.UsedFor_IntallApp:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetNFTAvatar:
+			fallthrough //nolint
+		case basetypes.UsedFor_SetPersonalImage:
+			fallthrough //nolint
 		case basetypes.UsedFor_Signin:
 			fallthrough //nolint
+		case basetypes.UsedFor_KYCApproved:
+			fallthrough //nolint
+		case basetypes.UsedFor_OrderCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_WithdrawalCompleted:
+			fallthrough //nolint
+		case basetypes.UsedFor_DepositReceived:
+			fallthrough //nolint
+		case basetypes.UsedFor_UpdatePassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_ResetPassword:
+			fallthrough //nolint
+		case basetypes.UsedFor_InternalTransfer:
+		// Not implemented
 		case basetypes.UsedFor_Update:
 			fallthrough //nolint
 		case basetypes.UsedFor_Contact:
-			fallthrough //nolint
-		case basetypes.UsedFor_SetWithdrawAddress:
 			fallthrough //nolint
 		case basetypes.UsedFor_Withdraw:
 			fallthrough //nolint
@@ -199,12 +236,6 @@ func WithEventType(eventType *basetypes.UsedFor, must bool) func(context.Context
 		case basetypes.UsedFor_SetTransferTargetUser:
 			fallthrough //nolint
 		case basetypes.UsedFor_WithdrawalRequest:
-			fallthrough //nolint
-		case basetypes.UsedFor_WithdrawalCompleted:
-			fallthrough //nolint
-		case basetypes.UsedFor_DepositReceived:
-			fallthrough //nolint
-		case basetypes.UsedFor_KYCApproved:
 			fallthrough //nolint
 		case basetypes.UsedFor_KYCRejected:
 			return wlog.Errorf("not implemented")
@@ -341,6 +372,12 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 			h.Conds.EntIDs = &cruder.Cond{
 				Op:  conds.GetEntIDs().GetOp(),
 				Val: ids,
+			}
+		}
+		if conds.ID != nil {
+			h.Conds.ID = &cruder.Cond{
+				Op:  conds.GetID().GetOp(),
+				Val: conds.GetID().GetValue(),
 			}
 		}
 		return nil

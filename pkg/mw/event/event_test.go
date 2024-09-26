@@ -58,7 +58,6 @@ var (
 		AppID:          uuid.NewString(),
 		EventType:      basetypes.UsedFor_Signup,
 		EventTypeStr:   basetypes.UsedFor_Signup.String(),
-		CouponIDs:      []string{coupon.EntID},
 		Credits:        decimal.RequireFromString("12.25").String(),
 		CreditsPerUSD:  decimal.RequireFromString("12.25").String(),
 		MaxConsecutive: 1,
@@ -66,6 +65,7 @@ var (
 	}
 )
 
+//nolint:dupl
 func setup(t *testing.T) func(*testing.T) {
 	h1, err := coupon1.NewHandler(
 		context.Background(),
@@ -105,7 +105,6 @@ func createEvent(t *testing.T) {
 		WithEntID(&ret.EntID, true),
 		WithAppID(&ret.AppID, true),
 		WithEventType(&ret.EventType, true),
-		WithCouponIDs(ret.CouponIDs, true),
 		WithCredits(&ret.Credits, true),
 		WithCreditsPerUSD(&ret.CreditsPerUSD, true),
 		WithMaxConsecutive(&ret.MaxConsecutive, true),
@@ -113,13 +112,17 @@ func createEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.CreateEvent(context.Background())
+	err = handler.CreateEvent(context.Background())
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.CreatedAt = info.CreatedAt
-		ret.UpdatedAt = info.UpdatedAt
-		ret.CouponIDsStr = info.CouponIDsStr
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetEvent(context.Background())
+		if assert.Nil(t, err) {
+			ret.CreatedAt = info.CreatedAt
+			ret.UpdatedAt = info.UpdatedAt
+			ret.GoodID = info.GoodID
+			ret.AppGoodID = info.AppGoodID
+			ret.ID = info.ID
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
@@ -127,7 +130,6 @@ func updateEvent(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
 		WithID(&ret.ID, true),
-		WithCouponIDs(ret.CouponIDs, true),
 		WithCredits(&ret.Credits, true),
 		WithCreditsPerUSD(&ret.CreditsPerUSD, true),
 		WithMaxConsecutive(&ret.MaxConsecutive, true),
@@ -135,10 +137,13 @@ func updateEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.UpdateEvent(context.Background())
+	err = handler.UpdateEvent(context.Background())
 	if assert.Nil(t, err) {
-		ret.UpdatedAt = info.UpdatedAt
-		assert.Equal(t, info, &ret)
+		info, err := handler.GetEvent(context.Background())
+		if assert.Nil(t, err) {
+			ret.UpdatedAt = info.UpdatedAt
+			assert.Equal(t, info, &ret)
+		}
 	}
 }
 
@@ -185,12 +190,10 @@ func deleteEvent(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	info, err := handler.DeleteEvent(context.Background())
-	if assert.Nil(t, err) {
-		assert.Equal(t, info, &ret)
-	}
+	err = handler.DeleteEvent(context.Background())
+	assert.Nil(t, err)
 
-	info, err = handler.GetEvent(context.Background())
+	info, err := handler.GetEvent(context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, info)
 }

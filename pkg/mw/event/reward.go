@@ -22,6 +22,7 @@ type rewardHandler struct {
 	*Handler
 }
 
+//nolint:dupl
 func (h *rewardHandler) condGood() error {
 	switch *h.EventType {
 	case basetypes.UsedFor_Purchase:
@@ -109,7 +110,7 @@ func (h *rewardHandler) allocateCoupons(ctx context.Context, ev *npool.Event) er
 			return wlog.WrapError(err)
 		}
 
-		if _, err := handler.CreateCoupon(ctx); err != nil {
+		if err := handler.CreateCoupon(ctx); err != nil {
 			return wlog.WrapError(err)
 		}
 	}

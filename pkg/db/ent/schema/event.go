@@ -39,10 +39,6 @@ func (Event) Fields() []ent.Field {
 			Optional().
 			Default(basetypes.UsedFor_DefaultUsedFor.String()),
 		field.
-			JSON("coupon_ids", []uuid.UUID{}).
-			Optional().
-			Default([]uuid.UUID{}),
-		field.
 			Other("credits", decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL: "decimal(37,18)",

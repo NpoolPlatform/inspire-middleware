@@ -24,7 +24,8 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 
 	handler, err := allocated1.NewHandler(
 		ctx,
-		allocated1.WithID(req.ID, true),
+		allocated1.WithID(req.ID, false),
+		allocated1.WithEntID(req.EntID, false),
 		allocated1.WithUsed(req.Used, false),
 		allocated1.WithUsedByOrderID(req.UsedByOrderID, false),
 	)
@@ -37,7 +38,7 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 		return &npool.UpdateCouponResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	info, err := handler.UpdateCoupon(ctx)
+	err = handler.UpdateCoupon(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"UpdateCoupon",
@@ -48,7 +49,7 @@ func (s *Server) UpdateCoupon(ctx context.Context, in *npool.UpdateCouponRequest
 	}
 
 	return &npool.UpdateCouponResponse{
-		Info: info,
+		Info: nil,
 	}, nil
 }
 

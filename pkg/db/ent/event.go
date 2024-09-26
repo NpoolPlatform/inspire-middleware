@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -30,8 +29,6 @@ type Event struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// EventType holds the value of the "event_type" field.
 	EventType string `json:"event_type,omitempty"`
-	// CouponIds holds the value of the "coupon_ids" field.
-	CouponIds []uuid.UUID `json:"coupon_ids,omitempty"`
 	// Credits holds the value of the "credits" field.
 	Credits decimal.Decimal `json:"credits,omitempty"`
 	// CreditsPerUsd holds the value of the "credits_per_usd" field.
@@ -51,8 +48,6 @@ func (*Event) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case event.FieldCouponIds:
-			values[i] = new([]byte)
 		case event.FieldCredits, event.FieldCreditsPerUsd:
 			values[i] = new(decimal.Decimal)
 		case event.FieldID, event.FieldCreatedAt, event.FieldUpdatedAt, event.FieldDeletedAt, event.FieldMaxConsecutive, event.FieldInviterLayers:
@@ -117,14 +112,6 @@ func (e *Event) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field event_type", values[i])
 			} else if value.Valid {
 				e.EventType = value.String
-			}
-		case event.FieldCouponIds:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field coupon_ids", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &e.CouponIds); err != nil {
-					return fmt.Errorf("unmarshal field coupon_ids: %w", err)
-				}
 			}
 		case event.FieldCredits:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -207,9 +194,6 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("event_type=")
 	builder.WriteString(e.EventType)
-	builder.WriteString(", ")
-	builder.WriteString("coupon_ids=")
-	builder.WriteString(fmt.Sprintf("%v", e.CouponIds))
 	builder.WriteString(", ")
 	builder.WriteString("credits=")
 	builder.WriteString(fmt.Sprintf("%v", e.Credits))

@@ -23,6 +23,7 @@ type createHandler struct {
 	coupon *ent.Coupon
 }
 
+//nolint:dupl
 func (h *createHandler) getCoupon(ctx context.Context) error {
 	return db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		coupon, err := cli.
@@ -47,6 +48,9 @@ func (h *createHandler) getCoupon(ctx context.Context) error {
 }
 
 func (h *createHandler) cashable() bool {
+	if h.Cashable != nil {
+		return *h.Cashable
+	}
 	probability := h.coupon.CashableProbability
 	if probability.Cmp(decimal.NewFromInt(0)) <= 0 {
 		return false
@@ -75,6 +79,7 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 			Denomination: &h.coupon.Denomination,
 			CouponScope:  &couponScope,
 			Cashable:     &_cashable,
+			Extra:        h.Extra,
 		},
 	).Save(ctx); err != nil {
 		return wlog.WrapError(err)
@@ -82,6 +87,23 @@ func (h *createHandler) createAllocatedCoupon(ctx context.Context, tx *ent.Tx) e
 	return nil
 }
 
+func (h *createHandler) validateAllocated() error {
+	allocated := h.coupon.Allocated
+	switch h.coupon.CouponType {
+	case inspiretypes.CouponType_FixAmount.String():
+		allocated = allocated.Add(h.coupon.Denomination)
+	case inspiretypes.CouponType_Discount.String():
+		allocated = allocated.Add(decimal.NewFromInt(1))
+	default:
+		return wlog.Errorf("invalid coupontype")
+	}
+	if allocated.Cmp(h.coupon.Circulation) > 0 {
+		return wlog.Errorf("insufficient circulation")
+	}
+	return nil
+}
+
+//nolint:dupl
 func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	allocated := h.coupon.Allocated
 	switch h.coupon.CouponType {
@@ -95,7 +117,6 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	if allocated.Cmp(h.coupon.Circulation) > 0 {
 		return wlog.Errorf("insufficient circulation")
 	}
-
 	if _, err := tx.
 		Coupon.
 		UpdateOne(h.coupon).
@@ -106,7 +127,7 @@ func (h *createHandler) updateCoupon(ctx context.Context, tx *ent.Tx) error {
 	return nil
 }
 
-func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
+func (h *Handler) CreateCoupon(ctx context.Context) error {
 	id := uuid.New()
 	if h.EntID == nil {
 		h.EntID = &id
@@ -116,10 +137,10 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		Handler: h,
 	}
 	if err := handler.getCoupon(ctx); err != nil {
-		return nil, wlog.WrapError(err)
+		return wlog.WrapError(err)
 	}
 
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+	return db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		if err := handler.createAllocatedCoupon(ctx, tx); err != nil {
 			return wlog.WrapError(err)
 		}
@@ -128,9 +149,28 @@ func (h *Handler) CreateCoupon(ctx context.Context) (*npool.Coupon, error) {
 		}
 		return nil
 	})
-	if err != nil {
+}
+
+func (h *Handler) CalcluateAllocatedCoupon(ctx context.Context) (*npool.Coupon, error) {
+	handler := &createHandler{
+		Handler: h,
+	}
+	if err := handler.getCoupon(ctx); err != nil {
 		return nil, wlog.WrapError(err)
 	}
 
-	return h.GetCoupon(ctx)
+	if err := handler.validateAllocated(); err != nil {
+		return nil, wlog.WrapError(err)
+	}
+
+	_cashable := handler.cashable()
+	coupon := &npool.Coupon{
+		AppID:        h.AppID.String(),
+		CouponID:     h.CouponID.String(),
+		UserID:       h.UserID.String(),
+		Denomination: handler.coupon.Denomination.String(),
+		Cashable:     _cashable,
+	}
+
+	return coupon, nil
 }

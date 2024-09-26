@@ -27,6 +27,12 @@ type AppGoodScope func(*sql.Selector)
 // CashControl is the predicate function for cashcontrol builders.
 type CashControl func(*sql.Selector)
 
+// CoinAllocated is the predicate function for coinallocated builders.
+type CoinAllocated func(*sql.Selector)
+
+// CoinConfig is the predicate function for coinconfig builders.
+type CoinConfig func(*sql.Selector)
+
 // Commission is the predicate function for commission builders.
 type Commission func(*sql.Selector)
 
@@ -39,8 +45,17 @@ type CouponAllocated func(*sql.Selector)
 // CouponScope is the predicate function for couponscope builders.
 type CouponScope func(*sql.Selector)
 
+// CreditAllocated is the predicate function for creditallocated builders.
+type CreditAllocated func(*sql.Selector)
+
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)
+
+// EventCoin is the predicate function for eventcoin builders.
+type EventCoin func(*sql.Selector)
+
+// EventCoupon is the predicate function for eventcoupon builders.
+type EventCoupon func(*sql.Selector)
 
 // GoodAchievement is the predicate function for goodachievement builders.
 type GoodAchievement func(*sql.Selector)
@@ -65,3 +80,15 @@ type Registration func(*sql.Selector)
 
 // Statement is the predicate function for statement builders.
 type Statement func(*sql.Selector)
+
+// TaskConfig is the predicate function for taskconfig builders.
+type TaskConfig func(*sql.Selector)
+
+// TaskUser is the predicate function for taskuser builders.
+type TaskUser func(*sql.Selector)
+
+// UserCoinReward is the predicate function for usercoinreward builders.
+type UserCoinReward func(*sql.Selector)
+
+// UserReward is the predicate function for userreward builders.
+type UserReward func(*sql.Selector)

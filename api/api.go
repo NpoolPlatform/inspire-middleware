@@ -15,15 +15,24 @@ import (
 	appconfig "github.com/NpoolPlatform/inspire-middleware/api/app/config"
 	appgoodcommissionconfig "github.com/NpoolPlatform/inspire-middleware/api/app/good/commission/config"
 	"github.com/NpoolPlatform/inspire-middleware/api/calculate"
+	coinallocated "github.com/NpoolPlatform/inspire-middleware/api/coin/allocated"
+	coinconfig "github.com/NpoolPlatform/inspire-middleware/api/coin/config"
 	"github.com/NpoolPlatform/inspire-middleware/api/commission"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/allocated"
 	cashcontrol "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/cashcontrol"
 	scope1 "github.com/NpoolPlatform/inspire-middleware/api/coupon/app/scope"
 	"github.com/NpoolPlatform/inspire-middleware/api/coupon/scope"
+	creditallocated "github.com/NpoolPlatform/inspire-middleware/api/credit/allocated"
 	"github.com/NpoolPlatform/inspire-middleware/api/event"
+	eventcoin "github.com/NpoolPlatform/inspire-middleware/api/event/coin"
+	eventcoupon "github.com/NpoolPlatform/inspire-middleware/api/event/coupon"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/invitationcode"
 	"github.com/NpoolPlatform/inspire-middleware/api/invitation/registration"
+	taskconfig "github.com/NpoolPlatform/inspire-middleware/api/task/config"
+	taskuser "github.com/NpoolPlatform/inspire-middleware/api/task/user"
+	usercoinreward "github.com/NpoolPlatform/inspire-middleware/api/user/coin/reward"
+	userreward "github.com/NpoolPlatform/inspire-middleware/api/user/reward"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -54,8 +63,18 @@ func Register(server grpc.ServiceRegistrar) {
 	appcommissionconfig.Register(server)
 	appgoodcommissionconfig.Register(server)
 	user.Register(server)
+	taskconfig.Register(server)
+	taskuser.Register(server)
+	coinconfig.Register(server)
+	coinallocated.Register(server)
+	usercoinreward.Register(server)
+	creditallocated.Register(server)
+	userreward.Register(server)
+	eventcoin.Register(server)
+	eventcoupon.Register(server)
 }
 
+//nolint:funlen
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
 	if err := npool.RegisterMiddlewareHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err
@@ -103,6 +122,33 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := user.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := taskconfig.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := taskuser.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := coinconfig.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := coinallocated.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := usercoinreward.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := creditallocated.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := userreward.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := eventcoin.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := eventcoupon.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil

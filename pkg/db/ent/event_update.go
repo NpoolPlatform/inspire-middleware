@@ -139,18 +139,6 @@ func (eu *EventUpdate) ClearEventType() *EventUpdate {
 	return eu
 }
 
-// SetCouponIds sets the "coupon_ids" field.
-func (eu *EventUpdate) SetCouponIds(u []uuid.UUID) *EventUpdate {
-	eu.mutation.SetCouponIds(u)
-	return eu
-}
-
-// ClearCouponIds clears the value of the "coupon_ids" field.
-func (eu *EventUpdate) ClearCouponIds() *EventUpdate {
-	eu.mutation.ClearCouponIds()
-	return eu
-}
-
 // SetCredits sets the "credits" field.
 func (eu *EventUpdate) SetCredits(d decimal.Decimal) *EventUpdate {
 	eu.mutation.SetCredits(d)
@@ -458,19 +446,6 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: event.FieldEventType,
 		})
 	}
-	if value, ok := eu.mutation.CouponIds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: event.FieldCouponIds,
-		})
-	}
-	if eu.mutation.CouponIdsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: event.FieldCouponIds,
-		})
-	}
 	if value, ok := eu.mutation.Credits(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeOther,
@@ -690,18 +665,6 @@ func (euo *EventUpdateOne) SetNillableEventType(s *string) *EventUpdateOne {
 // ClearEventType clears the value of the "event_type" field.
 func (euo *EventUpdateOne) ClearEventType() *EventUpdateOne {
 	euo.mutation.ClearEventType()
-	return euo
-}
-
-// SetCouponIds sets the "coupon_ids" field.
-func (euo *EventUpdateOne) SetCouponIds(u []uuid.UUID) *EventUpdateOne {
-	euo.mutation.SetCouponIds(u)
-	return euo
-}
-
-// ClearCouponIds clears the value of the "coupon_ids" field.
-func (euo *EventUpdateOne) ClearCouponIds() *EventUpdateOne {
-	euo.mutation.ClearCouponIds()
 	return euo
 }
 
@@ -1040,19 +1003,6 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: event.FieldEventType,
-		})
-	}
-	if value, ok := euo.mutation.CouponIds(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Value:  value,
-			Column: event.FieldCouponIds,
-		})
-	}
-	if euo.mutation.CouponIdsCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: event.FieldCouponIds,
 		})
 	}
 	if value, ok := euo.mutation.Credits(); ok {

@@ -17,7 +17,6 @@ type Req struct {
 	EntID          *uuid.UUID
 	AppID          *uuid.UUID
 	EventType      *basetypes.UsedFor
-	CouponIDs      []uuid.UUID
 	Credits        *decimal.Decimal
 	CreditsPerUSD  *decimal.Decimal
 	MaxConsecutive *uint32
@@ -39,9 +38,6 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 	}
 	if req.EventType != nil {
 		c.SetEventType(req.EventType.String())
-	}
-	if len(req.CouponIDs) > 0 {
-		c.SetCouponIds(req.CouponIDs)
 	}
 	if req.Credits != nil {
 		c.SetCredits(*req.Credits)
@@ -65,9 +61,6 @@ func CreateSet(c *ent.EventCreate, req *Req) *ent.EventCreate {
 }
 
 func UpdateSet(u *ent.EventUpdateOne, req *Req) *ent.EventUpdateOne {
-	if len(req.CouponIDs) > 0 {
-		u.SetCouponIds(req.CouponIDs)
-	}
 	if req.Credits != nil {
 		u.SetCredits(*req.Credits)
 	}
@@ -93,6 +86,7 @@ type Conds struct {
 	EventType *cruder.Cond
 	GoodID    *cruder.Cond
 	AppGoodID *cruder.Cond
+	ID        *cruder.Cond
 }
 
 //nolint:funlen
@@ -121,6 +115,20 @@ func SetQueryConds(q *ent.EventQuery, conds *Conds) (*ent.EventQuery, error) {
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(entevent.EntIDIn(ids...))
+		default:
+			return nil, wlog.Errorf("invalid event field")
+		}
+	}
+	if conds.ID != nil {
+		id, ok := conds.ID.Val.(uint32)
+		if !ok {
+			return nil, wlog.Errorf("invalid id")
+		}
+		switch conds.ID.Op {
+		case cruder.EQ:
+			q.Where(entevent.ID(id))
+		case cruder.NEQ:
+			q.Where(entevent.IDNEQ(id))
 		default:
 			return nil, wlog.Errorf("invalid event field")
 		}
