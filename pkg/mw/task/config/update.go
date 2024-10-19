@@ -81,7 +81,7 @@ func (h *updateHandler) constructSQL() error {
 	_sql += fmt.Sprintf("where di.app_id = '%v' and di.event_id = '%v' and di.task_type = '%v' and di.id != %v and deleted_at=0", h.appID, h.eventID, h.TaskType.String(), *h.ID)
 	_sql += " limit 1)"
 
-	if h.LastTaskID != nil {
+	if h.LastTaskID != nil && *h.LastTaskID != uuid.Nil {
 		_sql += " and exists ("
 		_sql += "select 1 from (select * from task_configs) as di "
 		_sql += fmt.Sprintf("where di.ent_id = '%v' and di.app_id = '%v' and di.deleted_at=0", *h.LastTaskID, h.appID)
